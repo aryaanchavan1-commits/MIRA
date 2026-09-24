@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Console · MIRA</title>
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body class="console-body">
+<aside class="side">
+  <a class="brand" href="/"><span class="brand-mark">◎</span> MIRA</a>
+  <nav class="side-nav">
+    <button data-view="overview" class="active">Overview</button>
+    <button data-view="chat">Chat</button>
+    <button data-view="mandala">Mandala</button>
+    <button data-view="documents">Documents</button>
+    <button data-view="websearch">Web Search</button>
+    <button data-view="lab">Research Lab</button>
+    <button data-view="benchmarks">Benchmarks</button>
+    <button data-view="research">Research</button>
+  </nav>
+  <div class="side-status" id="side-status">Loading system…</div>
+</aside>
+
+<main class="main">
+  <!-- OVERVIEW -->
+  <section class="view active" id="view-overview">
+    <h1>System overview</h1>
+    <div class="stat-grid" id="stats"></div>
+    <div class="card">
+      <h3>Resolved runtime</h3>
+      <div class="kv" id="runtime"></div>
+    </div>
+    <div class="card">
+      <h3>Notices</h3>
+      <ul class="ticks" id="notices"></ul>
+    </div>
+  </section>
+
+  <!-- CHAT -->
+  <section class="view" id="view-chat">
+    <h1>Chat with your memory</h1>
+    <form id="chat-form" class="chat-form">
+      <input id="chat-q" placeholder="Ask a multi-hop question…" autocomplete="off">
+      <select id="chat-set">
+        <option value="all">full MIRA</option>
+        <option value="vector_only">vector only</option>
+        <option value="graph_only">graph only</option>
+        <option value="hierarchy_only">hierarchy only</option>
+        <option value="radial_only">radial only</option>
+      </select>
+      <label class="check"><input id="chat-web" type="checkbox"> allow live web</label>
+      <button class="btn btn-primary" type="submit">Ask</button>
+    </form>
+    <div id="chat-out" class="chat-out"><p class="small muted">Agent answers from memory first; weak memory + web consent → live search; otherwise model knowledge (labeled).</p></div>
+  </section>
+
+  <!-- MANDALA -->
+  <section class="view" id="view-mandala">
+    <h1>Mandala topology</h1>
+    <p class="small muted">Angle = sector · radius = ring. Size = importance · color = memory type. Click a node to inspect it.</p>
+    <div class="mandala-wrap">
+      <canvas id="mandala-canvas"></canvas>
+      <div class="node-panel" id="node-panel"><p class="small muted">Select a node…</p></div>
+    </div>
+    <div class="legend" id="legend"></div>
+    <div class="card" style="margin-top:1.2rem">
+      <h3>Placement strategy lab</h3>
+      <p class="small muted">The mandala's ring/sector layout is itself a research variable (§11):
+        re-place every memory with a different strategy, benchmark retrieval, and compare.
+        The sweep restores your default strategy afterwards.</p>
+      <form id="strat-form" class="bench-form">
+        <label>Strategy <select id="strat-select"></select></label>
+        <button class="btn btn-secondary" type="submit">Apply strategy</button>
+        <button class="btn btn-secondary" type="button" id="strat-sweep">Benchmark all strategies</button>
+      </form>
+      <div id="strat-out" class="small"></div>
+    </div>
+  </section>
+
+  <!-- DOCUMENTS -->
+  <section class="view" id="view-documents">
+    <h1>Documents</h1>
+    <form id="upload-form" class="upload-form">
+      <input type="file" id="doc-file" accept=".pdf,.txt,.md,.json,.csv,.docx" required>
+      <input id="doc-title" placeholder="Title (optional)">
+      <button class="btn btn-primary" type="submit">Ingest</button>
+    </form>
+    <div id="upload-status" class="small"></div>
+    <div class="card"><h3>Ingested</h3><div id="doc-list" class="doc-list"></div></div>
+  </section>
+
+  <!-- RESEARCH LAB -->
+  <section class="view" id="view-lab">
+    <h1>Research Lab</h1>
+    <p class="small muted">Same query, different retrieval components. Jaccard ≈ 1.0 between two sets means they retrieve the same memories.</p>
+    <form id="lab-form" class="chat-form">
+      <input id="lab-q" placeholder="Query…" autocomplete="off">
+      <button class="btn btn-primary" type="submit">Run comparison</button>
+    </form>
+    <div id="lab-out"></div>
+  </section>
+
+  <!-- BENCHMARKS -->
+  <section class="view" id="view-benchmarks">
+    <h1>Benchmarks</h1>
+    <form id="bench-form" class="bench-form card">
+      <label>Dataset path (optional) <input id="bench-ds" placeholder="empty = generate from ingested corpus"></label>
+      <label>Format <select id="bench-fmt"><option value="">corpus (auto)</option><option>custom</option><option>hotpotqa</option><option>2wiki</option><option>musique</option></select></label>
+      <label>Questions <input id="bench-n" type="number" value="20" min="1" max="500"></label>
+      <label class="check"><input id="bench-judge" type="checkbox"> LLM-as-judge</label>
+      <button class="btn btn-primary" type="submit">Run benchmark</button>
+    </form>
+    <div id="bench-out"></div>
+  </section>
+
+  <!-- WEB SEARCH -->
+  <section class="view" id="view-websearch">
+    <h1>Live Web Search</h1>
+    <p class="small muted">Searches leave the machine when you click Search. Results are plain data;
+      ingest turns a page into mandala memories with URL provenance.</p>
+    <form id="ws-form" class="bench-form card">
+      <label>Query <input id="ws-q" placeholder="research question or keywords"></label>
+      <label>Backend <select id="ws-backend">
+        <option value="auto">auto (agent-reach → opencli → duckduckgo)</option>
+        <option value="agent-reach">agent-reach</option>
+        <option value="opencli">opencli</option>
+        <option value="duckduckgo">duckduckgo</option>
+      </select></label>
+      <button class="btn btn-primary" type="submit">Search</button>
+    </form>
+    <div id="ws-out"></div>
+  </section>
+
+  <!-- RESEARCH -->
+  <section class="view" id="view-research">
+    <h1>The research</h1>
+    <div class="card">
+      <h3>The problem in AI</h3>
+      <p>Standard RAG treats memory as a <em>flat bag of text chunks</em>: embed everything,
+      rank by cosine similarity, paste the top-k into the model. That has three structural
+      failures: it loses <strong>structure</strong> (a fact and the concept it belongs to are
+      just two equally-shaped vectors), it loses <strong>multi-hop reasoning</strong> (answering
+      “the mentor of the director of film X” needs chains, not neighbors), and it wastes
+      <strong>context</strong> on near-duplicate chunks.</p>
+    </div>
+    <div class="card">
+      <h3>The hypothesis</h3>
+      <p>Inspired by the radial organization of mandalas — a center, concentric rings of
+      decreasing generality, and semantic sectors — MIRA arranges memory as a formal
+      topology: <strong>ring 0</strong> core, <strong>ring 1</strong> major concepts,
+      <strong>ring 2</strong> subconcepts, <strong>ring 3</strong> facts/evidence,
+      <strong>ring 4</strong> source documents. Every node carries a computed
+      <strong>radial distance</strong> (semantic + hierarchical + graph + temporal distance).
+      Retrieval scores nine components, including <strong>spreading activation</strong> —
+      energy that propagates through the graph the way activation spreads in associative
+      memory (Collins &amp; Loftus 1975).</p>
+      <p class="small muted">Honesty: MIRA is <em>inspired by</em> mandala organization principles
+      and by biological memory dynamics. It does not claim mandalas were neural networks
+      or that this simulates a brain. Whether radial organization helps is an empirical
+      question — the system is built to answer it, including with “no”.</p>
+    </div>
+    <div class="card">
+      <h3>Three biological timescales</h3>
+      <ul class="ticks small">
+        <li><strong>Fast (per query)</strong> — spreading activation propagates energy through the mandala to surface multi-hop associates that vector search misses.</li>
+        <li><strong>Medium (per answer)</strong> — nine-component scoring weighs semantic, structural, radial, graph, activation, confidence, recency and path evidence.</li>
+        <li><strong>Slow (consolidation)</strong> — Hebbian plasticity: edges along successful retrieval paths strengthen, unused edges decay. The wiring adapts to use.</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>What it is used for</h3>
+      <ul class="ticks small">
+        <li>A private, offline research memory over your own PDFs, notes and web pages — answers always cite document/page/chunk provenance.</li>
+        <li>An <strong>experimental laboratory</strong>: every mechanism (vector, graph, hierarchy, radial, activation) is individually switchable and benchmarkable.</li>
+        <li>A <strong>learning memory</strong>: a delta-rule unit learns the retrieval weights from your corpus; web-fetched pages become permanent memories; Hebbian consolidation rewires the graph toward what you actually ask.</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>Measured so far (this installation, corpus-generated QA — sanity benchmark)</h3>
+      <ul class="ticks small">
+        <li>Trained neural scorer vs hand-tuned weights: <strong>MRR 0.365 → 0.488 (+34%)</strong>; the unit learned that semantic (0.69) + activation (0.25) deserve most of the weight.</li>
+        <li>Agent routing verified: memory → cited answers; web escalation → live pages ingested as permanent memories; ungrounded parametric answers always labeled.</li>
+        <li>Topological upgrade: radial distance now computed for every node; rings follow §9 semantics (1 core · 19 major · 139 sub · 21 facts · 22 documents at time of writing).</li>
+      </ul>
+      <p class="small muted">These are single-corpus sanity numbers, not headline claims. Run the
+      Benchmarks page on real datasets (HotpotQA, MuSiQue) for publishable results; the
+      paper draft lives in <code>paper/mira_paper.md</code>.</p>
+    </div>
+    <div class="card">
+      <h3>What problem this solves in AI, concretely</h3>
+      <ul class="ticks small">
+        <li><strong>Context efficiency</strong> — compression keeps only answer-critical evidence, so a 1.5B model on 4 GB VRAM behaves like a much larger one on its own corpus.</li>
+        <li><strong>Auditable grounding</strong> — no answer without a retrieval path and sources; nothing is cited that was not retrieved.</li>
+        <li><strong>Continual learning without fine-tuning</strong> — the memory grows (web ingest) and rewires (Hebbian) while the model stays frozen; external memory instead of expensive retraining.</li>
+        <li><strong>Honest evaluation culture</strong> — ablations and baselines are first-class, so improvements are attributable to specific mechanisms.</li>
+      </ul>
+    </div>
+  </section>
+</main>
+
+<script src="js/console.js"></script>
+<script src="js/mandala.js"></script>
+<script>initConsoleMandala && initConsoleMandala();</script>
+</body>
+</html>

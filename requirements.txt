@@ -1,0 +1,45 @@
+# MIRA — Mandala-Inspired Memory Architecture
+# Python 3.11 required (3.10–3.12 tolerated). Windows-first, works on Linux.
+
+# --- Core storage / computation ---
+numpy>=1.26,<2.0
+faiss-cpu>=1.8.0 ; python_version < "3.13"
+networkx>=3.2
+pyyaml>=6.0
+psutil>=5.9
+
+# --- Local LLM runtime (GGUF) ---
+llama-cpp-python>=0.2.90 ; python_version < "3.13"
+
+# --- Embeddings ---
+sentence-transformers>=3.0
+
+# --- Document ingestion ---
+pypdf>=4.2
+python-docx>=1.1
+tqdm>=4.66
+
+# --- UI ---
+streamlit>=1.36
+plotly>=5.22
+pandas>=2.2
+
+# --- Web console (default UI) ---
+fastapi>=0.111
+uvicorn[standard]>=0.30
+python-multipart>=0.0.9
+
+# --- Optional: semantic sector discovery (sklearn) ---
+scikit-learn>=1.4
+
+# --- Optional: QLoRA training (heavy; install only if you train) ---
+# torch>=2.2  (installed separately with CUDA wheel if needed)
+# peft>=0.11
+# transformers>=4.42
+# datasets>=2.20
+# bitsandbytes>=0.43 ; platform_system == "Linux"  # Windows needs community wheel
+
+# NOTE on llama-cpp-python: the PyPI wheel is CPU-only. For GPU offload on
+# Windows install a prebuilt CUDA wheel, e.g.:
+#   pip install llama-cpp-python --extra-index-url https://abetlen.github.io/llama-cpp-python/whl/cu121
+# MIRA detects CPU-only wheels at runtime and falls back to CPU inference.

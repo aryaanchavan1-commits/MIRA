@@ -1,0 +1,392 @@
+{
+  "vector_rag": {
+    "system": "vector_rag",
+    "aggregate": {
+      "context_tokens": 1.0,
+      "latency_ms": 8.18,
+      "mrr": 0.5,
+      "n_retrieved": 5.0,
+      "retrieval_latency_ms": 8.18,
+      "retrieval_recall": 1.0,
+      "n_questions": 2,
+      "wall_time_s": 0.02,
+      "questions_per_s": 115.0
+    },
+    "rows": [
+      {
+        "latency_ms": 8.64,
+        "retrieval_latency_ms": 8.64,
+        "n_retrieved": 5,
+        "context_tokens": 1,
+        "retrieval_recall": 1.0,
+        "mrr": 0.5
+      },
+      {
+        "latency_ms": 7.72,
+        "retrieval_latency_ms": 7.72,
+        "n_retrieved": 5,
+        "context_tokens": 1
+      }
+    ]
+  },
+  "graph_rag": {
+    "system": "graph_rag",
+    "aggregate": {
+      "context_tokens": 1.0,
+      "latency_ms": 6.955,
+      "mrr": 0.5,
+      "n_retrieved": 5.0,
+      "retrieval_latency_ms": 6.955,
+      "retrieval_recall": 1.0,
+      "n_questions": 2,
+      "wall_time_s": 0.01,
+      "questions_per_s": 136.3
+    },
+    "rows": [
+      {
+        "latency_ms": 5.62,
+        "retrieval_latency_ms": 5.62,
+        "n_retrieved": 5,
+        "context_tokens": 1,
+        "retrieval_recall": 1.0,
+        "mrr": 0.5
+      },
+      {
+        "latency_ms": 8.29,
+        "retrieval_latency_ms": 8.29,
+        "n_retrieved": 5,
+        "context_tokens": 1
+      }
+    ]
+  },
+  "hierarchical_rag": {
+    "system": "hierarchical_rag",
+    "aggregate": {
+      "context_tokens": 1.0,
+      "latency_ms": 0.98,
+      "mrr": 0.0,
+      "n_retrieved": 0.0,
+      "retrieval_latency_ms": 0.98,
+      "retrieval_recall": 0.0,
+      "n_questions": 2,
+      "wall_time_s": 0.0,
+      "questions_per_s": 748.73
+    },
+    "rows": [
+      {
+        "latency_ms": 1.03,
+        "retrieval_latency_ms": 1.03,
+        "n_retrieved": 0,
+        "context_tokens": 1,
+        "retrieval_recall": 0.0,
+        "mrr": 0.0
+      },
+      {
+        "latency_ms": 0.93,
+        "retrieval_latency_ms": 0.93,
+        "n_retrieved": 0,
+        "context_tokens": 1
+      }
+    ]
+  },
+  "full_mira": {
+    "system": "full_mira",
+    "aggregate": {
+      "context_tokens": 1.0,
+      "latency_ms": 11.895,
+      "mrr": 0.5,
+      "n_retrieved": 5.0,
+      "retrieval_latency_ms": 11.895,
+      "retrieval_recall": 1.0,
+      "n_questions": 2,
+      "wall_time_s": 0.02,
+      "questions_per_s": 80.65
+    },
+    "rows": [
+      {
+        "latency_ms": 13.93,
+        "retrieval_latency_ms": 13.93,
+        "n_retrieved": 5,
+        "context_tokens": 1,
+        "retrieval_recall": 1.0,
+        "mrr": 0.5
+      },
+      {
+        "latency_ms": 9.86,
+        "retrieval_latency_ms": 9.86,
+        "n_retrieved": 5,
+        "context_tokens": 1
+      }
+    ]
+  },
+  "vector_only": {
+    "system": "vector_only",
+    "aggregate": {
+      "context_tokens": 1.0,
+      "latency_ms": 10.375,
+      "mrr": 0.5,
+      "n_retrieved": 5.0,
+      "retrieval_latency_ms": 10.375,
+      "retrieval_recall": 1.0,
+      "n_questions": 2,
+      "wall_time_s": 0.02,
+      "questions_per_s": 93.38
+    },
+    "rows": [
+      {
+        "latency_ms": 11.1,
+        "retrieval_latency_ms": 11.1,
+        "n_retrieved": 5,
+        "context_tokens": 1,
+        "retrieval_recall": 1.0,
+        "mrr": 0.5
+      },
+      {
+        "latency_ms": 9.65,
+        "retrieval_latency_ms": 9.65,
+        "n_retrieved": 5,
+        "context_tokens": 1
+      }
+    ]
+  },
+  "graph_only": {
+    "system": "graph_only",
+    "aggregate": {
+      "context_tokens": 1.0,
+      "latency_ms": 11.19,
+      "mrr": 0.5,
+      "n_retrieved": 5.0,
+      "retrieval_latency_ms": 11.19,
+      "retrieval_recall": 1.0,
+      "n_questions": 2,
+      "wall_time_s": 0.02,
+      "questions_per_s": 86.67
+    },
+    "rows": [
+      {
+        "latency_ms": 12.4,
+        "retrieval_latency_ms": 12.4,
+        "n_retrieved": 5,
+        "context_tokens": 1,
+        "retrieval_recall": 1.0,
+        "mrr": 0.5
+      },
+      {
+        "latency_ms": 9.98,
+        "retrieval_latency_ms": 9.98,
+        "n_retrieved": 5,
+        "context_tokens": 1
+      }
+    ]
+  },
+  "hierarchy_only": {
+    "system": "hierarchy_only",
+    "aggregate": {
+      "context_tokens": 1.0,
+      "latency_ms": 10.7,
+      "mrr": 0.5,
+      "n_retrieved": 5.0,
+      "retrieval_latency_ms": 10.7,
+      "retrieval_recall": 1.0,
+      "n_questions": 2,
+      "wall_time_s": 0.02,
+      "questions_per_s": 90.26
+    },
+    "rows": [
+      {
+        "latency_ms": 11.69,
+        "retrieval_latency_ms": 11.69,
+        "n_retrieved": 5,
+        "context_tokens": 1,
+        "retrieval_recall": 1.0,
+        "mrr": 0.5
+      },
+      {
+        "latency_ms": 9.71,
+        "retrieval_latency_ms": 9.71,
+        "n_retrieved": 5,
+        "context_tokens": 1
+      }
+    ]
+  },
+  "radial_only": {
+    "system": "radial_only",
+    "aggregate": {
+      "context_tokens": 1.0,
+      "latency_ms": 10.53,
+      "mrr": 0.5,
+      "n_retrieved": 5.0,
+      "retrieval_latency_ms": 10.53,
+      "retrieval_recall": 1.0,
+      "n_questions": 2,
+      "wall_time_s": 0.02,
+      "questions_per_s": 91.85
+    },
+    "rows": [
+      {
+        "latency_ms": 11.03,
+        "retrieval_latency_ms": 11.03,
+        "n_retrieved": 5,
+        "context_tokens": 1,
+        "retrieval_recall": 1.0,
+        "mrr": 0.5
+      },
+      {
+        "latency_ms": 10.03,
+        "retrieval_latency_ms": 10.03,
+        "n_retrieved": 5,
+        "context_tokens": 1
+      }
+    ]
+  },
+  "vector_graph": {
+    "system": "vector_graph",
+    "aggregate": {
+      "context_tokens": 1.0,
+      "latency_ms": 10.83,
+      "mrr": 0.5,
+      "n_retrieved": 5.0,
+      "retrieval_latency_ms": 10.83,
+      "retrieval_recall": 1.0,
+      "n_questions": 2,
+      "wall_time_s": 0.02,
+      "questions_per_s": 89.63
+    },
+    "rows": [
+      {
+        "latency_ms": 12.2,
+        "retrieval_latency_ms": 12.2,
+        "n_retrieved": 5,
+        "context_tokens": 1,
+        "retrieval_recall": 1.0,
+        "mrr": 0.5
+      },
+      {
+        "latency_ms": 9.46,
+        "retrieval_latency_ms": 9.46,
+        "n_retrieved": 5,
+        "context_tokens": 1
+      }
+    ]
+  },
+  "vector_hierarchy": {
+    "system": "vector_hierarchy",
+    "aggregate": {
+      "context_tokens": 1.0,
+      "latency_ms": 10.095,
+      "mrr": 0.5,
+      "n_retrieved": 5.0,
+      "retrieval_latency_ms": 10.095,
+      "retrieval_recall": 1.0,
+      "n_questions": 2,
+      "wall_time_s": 0.02,
+      "questions_per_s": 96.02
+    },
+    "rows": [
+      {
+        "latency_ms": 11.12,
+        "retrieval_latency_ms": 11.12,
+        "n_retrieved": 5,
+        "context_tokens": 1,
+        "retrieval_recall": 1.0,
+        "mrr": 0.5
+      },
+      {
+        "latency_ms": 9.07,
+        "retrieval_latency_ms": 9.07,
+        "n_retrieved": 5,
+        "context_tokens": 1
+      }
+    ]
+  },
+  "vector_radial": {
+    "system": "vector_radial",
+    "aggregate": {
+      "context_tokens": 1.0,
+      "latency_ms": 10.57,
+      "mrr": 0.5,
+      "n_retrieved": 5.0,
+      "retrieval_latency_ms": 10.57,
+      "retrieval_recall": 1.0,
+      "n_questions": 2,
+      "wall_time_s": 0.02,
+      "questions_per_s": 91.67
+    },
+    "rows": [
+      {
+        "latency_ms": 11.2,
+        "retrieval_latency_ms": 11.2,
+        "n_retrieved": 5,
+        "context_tokens": 1,
+        "retrieval_recall": 1.0,
+        "mrr": 0.5
+      },
+      {
+        "latency_ms": 9.94,
+        "retrieval_latency_ms": 9.94,
+        "n_retrieved": 5,
+        "context_tokens": 1
+      }
+    ]
+  },
+  "graph_hierarchy": {
+    "system": "graph_hierarchy",
+    "aggregate": {
+      "context_tokens": 1.0,
+      "latency_ms": 11.73,
+      "mrr": 0.5,
+      "n_retrieved": 5.0,
+      "retrieval_latency_ms": 11.73,
+      "retrieval_recall": 1.0,
+      "n_questions": 2,
+      "wall_time_s": 0.02,
+      "questions_per_s": 82.63
+    },
+    "rows": [
+      {
+        "latency_ms": 13.21,
+        "retrieval_latency_ms": 13.21,
+        "n_retrieved": 5,
+        "context_tokens": 1,
+        "retrieval_recall": 1.0,
+        "mrr": 0.5
+      },
+      {
+        "latency_ms": 10.25,
+        "retrieval_latency_ms": 10.25,
+        "n_retrieved": 5,
+        "context_tokens": 1
+      }
+    ]
+  },
+  "graph_radial": {
+    "system": "graph_radial",
+    "aggregate": {
+      "context_tokens": 1.0,
+      "latency_ms": 11.175,
+      "mrr": 0.5,
+      "n_retrieved": 5.0,
+      "retrieval_latency_ms": 11.175,
+      "retrieval_recall": 1.0,
+      "n_questions": 2,
+      "wall_time_s": 0.02,
+      "questions_per_s": 86.32
+    },
+    "rows": [
+      {
+        "latency_ms": 13.14,
+        "retrieval_latency_ms": 13.14,
+        "n_retrieved": 5,
+        "context_tokens": 1,
+        "retrieval_recall": 1.0,
+        "mrr": 0.5
+      },
+      {
+        "latency_ms": 9.21,
+        "retrieval_latency_ms": 9.21,
+        "n_retrieved": 5,
+        "context_tokens": 1
+      }
+    ]
+  }
+}

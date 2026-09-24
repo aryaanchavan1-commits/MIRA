@@ -1,0 +1,1146 @@
+{
+  "vector_rag": {
+    "system": "vector_rag",
+    "aggregate": {
+      "context_tokens": 1.0,
+      "latency_ms": 4.7633,
+      "mrr": 0.6944,
+      "n_retrieved": 8.0,
+      "retrieval_latency_ms": 4.7633,
+      "retrieval_recall": 0.8333,
+      "n_questions": 6,
+      "wall_time_s": 0.23,
+      "questions_per_s": 26.27
+    },
+    "rows": [
+      {
+        "question": "Paris Landmarks",
+        "reference_answer": "The Eiffel Tower is a wrought-iron lattice tower in Paris, France. It was designed by Gustave Eiffel and completed in 1889 for the World Fair. The tower stands 330 metres tall and was the tallest structure in the world until 1930.\n\nThe Louvre Museum is the largest art museum in the world, located in Paris on the Seine river. Its collection includes the Mona Lisa painted by Leonardo da Vinci. Gustave Eiffel also engineered the internal frame of the Statue of Liberty.",
+        "answer_text": "",
+        "evidence_text": "",
+        "latency_ms": 3.64,
+        "retrieval_latency_ms": 3.64,
+        "n_retrieved": 8,
+        "context_tokens": 1,
+        "retrieval_recall": 1.0,
+        "mrr": 0.16666666666666666
+      },
+      {
+        "question": "The Eiffel Tower is a wrought-iron lattice tower in Paris, F",
+        "reference_answer": "The Eiffel Tower is a wrought-iron lattice tower in Paris, France. It was designed by Gustave Eiffel and completed in 1889 for the World Fair. The tower stands 330 metres tall and was the tallest structure in the world until 1930.\n\nThe Louvre Museum is the largest art museum in the world, located in Paris on the Seine river. Its collection includes the Mona Lisa painted by Leonardo da Vinci. Gustave Eiffel also engineered the internal frame of the Statue of Liberty.",
+        "answer_text": "",
+        "evidence_text": "",
+        "latency_ms": 4.95,
+        "retrieval_latency_ms": 4.95,
+        "n_retrieved": 8,
+        "context_tokens": 1,
+        "retrieval_recall": 1.0,
+        "mrr": 1.0
+      },
+      {
+        "question": "acceptance_test.txt",
+        "reference_answer": "The Eiffel Tower is a wrought-iron lattice tower in Paris, France. It was designed by Gustave Eiffel and completed in 1889 for the World's Fair. The tower stands 330 metres tall and was the tallest man-made structure in the\nworld until 1930. The Louvre Museum is the world's largest art museum, located in Paris on the\nright bank of the Seine. Its collection includes the Mona Lisa, painted by\nLeonardo da Vinci in the early sixteenth century. The museum opened in 1793. Gustave Eiffel also engineered the internal frame of the Statue of Liberty,\nwhich was a gift from France to the United States, dedicated in 1886 in New\nYork Harbor. The statue was designed by Frederic Auguste Bartholdi. Berlin is the capital of Germany and its largest city.",
+        "answer_text": "",
+        "evidence_text": "",
+        "latency_ms": 5.14,
+        "retrieval_latency_ms": 5.14,
+        "n_retrieved": 8,
+        "context_tokens": 1,
+        "retrieval_recall": 1.0,
+        "mrr": 1.0
+      },
+      {
+        "question": "The text provides information about the Eiffel Tower, Louvre",
+        "reference_answer": "The Eiffel Tower is a wrought-iron lattice tower in Paris, France. It was designed by Gustave Eiffel and completed in 1889 for the World's Fair. The tower stands 330 metres tall and was the tallest man-made structure in the\nworld until 1930. The Louvre Museum is the world's largest art museum, located in Paris on the\nright bank of the Seine. Its collection includes the Mona Lisa, painted by\nLeonardo da Vinci in the early sixteenth century. The museum opened in 1793. Gustave Eiffel also engineered the internal frame of the Statue of Liberty,\nwhich was a gift from France to the United States, dedicated in 1886 in New\nYork Harbor. The statue was designed by Frederic Auguste Bartholdi. Berlin is the capital of Germany and its largest city.",
+        "answer_text": "",
+        "evidence_text": "",
+        "latency_ms": 4.52,
+        "retrieval_latency_ms": 4.52,
+        "n_retrieved": 8,
+        "context_tokens": 1,
+        "retrieval_recall": 1.0,
+        "mrr": 1.0
+      },
+      {
+        "question": "acceptance_test.txt",
+        "reference_answer": "The statue was designed by Frederic Auguste Bartholdi. Berlin is the capital of Germany and its largest city. The Brandenburg Gate,\nbuilt between 1788 and 1791, is one of Berlin's most famous landmarks.",
+        "answer_text": "",
+        "evidence_text": "",
+        "latency_ms": 5.45,
+        "retrieval_latency_ms": 5.45,
+        "n_retrieved": 8,
+        "context_tokens": 1,
+        "retrieval_recall": 0.0,
+        "mrr": 0.0
+      },
+      {
+        "question": "Frederic Auguste Bartholdi designed a statue, Berlin is the ",
+        "reference_answer": "The statue was designed by Frederic Auguste Bartholdi. Berlin is the capital of Germany and its largest city. The Brandenburg Gate,\nbuilt between 1788 and 1791, is one of Berlin's most famous landmarks.",
+        "answer_text": "",
+        "evidence_text": "",
+        "latency_ms": 4.88,
+        "retrieval_latency_ms": 4.88,
+        "n_retrieved": 8,
+        "context_tokens": 1,
+        "retrieval_recall": 1.0,
+        "mrr": 1.0
+      }
+    ]
+  },
+  "graph_rag": {
+    "system": "graph_rag",
+    "aggregate": {
+      "context_tokens": 1.0,
+      "latency_ms": 5.955,
+      "mrr": 0.6944,
+      "n_retrieved": 8.0,
+      "retrieval_latency_ms": 5.955,
+      "retrieval_recall": 0.8333,
+      "n_questions": 6,
+      "wall_time_s": 0.22,
+      "questions_per_s": 26.74
+    },
+    "rows": [
+      {
+        "question": "Paris Landmarks",
+        "reference_answer": "The Eiffel Tower is a wrought-iron lattice tower in Paris, France. It was designed by Gustave Eiffel and completed in 1889 for the World Fair. The tower stands 330 metres tall and was the tallest structure in the world until 1930.\n\nThe Louvre Museum is the largest art museum in the world, located in Paris on the Seine river. Its collection includes the Mona Lisa painted by Leonardo da Vinci. Gustave Eiffel also engineered the internal frame of the Statue of Liberty.",
+        "answer_text": "",
+        "evidence_text": "",
+        "latency_ms": 6.51,
+        "retrieval_latency_ms": 6.51,
+        "n_retrieved": 8,
+        "context_tokens": 1,
+        "retrieval_recall": 1.0,
+        "mrr": 0.16666666666666666
+      },
+      {
+        "question": "The Eiffel Tower is a wrought-iron lattice tower in Paris, F",
+        "reference_answer": "The Eiffel Tower is a wrought-iron lattice tower in Paris, France. It was designed by Gustave Eiffel and completed in 1889 for the World Fair. The tower stands 330 metres tall and was the tallest structure in the world until 1930.\n\nThe Louvre Museum is the largest art museum in the world, located in Paris on the Seine river. Its collection includes the Mona Lisa painted by Leonardo da Vinci. Gustave Eiffel also engineered the internal frame of the Statue of Liberty.",
+        "answer_text": "",
+        "evidence_text": "",
+        "latency_ms": 5.59,
+        "retrieval_latency_ms": 5.59,
+        "n_retrieved": 8,
+        "context_tokens": 1,
+        "retrieval_recall": 1.0,
+        "mrr": 1.0
+      },
+      {
+        "question": "acceptance_test.txt",
+        "reference_answer": "The Eiffel Tower is a wrought-iron lattice tower in Paris, France. It was designed by Gustave Eiffel and completed in 1889 for the World's Fair. The tower stands 330 metres tall and was the tallest man-made structure in the\nworld until 1930. The Louvre Museum is the world's largest art museum, located in Paris on the\nright bank of the Seine. Its collection includes the Mona Lisa, painted by\nLeonardo da Vinci in the early sixteenth century. The museum opened in 1793. Gustave Eiffel also engineered the internal frame of the Statue of Liberty,\nwhich was a gift from France to the United States, dedicated in 1886 in New\nYork Harbor. The statue was designed by Frederic Auguste Bartholdi. Berlin is the capital of Germany and its largest city.",
+        "answer_text": "",
+        "evidence_text": "",
+        "latency_ms": 6.16,
+        "retrieval_latency_ms": 6.16,
+        "n_retrieved": 8,
+        "context_tokens": 1,
+        "retrieval_recall": 1.0,
+        "mrr": 1.0
+      },
+      {
+        "question": "The text provides information about the Eiffel Tower, Louvre",
+        "reference_answer": "The Eiffel Tower is a wrought-iron lattice tower in Paris, France. It was designed by Gustave Eiffel and completed in 1889 for the World's Fair. The tower stands 330 metres tall and was the tallest man-made structure in the\nworld until 1930. The Louvre Museum is the world's largest art museum, located in Paris on the\nright bank of the Seine. Its collection includes the Mona Lisa, painted by\nLeonardo da Vinci in the early sixteenth century. The museum opened in 1793. Gustave Eiffel also engineered the internal frame of the Statue of Liberty,\nwhich was a gift from France to the United States, dedicated in 1886 in New\nYork Harbor. The statue was designed by Frederic Auguste Bartholdi. Berlin is the capital of Germany and its largest city.",
+        "answer_text": "",
+        "evidence_text": "",
+        "latency_ms": 6.66,
+        "retrieval_latency_ms": 6.66,
+        "n_retrieved": 8,
+        "context_tokens": 1,
+        "retrieval_recall": 1.0,
+        "mrr": 1.0
+      },
+      {
+        "question": "acceptance_test.txt",
+        "reference_answer": "The statue was designed by Frederic Auguste Bartholdi. Berlin is the capital of Germany and its largest city. The Brandenburg Gate,\nbuilt between 1788 and 1791, is one of Berlin's most famous landmarks.",
+        "answer_text": "",
+        "evidence_text": "",
+        "latency_ms": 5.55,
+        "retrieval_latency_ms": 5.55,
+        "n_retrieved": 8,
+        "context_tokens": 1,
+        "retrieval_recall": 0.0,
+        "mrr": 0.0
+      },
+      {
+        "question": "Frederic Auguste Bartholdi designed a statue, Berlin is the ",
+        "reference_answer": "The statue was designed by Frederic Auguste Bartholdi. Berlin is the capital of Germany and its largest city. The Brandenburg Gate,\nbuilt between 1788 and 1791, is one of Berlin's most famous landmarks.",
+        "answer_text": "",
+        "evidence_text": "",
+        "latency_ms": 5.26,
+        "retrieval_latency_ms": 5.26,
+        "n_retrieved": 8,
+        "context_tokens": 1,
+        "retrieval_recall": 1.0,
+        "mrr": 1.0
+      }
+    ]
+  },
+  "hierarchical_rag": {
+    "system": "hierarchical_rag",
+    "aggregate": {
+      "context_tokens": 1.0,
+      "latency_ms": 0.28,
+      "mrr": 0.0,
+      "n_retrieved": 0.0,
+      "retrieval_latency_ms": 0.28,
+      "retrieval_recall": 0.0,
+      "n_questions": 6,
+      "wall_time_s": 0.17,
+      "questions_per_s": 36.15
+    },
+    "rows": [
+      {
+        "question": "Paris Landmarks",
+        "reference_answer": "The Eiffel Tower is a wrought-iron lattice tower in Paris, France. It was designed by Gustave Eiffel and completed in 1889 for the World Fair. The tower stands 330 metres tall and was the tallest structure in the world until 1930.\n\nThe Louvre Museum is the largest art museum in the world, located in Paris on the Seine river. Its collection includes the Mona Lisa painted by Leonardo da Vinci. Gustave Eiffel also engineered the internal frame of the Statue of Liberty.",
+        "answer_text": "",
+        "evidence_text": "",
+        "latency_ms": 0.42,
+        "retrieval_latency_ms": 0.42,
+        "n_retrieved": 0,
+        "context_tokens": 1,
+        "retrieval_recall": 0.0,
+        "mrr": 0.0
+      },
+      {
+        "question": "The Eiffel Tower is a wrought-iron lattice tower in Paris, F",
+        "reference_answer": "The Eiffel Tower is a wrought-iron lattice tower in Paris, France. It was designed by Gustave Eiffel and completed in 1889 for the World Fair. The tower stands 330 metres tall and was the tallest structure in the world until 1930.\n\nThe Louvre Museum is the largest art museum in the world, located in Paris on the Seine river. Its collection includes the Mona Lisa painted by Leonardo da Vinci. Gustave Eiffel also engineered the internal frame of the Statue of Liberty.",
+        "answer_text": "",
+        "evidence_text": "",
+        "latency_ms": 0.22,
+        "retrieval_latency_ms": 0.22,
+        "n_retrieved": 0,
+        "context_tokens": 1,
+        "retrieval_recall": 0.0,
+        "mrr": 0.0
+      },
+      {
+        "question": "acceptance_test.txt",
+        "reference_answer": "The Eiffel Tower is a wrought-iron lattice tower in Paris, France. It was designed by Gustave Eiffel and completed in 1889 for the World's Fair. The tower stands 330 metres tall and was the tallest man-made structure in the\nworld until 1930. The Louvre Museum is the world's largest art museum, located in Paris on the\nright bank of the Seine. Its collection includes the Mona Lisa, painted by\nLeonardo da Vinci in the early sixteenth century. The museum opened in 1793. Gustave Eiffel also engineered the internal frame of the Statue of Liberty,\nwhich was a gift from France to the United States, dedicated in 1886 in New\nYork Harbor. The statue was designed by Frederic Auguste Bartholdi. Berlin is the capital of Germany and its largest city.",
+        "answer_text": "",
+        "evidence_text": "",
+        "latency_ms": 0.29,
+        "retrieval_latency_ms": 0.29,
+        "n_retrieved": 0,
+        "context_tokens": 1,
+        "retrieval_recall": 0.0,
+        "mrr": 0.0
+      },
+      {
+        "question": "The text provides information about the Eiffel Tower, Louvre",
+        "reference_answer": "The Eiffel Tower is a wrought-iron lattice tower in Paris, France. It was designed by Gustave Eiffel and completed in 1889 for the World's Fair. The tower stands 330 metres tall and was the tallest man-made structure in the\nworld until 1930. The Louvre Museum is the world's largest art museum, located in Paris on the\nright bank of the Seine. Its collection includes the Mona Lisa, painted by\nLeonardo da Vinci in the early sixteenth century. The museum opened in 1793. Gustave Eiffel also engineered the internal frame of the Statue of Liberty,\nwhich was a gift from France to the United States, dedicated in 1886 in New\nYork Harbor. The statue was designed by Frederic Auguste Bartholdi. Berlin is the capital of Germany and its largest city.",
+        "answer_text": "",
+        "evidence_text": "",
+        "latency_ms": 0.29,
+        "retrieval_latency_ms": 0.29,
+        "n_retrieved": 0,
+        "context_tokens": 1,
+        "retrieval_recall": 0.0,
+        "mrr": 0.0
+      },
+      {
+        "question": "acceptance_test.txt",
+        "reference_answer": "The statue was designed by Frederic Auguste Bartholdi. Berlin is the capital of Germany and its largest city. The Brandenburg Gate,\nbuilt between 1788 and 1791, is one of Berlin's most famous landmarks.",
+        "answer_text": "",
+        "evidence_text": "",
+        "latency_ms": 0.22,
+        "retrieval_latency_ms": 0.22,
+        "n_retrieved": 0,
+        "context_tokens": 1,
+        "retrieval_recall": 0.0,
+        "mrr": 0.0
+      },
+      {
+        "question": "Frederic Auguste Bartholdi designed a statue, Berlin is the ",
+        "reference_answer": "The statue was designed by Frederic Auguste Bartholdi. Berlin is the capital of Germany and its largest city. The Brandenburg Gate,\nbuilt between 1788 and 1791, is one of Berlin's most famous landmarks.",
+        "answer_text": "",
+        "evidence_text": "",
+        "latency_ms": 0.24,
+        "retrieval_latency_ms": 0.24,
+        "n_retrieved": 0,
+        "context_tokens": 1,
+        "retrieval_recall": 0.0,
+        "mrr": 0.0
+      }
+    ]
+  },
+  "full_mira": {
+    "system": "full_mira",
+    "aggregate": {
+      "context_tokens": 1.0,
+      "latency_ms": 8.67,
+      "mrr": 0.6806,
+      "n_retrieved": 8.0,
+      "retrieval_latency_ms": 8.67,
+      "retrieval_recall": 1.0,
+      "n_questions": 6,
+      "wall_time_s": 0.23,
+      "questions_per_s": 25.7
+    },
+    "rows": [
+      {
+        "question": "Paris Landmarks",
+        "reference_answer": "The Eiffel Tower is a wrought-iron lattice tower in Paris, France. It was designed by Gustave Eiffel and completed in 1889 for the World Fair. The tower stands 330 metres tall and was the tallest structure in the world until 1930.\n\nThe Louvre Museum is the largest art museum in the world, located in Paris on the Seine river. Its collection includes the Mona Lisa painted by Leonardo da Vinci. Gustave Eiffel also engineered the internal frame of the Statue of Liberty.",
+        "answer_text": "",
+        "evidence_text": "",
+        "latency_ms": 10.35,
+        "retrieval_latency_ms": 10.35,
+        "n_retrieved": 8,
+        "context_tokens": 1,
+        "retrieval_recall": 1.0,
+        "mrr": 0.3333333333333333
+      },
+      {
+        "question": "The Eiffel Tower is a wrought-iron lattice tower in Paris, F",
+        "reference_answer": "The Eiffel Tower is a wrought-iron lattice tower in Paris, France. It was designed by Gustave Eiffel and completed in 1889 for the World Fair. The tower stands 330 metres tall and was the tallest structure in the world until 1930.\n\nThe Louvre Museum is the largest art museum in the world, located in Paris on the Seine river. Its collection includes the Mona Lisa painted by Leonardo da Vinci. Gustave Eiffel also engineered the internal frame of the Statue of Liberty.",
+        "answer_text": "",
+        "evidence_text": "",
+        "latency_ms": 8.59,
+        "retrieval_latency_ms": 8.59,
+        "n_retrieved": 8,
+        "context_tokens": 1,
+        "retrieval_recall": 1.0,
+        "mrr": 0.5
+      },
+      {
+        "question": "acceptance_test.txt",
+        "reference_answer": "The Eiffel Tower is a wrought-iron lattice tower in Paris, France. It was designed by Gustave Eiffel and completed in 1889 for the World's Fair. The tower stands 330 metres tall and was the tallest man-made structure in the\nworld until 1930. The Louvre Museum is the world's largest art museum, located in Paris on the\nright bank of the Seine. Its collection includes the Mona Lisa, painted by\nLeonardo da Vinci in the early sixteenth century. The museum opened in 1793. Gustave Eiffel also engineered the internal frame of the Statue of Liberty,\nwhich was a gift from France to the United States, dedicated in 1886 in New\nYork Harbor. The statue was designed by Frederic Auguste Bartholdi. Berlin is the capital of Germany and its largest city.",
+        "answer_text": "",
+        "evidence_text": "",
+        "latency_ms": 8.93,
+        "retrieval_latency_ms": 8.93,
+        "n_retrieved": 8,
+        "context_tokens": 1,
+        "retrieval_recall": 1.0,
+        "mrr": 1.0
+      },
+      {
+        "question": "The text provides information about the Eiffel Tower, Louvre",
+        "reference_answer": "The Eiffel Tower is a wrought-iron lattice tower in Paris, France. It was designed by Gustave Eiffel and completed in 1889 for the World's Fair. The tower stands 330 metres tall and was the tallest man-made structure in the\nworld until 1930. The Louvre Museum is the world's largest art museum, located in Paris on the\nright bank of the Seine. Its collection includes the Mona Lisa, painted by\nLeonardo da Vinci in the early sixteenth century. The museum opened in 1793. Gustave Eiffel also engineered the internal frame of the Statue of Liberty,\nwhich was a gift from France to the United States, dedicated in 1886 in New\nYork Harbor. The statue was designed by Frederic Auguste Bartholdi. Berlin is the capital of Germany and its largest city.",
+        "answer_text": "",
+        "evidence_text": "",
+        "latency_ms": 7.94,
+        "retrieval_latency_ms": 7.94,
+        "n_retrieved": 8,
+        "context_tokens": 1,
+        "retrieval_recall": 1.0,
+        "mrr": 1.0
+      },
+      {
+        "question": "acceptance_test.txt",
+        "reference_answer": "The statue was designed by Frederic Auguste Bartholdi. Berlin is the capital of Germany and its largest city. The Brandenburg Gate,\nbuilt between 1788 and 1791, is one of Berlin's most famous landmarks.",
+        "answer_text": "",
+        "evidence_text": "",
+        "latency_ms": 8.16,
+        "retrieval_latency_ms": 8.16,
+        "n_retrieved": 8,
+        "context_tokens": 1,
+        "retrieval_recall": 1.0,
+        "mrr": 0.25
+      },
+      {
+        "question": "Frederic Auguste Bartholdi designed a statue, Berlin is the ",
+        "reference_answer": "The statue was designed by Frederic Auguste Bartholdi. Berlin is the capital of Germany and its largest city. The Brandenburg Gate,\nbuilt between 1788 and 1791, is one of Berlin's most famous landmarks.",
+        "answer_text": "",
+        "evidence_text": "",
+        "latency_ms": 8.05,
+        "retrieval_latency_ms": 8.05,
+        "n_retrieved": 8,
+        "context_tokens": 1,
+        "retrieval_recall": 1.0,
+        "mrr": 1.0
+      }
+    ]
+  },
+  "vector_only": {
+    "system": "vector_only",
+    "aggregate": {
+      "context_tokens": 1.0,
+      "latency_ms": 7.5367,
+      "mrr": 0.6944,
+      "n_retrieved": 8.0,
+      "retrieval_latency_ms": 7.5367,
+      "retrieval_recall": 0.8333,
+      "n_questions": 6,
+      "wall_time_s": 0.21,
+      "questions_per_s": 29.06
+    },
+    "rows": [
+      {
+        "question": "Paris Landmarks",
+        "reference_answer": "The Eiffel Tower is a wrought-iron lattice tower in Paris, France. It was designed by Gustave Eiffel and completed in 1889 for the World Fair. The tower stands 330 metres tall and was the tallest structure in the world until 1930.\n\nThe Louvre Museum is the largest art museum in the world, located in Paris on the Seine river. Its collection includes the Mona Lisa painted by Leonardo da Vinci. Gustave Eiffel also engineered the internal frame of the Statue of Liberty.",
+        "answer_text": "",
+        "evidence_text": "",
+        "latency_ms": 7.51,
+        "retrieval_latency_ms": 7.51,
+        "n_retrieved": 8,
+        "context_tokens": 1,
+        "retrieval_recall": 1.0,
+        "mrr": 0.16666666666666666
+      },
+      {
+        "question": "The Eiffel Tower is a wrought-iron lattice tower in Paris, F",
+        "reference_answer": "The Eiffel Tower is a wrought-iron lattice tower in Paris, France. It was designed by Gustave Eiffel and completed in 1889 for the World Fair. The tower stands 330 metres tall and was the tallest structure in the world until 1930.\n\nThe Louvre Museum is the largest art museum in the world, located in Paris on the Seine river. Its collection includes the Mona Lisa painted by Leonardo da Vinci. Gustave Eiffel also engineered the internal frame of the Statue of Liberty.",
+        "answer_text": "",
+        "evidence_text": "",
+        "latency_ms": 6.53,
+        "retrieval_latency_ms": 6.53,
+        "n_retrieved": 8,
+        "context_tokens": 1,
+        "retrieval_recall": 1.0,
+        "mrr": 1.0
+      },
+      {
+        "question": "acceptance_test.txt",
+        "reference_answer": "The Eiffel Tower is a wrought-iron lattice tower in Paris, France. It was designed by Gustave Eiffel and completed in 1889 for the World's Fair. The tower stands 330 metres tall and was the tallest man-made structure in the\nworld until 1930. The Louvre Museum is the world's largest art museum, located in Paris on the\nright bank of the Seine. Its collection includes the Mona Lisa, painted by\nLeonardo da Vinci in the early sixteenth century. The museum opened in 1793. Gustave Eiffel also engineered the internal frame of the Statue of Liberty,\nwhich was a gift from France to the United States, dedicated in 1886 in New\nYork Harbor. The statue was designed by Frederic Auguste Bartholdi. Berlin is the capital of Germany and its largest city.",
+        "answer_text": "",
+        "evidence_text": "",
+        "latency_ms": 6.98,
+        "retrieval_latency_ms": 6.98,
+        "n_retrieved": 8,
+        "context_tokens": 1,
+        "retrieval_recall": 1.0,
+        "mrr": 1.0
+      },
+      {
+        "question": "The text provides information about the Eiffel Tower, Louvre",
+        "reference_answer": "The Eiffel Tower is a wrought-iron lattice tower in Paris, France. It was designed by Gustave Eiffel and completed in 1889 for the World's Fair. The tower stands 330 metres tall and was the tallest man-made structure in the\nworld until 1930. The Louvre Museum is the world's largest art museum, located in Paris on the\nright bank of the Seine. Its collection includes the Mona Lisa, painted by\nLeonardo da Vinci in the early sixteenth century. The museum opened in 1793. Gustave Eiffel also engineered the internal frame of the Statue of Liberty,\nwhich was a gift from France to the United States, dedicated in 1886 in New\nYork Harbor. The statue was designed by Frederic Auguste Bartholdi. Berlin is the capital of Germany and its largest city.",
+        "answer_text": "",
+        "evidence_text": "",
+        "latency_ms": 8.89,
+        "retrieval_latency_ms": 8.89,
+        "n_retrieved": 8,
+        "context_tokens": 1,
+        "retrieval_recall": 1.0,
+        "mrr": 1.0
+      },
+      {
+        "question": "acceptance_test.txt",
+        "reference_answer": "The statue was designed by Frederic Auguste Bartholdi. Berlin is the capital of Germany and its largest city. The Brandenburg Gate,\nbuilt between 1788 and 1791, is one of Berlin's most famous landmarks.",
+        "answer_text": "",
+        "evidence_text": "",
+        "latency_ms": 6.46,
+        "retrieval_latency_ms": 6.46,
+        "n_retrieved": 8,
+        "context_tokens": 1,
+        "retrieval_recall": 0.0,
+        "mrr": 0.0
+      },
+      {
+        "question": "Frederic Auguste Bartholdi designed a statue, Berlin is the ",
+        "reference_answer": "The statue was designed by Frederic Auguste Bartholdi. Berlin is the capital of Germany and its largest city. The Brandenburg Gate,\nbuilt between 1788 and 1791, is one of Berlin's most famous landmarks.",
+        "answer_text": "",
+        "evidence_text": "",
+        "latency_ms": 8.85,
+        "retrieval_latency_ms": 8.85,
+        "n_retrieved": 8,
+        "context_tokens": 1,
+        "retrieval_recall": 1.0,
+        "mrr": 1.0
+      }
+    ]
+  },
+  "graph_only": {
+    "system": "graph_only",
+    "aggregate": {
+      "context_tokens": 1.0,
+      "latency_ms": 8.565,
+      "mrr": 0.6944,
+      "n_retrieved": 8.0,
+      "retrieval_latency_ms": 8.565,
+      "retrieval_recall": 0.8333,
+      "n_questions": 6,
+      "wall_time_s": 0.23,
+      "questions_per_s": 26.56
+    },
+    "rows": [
+      {
+        "question": "Paris Landmarks",
+        "reference_answer": "The Eiffel Tower is a wrought-iron lattice tower in Paris, France. It was designed by Gustave Eiffel and completed in 1889 for the World Fair. The tower stands 330 metres tall and was the tallest structure in the world until 1930.\n\nThe Louvre Museum is the largest art museum in the world, located in Paris on the Seine river. Its collection includes the Mona Lisa painted by Leonardo da Vinci. Gustave Eiffel also engineered the internal frame of the Statue of Liberty.",
+        "answer_text": "",
+        "evidence_text": "",
+        "latency_ms": 8.05,
+        "retrieval_latency_ms": 8.05,
+        "n_retrieved": 8,
+        "context_tokens": 1,
+        "retrieval_recall": 1.0,
+        "mrr": 0.16666666666666666
+      },
+      {
+        "question": "The Eiffel Tower is a wrought-iron lattice tower in Paris, F",
+        "reference_answer": "The Eiffel Tower is a wrought-iron lattice tower in Paris, France. It was designed by Gustave Eiffel and completed in 1889 for the World Fair. The tower stands 330 metres tall and was the tallest structure in the world until 1930.\n\nThe Louvre Museum is the largest art museum in the world, located in Paris on the Seine river. Its collection includes the Mona Lisa painted by Leonardo da Vinci. Gustave Eiffel also engineered the internal frame of the Statue of Liberty.",
+        "answer_text": "",
+        "evidence_text": "",
+        "latency_ms": 8.3,
+        "retrieval_latency_ms": 8.3,
+        "n_retrieved": 8,
+        "context_tokens": 1,
+        "retrieval_recall": 1.0,
+        "mrr": 1.0
+      },
+      {
+        "question": "acceptance_test.txt",
+        "reference_answer": "The Eiffel Tower is a wrought-iron lattice tower in Paris, France. It was designed by Gustave Eiffel and completed in 1889 for the World's Fair. The tower stands 330 metres tall and was the tallest man-made structure in the\nworld until 1930. The Louvre Museum is the world's largest art museum, located in Paris on the\nright bank of the Seine. Its collection includes the Mona Lisa, painted by\nLeonardo da Vinci in the early sixteenth century. The museum opened in 1793. Gustave Eiffel also engineered the internal frame of the Statue of Liberty,\nwhich was a gift from France to the United States, dedicated in 1886 in New\nYork Harbor. The statue was designed by Frederic Auguste Bartholdi. Berlin is the capital of Germany and its largest city.",
+        "answer_text": "",
+        "evidence_text": "",
+        "latency_ms": 9.45,
+        "retrieval_latency_ms": 9.45,
+        "n_retrieved": 8,
+        "context_tokens": 1,
+        "retrieval_recall": 1.0,
+        "mrr": 1.0
+      },
+      {
+        "question": "The text provides information about the Eiffel Tower, Louvre",
+        "reference_answer": "The Eiffel Tower is a wrought-iron lattice tower in Paris, France. It was designed by Gustave Eiffel and completed in 1889 for the World's Fair. The tower stands 330 metres tall and was the tallest man-made structure in the\nworld until 1930. The Louvre Museum is the world's largest art museum, located in Paris on the\nright bank of the Seine. Its collection includes the Mona Lisa, painted by\nLeonardo da Vinci in the early sixteenth century. The museum opened in 1793. Gustave Eiffel also engineered the internal frame of the Statue of Liberty,\nwhich was a gift from France to the United States, dedicated in 1886 in New\nYork Harbor. The statue was designed by Frederic Auguste Bartholdi. Berlin is the capital of Germany and its largest city.",
+        "answer_text": "",
+        "evidence_text": "",
+        "latency_ms": 8.05,
+        "retrieval_latency_ms": 8.05,
+        "n_retrieved": 8,
+        "context_tokens": 1,
+        "retrieval_recall": 1.0,
+        "mrr": 1.0
+      },
+      {
+        "question": "acceptance_test.txt",
+        "reference_answer": "The statue was designed by Frederic Auguste Bartholdi. Berlin is the capital of Germany and its largest city. The Brandenburg Gate,\nbuilt between 1788 and 1791, is one of Berlin's most famous landmarks.",
+        "answer_text": "",
+        "evidence_text": "",
+        "latency_ms": 9.39,
+        "retrieval_latency_ms": 9.39,
+        "n_retrieved": 8,
+        "context_tokens": 1,
+        "retrieval_recall": 0.0,
+        "mrr": 0.0
+      },
+      {
+        "question": "Frederic Auguste Bartholdi designed a statue, Berlin is the ",
+        "reference_answer": "The statue was designed by Frederic Auguste Bartholdi. Berlin is the capital of Germany and its largest city. The Brandenburg Gate,\nbuilt between 1788 and 1791, is one of Berlin's most famous landmarks.",
+        "answer_text": "",
+        "evidence_text": "",
+        "latency_ms": 8.15,
+        "retrieval_latency_ms": 8.15,
+        "n_retrieved": 8,
+        "context_tokens": 1,
+        "retrieval_recall": 1.0,
+        "mrr": 1.0
+      }
+    ]
+  },
+  "hierarchy_only": {
+    "system": "hierarchy_only",
+    "aggregate": {
+      "context_tokens": 1.0,
+      "latency_ms": 8.4717,
+      "mrr": 0.6944,
+      "n_retrieved": 8.0,
+      "retrieval_latency_ms": 8.4717,
+      "retrieval_recall": 0.8333,
+      "n_questions": 6,
+      "wall_time_s": 0.24,
+      "questions_per_s": 24.67
+    },
+    "rows": [
+      {
+        "question": "Paris Landmarks",
+        "reference_answer": "The Eiffel Tower is a wrought-iron lattice tower in Paris, France. It was designed by Gustave Eiffel and completed in 1889 for the World Fair. The tower stands 330 metres tall and was the tallest structure in the world until 1930.\n\nThe Louvre Museum is the largest art museum in the world, located in Paris on the Seine river. Its collection includes the Mona Lisa painted by Leonardo da Vinci. Gustave Eiffel also engineered the internal frame of the Statue of Liberty.",
+        "answer_text": "",
+        "evidence_text": "",
+        "latency_ms": 8.99,
+        "retrieval_latency_ms": 8.99,
+        "n_retrieved": 8,
+        "context_tokens": 1,
+        "retrieval_recall": 1.0,
+        "mrr": 0.16666666666666666
+      },
+      {
+        "question": "The Eiffel Tower is a wrought-iron lattice tower in Paris, F",
+        "reference_answer": "The Eiffel Tower is a wrought-iron lattice tower in Paris, France. It was designed by Gustave Eiffel and completed in 1889 for the World Fair. The tower stands 330 metres tall and was the tallest structure in the world until 1930.\n\nThe Louvre Museum is the largest art museum in the world, located in Paris on the Seine river. Its collection includes the Mona Lisa painted by Leonardo da Vinci. Gustave Eiffel also engineered the internal frame of the Statue of Liberty.",
+        "answer_text": "",
+        "evidence_text": "",
+        "latency_ms": 8.65,
+        "retrieval_latency_ms": 8.65,
+        "n_retrieved": 8,
+        "context_tokens": 1,
+        "retrieval_recall": 1.0,
+        "mrr": 1.0
+      },
+      {
+        "question": "acceptance_test.txt",
+        "reference_answer": "The Eiffel Tower is a wrought-iron lattice tower in Paris, France. It was designed by Gustave Eiffel and completed in 1889 for the World's Fair. The tower stands 330 metres tall and was the tallest man-made structure in the\nworld until 1930. The Louvre Museum is the world's largest art museum, located in Paris on the\nright bank of the Seine. Its collection includes the Mona Lisa, painted by\nLeonardo da Vinci in the early sixteenth century. The museum opened in 1793. Gustave Eiffel also engineered the internal frame of the Statue of Liberty,\nwhich was a gift from France to the United States, dedicated in 1886 in New\nYork Harbor. The statue was designed by Frederic Auguste Bartholdi. Berlin is the capital of Germany and its largest city.",
+        "answer_text": "",
+        "evidence_text": "",
+        "latency_ms": 8.84,
+        "retrieval_latency_ms": 8.84,
+        "n_retrieved": 8,
+        "context_tokens": 1,
+        "retrieval_recall": 1.0,
+        "mrr": 1.0
+      },
+      {
+        "question": "The text provides information about the Eiffel Tower, Louvre",
+        "reference_answer": "The Eiffel Tower is a wrought-iron lattice tower in Paris, France. It was designed by Gustave Eiffel and completed in 1889 for the World's Fair. The tower stands 330 metres tall and was the tallest man-made structure in the\nworld until 1930. The Louvre Museum is the world's largest art museum, located in Paris on the\nright bank of the Seine. Its collection includes the Mona Lisa, painted by\nLeonardo da Vinci in the early sixteenth century. The museum opened in 1793. Gustave Eiffel also engineered the internal frame of the Statue of Liberty,\nwhich was a gift from France to the United States, dedicated in 1886 in New\nYork Harbor. The statue was designed by Frederic Auguste Bartholdi. Berlin is the capital of Germany and its largest city.",
+        "answer_text": "",
+        "evidence_text": "",
+        "latency_ms": 8.42,
+        "retrieval_latency_ms": 8.42,
+        "n_retrieved": 8,
+        "context_tokens": 1,
+        "retrieval_recall": 1.0,
+        "mrr": 1.0
+      },
+      {
+        "question": "acceptance_test.txt",
+        "reference_answer": "The statue was designed by Frederic Auguste Bartholdi. Berlin is the capital of Germany and its largest city. The Brandenburg Gate,\nbuilt between 1788 and 1791, is one of Berlin's most famous landmarks.",
+        "answer_text": "",
+        "evidence_text": "",
+        "latency_ms": 7.18,
+        "retrieval_latency_ms": 7.18,
+        "n_retrieved": 8,
+        "context_tokens": 1,
+        "retrieval_recall": 0.0,
+        "mrr": 0.0
+      },
+      {
+        "question": "Frederic Auguste Bartholdi designed a statue, Berlin is the ",
+        "reference_answer": "The statue was designed by Frederic Auguste Bartholdi. Berlin is the capital of Germany and its largest city. The Brandenburg Gate,\nbuilt between 1788 and 1791, is one of Berlin's most famous landmarks.",
+        "answer_text": "",
+        "evidence_text": "",
+        "latency_ms": 8.75,
+        "retrieval_latency_ms": 8.75,
+        "n_retrieved": 8,
+        "context_tokens": 1,
+        "retrieval_recall": 1.0,
+        "mrr": 1.0
+      }
+    ]
+  },
+  "radial_only": {
+    "system": "radial_only",
+    "aggregate": {
+      "context_tokens": 1.0,
+      "latency_ms": 8.235,
+      "mrr": 0.6944,
+      "n_retrieved": 8.0,
+      "retrieval_latency_ms": 8.235,
+      "retrieval_recall": 0.8333,
+      "n_questions": 6,
+      "wall_time_s": 0.25,
+      "questions_per_s": 24.04
+    },
+    "rows": [
+      {
+        "question": "Paris Landmarks",
+        "reference_answer": "The Eiffel Tower is a wrought-iron lattice tower in Paris, France. It was designed by Gustave Eiffel and completed in 1889 for the World Fair. The tower stands 330 metres tall and was the tallest structure in the world until 1930.\n\nThe Louvre Museum is the largest art museum in the world, located in Paris on the Seine river. Its collection includes the Mona Lisa painted by Leonardo da Vinci. Gustave Eiffel also engineered the internal frame of the Statue of Liberty.",
+        "answer_text": "",
+        "evidence_text": "",
+        "latency_ms": 8.51,
+        "retrieval_latency_ms": 8.51,
+        "n_retrieved": 8,
+        "context_tokens": 1,
+        "retrieval_recall": 1.0,
+        "mrr": 0.16666666666666666
+      },
+      {
+        "question": "The Eiffel Tower is a wrought-iron lattice tower in Paris, F",
+        "reference_answer": "The Eiffel Tower is a wrought-iron lattice tower in Paris, France. It was designed by Gustave Eiffel and completed in 1889 for the World Fair. The tower stands 330 metres tall and was the tallest structure in the world until 1930.\n\nThe Louvre Museum is the largest art museum in the world, located in Paris on the Seine river. Its collection includes the Mona Lisa painted by Leonardo da Vinci. Gustave Eiffel also engineered the internal frame of the Statue of Liberty.",
+        "answer_text": "",
+        "evidence_text": "",
+        "latency_ms": 8.81,
+        "retrieval_latency_ms": 8.81,
+        "n_retrieved": 8,
+        "context_tokens": 1,
+        "retrieval_recall": 1.0,
+        "mrr": 1.0
+      },
+      {
+        "question": "acceptance_test.txt",
+        "reference_answer": "The Eiffel Tower is a wrought-iron lattice tower in Paris, France. It was designed by Gustave Eiffel and completed in 1889 for the World's Fair. The tower stands 330 metres tall and was the tallest man-made structure in the\nworld until 1930. The Louvre Museum is the world's largest art museum, located in Paris on the\nright bank of the Seine. Its collection includes the Mona Lisa, painted by\nLeonardo da Vinci in the early sixteenth century. The museum opened in 1793. Gustave Eiffel also engineered the internal frame of the Statue of Liberty,\nwhich was a gift from France to the United States, dedicated in 1886 in New\nYork Harbor. The statue was designed by Frederic Auguste Bartholdi. Berlin is the capital of Germany and its largest city.",
+        "answer_text": "",
+        "evidence_text": "",
+        "latency_ms": 7.99,
+        "retrieval_latency_ms": 7.99,
+        "n_retrieved": 8,
+        "context_tokens": 1,
+        "retrieval_recall": 1.0,
+        "mrr": 1.0
+      },
+      {
+        "question": "The text provides information about the Eiffel Tower, Louvre",
+        "reference_answer": "The Eiffel Tower is a wrought-iron lattice tower in Paris, France. It was designed by Gustave Eiffel and completed in 1889 for the World's Fair. The tower stands 330 metres tall and was the tallest man-made structure in the\nworld until 1930. The Louvre Museum is the world's largest art museum, located in Paris on the\nright bank of the Seine. Its collection includes the Mona Lisa, painted by\nLeonardo da Vinci in the early sixteenth century. The museum opened in 1793. Gustave Eiffel also engineered the internal frame of the Statue of Liberty,\nwhich was a gift from France to the United States, dedicated in 1886 in New\nYork Harbor. The statue was designed by Frederic Auguste Bartholdi. Berlin is the capital of Germany and its largest city.",
+        "answer_text": "",
+        "evidence_text": "",
+        "latency_ms": 8.26,
+        "retrieval_latency_ms": 8.26,
+        "n_retrieved": 8,
+        "context_tokens": 1,
+        "retrieval_recall": 1.0,
+        "mrr": 1.0
+      },
+      {
+        "question": "acceptance_test.txt",
+        "reference_answer": "The statue was designed by Frederic Auguste Bartholdi. Berlin is the capital of Germany and its largest city. The Brandenburg Gate,\nbuilt between 1788 and 1791, is one of Berlin's most famous landmarks.",
+        "answer_text": "",
+        "evidence_text": "",
+        "latency_ms": 8.72,
+        "retrieval_latency_ms": 8.72,
+        "n_retrieved": 8,
+        "context_tokens": 1,
+        "retrieval_recall": 0.0,
+        "mrr": 0.0
+      },
+      {
+        "question": "Frederic Auguste Bartholdi designed a statue, Berlin is the ",
+        "reference_answer": "The statue was designed by Frederic Auguste Bartholdi. Berlin is the capital of Germany and its largest city. The Brandenburg Gate,\nbuilt between 1788 and 1791, is one of Berlin's most famous landmarks.",
+        "answer_text": "",
+        "evidence_text": "",
+        "latency_ms": 7.12,
+        "retrieval_latency_ms": 7.12,
+        "n_retrieved": 8,
+        "context_tokens": 1,
+        "retrieval_recall": 1.0,
+        "mrr": 1.0
+      }
+    ]
+  },
+  "vector_graph": {
+    "system": "vector_graph",
+    "aggregate": {
+      "context_tokens": 1.0,
+      "latency_ms": 7.8533,
+      "mrr": 0.6944,
+      "n_retrieved": 8.0,
+      "retrieval_latency_ms": 7.8533,
+      "retrieval_recall": 0.8333,
+      "n_questions": 6,
+      "wall_time_s": 0.22,
+      "questions_per_s": 27.3
+    },
+    "rows": [
+      {
+        "question": "Paris Landmarks",
+        "reference_answer": "The Eiffel Tower is a wrought-iron lattice tower in Paris, France. It was designed by Gustave Eiffel and completed in 1889 for the World Fair. The tower stands 330 metres tall and was the tallest structure in the world until 1930.\n\nThe Louvre Museum is the largest art museum in the world, located in Paris on the Seine river. Its collection includes the Mona Lisa painted by Leonardo da Vinci. Gustave Eiffel also engineered the internal frame of the Statue of Liberty.",
+        "answer_text": "",
+        "evidence_text": "",
+        "latency_ms": 7.93,
+        "retrieval_latency_ms": 7.93,
+        "n_retrieved": 8,
+        "context_tokens": 1,
+        "retrieval_recall": 1.0,
+        "mrr": 0.16666666666666666
+      },
+      {
+        "question": "The Eiffel Tower is a wrought-iron lattice tower in Paris, F",
+        "reference_answer": "The Eiffel Tower is a wrought-iron lattice tower in Paris, France. It was designed by Gustave Eiffel and completed in 1889 for the World Fair. The tower stands 330 metres tall and was the tallest structure in the world until 1930.\n\nThe Louvre Museum is the largest art museum in the world, located in Paris on the Seine river. Its collection includes the Mona Lisa painted by Leonardo da Vinci. Gustave Eiffel also engineered the internal frame of the Statue of Liberty.",
+        "answer_text": "",
+        "evidence_text": "",
+        "latency_ms": 8.05,
+        "retrieval_latency_ms": 8.05,
+        "n_retrieved": 8,
+        "context_tokens": 1,
+        "retrieval_recall": 1.0,
+        "mrr": 1.0
+      },
+      {
+        "question": "acceptance_test.txt",
+        "reference_answer": "The Eiffel Tower is a wrought-iron lattice tower in Paris, France. It was designed by Gustave Eiffel and completed in 1889 for the World's Fair. The tower stands 330 metres tall and was the tallest man-made structure in the\nworld until 1930. The Louvre Museum is the world's largest art museum, located in Paris on the\nright bank of the Seine. Its collection includes the Mona Lisa, painted by\nLeonardo da Vinci in the early sixteenth century. The museum opened in 1793. Gustave Eiffel also engineered the internal frame of the Statue of Liberty,\nwhich was a gift from France to the United States, dedicated in 1886 in New\nYork Harbor. The statue was designed by Frederic Auguste Bartholdi. Berlin is the capital of Germany and its largest city.",
+        "answer_text": "",
+        "evidence_text": "",
+        "latency_ms": 7.97,
+        "retrieval_latency_ms": 7.97,
+        "n_retrieved": 8,
+        "context_tokens": 1,
+        "retrieval_recall": 1.0,
+        "mrr": 1.0
+      },
+      {
+        "question": "The text provides information about the Eiffel Tower, Louvre",
+        "reference_answer": "The Eiffel Tower is a wrought-iron lattice tower in Paris, France. It was designed by Gustave Eiffel and completed in 1889 for the World's Fair. The tower stands 330 metres tall and was the tallest man-made structure in the\nworld until 1930. The Louvre Museum is the world's largest art museum, located in Paris on the\nright bank of the Seine. Its collection includes the Mona Lisa, painted by\nLeonardo da Vinci in the early sixteenth century. The museum opened in 1793. Gustave Eiffel also engineered the internal frame of the Statue of Liberty,\nwhich was a gift from France to the United States, dedicated in 1886 in New\nYork Harbor. The statue was designed by Frederic Auguste Bartholdi. Berlin is the capital of Germany and its largest city.",
+        "answer_text": "",
+        "evidence_text": "",
+        "latency_ms": 8.13,
+        "retrieval_latency_ms": 8.13,
+        "n_retrieved": 8,
+        "context_tokens": 1,
+        "retrieval_recall": 1.0,
+        "mrr": 1.0
+      },
+      {
+        "question": "acceptance_test.txt",
+        "reference_answer": "The statue was designed by Frederic Auguste Bartholdi. Berlin is the capital of Germany and its largest city. The Brandenburg Gate,\nbuilt between 1788 and 1791, is one of Berlin's most famous landmarks.",
+        "answer_text": "",
+        "evidence_text": "",
+        "latency_ms": 7.59,
+        "retrieval_latency_ms": 7.59,
+        "n_retrieved": 8,
+        "context_tokens": 1,
+        "retrieval_recall": 0.0,
+        "mrr": 0.0
+      },
+      {
+        "question": "Frederic Auguste Bartholdi designed a statue, Berlin is the ",
+        "reference_answer": "The statue was designed by Frederic Auguste Bartholdi. Berlin is the capital of Germany and its largest city. The Brandenburg Gate,\nbuilt between 1788 and 1791, is one of Berlin's most famous landmarks.",
+        "answer_text": "",
+        "evidence_text": "",
+        "latency_ms": 7.45,
+        "retrieval_latency_ms": 7.45,
+        "n_retrieved": 8,
+        "context_tokens": 1,
+        "retrieval_recall": 1.0,
+        "mrr": 1.0
+      }
+    ]
+  },
+  "vector_hierarchy": {
+    "system": "vector_hierarchy",
+    "aggregate": {
+      "context_tokens": 1.0,
+      "latency_ms": 8.2833,
+      "mrr": 0.6944,
+      "n_retrieved": 8.0,
+      "retrieval_latency_ms": 8.2833,
+      "retrieval_recall": 0.8333,
+      "n_questions": 6,
+      "wall_time_s": 0.24,
+      "questions_per_s": 24.87
+    },
+    "rows": [
+      {
+        "question": "Paris Landmarks",
+        "reference_answer": "The Eiffel Tower is a wrought-iron lattice tower in Paris, France. It was designed by Gustave Eiffel and completed in 1889 for the World Fair. The tower stands 330 metres tall and was the tallest structure in the world until 1930.\n\nThe Louvre Museum is the largest art museum in the world, located in Paris on the Seine river. Its collection includes the Mona Lisa painted by Leonardo da Vinci. Gustave Eiffel also engineered the internal frame of the Statue of Liberty.",
+        "answer_text": "",
+        "evidence_text": "",
+        "latency_ms": 7.42,
+        "retrieval_latency_ms": 7.42,
+        "n_retrieved": 8,
+        "context_tokens": 1,
+        "retrieval_recall": 1.0,
+        "mrr": 0.16666666666666666
+      },
+      {
+        "question": "The Eiffel Tower is a wrought-iron lattice tower in Paris, F",
+        "reference_answer": "The Eiffel Tower is a wrought-iron lattice tower in Paris, France. It was designed by Gustave Eiffel and completed in 1889 for the World Fair. The tower stands 330 metres tall and was the tallest structure in the world until 1930.\n\nThe Louvre Museum is the largest art museum in the world, located in Paris on the Seine river. Its collection includes the Mona Lisa painted by Leonardo da Vinci. Gustave Eiffel also engineered the internal frame of the Statue of Liberty.",
+        "answer_text": "",
+        "evidence_text": "",
+        "latency_ms": 8.31,
+        "retrieval_latency_ms": 8.31,
+        "n_retrieved": 8,
+        "context_tokens": 1,
+        "retrieval_recall": 1.0,
+        "mrr": 1.0
+      },
+      {
+        "question": "acceptance_test.txt",
+        "reference_answer": "The Eiffel Tower is a wrought-iron lattice tower in Paris, France. It was designed by Gustave Eiffel and completed in 1889 for the World's Fair. The tower stands 330 metres tall and was the tallest man-made structure in the\nworld until 1930. The Louvre Museum is the world's largest art museum, located in Paris on the\nright bank of the Seine. Its collection includes the Mona Lisa, painted by\nLeonardo da Vinci in the early sixteenth century. The museum opened in 1793. Gustave Eiffel also engineered the internal frame of the Statue of Liberty,\nwhich was a gift from France to the United States, dedicated in 1886 in New\nYork Harbor. The statue was designed by Frederic Auguste Bartholdi. Berlin is the capital of Germany and its largest city.",
+        "answer_text": "",
+        "evidence_text": "",
+        "latency_ms": 9.82,
+        "retrieval_latency_ms": 9.82,
+        "n_retrieved": 8,
+        "context_tokens": 1,
+        "retrieval_recall": 1.0,
+        "mrr": 1.0
+      },
+      {
+        "question": "The text provides information about the Eiffel Tower, Louvre",
+        "reference_answer": "The Eiffel Tower is a wrought-iron lattice tower in Paris, France. It was designed by Gustave Eiffel and completed in 1889 for the World's Fair. The tower stands 330 metres tall and was the tallest man-made structure in the\nworld until 1930. The Louvre Museum is the world's largest art museum, located in Paris on the\nright bank of the Seine. Its collection includes the Mona Lisa, painted by\nLeonardo da Vinci in the early sixteenth century. The museum opened in 1793. Gustave Eiffel also engineered the internal frame of the Statue of Liberty,\nwhich was a gift from France to the United States, dedicated in 1886 in New\nYork Harbor. The statue was designed by Frederic Auguste Bartholdi. Berlin is the capital of Germany and its largest city.",
+        "answer_text": "",
+        "evidence_text": "",
+        "latency_ms": 7.99,
+        "retrieval_latency_ms": 7.99,
+        "n_retrieved": 8,
+        "context_tokens": 1,
+        "retrieval_recall": 1.0,
+        "mrr": 1.0
+      },
+      {
+        "question": "acceptance_test.txt",
+        "reference_answer": "The statue was designed by Frederic Auguste Bartholdi. Berlin is the capital of Germany and its largest city. The Brandenburg Gate,\nbuilt between 1788 and 1791, is one of Berlin's most famous landmarks.",
+        "answer_text": "",
+        "evidence_text": "",
+        "latency_ms": 7.54,
+        "retrieval_latency_ms": 7.54,
+        "n_retrieved": 8,
+        "context_tokens": 1,
+        "retrieval_recall": 0.0,
+        "mrr": 0.0
+      },
+      {
+        "question": "Frederic Auguste Bartholdi designed a statue, Berlin is the ",
+        "reference_answer": "The statue was designed by Frederic Auguste Bartholdi. Berlin is the capital of Germany and its largest city. The Brandenburg Gate,\nbuilt between 1788 and 1791, is one of Berlin's most famous landmarks.",
+        "answer_text": "",
+        "evidence_text": "",
+        "latency_ms": 8.62,
+        "retrieval_latency_ms": 8.62,
+        "n_retrieved": 8,
+        "context_tokens": 1,
+        "retrieval_recall": 1.0,
+        "mrr": 1.0
+      }
+    ]
+  },
+  "vector_radial": {
+    "system": "vector_radial",
+    "aggregate": {
+      "context_tokens": 1.0,
+      "latency_ms": 8.78,
+      "mrr": 0.6944,
+      "n_retrieved": 8.0,
+      "retrieval_latency_ms": 8.78,
+      "retrieval_recall": 0.8333,
+      "n_questions": 6,
+      "wall_time_s": 0.26,
+      "questions_per_s": 23.26
+    },
+    "rows": [
+      {
+        "question": "Paris Landmarks",
+        "reference_answer": "The Eiffel Tower is a wrought-iron lattice tower in Paris, France. It was designed by Gustave Eiffel and completed in 1889 for the World Fair. The tower stands 330 metres tall and was the tallest structure in the world until 1930.\n\nThe Louvre Museum is the largest art museum in the world, located in Paris on the Seine river. Its collection includes the Mona Lisa painted by Leonardo da Vinci. Gustave Eiffel also engineered the internal frame of the Statue of Liberty.",
+        "answer_text": "",
+        "evidence_text": "",
+        "latency_ms": 7.53,
+        "retrieval_latency_ms": 7.53,
+        "n_retrieved": 8,
+        "context_tokens": 1,
+        "retrieval_recall": 1.0,
+        "mrr": 0.16666666666666666
+      },
+      {
+        "question": "The Eiffel Tower is a wrought-iron lattice tower in Paris, F",
+        "reference_answer": "The Eiffel Tower is a wrought-iron lattice tower in Paris, France. It was designed by Gustave Eiffel and completed in 1889 for the World Fair. The tower stands 330 metres tall and was the tallest structure in the world until 1930.\n\nThe Louvre Museum is the largest art museum in the world, located in Paris on the Seine river. Its collection includes the Mona Lisa painted by Leonardo da Vinci. Gustave Eiffel also engineered the internal frame of the Statue of Liberty.",
+        "answer_text": "",
+        "evidence_text": "",
+        "latency_ms": 9.42,
+        "retrieval_latency_ms": 9.42,
+        "n_retrieved": 8,
+        "context_tokens": 1,
+        "retrieval_recall": 1.0,
+        "mrr": 1.0
+      },
+      {
+        "question": "acceptance_test.txt",
+        "reference_answer": "The Eiffel Tower is a wrought-iron lattice tower in Paris, France. It was designed by Gustave Eiffel and completed in 1889 for the World's Fair. The tower stands 330 metres tall and was the tallest man-made structure in the\nworld until 1930. The Louvre Museum is the world's largest art museum, located in Paris on the\nright bank of the Seine. Its collection includes the Mona Lisa, painted by\nLeonardo da Vinci in the early sixteenth century. The museum opened in 1793. Gustave Eiffel also engineered the internal frame of the Statue of Liberty,\nwhich was a gift from France to the United States, dedicated in 1886 in New\nYork Harbor. The statue was designed by Frederic Auguste Bartholdi. Berlin is the capital of Germany and its largest city.",
+        "answer_text": "",
+        "evidence_text": "",
+        "latency_ms": 10.04,
+        "retrieval_latency_ms": 10.04,
+        "n_retrieved": 8,
+        "context_tokens": 1,
+        "retrieval_recall": 1.0,
+        "mrr": 1.0
+      },
+      {
+        "question": "The text provides information about the Eiffel Tower, Louvre",
+        "reference_answer": "The Eiffel Tower is a wrought-iron lattice tower in Paris, France. It was designed by Gustave Eiffel and completed in 1889 for the World's Fair. The tower stands 330 metres tall and was the tallest man-made structure in the\nworld until 1930. The Louvre Museum is the world's largest art museum, located in Paris on the\nright bank of the Seine. Its collection includes the Mona Lisa, painted by\nLeonardo da Vinci in the early sixteenth century. The museum opened in 1793. Gustave Eiffel also engineered the internal frame of the Statue of Liberty,\nwhich was a gift from France to the United States, dedicated in 1886 in New\nYork Harbor. The statue was designed by Frederic Auguste Bartholdi. Berlin is the capital of Germany and its largest city.",
+        "answer_text": "",
+        "evidence_text": "",
+        "latency_ms": 9.57,
+        "retrieval_latency_ms": 9.57,
+        "n_retrieved": 8,
+        "context_tokens": 1,
+        "retrieval_recall": 1.0,
+        "mrr": 1.0
+      },
+      {
+        "question": "acceptance_test.txt",
+        "reference_answer": "The statue was designed by Frederic Auguste Bartholdi. Berlin is the capital of Germany and its largest city. The Brandenburg Gate,\nbuilt between 1788 and 1791, is one of Berlin's most famous landmarks.",
+        "answer_text": "",
+        "evidence_text": "",
+        "latency_ms": 7.95,
+        "retrieval_latency_ms": 7.95,
+        "n_retrieved": 8,
+        "context_tokens": 1,
+        "retrieval_recall": 0.0,
+        "mrr": 0.0
+      },
+      {
+        "question": "Frederic Auguste Bartholdi designed a statue, Berlin is the ",
+        "reference_answer": "The statue was designed by Frederic Auguste Bartholdi. Berlin is the capital of Germany and its largest city. The Brandenburg Gate,\nbuilt between 1788 and 1791, is one of Berlin's most famous landmarks.",
+        "answer_text": "",
+        "evidence_text": "",
+        "latency_ms": 8.17,
+        "retrieval_latency_ms": 8.17,
+        "n_retrieved": 8,
+        "context_tokens": 1,
+        "retrieval_recall": 1.0,
+        "mrr": 1.0
+      }
+    ]
+  },
+  "graph_hierarchy": {
+    "system": "graph_hierarchy",
+    "aggregate": {
+      "context_tokens": 1.0,
+      "latency_ms": 8.7683,
+      "mrr": 0.6944,
+      "n_retrieved": 8.0,
+      "retrieval_latency_ms": 8.7683,
+      "retrieval_recall": 0.8333,
+      "n_questions": 6,
+      "wall_time_s": 0.23,
+      "questions_per_s": 26.38
+    },
+    "rows": [
+      {
+        "question": "Paris Landmarks",
+        "reference_answer": "The Eiffel Tower is a wrought-iron lattice tower in Paris, France. It was designed by Gustave Eiffel and completed in 1889 for the World Fair. The tower stands 330 metres tall and was the tallest structure in the world until 1930.\n\nThe Louvre Museum is the largest art museum in the world, located in Paris on the Seine river. Its collection includes the Mona Lisa painted by Leonardo da Vinci. Gustave Eiffel also engineered the internal frame of the Statue of Liberty.",
+        "answer_text": "",
+        "evidence_text": "",
+        "latency_ms": 8.65,
+        "retrieval_latency_ms": 8.65,
+        "n_retrieved": 8,
+        "context_tokens": 1,
+        "retrieval_recall": 1.0,
+        "mrr": 0.16666666666666666
+      },
+      {
+        "question": "The Eiffel Tower is a wrought-iron lattice tower in Paris, F",
+        "reference_answer": "The Eiffel Tower is a wrought-iron lattice tower in Paris, France. It was designed by Gustave Eiffel and completed in 1889 for the World Fair. The tower stands 330 metres tall and was the tallest structure in the world until 1930.\n\nThe Louvre Museum is the largest art museum in the world, located in Paris on the Seine river. Its collection includes the Mona Lisa painted by Leonardo da Vinci. Gustave Eiffel also engineered the internal frame of the Statue of Liberty.",
+        "answer_text": "",
+        "evidence_text": "",
+        "latency_ms": 9.63,
+        "retrieval_latency_ms": 9.63,
+        "n_retrieved": 8,
+        "context_tokens": 1,
+        "retrieval_recall": 1.0,
+        "mrr": 1.0
+      },
+      {
+        "question": "acceptance_test.txt",
+        "reference_answer": "The Eiffel Tower is a wrought-iron lattice tower in Paris, France. It was designed by Gustave Eiffel and completed in 1889 for the World's Fair. The tower stands 330 metres tall and was the tallest man-made structure in the\nworld until 1930. The Louvre Museum is the world's largest art museum, located in Paris on the\nright bank of the Seine. Its collection includes the Mona Lisa, painted by\nLeonardo da Vinci in the early sixteenth century. The museum opened in 1793. Gustave Eiffel also engineered the internal frame of the Statue of Liberty,\nwhich was a gift from France to the United States, dedicated in 1886 in New\nYork Harbor. The statue was designed by Frederic Auguste Bartholdi. Berlin is the capital of Germany and its largest city.",
+        "answer_text": "",
+        "evidence_text": "",
+        "latency_ms": 7.9,
+        "retrieval_latency_ms": 7.9,
+        "n_retrieved": 8,
+        "context_tokens": 1,
+        "retrieval_recall": 1.0,
+        "mrr": 1.0
+      },
+      {
+        "question": "The text provides information about the Eiffel Tower, Louvre",
+        "reference_answer": "The Eiffel Tower is a wrought-iron lattice tower in Paris, France. It was designed by Gustave Eiffel and completed in 1889 for the World's Fair. The tower stands 330 metres tall and was the tallest man-made structure in the\nworld until 1930. The Louvre Museum is the world's largest art museum, located in Paris on the\nright bank of the Seine. Its collection includes the Mona Lisa, painted by\nLeonardo da Vinci in the early sixteenth century. The museum opened in 1793. Gustave Eiffel also engineered the internal frame of the Statue of Liberty,\nwhich was a gift from France to the United States, dedicated in 1886 in New\nYork Harbor. The statue was designed by Frederic Auguste Bartholdi. Berlin is the capital of Germany and its largest city.",
+        "answer_text": "",
+        "evidence_text": "",
+        "latency_ms": 7.99,
+        "retrieval_latency_ms": 7.99,
+        "n_retrieved": 8,
+        "context_tokens": 1,
+        "retrieval_recall": 1.0,
+        "mrr": 1.0
+      },
+      {
+        "question": "acceptance_test.txt",
+        "reference_answer": "The statue was designed by Frederic Auguste Bartholdi. Berlin is the capital of Germany and its largest city. The Brandenburg Gate,\nbuilt between 1788 and 1791, is one of Berlin's most famous landmarks.",
+        "answer_text": "",
+        "evidence_text": "",
+        "latency_ms": 10.17,
+        "retrieval_latency_ms": 10.17,
+        "n_retrieved": 8,
+        "context_tokens": 1,
+        "retrieval_recall": 0.0,
+        "mrr": 0.0
+      },
+      {
+        "question": "Frederic Auguste Bartholdi designed a statue, Berlin is the ",
+        "reference_answer": "The statue was designed by Frederic Auguste Bartholdi. Berlin is the capital of Germany and its largest city. The Brandenburg Gate,\nbuilt between 1788 and 1791, is one of Berlin's most famous landmarks.",
+        "answer_text": "",
+        "evidence_text": "",
+        "latency_ms": 8.27,
+        "retrieval_latency_ms": 8.27,
+        "n_retrieved": 8,
+        "context_tokens": 1,
+        "retrieval_recall": 1.0,
+        "mrr": 1.0
+      }
+    ]
+  },
+  "graph_radial": {
+    "system": "graph_radial",
+    "aggregate": {
+      "context_tokens": 1.0,
+      "latency_ms": 8.19,
+      "mrr": 0.6944,
+      "n_retrieved": 8.0,
+      "retrieval_latency_ms": 8.19,
+      "retrieval_recall": 0.8333,
+      "n_questions": 6,
+      "wall_time_s": 0.24,
+      "questions_per_s": 25.29
+    },
+    "rows": [
+      {
+        "question": "Paris Landmarks",
+        "reference_answer": "The Eiffel Tower is a wrought-iron lattice tower in Paris, France. It was designed by Gustave Eiffel and completed in 1889 for the World Fair. The tower stands 330 metres tall and was the tallest structure in the world until 1930.\n\nThe Louvre Museum is the largest art museum in the world, located in Paris on the Seine river. Its collection includes the Mona Lisa painted by Leonardo da Vinci. Gustave Eiffel also engineered the internal frame of the Statue of Liberty.",
+        "answer_text": "",
+        "evidence_text": "",
+        "latency_ms": 9.07,
+        "retrieval_latency_ms": 9.07,
+        "n_retrieved": 8,
+        "context_tokens": 1,
+        "retrieval_recall": 1.0,
+        "mrr": 0.16666666666666666
+      },
+      {
+        "question": "The Eiffel Tower is a wrought-iron lattice tower in Paris, F",
+        "reference_answer": "The Eiffel Tower is a wrought-iron lattice tower in Paris, France. It was designed by Gustave Eiffel and completed in 1889 for the World Fair. The tower stands 330 metres tall and was the tallest structure in the world until 1930.\n\nThe Louvre Museum is the largest art museum in the world, located in Paris on the Seine river. Its collection includes the Mona Lisa painted by Leonardo da Vinci. Gustave Eiffel also engineered the internal frame of the Statue of Liberty.",
+        "answer_text": "",
+        "evidence_text": "",
+        "latency_ms": 8.2,
+        "retrieval_latency_ms": 8.2,
+        "n_retrieved": 8,
+        "context_tokens": 1,
+        "retrieval_recall": 1.0,
+        "mrr": 1.0
+      },
+      {
+        "question": "acceptance_test.txt",
+        "reference_answer": "The Eiffel Tower is a wrought-iron lattice tower in Paris, France. It was designed by Gustave Eiffel and completed in 1889 for the World's Fair. The tower stands 330 metres tall and was the tallest man-made structure in the\nworld until 1930. The Louvre Museum is the world's largest art museum, located in Paris on the\nright bank of the Seine. Its collection includes the Mona Lisa, painted by\nLeonardo da Vinci in the early sixteenth century. The museum opened in 1793. Gustave Eiffel also engineered the internal frame of the Statue of Liberty,\nwhich was a gift from France to the United States, dedicated in 1886 in New\nYork Harbor. The statue was designed by Frederic Auguste Bartholdi. Berlin is the capital of Germany and its largest city.",
+        "answer_text": "",
+        "evidence_text": "",
+        "latency_ms": 7.35,
+        "retrieval_latency_ms": 7.35,
+        "n_retrieved": 8,
+        "context_tokens": 1,
+        "retrieval_recall": 1.0,
+        "mrr": 1.0
+      },
+      {
+        "question": "The text provides information about the Eiffel Tower, Louvre",
+        "reference_answer": "The Eiffel Tower is a wrought-iron lattice tower in Paris, France. It was designed by Gustave Eiffel and completed in 1889 for the World's Fair. The tower stands 330 metres tall and was the tallest man-made structure in the\nworld until 1930. The Louvre Museum is the world's largest art museum, located in Paris on the\nright bank of the Seine. Its collection includes the Mona Lisa, painted by\nLeonardo da Vinci in the early sixteenth century. The museum opened in 1793. Gustave Eiffel also engineered the internal frame of the Statue of Liberty,\nwhich was a gift from France to the United States, dedicated in 1886 in New\nYork Harbor. The statue was designed by Frederic Auguste Bartholdi. Berlin is the capital of Germany and its largest city.",
+        "answer_text": "",
+        "evidence_text": "",
+        "latency_ms": 8.75,
+        "retrieval_latency_ms": 8.75,
+        "n_retrieved": 8,
+        "context_tokens": 1,
+        "retrieval_recall": 1.0,
+        "mrr": 1.0
+      },
+      {
+        "question": "acceptance_test.txt",
+        "reference_answer": "The statue was designed by Frederic Auguste Bartholdi. Berlin is the capital of Germany and its largest city. The Brandenburg Gate,\nbuilt between 1788 and 1791, is one of Berlin's most famous landmarks.",
+        "answer_text": "",
+        "evidence_text": "",
+        "latency_ms": 8.39,
+        "retrieval_latency_ms": 8.39,
+        "n_retrieved": 8,
+        "context_tokens": 1,
+        "retrieval_recall": 0.0,
+        "mrr": 0.0
+      },
+      {
+        "question": "Frederic Auguste Bartholdi designed a statue, Berlin is the ",
+        "reference_answer": "The statue was designed by Frederic Auguste Bartholdi. Berlin is the capital of Germany and its largest city. The Brandenburg Gate,\nbuilt between 1788 and 1791, is one of Berlin's most famous landmarks.",
+        "answer_text": "",
+        "evidence_text": "",
+        "latency_ms": 7.38,
+        "retrieval_latency_ms": 7.38,
+        "n_retrieved": 8,
+        "context_tokens": 1,
+        "retrieval_recall": 1.0,
+        "mrr": 1.0
+      }
+    ]
+  }
+}

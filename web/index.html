@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MIRA — Mandala-Inspired Memory Architecture</title>
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<!-- ============ NAV ============ -->
+<nav class="nav">
+  <div class="nav-inner">
+    <a class="brand" href="#top"><span class="brand-mark">◎</span> MIRA</a>
+    <div class="nav-links">
+      <a href="#research">Research</a>
+      <a href="#architecture">Architecture</a>
+      <a href="#science">Science</a>
+      <a class="nav-cta" href="/console.html">Open Console →</a>
+    </div>
+  </div>
+</nav>
+
+<!-- ============ HERO ============ -->
+<header class="hero" id="top">
+  <canvas id="hero-mandala" aria-hidden="true"></canvas>
+  <div class="hero-inner">
+    <p class="hero-eyebrow">Local research platform · offline-first · your GPU</p>
+    <h1>Memory, arranged<br>like a <em>mandala</em>.</h1>
+    <p class="hero-sub">MIRA tests a formal hypothesis: does a <strong>radial, hierarchical,
+    graph-based memory topology</strong> — rings and sectors instead of flat vectors — improve
+    how machines retrieve and reason? The system is built to prove it wrong as easily as right.</p>
+    <div class="hero-actions">
+      <a class="btn btn-primary" href="/console.html">Launch the console</a>
+      <a class="btn btn-ghost" href="#research">Read the research question</a>
+    </div>
+    <dl class="hero-stats">
+      <div><dt>Retrieval components</dt><dd>8</dd></div>
+      <div><dt>Ablation sets</dt><dd>10</dd></div>
+      <div><dt>Baselines</dt><dd>3</dd></div>
+      <div><dt>Cloud calls</dt><dd>0</dd></div>
+    </dl>
+  </div>
+</header>
+
+<!-- ============ HONESTY BANNER ============ -->
+<section class="honesty">
+  <p><strong>What MIRA is not.</strong> MIRA is an experimental architecture inspired by the
+  organizational and visual principles of mandalas/yantras. It does <strong>not</strong> claim
+  that historical mandalas were neural networks or that ancient traditions contained modern AI.
+  Whether radial organization helps is an <strong>empirical question</strong> — negative results
+  are reported, not hidden.</p>
+</section>
+
+<!-- ============ RESEARCH ============ -->
+<section class="section" id="research">
+  <p class="eyebrow">01 · The research question</p>
+  <h2>Does radial topology earn its place?</h2>
+  <p class="lede">When model, context budget, dataset and hardware are held constant, does arranging
+  memory in concentric rings around a core — measured by a formal radial distance — retrieve better
+  evidence for multi-hop questions than flat vector search?</p>
+  <div class="grid-3">
+    <article class="card">
+      <h3>The formula under test</h3>
+      <pre class="formula">score = α·semantic + β·structural
+      + γ·radial   + δ·graph
+      + ε·importance + ζ·confidence
+      + η·recency  + θ·path</pre>
+      <p class="small">Every coefficient is configurable and every component can be switched
+      off — that's what makes the contribution testable, not decorative.</p>
+    </article>
+    <article class="card">
+      <h3>The honest baselines</h3>
+      <ul class="ticks">
+        <li>Naive vector RAG (FAISS cosine)</li>
+        <li>Vector + graph hybrid</li>
+        <li>Hierarchical coarse-to-fine</li>
+        <li>Full MIRA — all components</li>
+      </ul>
+      <p class="small">All systems share the same model, embeddings, dataset,
+      context budget and hardware.</p>
+    </article>
+    <article class="card">
+      <h3>What counts as a win</h3>
+      <p>Higher retrieval recall and MRR on multi-hop QA at <em>equal or lower</em> context
+      tokens. If full MIRA only matches vector-only, that's the finding — and it gets
+      reported.</p>
+    </article>
+  </div>
+</section>
+
+<!-- ============ ARCHITECTURE ============ -->
+<section class="section section-alt" id="architecture">
+  <p class="eyebrow">02 · Architecture</p>
+  <h2>From PDF to audited answer</h2>
+  <div class="pipeline">
+    <span>Document</span><span>Chunks</span><span>Embeddings</span><span>Memory nodes</span><span>Graph</span><span>Mandala placement</span><span>Radial retrieval</span><span>Evidence</span><span>Small LLM</span><span>Answer</span>
+  </div>
+  <div class="grid-2">
+    <div class="card">
+      <h3>The memory model</h3>
+      <p>Nodes carry <code>ring · sector · radial_distance · importance · confidence ·
+      provenance</code>. Typed edges (has_part, evidence, supports…) form the graph.
+      Sectors are <em>discovered</em> from embedding clusters — never hard-coded categories.</p>
+    </div>
+    <div class="card">
+      <h3>Placement strategies, switchable</h3>
+      <p>Embedding clusters · graph centrality · hierarchy · temporal · hybrid MIRA.
+      The same memory can be laid out five ways and compared — placement itself is an
+      experimental variable.</p>
+    </div>
+    <div class="card">
+      <h3>Local-first inference</h3>
+      <p>Hardware is detected at startup; the runtime selects the largest GGUF that fits
+      with safety headroom (never 100% of RAM/VRAM). On a 4 GB laptop GPU, MIRA runs a
+      1.5B Q4 model with all layers offloaded — fully offline.</p>
+    </div>
+    <div class="card">
+      <h3>Everything is auditable</h3>
+      <p>Every answer ships with its retrieved memories, per-component scores, the
+      multi-hop path taken, and document/page provenance. No hidden chain-of-thought —
+      just evidence you can click.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SCIENCE ============ -->
+<section class="section" id="science">
+  <p class="eyebrow">03 · The science</p>
+  <h2>Built to be refuted</h2>
+  <div class="grid-2">
+    <div class="card">
+      <h3>Radial distance is formal, not visual</h3>
+      <pre class="formula">radial = α·semantic + β·hierarchy
+       + γ·graph    + δ·temporal</pre>
+      <p class="small">Rings are computed, sectors are clustered, and the weights are
+      experimental defaults — the starting point of a sweep, not a claim.</p>
+    </div>
+    <div class="card">
+      <h3>Ablations isolate the contribution</h3>
+      <p>Run <code>vector_only</code> against <code>full_mira</code>: if retrieval overlap
+      is ~1.0, the extra components added nothing for that query. Jaccard overlap between
+      sets is reported in the Research Lab for exactly this reason.</p>
+    </div>
+    <div class="card">
+      <h3>Metrics from real computation</h3>
+      <p>Recall@k, MRR, context tokens, latency, token-F1, and an optional local
+      LLM-as-judge — computed from actual runs, exported with full config, hardware
+      snapshot, seed and git commit.</p>
+    </div>
+    <div class="card">
+      <h3>Limitations, stated</h3>
+      <p>Token-F1 is a lexical proxy. The judge is the same small model that answers.
+      Centrality is O(n) — laptop-scale. These ceilings are documented, not buried.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FOOTER ============ -->
+<footer class="footer">
+  <div>
+    <span class="brand-mark">◎</span> MIRA — Mandala-Inspired Memory Architecture
+    <p class="small">Local-first research prototype. Runs entirely on your machine.</p>
+  </div>
+  <div class="footer-links">
+    <a href="/console.html">Console</a>
+    <a href="/api/docs">API docs</a>
+    <a href="https://github.com/">Source</a>
+  </div>
+</footer>
+
+<script src="js/mandala.js"></script>
+</body>
+</html>

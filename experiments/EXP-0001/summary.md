@@ -1,0 +1,23 @@
+# acceptance-run
+
+- experiment: `EXP-0001`
+- created: 2026-09-22T19:26:56.699265+00:00
+- git: `` · seed: 42
+
+| system | retrieval_recall | mrr | answer_token_f1 | context_tokens | latency_ms | questions_per_s | n_questions |
+|---|---|---|---|---|---|---|---|
+| vector_rag | 1.0 | 0.5 | — | 1.0 | 8.18 | 115.0 | 2 |
+| graph_rag | 1.0 | 0.5 | — | 1.0 | 6.955 | 136.3 | 2 |
+| hierarchical_rag | 0.0 | 0.0 | — | 1.0 | 0.98 | 748.73 | 2 |
+| full_mira | 1.0 | 0.5 | — | 1.0 | 11.895 | 80.65 | 2 |
+| vector_only | 1.0 | 0.5 | — | 1.0 | 10.375 | 93.38 | 2 |
+| graph_only | 1.0 | 0.5 | — | 1.0 | 11.19 | 86.67 | 2 |
+| hierarchy_only | 1.0 | 0.5 | — | 1.0 | 10.7 | 90.26 | 2 |
+| radial_only | 1.0 | 0.5 | — | 1.0 | 10.53 | 91.85 | 2 |
+| vector_graph | 1.0 | 0.5 | — | 1.0 | 10.83 | 89.63 | 2 |
+| vector_hierarchy | 1.0 | 0.5 | — | 1.0 | 10.095 | 96.02 | 2 |
+| vector_radial | 1.0 | 0.5 | — | 1.0 | 10.57 | 91.67 | 2 |
+| graph_hierarchy | 1.0 | 0.5 | — | 1.0 | 11.73 | 82.63 | 2 |
+| graph_radial | 1.0 | 0.5 | — | 1.0 | 11.175 | 86.32 | 2 |
+
+Metrics are computed from actual retrieval output. answer_token_f1 is a lexical proxy, not an LLM judge.

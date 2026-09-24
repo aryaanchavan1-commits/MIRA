@@ -1,0 +1,81 @@
+# MIRA configuration. Values marked "experimental" are defaults chosen for
+# stability, NOT scientifically optimal — they are the starting point for
+# ablation experiments, not a claim.
+
+performance_mode: balanced   # safe | balanced | fast | research
+
+offline: true                # strict offline: no network calls, no downloads
+
+resources:
+  max_ram_gb: auto           # cap on MIRA's total RAM budget
+  max_vram_gb: auto          # cap on GPU memory used for inference
+  max_model_disk_gb: auto    # cap on a single model download
+  safety_vram_fraction: 0.75 # usable_vram = total * fraction (leave headroom)
+  safety_ram_fraction: 0.60  # usable_ram = total * fraction (OS + browser need the rest)
+
+models:
+  allow_download: false      # require explicit confirmation before any download
+  allow_remote_api: false    # remote LLM APIs are OFF unless the user enables them
+  llm:
+    # candidate list, best-fitting-first; sizes in billions of parameters
+    prefer_params_b: [0.5, 1.0, 1.5, 2.0, 3.0]
+    prefer_quant: ["Q4_K_M", "Q5_K_M", "Q4_0", "Q8_0"]
+    max_context_tokens: auto
+    gpu_layers: auto         # -1 = all, 0 = CPU only, auto = fit to VRAM
+    threads: auto
+  embeddings:
+    prefer: [all-MiniLM-L6-v2, all-MiniLM-L12-v2, paraphrase-MiniLM-L3-v2]
+
+topology:
+  max_rings: 5               # ring 0 = core, ring 4+ = raw evidence
+  sector_count: auto         # discovered from embedding clusters
+  placement_strategy: hybrid_mira   # embedding_clusters | graph_centrality | hierarchy | temporal | hybrid_mira
+
+radial_distance:             # §12: weighted radial distance — experimental
+  alpha_semantic: 0.40
+  beta_hierarchy: 0.25
+  gamma_graph: 0.20
+  delta_temporal: 0.15
+
+retrieval_score:             # §21: MIRA retrieval score — experimental
+  alpha_semantic: 0.35
+  beta_structural: 0.15
+  gamma_radial: 0.15
+  delta_graph: 0.15
+  epsilon_importance: 0.08
+  zeta_confidence: 0.07
+  eta_recency: 0.03
+  theta_path: 0.02
+  iota_activation: 0.12      # spreading-activation component (bio-inspired)
+  learned: true              # refit 2026-09 on the 12-doc corpus (1632 pairs):
+                             # MRR 0.316 -> 0.470, recall 0.567 -> 0.650 vs hand
+                             # weights; radial weight rose 0.02 -> 0.32 with scale.
+                             # Refit after major corpus growth.
+
+activation:                  # spreading-activation dynamics (core/activation.py)
+  hops: 2                    # energy propagation depth
+  decay: 0.5                 # activation retained per hop
+  fanout_normalize: true     # synaptic scaling: busy hubs don't over-fire
+  seed_semantic_weight: 1.0
+  seed_importance_weight: 0.3
+
+memory:
+  hebbian: true              # consolidate used retrieval paths (core/hebbian.py)
+
+web_search:                  # every search leaves the machine — off by default
+  enabled: false             # true = allow live search (agent-reach/opencli/DDG)
+
+agent:                       # routing: memory → web → parametric (core/agent.py)
+  memory_gate_semantic: 0.45 # min cosine similarity to answer from memory alone
+
+retrieval:
+  candidate_k: 24            # per-retriever candidate count before merge
+  final_k: 8                 # memories shown to the LLM
+  max_hops: 3
+  rerank: true
+
+context:
+  max_tokens: auto           # auto = derive from model context
+  compression_target_ratio: 0.6
+
+seed: 42

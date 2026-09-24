@@ -1,0 +1,522 @@
+{
+  "vector_rag": {
+    "system": "vector_rag",
+    "aggregate": {
+      "context_tokens": 1.0,
+      "latency_ms": 3.31,
+      "mrr": 0.125,
+      "n_retrieved": 5.0,
+      "retrieval_latency_ms": 3.31,
+      "retrieval_recall": 0.5,
+      "n_questions": 2,
+      "wall_time_s": 0.04,
+      "questions_per_s": 52.95
+    },
+    "rows": [
+      {
+        "question": "Who designed the Eiffel Tower?",
+        "reference_answer": "Gustave Eiffel designed the Eiffel Tower.",
+        "answer_text": "",
+        "evidence_text": "",
+        "latency_ms": 2.94,
+        "retrieval_latency_ms": 2.94,
+        "n_retrieved": 5,
+        "context_tokens": 1,
+        "retrieval_recall": 1.0,
+        "mrr": 0.25
+      },
+      {
+        "question": "Where is the Louvre Museum?",
+        "reference_answer": "The Louvre Museum is located in Paris.",
+        "answer_text": "",
+        "evidence_text": "",
+        "latency_ms": 3.68,
+        "retrieval_latency_ms": 3.68,
+        "n_retrieved": 5,
+        "context_tokens": 1,
+        "retrieval_recall": 0.0,
+        "mrr": 0.0
+      }
+    ]
+  },
+  "graph_rag": {
+    "system": "graph_rag",
+    "aggregate": {
+      "context_tokens": 1.0,
+      "latency_ms": 3.785,
+      "mrr": 0.125,
+      "n_retrieved": 5.0,
+      "retrieval_latency_ms": 3.785,
+      "retrieval_recall": 0.5,
+      "n_questions": 2,
+      "wall_time_s": 0.1,
+      "questions_per_s": 19.82
+    },
+    "rows": [
+      {
+        "question": "Who designed the Eiffel Tower?",
+        "reference_answer": "Gustave Eiffel designed the Eiffel Tower.",
+        "answer_text": "",
+        "evidence_text": "",
+        "latency_ms": 4.18,
+        "retrieval_latency_ms": 4.18,
+        "n_retrieved": 5,
+        "context_tokens": 1,
+        "retrieval_recall": 1.0,
+        "mrr": 0.25
+      },
+      {
+        "question": "Where is the Louvre Museum?",
+        "reference_answer": "The Louvre Museum is located in Paris.",
+        "answer_text": "",
+        "evidence_text": "",
+        "latency_ms": 3.39,
+        "retrieval_latency_ms": 3.39,
+        "n_retrieved": 5,
+        "context_tokens": 1,
+        "retrieval_recall": 0.0,
+        "mrr": 0.0
+      }
+    ]
+  },
+  "hierarchical_rag": {
+    "system": "hierarchical_rag",
+    "aggregate": {
+      "context_tokens": 1.0,
+      "latency_ms": 0.23,
+      "mrr": 0.0,
+      "n_retrieved": 0.0,
+      "retrieval_latency_ms": 0.23,
+      "retrieval_recall": 0.0,
+      "n_questions": 2,
+      "wall_time_s": 0.03,
+      "questions_per_s": 78.47
+    },
+    "rows": [
+      {
+        "question": "Who designed the Eiffel Tower?",
+        "reference_answer": "Gustave Eiffel designed the Eiffel Tower.",
+        "answer_text": "",
+        "evidence_text": "",
+        "latency_ms": 0.24,
+        "retrieval_latency_ms": 0.24,
+        "n_retrieved": 0,
+        "context_tokens": 1,
+        "retrieval_recall": 0.0,
+        "mrr": 0.0
+      },
+      {
+        "question": "Where is the Louvre Museum?",
+        "reference_answer": "The Louvre Museum is located in Paris.",
+        "answer_text": "",
+        "evidence_text": "",
+        "latency_ms": 0.22,
+        "retrieval_latency_ms": 0.22,
+        "n_retrieved": 0,
+        "context_tokens": 1,
+        "retrieval_recall": 0.0,
+        "mrr": 0.0
+      }
+    ]
+  },
+  "full_mira": {
+    "system": "full_mira",
+    "aggregate": {
+      "context_tokens": 1.0,
+      "latency_ms": 6.03,
+      "mrr": 0.125,
+      "n_retrieved": 5.0,
+      "retrieval_latency_ms": 6.03,
+      "retrieval_recall": 0.5,
+      "n_questions": 2,
+      "wall_time_s": 0.04,
+      "questions_per_s": 53.69
+    },
+    "rows": [
+      {
+        "question": "Who designed the Eiffel Tower?",
+        "reference_answer": "Gustave Eiffel designed the Eiffel Tower.",
+        "answer_text": "",
+        "evidence_text": "",
+        "latency_ms": 6.43,
+        "retrieval_latency_ms": 6.43,
+        "n_retrieved": 5,
+        "context_tokens": 1,
+        "retrieval_recall": 1.0,
+        "mrr": 0.25
+      },
+      {
+        "question": "Where is the Louvre Museum?",
+        "reference_answer": "The Louvre Museum is located in Paris.",
+        "answer_text": "",
+        "evidence_text": "",
+        "latency_ms": 5.63,
+        "retrieval_latency_ms": 5.63,
+        "n_retrieved": 5,
+        "context_tokens": 1,
+        "retrieval_recall": 0.0,
+        "mrr": 0.0
+      }
+    ]
+  },
+  "vector_only": {
+    "system": "vector_only",
+    "aggregate": {
+      "context_tokens": 1.0,
+      "latency_ms": 4.835,
+      "mrr": 0.125,
+      "n_retrieved": 5.0,
+      "retrieval_latency_ms": 4.835,
+      "retrieval_recall": 0.5,
+      "n_questions": 2,
+      "wall_time_s": 0.03,
+      "questions_per_s": 61.46
+    },
+    "rows": [
+      {
+        "question": "Who designed the Eiffel Tower?",
+        "reference_answer": "Gustave Eiffel designed the Eiffel Tower.",
+        "answer_text": "",
+        "evidence_text": "",
+        "latency_ms": 4.87,
+        "retrieval_latency_ms": 4.87,
+        "n_retrieved": 5,
+        "context_tokens": 1,
+        "retrieval_recall": 1.0,
+        "mrr": 0.25
+      },
+      {
+        "question": "Where is the Louvre Museum?",
+        "reference_answer": "The Louvre Museum is located in Paris.",
+        "answer_text": "",
+        "evidence_text": "",
+        "latency_ms": 4.8,
+        "retrieval_latency_ms": 4.8,
+        "n_retrieved": 5,
+        "context_tokens": 1,
+        "retrieval_recall": 0.0,
+        "mrr": 0.0
+      }
+    ]
+  },
+  "graph_only": {
+    "system": "graph_only",
+    "aggregate": {
+      "context_tokens": 1.0,
+      "latency_ms": 5.47,
+      "mrr": 0.125,
+      "n_retrieved": 5.0,
+      "retrieval_latency_ms": 5.47,
+      "retrieval_recall": 0.5,
+      "n_questions": 2,
+      "wall_time_s": 0.03,
+      "questions_per_s": 64.24
+    },
+    "rows": [
+      {
+        "question": "Who designed the Eiffel Tower?",
+        "reference_answer": "Gustave Eiffel designed the Eiffel Tower.",
+        "answer_text": "",
+        "evidence_text": "",
+        "latency_ms": 4.95,
+        "retrieval_latency_ms": 4.95,
+        "n_retrieved": 5,
+        "context_tokens": 1,
+        "retrieval_recall": 1.0,
+        "mrr": 0.25
+      },
+      {
+        "question": "Where is the Louvre Museum?",
+        "reference_answer": "The Louvre Museum is located in Paris.",
+        "answer_text": "",
+        "evidence_text": "",
+        "latency_ms": 5.99,
+        "retrieval_latency_ms": 5.99,
+        "n_retrieved": 5,
+        "context_tokens": 1,
+        "retrieval_recall": 0.0,
+        "mrr": 0.0
+      }
+    ]
+  },
+  "hierarchy_only": {
+    "system": "hierarchy_only",
+    "aggregate": {
+      "context_tokens": 1.0,
+      "latency_ms": 6.005,
+      "mrr": 0.125,
+      "n_retrieved": 5.0,
+      "retrieval_latency_ms": 6.005,
+      "retrieval_recall": 0.5,
+      "n_questions": 2,
+      "wall_time_s": 0.04,
+      "questions_per_s": 52.4
+    },
+    "rows": [
+      {
+        "question": "Who designed the Eiffel Tower?",
+        "reference_answer": "Gustave Eiffel designed the Eiffel Tower.",
+        "answer_text": "",
+        "evidence_text": "",
+        "latency_ms": 6.07,
+        "retrieval_latency_ms": 6.07,
+        "n_retrieved": 5,
+        "context_tokens": 1,
+        "retrieval_recall": 1.0,
+        "mrr": 0.25
+      },
+      {
+        "question": "Where is the Louvre Museum?",
+        "reference_answer": "The Louvre Museum is located in Paris.",
+        "answer_text": "",
+        "evidence_text": "",
+        "latency_ms": 5.94,
+        "retrieval_latency_ms": 5.94,
+        "n_retrieved": 5,
+        "context_tokens": 1,
+        "retrieval_recall": 0.0,
+        "mrr": 0.0
+      }
+    ]
+  },
+  "radial_only": {
+    "system": "radial_only",
+    "aggregate": {
+      "context_tokens": 1.0,
+      "latency_ms": 5.825,
+      "mrr": 0.125,
+      "n_retrieved": 5.0,
+      "retrieval_latency_ms": 5.825,
+      "retrieval_recall": 0.5,
+      "n_questions": 2,
+      "wall_time_s": 0.04,
+      "questions_per_s": 51.39
+    },
+    "rows": [
+      {
+        "question": "Who designed the Eiffel Tower?",
+        "reference_answer": "Gustave Eiffel designed the Eiffel Tower.",
+        "answer_text": "",
+        "evidence_text": "",
+        "latency_ms": 5.83,
+        "retrieval_latency_ms": 5.83,
+        "n_retrieved": 5,
+        "context_tokens": 1,
+        "retrieval_recall": 1.0,
+        "mrr": 0.25
+      },
+      {
+        "question": "Where is the Louvre Museum?",
+        "reference_answer": "The Louvre Museum is located in Paris.",
+        "answer_text": "",
+        "evidence_text": "",
+        "latency_ms": 5.82,
+        "retrieval_latency_ms": 5.82,
+        "n_retrieved": 5,
+        "context_tokens": 1,
+        "retrieval_recall": 0.0,
+        "mrr": 0.0
+      }
+    ]
+  },
+  "vector_graph": {
+    "system": "vector_graph",
+    "aggregate": {
+      "context_tokens": 1.0,
+      "latency_ms": 5.96,
+      "mrr": 0.125,
+      "n_retrieved": 5.0,
+      "retrieval_latency_ms": 5.96,
+      "retrieval_recall": 0.5,
+      "n_questions": 2,
+      "wall_time_s": 0.04,
+      "questions_per_s": 53.62
+    },
+    "rows": [
+      {
+        "question": "Who designed the Eiffel Tower?",
+        "reference_answer": "Gustave Eiffel designed the Eiffel Tower.",
+        "answer_text": "",
+        "evidence_text": "",
+        "latency_ms": 5.91,
+        "retrieval_latency_ms": 5.91,
+        "n_retrieved": 5,
+        "context_tokens": 1,
+        "retrieval_recall": 1.0,
+        "mrr": 0.25
+      },
+      {
+        "question": "Where is the Louvre Museum?",
+        "reference_answer": "The Louvre Museum is located in Paris.",
+        "answer_text": "",
+        "evidence_text": "",
+        "latency_ms": 6.01,
+        "retrieval_latency_ms": 6.01,
+        "n_retrieved": 5,
+        "context_tokens": 1,
+        "retrieval_recall": 0.0,
+        "mrr": 0.0
+      }
+    ]
+  },
+  "vector_hierarchy": {
+    "system": "vector_hierarchy",
+    "aggregate": {
+      "context_tokens": 1.0,
+      "latency_ms": 5.655,
+      "mrr": 0.125,
+      "n_retrieved": 5.0,
+      "retrieval_latency_ms": 5.655,
+      "retrieval_recall": 0.5,
+      "n_questions": 2,
+      "wall_time_s": 0.13,
+      "questions_per_s": 15.55
+    },
+    "rows": [
+      {
+        "question": "Who designed the Eiffel Tower?",
+        "reference_answer": "Gustave Eiffel designed the Eiffel Tower.",
+        "answer_text": "",
+        "evidence_text": "",
+        "latency_ms": 5.62,
+        "retrieval_latency_ms": 5.62,
+        "n_retrieved": 5,
+        "context_tokens": 1,
+        "retrieval_recall": 1.0,
+        "mrr": 0.25
+      },
+      {
+        "question": "Where is the Louvre Museum?",
+        "reference_answer": "The Louvre Museum is located in Paris.",
+        "answer_text": "",
+        "evidence_text": "",
+        "latency_ms": 5.69,
+        "retrieval_latency_ms": 5.69,
+        "n_retrieved": 5,
+        "context_tokens": 1,
+        "retrieval_recall": 0.0,
+        "mrr": 0.0
+      }
+    ]
+  },
+  "vector_radial": {
+    "system": "vector_radial",
+    "aggregate": {
+      "context_tokens": 1.0,
+      "latency_ms": 4.9,
+      "mrr": 0.125,
+      "n_retrieved": 5.0,
+      "retrieval_latency_ms": 4.9,
+      "retrieval_recall": 0.5,
+      "n_questions": 2,
+      "wall_time_s": 0.03,
+      "questions_per_s": 62.46
+    },
+    "rows": [
+      {
+        "question": "Who designed the Eiffel Tower?",
+        "reference_answer": "Gustave Eiffel designed the Eiffel Tower.",
+        "answer_text": "",
+        "evidence_text": "",
+        "latency_ms": 4.83,
+        "retrieval_latency_ms": 4.83,
+        "n_retrieved": 5,
+        "context_tokens": 1,
+        "retrieval_recall": 1.0,
+        "mrr": 0.25
+      },
+      {
+        "question": "Where is the Louvre Museum?",
+        "reference_answer": "The Louvre Museum is located in Paris.",
+        "answer_text": "",
+        "evidence_text": "",
+        "latency_ms": 4.97,
+        "retrieval_latency_ms": 4.97,
+        "n_retrieved": 5,
+        "context_tokens": 1,
+        "retrieval_recall": 0.0,
+        "mrr": 0.0
+      }
+    ]
+  },
+  "graph_hierarchy": {
+    "system": "graph_hierarchy",
+    "aggregate": {
+      "context_tokens": 1.0,
+      "latency_ms": 6.0,
+      "mrr": 0.125,
+      "n_retrieved": 5.0,
+      "retrieval_latency_ms": 6.0,
+      "retrieval_recall": 0.5,
+      "n_questions": 2,
+      "wall_time_s": 0.03,
+      "questions_per_s": 57.76
+    },
+    "rows": [
+      {
+        "question": "Who designed the Eiffel Tower?",
+        "reference_answer": "Gustave Eiffel designed the Eiffel Tower.",
+        "answer_text": "",
+        "evidence_text": "",
+        "latency_ms": 6.23,
+        "retrieval_latency_ms": 6.23,
+        "n_retrieved": 5,
+        "context_tokens": 1,
+        "retrieval_recall": 1.0,
+        "mrr": 0.25
+      },
+      {
+        "question": "Where is the Louvre Museum?",
+        "reference_answer": "The Louvre Museum is located in Paris.",
+        "answer_text": "",
+        "evidence_text": "",
+        "latency_ms": 5.77,
+        "retrieval_latency_ms": 5.77,
+        "n_retrieved": 5,
+        "context_tokens": 1,
+        "retrieval_recall": 0.0,
+        "mrr": 0.0
+      }
+    ]
+  },
+  "graph_radial": {
+    "system": "graph_radial",
+    "aggregate": {
+      "context_tokens": 1.0,
+      "latency_ms": 5.195,
+      "mrr": 0.125,
+      "n_retrieved": 5.0,
+      "retrieval_latency_ms": 5.195,
+      "retrieval_recall": 0.5,
+      "n_questions": 2,
+      "wall_time_s": 0.03,
+      "questions_per_s": 60.49
+    },
+    "rows": [
+      {
+        "question": "Who designed the Eiffel Tower?",
+        "reference_answer": "Gustave Eiffel designed the Eiffel Tower.",
+        "answer_text": "",
+        "evidence_text": "",
+        "latency_ms": 5.17,
+        "retrieval_latency_ms": 5.17,
+        "n_retrieved": 5,
+        "context_tokens": 1,
+        "retrieval_recall": 1.0,
+        "mrr": 0.25
+      },
+      {
+        "question": "Where is the Louvre Museum?",
+        "reference_answer": "The Louvre Museum is located in Paris.",
+        "answer_text": "",
+        "evidence_text": "",
+        "latency_ms": 5.22,
+        "retrieval_latency_ms": 5.22,
+        "n_retrieved": 5,
+        "context_tokens": 1,
+        "retrieval_recall": 0.0,
+        "mrr": 0.0
+      }
+    ]
+  }
+}

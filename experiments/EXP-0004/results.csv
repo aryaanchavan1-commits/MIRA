@@ -1,0 +1,14 @@
+system,retrieval_recall,mrr,answer_token_f1,context_tokens,latency_ms,questions_per_s,n_questions
+vector_rag,0.8333,0.6944,,1.0,4.7633,26.27,6
+graph_rag,0.8333,0.6944,,1.0,5.955,26.74,6
+hierarchical_rag,0.0,0.0,,1.0,0.28,36.15,6
+full_mira,1.0,0.6806,,1.0,8.67,25.7,6
+vector_only,0.8333,0.6944,,1.0,7.5367,29.06,6
+graph_only,0.8333,0.6944,,1.0,8.565,26.56,6
+hierarchy_only,0.8333,0.6944,,1.0,8.4717,24.67,6
+radial_only,0.8333,0.6944,,1.0,8.235,24.04,6
+vector_graph,0.8333,0.6944,,1.0,7.8533,27.3,6
+vector_hierarchy,0.8333,0.6944,,1.0,8.2833,24.87,6
+vector_radial,0.8333,0.6944,,1.0,8.78,23.26,6
+graph_hierarchy,0.8333,0.6944,,1.0,8.7683,26.38,6
+graph_radial,0.8333,0.6944,,1.0,8.19,25.29,6
