@@ -8,15 +8,17 @@
 <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
+<canvas id="bg-texture" class="bg-texture" aria-hidden="true"></canvas>
 <!-- ============ NAV ============ -->
 <nav class="nav" aria-label="Primary navigation">
   <div class="nav-inner">
     <a class="brand" href="#top"><span class="brand-mark">◎</span> MIRA</a>
     <div class="nav-links">
-      <a href="#research">Research</a>
-      <a href="#architecture">Architecture</a>
-      <a href="#science">Science</a>
-      <a class="nav-cta" href="/console.html">Open Console →</a>
+      <a href="#research" data-i18n="nav.research">Research</a>
+      <a href="#architecture" data-i18n="nav.architecture">Architecture</a>
+      <a href="#science" data-i18n="nav.science">Science</a>
+      <span class="lang-mount"></span>
+      <a class="nav-cta" href="/console.html" data-i18n="nav.console">Open Console →</a>
     </div>
   </div>
 </nav>
@@ -26,26 +28,27 @@
 <header class="hero" id="top">
   <canvas id="hero-mandala" aria-hidden="true"></canvas>
   <div class="hero-inner">
-    <h1>Memory, arranged<br>like a <em>mandala</em>.</h1>
-    <p class="hero-sub">MIRA tests a formal hypothesis: can a <strong>radial, hierarchical,
+    <p class="hero-eyebrow" data-i18n="hero.eyebrow">Local-first memory research</p>
+    <h1 data-i18n="hero.h1">Memory, arranged<br>like a <em>mandala</em>.</h1>
+    <p class="hero-sub" data-i18n="hero.sub">MIRA tests a formal hypothesis: can a <strong>radial, hierarchical,
     graph-based memory topology</strong>, using rings and sectors instead of flat vectors,
     improve how machines retrieve and reason? The system is built to prove it wrong as easily as right.</p>
     <div class="hero-actions">
-      <a class="btn btn-primary" href="/console.html">Launch the console</a>
-      <a class="btn btn-ghost" href="#research">Read the research question</a>
+      <a class="btn btn-primary" href="/console.html" data-i18n="hero.cta1">Launch the console</a>
+      <a class="btn btn-ghost" href="#research" data-i18n="hero.cta2">Read the research question</a>
     </div>
     <dl class="hero-stats">
-      <div><dt>Retrieval components</dt><dd>9</dd></div>
-      <div><dt>Ablation sets</dt><dd>12</dd></div>
-      <div><dt>Baselines</dt><dd>3</dd></div>
-      <div><dt>Cloud calls (default)</dt><dd>0</dd></div>
+      <div><dt data-i18n="hero.stats.components">Retrieval components</dt><dd>9</dd></div>
+      <div><dt data-i18n="hero.stats.ablations">Ablation sets</dt><dd>12</dd></div>
+      <div><dt data-i18n="hero.stats.baselines">Baselines</dt><dd>3</dd></div>
+      <div><dt data-i18n="hero.stats.cloud">Cloud calls (default)</dt><dd>0</dd></div>
     </dl>
   </div>
 </header>
 
 <!-- ============ HONESTY BANNER ============ -->
 <section class="honesty">
-  <p><strong>What MIRA is not.</strong> MIRA is an experimental architecture inspired by the
+  <p data-i18n="honesty.body"><strong>What MIRA is not.</strong> MIRA is an experimental architecture inspired by the
   organizational and visual principles of mandalas/yantras. It does <strong>not</strong> claim
   that historical mandalas were neural networks or that ancient traditions contained modern AI.
   Whether radial organization helps is an <strong>empirical question</strong>: negative results
@@ -54,8 +57,8 @@
 
 <!-- ============ RESEARCH ============ -->
 <section class="section" id="research">
-  <h2>Does radial topology earn its place?</h2>
-  <p class="lede">When model, context budget, dataset and hardware are held constant, does arranging
+  <h2 data-i18n="research.h2">Does radial topology earn its place?</h2>
+  <p class="lede" data-i18n="research.lede">When model, context budget, dataset and hardware are held constant, does arranging
   memory in concentric rings around a core, measured by a formal radial distance, retrieve better
   evidence for multi-hop questions than flat vector search?</p>
   <div class="grid-3">
@@ -124,9 +127,34 @@
   </div>
 </section>
 
+<!-- ============ REAL-DATA BENCHMARK ============ -->
+<section class="section section-alt" id="benchmark">
+  <h2 data-i18n="bench.h2">Evaluated on real multi-hop data</h2>
+  <p class="lede" data-i18n="bench.lede">MuSiQue (Trivedi et al., 2021): answerable 2-hop questions over a shared distractor corpus.
+  MIRA is compared against flat-vector retrieval with an identical answer stage; per-question paired
+  bootstrap and Wilcoxon tests back every comparison.</p>
+  <div class="grid-3">
+    <article class="card">
+      <h3>MuSiQue 2-hop</h3>
+      <p class="bench-figure" id="bench-figure-questions">300</p>
+      <p class="small">answerable multi-hop questions, 3 seeded runs, held to the same corpus and answer stage.</p>
+    </article>
+    <article class="card">
+      <h3>Shared corpus</h3>
+      <p class="bench-figure" id="bench-figure-corpus">4,043</p>
+      <p class="small">distractor paragraphs (1.75M chars) — supporting and non-supporting, exactly as annotated.</p>
+    </article>
+    <article class="card">
+      <h3>Significance</h3>
+      <p class="bench-figure">p &lt; 0.05</p>
+      <p class="small">or the claim is not made. Paired bootstrap CIs and Wilcoxon signed-rank on every headline number. Full per-question artifacts ship in <code>data_bench/</code>.</p>
+    </article>
+  </div>
+</section>
+
 <!-- ============ SCIENCE ============ -->
 <section class="section" id="science">
-  <h2>Built to be refuted</h2>
+  <h2 data-i18n="science.h2">Built to be refuted</h2>
   <div class="grid-2">
     <div class="card">
       <h3>Radial distance is formal, not visual</h3>
@@ -160,15 +188,17 @@
 <footer class="footer">
   <div>
     <span class="brand-mark">◎</span> MIRA · Mandala-Inspired Memory Architecture
-    <p class="small">Created by Aryan Chavan. Local-first research prototype. Runs entirely on your machine.</p>
+    <p class="small" data-i18n="footer.built">Created by Aryan Chavan. Local-first research prototype. Runs entirely on your machine.</p>
   </div>
   <div class="footer-links">
-    <a href="/console.html">Console</a>
-    <a href="/api/docs">API docs</a>
-    <a href="https://github.com/">Source</a>
+    <a href="/console.html" data-i18n="footer.console">Console</a>
+    <a href="/api/docs" data-i18n="footer.api">API docs</a>
+    <a href="https://github.com/" data-i18n="footer.source">Source</a>
   </div>
 </footer>
 
+<script src="js/texture.js"></script>
+<script src="js/i18n.js"></script>
 <script src="js/mandala.js"></script>
 </body>
 </html>

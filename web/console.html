@@ -8,6 +8,7 @@
 <link rel="stylesheet" href="css/style.css">
 </head>
 <body class="console-body">
+<canvas id="bg-texture-console" class="bg-texture bg-texture-dim" aria-hidden="true"></canvas>
 <aside class="side">
   <a class="brand" href="/"><span class="brand-mark">◎</span> MIRA</a>
   <nav class="side-nav" aria-label="Console sections">
@@ -20,6 +21,9 @@
     <button type="button" data-view="benchmarks" aria-controls="view-benchmarks">Benchmarks</button>
     <button type="button" data-view="research" aria-controls="view-research">Research</button>
   </nav>
+  <div class="side-extra">
+    <span class="lang-mount"></span>
+  </div>
   <div class="side-status" id="side-status" role="status" aria-live="polite" aria-atomic="true">Loading system…</div>
 </aside>
 
@@ -63,9 +67,17 @@
         </select>
       </div>
       <label class="check"><input id="chat-web" type="checkbox"> Allow live web</label>
-      <button class="btn btn-primary" id="chat-submit" type="submit">Ask</button>
+      <div class="chat-actions">
+        <button class="btn btn-primary" id="chat-submit" type="submit">Ask</button>
+        <button class="btn btn-icon" id="chat-mic" type="button" data-i18n-title="chat.listen" aria-label="Speak your question" hidden>🎙</button>
+      </div>
     </form>
     <div id="chat-out" class="chat-out" role="log" aria-live="polite" aria-relevant="additions text" aria-busy="false"><p class="small muted">Agent answers from memory first; weak memory + web consent → live search; otherwise model knowledge (labeled).</p></div>
+    <div class="chat-voicebar" id="chat-voicebar" hidden>
+      <button class="btn btn-ghost btn-small" id="chat-speak" type="button" data-i18n="chat.speak">Read the answer aloud</button>
+      <button class="btn btn-ghost btn-small" id="chat-voice-stop" type="button" data-i18n="chat.stop">Stop</button>
+      <span class="small muted" id="chat-voice-status" role="status" aria-live="polite"></span>
+    </div>
   </section>
 
   <!-- MANDALA -->
@@ -139,6 +151,13 @@
   <!-- BENCHMARKS -->
   <section class="view" id="view-benchmarks">
     <h1>Benchmarks</h1>
+    <div class="card" id="real-results-card">
+      <h2>Real-data results (MuSiQue)</h2>
+      <p class="small muted">Produced by <code>scripts/eval_benchmark_real.py</code> and
+        <code>scripts/eval_ablation_real.py</code> on the isolated 4,043-paragraph bench corpus.
+        Missing rows mean the experiment has not been run on this machine — never that it passed.</p>
+      <div id="real-results-out" role="status" aria-live="polite"><p class="small muted">Loading artifacts…</p></div>
+    </div>
     <form id="bench-form" class="bench-form card" aria-busy="false">
       <label>Dataset path (optional) <input id="bench-ds" placeholder="empty = generate from ingested corpus"></label>
       <label>Format <select id="bench-fmt"><option value="">corpus (auto)</option><option>custom</option><option>hotpotqa</option><option>2wiki</option><option>musique</option></select></label>
@@ -240,6 +259,9 @@
   </section>
 </main>
 
+<script src="js/texture.js"></script>
+<script src="js/i18n.js"></script>
+<script src="js/voice.js"></script>
 <script src="js/console.js"></script>
 <script src="js/mandala.js"></script>
 <script>initConsoleMandala && initConsoleMandala();</script>

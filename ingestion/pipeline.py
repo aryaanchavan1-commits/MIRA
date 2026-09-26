@@ -36,11 +36,18 @@ logger = logging.getLogger("mira.pipeline")
 
 class IngestionPipeline:
     def __init__(self, store: SQLiteStore, embeddings: EmbeddingBackend,
-                 llm=None, config: Optional[Dict] = None):
+                 llm=None, config: Optional[Dict] = None,
+                 bulk_mode: bool = False):
         self.store = store
         self.embeddings = embeddings
         self.llm = llm
         self.config = config or {}
+        # bulk_mode: defer per-document vector-index writes and expose the
+        # accumulated frame so a caller can flush vectors ONCE at the end.
+        # Per-doc index load+atomic-save is O(N) I/O per document, which made
+        # bulk ingestion O(N²) overall (~5s/doc at 2.5k nodes).
+        self.bulk_mode = bulk_mode
+        self.bulk_frame = MemoryFrame() if bulk_mode else None
 
     # ------------------------------------------------------------------
     def ingest_file(self, path: str, title: Optional[str] = None) -> Dict[str, Any]:
@@ -286,7 +293,14 @@ class IngestionPipeline:
                 edge.source_id, edge.target_id, edge.relation_type)):
             self.store.add_edge(e.source_id, e.target_id, e.relation_type,
                                 e.weight, e.confidence, e.provenance)
-        self._append_vectors(frame)
+        if self.bulk_mode:
+            # Defer the O(index-size) vector write; accumulate for one flush.
+            for node in frame.nodes.values():
+                self.bulk_frame.add_node(node)
+            for edge in frame.edges:
+                self.bulk_frame.add_edge(edge)
+        else:
+            self._append_vectors(frame)
         self.store.set_document_chunk_count(doc_id, len(chunks))
         logger.info("ingested", extra={
             "document": doc_id, "chunks": len(chunks),
@@ -300,6 +314,15 @@ class IngestionPipeline:
         }
 
     # ------------------------------------------------------------------
+    def flush_bulk_vectors(self) -> int:
+        """Write all vectors accumulated during bulk_mode ingestion exactly once."""
+        if self.bulk_frame is None or not self.bulk_frame.nodes:
+            return 0
+        n = sum(1 for n in self.bulk_frame.nodes.values() if n.embedding is not None)
+        self._append_vectors(self.bulk_frame)
+        self.bulk_frame = MemoryFrame()
+        return n
+
     def _get_or_create_rel_node(self, frame: MemoryFrame, name: str,
                                 doc_id: str) -> MemoryNode:
         key = name.lower()

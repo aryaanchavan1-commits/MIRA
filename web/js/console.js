@@ -193,7 +193,6 @@ chatForm.addEventListener("submit", async (e) => {
     pending.innerHTML = `
       <strong>Answer <span class="muted small">(${esc(d.mode)} · ${esc(amodeTag)})</span></strong>
       <p>${esc(d.answer)}</p>
-      ${d.paths && d.paths.length ? `<div class="path">${d.paths.map(esc).join("<br>")}</div>` : ""}
       <div class="meta"><span>${fmt(m.latency_ms, 0)} ms</span>
         <span>${esc(m.n_memories ?? "—")} memories</span>
         <span>${esc(m.context_tokens ?? "—")} ctx tokens</span>
@@ -207,6 +206,78 @@ chatForm.addEventListener("submit", async (e) => {
     setBusy(chatForm, false); setBusy(chatOutput, false); setPending(chatSubmit, false);
   }
 });
+
+/* ---------- live voice: speak the question, hear the answer ---------- */
+(function initVoice() {
+  const mic = $("chat-mic");
+  const voicebar = $("chat-voicebar");
+  const speakBtn = $("chat-speak");
+  const stopBtn = $("chat-voice-stop");
+  const voiceStatus = $("chat-voice-status");
+  if (!mic || !window.MIRAVoice) return;
+
+  const V = window.MIRAVoice;
+  if (V.supported.stt) {
+    mic.hidden = false;
+    let finalText = "";
+    mic.addEventListener("click", () => {
+      if (V.isListening()) {
+        V.stopListening();
+        return;
+      }
+      finalText = "";
+      mic.setAttribute("aria-pressed", "true");
+      voicebar.hidden = false;
+      voiceStatus.textContent = (window.MIRAI18N && MIRAI18N.t("chat.listening")) || "Listening…";
+      const started = V.startListening({
+        onResult: (text, isFinal) => {
+          $("chat-q").value = text;
+          if (isFinal) finalText = text;
+        },
+        onEnd: (err) => {
+          mic.setAttribute("aria-pressed", "false");
+          voiceStatus.textContent = err ? `mic: ${err}` : "";
+          if (!err && finalText.trim()) chatForm.requestSubmit();
+        },
+      });
+      if (!started) {
+        mic.setAttribute("aria-pressed", "false");
+        voiceStatus.textContent = (window.MIRAI18N && MIRAI18N.t("chat.mic.unsupported")) || "Voice input needs Chrome or Edge";
+      }
+    });
+  }
+
+  /* manual replay + stop; auto-speak stays off until the user opts in once */
+  speakBtn.addEventListener("click", () => {
+    const last = [...chatOutput.querySelectorAll(".bubble p")].reverse()
+      .find(p => p.textContent.length > 40);
+    if (last) V.speak(last.textContent);
+  });
+  stopBtn.addEventListener("click", () => {
+    V.stopSpeaking();
+    V.stopListening();
+    voiceStatus.textContent = "";
+  });
+})();
+
+/* ---------- reveal-on-scroll for landing sections ---------- */
+(function initReveal() {
+  const targets = document.querySelectorAll(".section, .honesty, .hero-inner");
+  if (!targets.length || !("IntersectionObserver" in window) ||
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    return;
+  }
+  targets.forEach(el => el.classList.add("reveal"));
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(en => {
+      if (en.isIntersecting) {
+        en.target.classList.add("in");
+        io.unobserve(en.target);
+      }
+    });
+  }, { threshold: 0.08 });
+  targets.forEach(el => io.observe(el));
+})();
 
 /* ---------- documents ---------- */
 const docList = $("doc-list");
@@ -485,3 +556,53 @@ stratSweep.addEventListener("click", async () => {
 loadOverview();
 loadDocs();
 initStrategyLab();
+
+/* ---------- real-data research artifacts ---------- */
+(async function loadRealResults() {
+  const out = $("real-results-out");
+  if (!out) return;
+  try {
+    const d = await api("/api/research/artifacts");
+    const a = (d && d.artifacts) || {};
+    let html = "";
+    const bench = a.bench_real;
+    if (bench && bench.summary) {
+      const sig = (bench.significance && bench.significance.mrr) || {};
+      const bt = sig.bootstrap || {};
+      html += `<div class="table-wrap" role="region" aria-label="Real benchmark results" tabindex="0"><table class="bench-table"><thead><tr>` +
+        `<th scope="col">system</th><th scope="col">MRR</th><th scope="col">recall@8</th><th scope="col">latency ms</th></tr></thead><tbody>`;
+      for (const [name, s] of Object.entries(bench.summary)) {
+        html += `<tr><th scope="row">${esc(name)}</th><td>${fmt(s.mrr)}</td>` +
+          `<td>${fmt(s.retrieval_recall)}</td><td>${fmt(s.latency_ms, 1)}</td></tr>`;
+      }
+      html += `</tbody></table></div>`;
+      if (typeof bt.mean_diff === "number" && bt.n_pairs > 0) {
+        html += `<p class="small muted">mira vs flat_vector MRR: Δ=${esc(bt.mean_diff)} ` +
+          `95% CI [${esc(bt.ci_low)}, ${esc(bt.ci_high)}], p≈${esc(bt.p_value)} ` +
+          `(n=${esc(bt.n_pairs)} paired questions, 3 seeds)</p>`;
+      }
+    } else {
+      html += `<p class="small muted">Full real-data benchmark: not yet run on this machine. Run <code>scripts/eval_benchmark_real.py</code>.</p>`;
+    }
+    const abl = a.ablation_real;
+    if (abl && abl.table && abl.table.length) {
+      html += `<h3 style="margin-top:1rem">Component ablation (leave-one-out)</h3>` +
+        `<div class="table-wrap" role="region" aria-label="Ablation results" tabindex="0"><table class="bench-table"><thead><tr>` +
+        `<th scope="col">condition</th><th scope="col">MRR</th><th scope="col">recall@8</th><th scope="col">Δ vs full</th></tr></thead><tbody>`;
+      for (const row of abl.table) {
+        html += `<tr><th scope="row">${esc(row.condition)}</th><td>${fmt(row.mrr)}</td>` +
+          `<td>${fmt(row["recall@8"])}</td><td>${row.mrr_delta_vs_full != null ? esc(row.mrr_delta_vs_full) : "—"}</td></tr>`;
+      }
+      html += `</tbody></table></div>`;
+    }
+    const nv = a.neural_validation;
+    if (nv) {
+      html += `<p class="small muted">Learned scorer (document-grouped holdout): hand MRR ${esc(nv.holdout_mrr_hand)} → learned ${esc(nv.holdout_mrr_learned)} — ` +
+        `<strong>${nv.verdict_enable ? "enabled" : "kept disabled"}</strong> per the significance rule.</p>`;
+    }
+    if (!html) html = `<p class="small muted">No artifacts yet — run the eval scripts.</p>`;
+    out.innerHTML = html;
+  } catch (err) {
+    out.innerHTML = `<p class="small status-error" role="alert">Could not load research artifacts: ${esc(err.message || err)}</p>`;
+  }
+})();

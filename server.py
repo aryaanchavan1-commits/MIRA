@@ -7,6 +7,7 @@ web/ is served at "/" so the whole product is one local process. Run:
 """
 from __future__ import annotations
 
+import json
 import logging
 import os
 import threading
@@ -16,7 +17,8 @@ from typing import Any, Dict, Optional
 from fastapi import FastAPI, File, Form, HTTPException, UploadFile
 from fastapi.staticfiles import StaticFiles
 
-from config.auto_config import DATA_DIR, build_context, runtime_summary
+from config.auto_config import (DATA_DIR, PROJECT_ROOT, build_context,  # noqa: F401
+                                runtime_summary)
 from core.affect import AFFECT_DISCLOSURE
 from core.placement import STRATEGIES as PLACEMENT_STRATEGIES
 from core.retrieval import ablation_configs
@@ -495,6 +497,33 @@ def websearch_ingest(payload: Dict[str, Any]) -> Dict[str, Any]:
 
 
 # ---- benchmarks ----
+@app.get("/api/research/artifacts")
+def research_artifacts() -> Dict[str, Any]:
+    """Serve the real-data benchmark artifacts produced by the scripts in
+    scripts/eval_*.py. Missing artifacts are reported honestly as null — the
+    UI shows what has actually been measured, never invented numbers."""
+    out: Dict[str, Any] = {"artifacts": {}}
+    sources = {
+        "bench_real": os.path.join("data_bench", "bench_real_results.json"),
+        "bench_answers": os.path.join("data_bench", "bench_real_answers.json"),
+        "ablation_real": os.path.join("data_bench", "ablation_real_results.json"),
+        "scale_sweep": os.path.join("data_bench", "scale_sweep_results.json"),
+        "neural_validation": os.path.join("experiments", "neural_validation.json"),
+    }
+    for key, rel in sources.items():
+        path = os.path.join(PROJECT_ROOT, rel)
+        if os.path.isfile(path):
+            try:
+                with open(path, "r", encoding="utf-8") as fh:
+                    out["artifacts"][key] = json.load(fh)
+            except (OSError, ValueError):
+                out["artifacts"][key] = None
+        else:
+            out["artifacts"][key] = None
+    out["generated"] = {k: (v is not None) for k, v in out["artifacts"].items()}
+    return out
+
+
 @app.post("/api/benchmark")
 def benchmark(payload: Dict[str, Any]) -> Dict[str, Any]:
     w = ws()
