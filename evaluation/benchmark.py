@@ -110,16 +110,26 @@ def run_system(name: str, retrieve_fn: Callable[[str, np.ndarray], Dict[str, Any
 
 def mira_retrieve_fn(ws, active_components=None, k: int = 8,
                      with_answer: bool = False) -> Callable:
-    """Builds a FRESH retriever per call: no cross-run config caching (a cached
-    retriever silently reused stale weights after config flips) and no stale
-    frame reference after ingestion."""
+    """One AnswerPipeline per sweep-lambda, built lazily on first query and
+    rebuilt only if the workspace swaps its frame or vector store (stale-frame
+    guard). Config is fixed for the lifetime of this fn by construction — every
+    caller creates it inside a single run/request — so per-query rebuilding
+    bought nothing except O(nodes) allocation churn per query, which OOM'd at
+    82k nodes."""
+    state: Dict[str, Any] = {}
+
     def fn(question: str, qvec: np.ndarray) -> Dict[str, Any]:
         from core.answer import AnswerPipeline
         with _workspace_guard(ws):
-            pipe = AnswerPipeline(ws.frame, ws.vs, ws.gs, ws.embeddings,
-                                  llm=ws.llm, config=ws.config,
-                                  doc_titles=ws._doc_titles(),
-                                  operation_lock=getattr(ws, "_lock", None))
+            entry = state.get("pipe")
+            if entry is None or entry[0] is not ws.frame or entry[1] is not ws.vs:
+                pipe = AnswerPipeline(ws.frame, ws.vs, ws.gs, ws.embeddings,
+                                      llm=ws.llm, config=ws.config,
+                                      doc_titles=ws._doc_titles(),
+                                      operation_lock=getattr(ws, "_lock", None))
+                state["pipe"] = (ws.frame, ws.vs, pipe)
+            else:
+                pipe = entry[2]
             res = pipe.retriever.retrieve(question, qvec,
                                           active_components=active_components,
                                           final_k=k)
@@ -138,14 +148,23 @@ def mira_retrieve_fn(ws, active_components=None, k: int = 8,
 def answer_retrieve_fn(ws, active_components=None, k: int = 8) -> Callable:
     """Retrieval + the FULL shared answer stage (compression + LLM), so every
     MIRA ablation is scored with an identical downstream pipeline. Baselines
-    keep their own retrieval-only fns and are compared at retrieval level."""
+    keep their own retrieval-only fns and are compared at retrieval level.
+    Same lazy once-per-fn pipeline reuse as mira_retrieve_fn (OOM at 82k nodes
+    if rebuilt per query)."""
+    state: Dict[str, Any] = {}
+
     def fn(question: str, qvec: np.ndarray) -> Dict[str, Any]:
         from core.answer import AnswerPipeline
         with _workspace_guard(ws):
-            pipe = AnswerPipeline(ws.frame, ws.vs, ws.gs, ws.embeddings,
-                                  llm=ws.llm, config=ws.config,
-                                  doc_titles=ws._doc_titles(),
-                                  operation_lock=getattr(ws, "_lock", None))
+            entry = state.get("pipe")
+            if entry is None or entry[0] is not ws.frame or entry[1] is not ws.vs:
+                pipe = AnswerPipeline(ws.frame, ws.vs, ws.gs, ws.embeddings,
+                                      llm=ws.llm, config=ws.config,
+                                      doc_titles=ws._doc_titles(),
+                                      operation_lock=getattr(ws, "_lock", None))
+                state["pipe"] = (ws.frame, ws.vs, pipe)
+            else:
+                pipe = entry[2]
             ans = pipe.ask(question, active_components=active_components,
                            system_name="bench", query_vec=qvec, final_k=k)
             if hasattr(ans, "selected_evidence_ids"):

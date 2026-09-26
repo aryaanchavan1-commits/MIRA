@@ -520,12 +520,51 @@ class Workspace:
         missing = [n for n in self.frame.nodes.values() if n.embedding is None]
         if not missing:
             return 0
+        # Cold-boot fast path: node vectors aren't persisted in SQLite, so
+        # without hydration every boot re-encodes the whole corpus (82k nodes
+        # ≈ 1h on CPU). Restores vectors from the persisted FAISS index;
+        # falls back to full re-encode when the index doesn't cover exactly
+        # the live node set (guards against cross-corpus index leakage).
+        if self._hydrate_embeddings_from_index():
+            missing = [n for n in self.frame.nodes.values() if n.embedding is None]
+            if not missing:
+                return 0
         texts = [n.concept + " " + (n.summary or n.raw_text[:400]) for n in missing]
         vecs = self.embeddings.encode(texts)
         for n, v in zip(missing, vecs):
             n.embedding = v
         self._rebuild_index()
         return len(missing)
+
+    def _hydrate_embeddings_from_index(self) -> bool:
+        """Attach persisted index vectors to in-memory nodes. True only when
+        the index bijectively covers the live node set."""
+        if not os.path.exists(index_path()):
+            return False
+        try:
+            vs = VectorStore.load(index_path())
+        except Exception as exc:
+            logger.warning("embedding hydration skipped (index load failed: %s)", exc)
+            return False
+        by_id = {}
+        for i, meta in vs.id_meta.items():
+            nid = meta.get("node_id")
+            if nid in self.frame.nodes:
+                by_id[nid] = int(i)
+        if len(by_id) != len(self.frame.nodes):
+            logger.info("index covers %d/%d live nodes — hydration skipped",
+                        len(by_id), len(self.frame.nodes))
+            return False
+        try:
+            for nid, i in by_id.items():
+                node = self.frame.nodes[nid]
+                if node.embedding is None:
+                    node.embedding = np.asarray(vs.index.reconstruct(i))
+        except Exception as exc:
+            logger.warning("embedding hydration failed (%s) — will re-encode", exc)
+            return False
+        logger.info("hydrated %d node embeddings from persisted index", len(by_id))
+        return True
 
     def stats(self) -> Dict[str, Any]:
         with self._get_lock():

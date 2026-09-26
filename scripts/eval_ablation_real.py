@@ -16,11 +16,16 @@ import random
 import sys
 import time
 
+if hasattr(sys.stdout, "reconfigure"):  # cp1252 consoles choke on fancy glyphs
+    sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 import core.workspace as cw  # noqa: E402
+import config.auto_config as ac  # noqa: E402
 cw.DATA_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
                            "data_bench")
+ac.DATA_DIR = cw.DATA_DIR  # ingestion/pipeline reads auto_config.DATA_DIR at call time
 BENCH_DIR = cw.DATA_DIR
 
 from config.auto_config import build_context  # noqa: E402
@@ -37,6 +42,8 @@ def main() -> int:
     ap.add_argument("--n", type=int, default=300)
     ap.add_argument("--seeds", type=int, default=3)
     ap.add_argument("--k", type=int, default=8)
+    ap.add_argument("--resume", action="store_true",
+                    help="continue from ablation_checkpoint.json if present")
     args = ap.parse_args()
 
     with open(BENCH_JSON, "r", encoding="utf-8") as fh:
@@ -60,11 +67,22 @@ def main() -> int:
 
     per_seed = []
     pool = {name: [] for name in conditions}
+    ckpt_path = os.path.join(BENCH_DIR, "ablation_checkpoint.json")
+    done = set()
+    if args.resume and os.path.exists(ckpt_path):
+        with open(ckpt_path, "r", encoding="utf-8") as fh:
+            ck = json.load(fh)
+        per_seed = ck.get("per_seed", [])
+        pool = {n: ck.get("pool", {}).get(n, []) for n in conditions}
+        done = {p["condition"] for p in per_seed}
+        print(f"resuming: {sorted(done)} already done")
     for seed in range(args.seeds):
         rng = random.Random(2000 + seed)
         sub = records if args.n >= len(records) else rng.sample(records, args.n)
         print(f"\n=== seed {seed} ({len(sub)} questions) ===")
         for name, active in conditions.items():
+            if (seed, name) in done:
+                continue
             t0 = time.time()
             res = run_system(name, mira_retrieve_fn(ws, active, k=args.k),
                              ws.embeddings, sub, k=args.k)
@@ -73,6 +91,16 @@ def main() -> int:
             per_seed.append({"seed": seed, "condition": name, **agg})
             print(f"  {name:20s} mrr={agg.get('mrr', 0):.4f} "
                   f"recall={agg.get('retrieval_recall', 0):.4f} ({time.time() - t0:.0f}s)")
+            # incremental checkpoint after each condition (this box has form)
+            with open(os.path.join(BENCH_DIR, "ablation_checkpoint.json"), "w",
+                      encoding="utf-8") as fh:
+                json.dump({"config": {"n": args.n, "seeds": args.seeds, "k": args.k},
+                           "per_seed": per_seed,
+                           "pool": {n: r for n, r in pool.items()}}, fh)
+
+    if not any(r.get("mrr") for rows in pool.values() for r in rows):
+        print("WARNING: all-zero rows — gold ids likely unresolved; aborting before table")
+        return 1
 
     print("\n=== ablation table (mean over seeds; delta vs full with significance) ===")
     table = []
@@ -93,6 +121,8 @@ def main() -> int:
         star = ""
         if "mrr_p" in e and e["mrr_p"] < 0.05:
             star = " *" if e.get("mrr_delta_vs_full", 0) > 0 else " (sig. worse)"
+        if "mrr_delta_vs_full" in e and e["mrr_delta_vs_full"] == 0:
+            star = " (= full)"
         print(f"  {e['condition']:20s} mrr={e['mrr']:.4f} recall={e['recall@8']:.4f}"
               + (f"  d={e.get('mrr_delta_vs_full')}" if "mrr_delta_vs_full" in e else "")
               + star)

@@ -18,8 +18,12 @@ from __future__ import annotations
 
 import json
 import os
+import random
 import sys
 import time
+
+if hasattr(sys.stdout, "reconfigure"):  # cp1252 consoles choke on fancy glyphs
+    sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
@@ -33,7 +37,6 @@ from config.auto_config import build_context  # noqa: E402
 from core.placement import STRATEGIES as PLACEMENT_STRATEGIES  # noqa: E402
 from core.workspace import Workspace  # noqa: E402
 from evaluation.benchmark import mira_retrieve_fn, run_system  # noqa: E402
-from evaluation.datasets import corpus_dataset  # noqa: E402
 
 OUT = os.path.join(_BENCH, "scale_sweep_results.json")
 
@@ -64,23 +67,71 @@ def main() -> int:
     total = len(ws.frame.nodes)
     print(f"scale workspace: {total} nodes, vs={ws.vs is not None}")
 
-    # size ladder: same questions at increasing corpus sizes
+    # size ladder: same probe design at increasing corpus sizes.
+    # Nodes carry CHUNK ids in source_ids; resolve chunk->doc once.
+    chunk_to_doc = {}
+    for d in ws.store.list_documents():
+        for c in ws.store.document_chunks(d["id"]):
+            chunk_to_doc[c["id"]] = d["id"]
+    node_doc = {nid: {chunk_to_doc[c] for c in (n.source_ids or [])
+                      if c in chunk_to_doc}
+                for nid, n in ws.frame.nodes.items()}
+    docs = sorted({d for ds in node_doc.values() for d in ds})
+
+    # probe pool: hub nodes (>=5 neighbors); gold = their graph neighbors.
+    # corpus_dataset self-probes can't discriminate placement — the query node
+    # is a perfect semantic match under every strategy (MRR flatlines at ~1).
+    adj: dict = {}
+    for e in ws.frame.edges:
+        adj.setdefault(e.source_id, set()).add(e.target_id)
+        adj.setdefault(e.target_id, set()).add(e.source_id)
+    pool = [(n.id, sorted(adj[n.id] - {n.id}))
+            for n in ws.frame.nodes.values()
+            if len(adj.get(n.id, ())) >= 5 and (n.concept or "").strip()]
+    print(f"probe pool: {len(pool)} hub nodes (gold = graph neighborhood)")
+
     ladder = []
     for frac in (0.05, 0.15, 0.4, 1.0):
-        n_nodes = int(total * frac)
-        # subset documents until we reach the target scale
-        docs = sorted({sid for n in ws.frame.nodes.values()
-                       for sid in (n.source_ids or []) if sid.startswith("doc_")})
-        keep = docs[:max(1, int(len(docs) * frac))]
-        sub_nodes = {nid: n for nid, n in ws.frame.nodes.items()
-                     if any(sid in keep for sid in (n.source_ids or []))}
-        # probe questions: from the FULL corpus set, fixed count for fairness
-        records = corpus_dataset(ws, limit=40)
+        keep = set(docs[:max(1, int(len(docs) * frac))])
+        # fact nodes of kept docs, plus concept/entity hubs adjacent to >=2
+        # kept facts (concepts have no source_ids; without the closure every
+        # subset loses its hubs and the probe pool empties).
+        fact_ids = {nid for nid, ds in node_doc.items() if ds & keep}
+        sub_ids = set(fact_ids)
+        hub_count: dict = {}
+        for e in ws.frame.edges:
+            a, b = e.source_id, e.target_id
+            a_in, b_in = a in sub_ids, b in sub_ids
+            if a_in != b_in:
+                other = b if a_in else a
+                hub_count[other] = hub_count.get(other, 0) + 1
+        sub_ids |= {nid for nid, c in hub_count.items() if c >= 2}
+        sub_nodes = {nid: ws.frame.nodes[nid] for nid in sub_ids}
+        sub_adj: dict = {}
+        for e in ws.frame.edges:
+            if e.source_id in sub_ids and e.target_id in sub_ids:
+                sub_adj.setdefault(e.source_id, set()).add(e.target_id)
+                sub_adj.setdefault(e.target_id, set()).add(e.source_id)
+        sub_pool = [(nid, sorted(sub_adj[nid] - {nid}))
+                    for nid in sub_ids
+                    if len(sub_adj.get(nid, ())) >= 5
+                    and (ws.frame.nodes[nid].concept or "").strip()]
+        rng = random.Random(1234)
+        rng.shuffle(sub_pool)
+        probes = sub_pool[:40]
+        if len(probes) < 10:
+            print(f"\n=== scale {frac:.0%}: skipped (only {len(probes)} "
+                  f"hub probes in induced subgraph) ===", flush=True)
+            continue
+        records = [{"question": ws.frame.nodes[nid].concept,
+                    "answer": (ws.frame.nodes[nid].summary
+                               or ws.frame.nodes[nid].raw_text or "")[:300],
+                    "supporting_ids": gold}
+                   for nid, gold in probes]
         print(f"\n=== scale {frac:.0%}: {len(keep)} docs / {len(sub_nodes)} nodes "
-              f"(probe: {len(records)} fixed questions) ===", flush=True)
+              f"(probe: {len(records)} hub-neighborhood questions) ===", flush=True)
         t0 = time.time()
         # run sweep against a reduced frame view
-        import copy
         full_frame = ws.frame
         ws.frame = type(full_frame)()
         for nid in sorted(sub_nodes):
@@ -88,12 +139,20 @@ def main() -> int:
         for e in full_frame.edges:
             if e.source_id in sub_nodes and e.target_id in sub_nodes:
                 ws.frame.add_edge(e)
-        ws.gs.build_from(ws.frame)
+        ws.gs.build_from(
+            [ws.frame.nodes[nid].to_row() for nid in sorted(ws.frame.nodes)],
+            [e.to_row() for e in sorted(ws.frame.edges,
+                                        key=lambda x: (x.source_id, x.target_id,
+                                                       x.relation_type))])
         try:
             table = sweep(ws, records, k=8)
         finally:
             ws.frame = full_frame
-            ws.gs.build_from(full_frame)
+            ws.gs.build_from(
+                [full_frame.nodes[nid].to_row() for nid in sorted(full_frame.nodes)],
+                [e.to_row() for e in sorted(full_frame.edges,
+                                            key=lambda x: (x.source_id, x.target_id,
+                                                           x.relation_type))])
         ladder.append({"frac": frac, "n_docs": len(keep),
                        "n_nodes": len(sub_nodes), "n_questions": len(records),
                        "table": table, "seconds": round(time.time() - t0, 1)})

@@ -21,11 +21,16 @@ import random
 import sys
 import time
 
+if hasattr(sys.stdout, "reconfigure"):  # cp1252 consoles choke on fancy glyphs
+    sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 import core.workspace as cw  # noqa: E402
+import config.auto_config as ac  # noqa: E402
 cw.DATA_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
                            "data_bench")
+ac.DATA_DIR = cw.DATA_DIR  # ingestion/pipeline reads auto_config.DATA_DIR at call time
 BENCH_DIR = cw.DATA_DIR
 
 from config.auto_config import build_context  # noqa: E402
@@ -102,6 +107,13 @@ def main() -> int:
                   f"recall@8={agg.get('retrieval_recall', 0):.4f} "
                   f"({time.time() - t0:.0f}s)")
             seed_summaries.append({"seed": seed, "system": name, **agg})
+            # incremental checkpoint after each system×seed (this box has form)
+            with open(os.path.join(OUT_DIR, "bench_real_checkpoint.json"), "w",
+                      encoding="utf-8") as fh:
+                json.dump({"config": {"n": args.n, "seeds": args.seeds, "k": args.k},
+                           "seed_summaries": seed_summaries,
+                           "rows": {"|".join(map(str, key)): v
+                                    for key, v in all_rows.items()}}, fh)
 
     # --- aggregate over seeds ---
     def mean_over_seeds(name, key):
@@ -126,7 +138,7 @@ def main() -> int:
         sig[metric] = {"bootstrap": bt, "wilcoxon": wx}
         print(f"\nsignificance mira_full vs flat_vector [{metric}]:")
         print(f"  paired bootstrap: mean_diff={bt['mean_diff']} "
-              f"95% CI [{bt['ci_low']}, {bt['ci_high']}] p≈{bt['p_value']}")
+              f"95% CI [{bt['ci_low']}, {bt['ci_high']}] p~{bt['p_value']}")
         print(f"  wilcoxon: {wx}")
 
     out = {"config": {"n": args.n, "seeds": args.seeds, "k": args.k,
@@ -142,7 +154,7 @@ def main() -> int:
     # --- optional answer-level run ---
     if args.answers:
         if ctx.llm is None or not ctx.llm.available:
-            print("LLM unavailable — skipping answer-level run")
+            print("LLM unavailable -- skipping answer-level run")
             return 0
         rng = random.Random(77)
         sub = rng.sample(records, min(args.n_answers, len(records)))

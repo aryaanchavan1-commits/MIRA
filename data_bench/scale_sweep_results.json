@@ -1,0 +1,173 @@
+{
+ "n_nodes_total": 82783,
+ "ladder": [
+  {
+   "frac": 0.05,
+   "n_docs": 202,
+   "n_nodes": 658,
+   "n_questions": 40,
+   "table": [
+    {
+     "strategy": "embedding_clusters",
+     "mrr": 0.875,
+     "recall": 0.4778,
+     "latency_ms": 22.7845
+    },
+    {
+     "strategy": "graph_centrality",
+     "mrr": 0.4536,
+     "recall": 0.4912,
+     "latency_ms": 14.989
+    },
+    {
+     "strategy": "hierarchy",
+     "mrr": 0.75,
+     "recall": 0.484,
+     "latency_ms": 49.2392
+    },
+    {
+     "strategy": "temporal",
+     "mrr": 0.4604,
+     "recall": 0.3735,
+     "latency_ms": 20.606
+    },
+    {
+     "strategy": "hybrid_mira",
+     "mrr": 0.5854,
+     "recall": 0.5641,
+     "latency_ms": 10.8
+    }
+   ],
+   "seconds": 15.0,
+   "aware_best_mrr": 0.75,
+   "blind_best_mrr": 0.875,
+   "gap": -0.125
+  },
+  {
+   "frac": 0.15,
+   "n_docs": 606,
+   "n_nodes": 1804,
+   "n_questions": 40,
+   "table": [
+    {
+     "strategy": "embedding_clusters",
+     "mrr": 0.7729,
+     "recall": 0.3878,
+     "latency_ms": 34.6498
+    },
+    {
+     "strategy": "graph_centrality",
+     "mrr": 0.4275,
+     "recall": 0.4188,
+     "latency_ms": 28.0617
+    },
+    {
+     "strategy": "hierarchy",
+     "mrr": 0.6994,
+     "recall": 0.4069,
+     "latency_ms": 97.0588
+    },
+    {
+     "strategy": "temporal",
+     "mrr": 0.4237,
+     "recall": 0.2678,
+     "latency_ms": 41.6695
+    },
+    {
+     "strategy": "hybrid_mira",
+     "mrr": 0.5286,
+     "recall": 0.5304,
+     "latency_ms": 11.6245
+    }
+   ],
+   "seconds": 21.2,
+   "aware_best_mrr": 0.6994,
+   "blind_best_mrr": 0.7729,
+   "gap": -0.0735
+  },
+  {
+   "frac": 0.4,
+   "n_docs": 1617,
+   "n_nodes": 4690,
+   "n_questions": 40,
+   "table": [
+    {
+     "strategy": "embedding_clusters",
+     "mrr": 0.875,
+     "recall": 0.3769,
+     "latency_ms": 70.6965
+    },
+    {
+     "strategy": "graph_centrality",
+     "mrr": 0.4452,
+     "recall": 0.4442,
+     "latency_ms": 59.6957
+    },
+    {
+     "strategy": "hierarchy",
+     "mrr": 0.7396,
+     "recall": 0.4155,
+     "latency_ms": 213.7145
+    },
+    {
+     "strategy": "temporal",
+     "mrr": 0.4917,
+     "recall": 0.253,
+     "latency_ms": 98.276
+    },
+    {
+     "strategy": "hybrid_mira",
+     "mrr": 0.5458,
+     "recall": 0.5257,
+     "latency_ms": 17.722
+    }
+   ],
+   "seconds": 36.1,
+   "aware_best_mrr": 0.7396,
+   "blind_best_mrr": 0.875,
+   "gap": -0.1354
+  },
+  {
+   "frac": 1.0,
+   "n_docs": 4043,
+   "n_nodes": 11886,
+   "n_questions": 40,
+   "table": [
+    {
+     "strategy": "embedding_clusters",
+     "mrr": 0.8119,
+     "recall": 0.3047,
+     "latency_ms": 139.9497
+    },
+    {
+     "strategy": "graph_centrality",
+     "mrr": 0.4612,
+     "recall": 0.3501,
+     "latency_ms": 113.446
+    },
+    {
+     "strategy": "hierarchy",
+     "mrr": 0.7883,
+     "recall": 0.3288,
+     "latency_ms": 445.67
+    },
+    {
+     "strategy": "temporal",
+     "mrr": 0.4909,
+     "recall": 0.2183,
+     "latency_ms": 193.8905
+    },
+    {
+     "strategy": "hybrid_mira",
+     "mrr": 0.6767,
+     "recall": 0.4473,
+     "latency_ms": 19.3525
+    }
+   ],
+   "seconds": 82.2,
+   "aware_best_mrr": 0.7883,
+   "blind_best_mrr": 0.8119,
+   "gap": -0.0236
+  }
+ ]
+}

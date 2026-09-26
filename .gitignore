@@ -92,3 +92,10 @@ models/
 data/
 experiments/rotational_benchmark/
 experiments/01_geometry_ablation/*/
+
+# bench workspace: heavy local artifacts stay out of git; result JSONs are whitelisted
+data_bench/**
+!data_bench/bench_real_results.json
+!data_bench/ablation_real_results.json
+!data_bench/scale_sweep_results.json
+!data_bench/bench_real_answers.json

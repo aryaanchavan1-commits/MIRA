@@ -1,7 +1,8 @@
 # Radial Memory Topologies for Retrieval-Augmented Generation: A Controlled Study of Mandala-Inspired Organization
 
-**Draft v0.1 — results pending experiments. Every number in the results section is
-generated from real runs by `paper/export_results.py`; this draft contains none.**
+**Draft v0.2 — first real-data retrieval benchmark complete (MuSiQue, n=300, 3 seeds).
+Results in §6 are generated from saved runs by `paper/export_results.py --real`; no
+number is hand-typed. Answer-stage experiments remain pending.**
 
 ---
 
@@ -18,7 +19,12 @@ the radial mechanism is one switchable component among nine, each independently
 retrieval under a declared, shared protocol when the answer-stage experiment is
 run; the current default runs are retrieval-only smoke measurements, not
 answer-quality evidence.
-**[Results TBF — populated only from measured runs.]** We release the platform, including
+**[Measured, retrieval-stage only: on 300 MuSiQue answerable 2-hop questions over an
+82,783-node workspace built from 4,043 paragraphs, MIRA reaches MRR 0.702 vs 0.435 for
+flat vector RAG (paired bootstrap ΔMRR +0.267, 95% CI [0.224, 0.311], p≈0.0001;
+Wilcoxon p=7.8e-22). recall@8 is statistically tied (Δ −0.008, CI [−0.031, +0.016]):
+MIRA ranks supporting evidence higher but does not surface more of it at k=8.
+Answer-quality evidence is not yet measured.]** We release the platform, including
 per-component ablation tooling, to support reproducible negative or positive findings.
 
 ---
@@ -234,17 +240,30 @@ invariance and must not be described as a biological grid-cell result.
 
 ---
 
-## 6. Results
+## 6. Results**Measured (retrieval stage):** the canonical result tables are auto-generated in
+[`paper/results_real.md`](results_real.md) from the `data_bench/` artifacts.
+Headline: MRR 0.7016 (mira_full) vs 0.4347 (flat_vector) vs 0.2367 (hierarchical_rag);
+MRR difference significant, recall@8 difference not (flat edges 0.3066 vs 0.2991).
+Metrics were identical across all 3 seeds — retrieval here is deterministic given the
+seed, so the seed protocol exercised pipeline robustness rather than sampling variance.
+Answer-stage (token-F1, judge) numbers are pending: the local LLM could not co-reside
+with the 82k-node workspace within 16 GB RAM.
 
-**[TBF — this section is populated exclusively by `python paper/export_results.py`
-from a saved `study_type: research` manifest. Smoke runs are rejected unless
-`--allow-smoke` is supplied for inspection. No numbers are written by hand.]**
+**Ablation (same 300 questions).** The semantic component is the workhorse
+(removal collapses MRR to 0.4422, Δ+0.259). The structural/radial geometry contributes
+a significant +0.044 MRR — but at a recall cost (recall@8 rises to 0.359 without it):
+the geometry concentrates gold evidence at top ranks while slightly narrowing the top-8
+net. Graph and recency components are micro-contributors (d≈0, bit-identical rankings);
+spreading activation slightly *hurts* MRR while diversifying candidates. The learned
+scorer (Δ-rule) was validated on a document-grouped holdout and **lost** to the hand
+weights (0.633 vs 0.747, p=0.0002) — `retrieval_score.learned` stays off.
 
-Planned tables:
-1. Main table: all systems × {recall, MRR, token-F1, judge, context tokens, latency}
-2. Ablation deltas vs full MIRA, per dataset
-3. Retrieval overlap (Jaccard) between systems, showing *where* components diverge
-4. Latency/token cost of each component
+**Scale sweep (structure-blind vs topology-aware placement).** Against the hub-
+neighborhood probe, structure-blind `embedding_clusters` posts the best MRR at every
+ladder rung (658 → 11,886 nodes), but its recall degrades fastest with scale (0.478 →
+0.305); `hybrid_mira` holds the best recall at every rung (0.564 → 0.447). The
+aware-vs-blind MRR gap does **not** widen with scale (−0.125 → −0.024). Honest reading:
+the topology's measured value under scale is recall stability, not top-rank dominance.
 
 ---
 
@@ -265,13 +284,15 @@ Planned tables:
 
 ## 8. Conclusion
 
-**[TBF after valid runs.]** The platform is runnable, but the honest state of
-this research is *hypothesis stated, instrument built, results pending*. The
-current smoke harness does not establish answer quality, multi-hop reasoning, or
-causal component benefits.
-A negative result — radial organization adding nothing beyond graph+hierarchy — is a
-publishable outcome of this instrument, and the harness is built to make that outcome
-easy to demonstrate.
+**Retrieval-stage verdict (measured): the radial topology ranks supporting evidence
+substantially higher than flat retrieval on real multi-hop questions (MRR +0.267,
+p<0.001), while top-8 coverage is statistically indistinguishable — an honest, narrower
+claim than "MIRA retrieves better". Which components carry the effect is now measured
+(§6): semantic similarity dominates, the structural geometry adds a real but smaller
++0.044 MRR at a recall cost, and graph/recency are micro-contributors. At scale the
+topology's value is recall stability rather than a widening ranking gap, and the
+learned scorer stays disabled on holdout evidence. Remaining open questions: answer
+quality under a fixed local LLM, and replication beyond one machine and one model family.**
 
 ---
 

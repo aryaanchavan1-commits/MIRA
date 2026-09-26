@@ -36,6 +36,9 @@ def paired_bootstrap(rows_a: List[dict], rows_b: List[dict], metric: str,
         return {"n_pairs": n, "mean_diff": 0.0, "ci_low": 0.0, "ci_high": 0.0,
                 "p_value": 1.0}
     diffs = [x - y for x, y in zip(a, b)]
+    if not any(diffs):  # all-zero diffs: no evidence of difference, not max
+        return {"n_pairs": n, "mean_diff": 0.0, "ci_low": 0.0, "ci_high": 0.0,
+                "p_value": 1.0}
     rng = random.Random(seed)
     boots = []
     for _ in range(n_boot):

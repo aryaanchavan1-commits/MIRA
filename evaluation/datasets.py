@@ -27,6 +27,19 @@ def _read_json(path: str) -> Any:
         return json.load(fh)
 
 
+def _chunk_node_index(ws) -> dict:
+    """chunk_id -> [node_id] map, built once per workspace (was rescanning all
+    nodes on every call — 82k nodes x 300 questions dominated bench startup)."""
+    idx = getattr(ws, "_chunk_node_index", None)
+    if idx is None:
+        idx = {}
+        for n in ws.frame.nodes.values():
+            for cid in n.source_ids:
+                idx.setdefault(cid, []).append(n.id)
+        ws._chunk_node_index = idx
+    return idx
+
+
 def resolve_titles_to_ids(ws, titles: List[str]) -> List[str]:
     """Map document/evidence titles to node ids via the workspace.
 
@@ -35,17 +48,25 @@ def resolve_titles_to_ids(ws, titles: List[str]) -> List[str]:
     """
     if ws is None or not titles:
         return []
-    title_lower = {t.lower() for t in titles}
-    doc_ids = []
+
+    def _canon(t: str) -> str:
+        # gold titles are bare ("Green (Steve Hillage album)"); doc titles may be
+        # namespaced ("MuSiQue: Green (Steve Hillage album)") — strip "X: " prefix.
+        t = (t or "").lower()
+        return t.split(": ", 1)[1] if ": " in t else t
+
+    title_lower = {_canon(t) for t in titles}
     chunk_ids: set = set()
     for d in ws.store.list_documents():
-        if d["title"].lower() in title_lower or os.path.basename(
-                d.get("source_path") or "").lower() in title_lower:
-            doc_ids.append(d["id"])
+        if _canon(d["title"]) in title_lower or _canon(os.path.basename(
+                d.get("source_path") or "")).lower() in title_lower:
             chunk_ids |= {c["id"] for c in ws.store.document_chunks(d["id"])}
     if not chunk_ids:
         return []
-    ids = [n.id for n in ws.frame.nodes.values() if set(n.source_ids) & chunk_ids]
+    idx = _chunk_node_index(ws)
+    ids = []
+    for cid in chunk_ids:
+        ids.extend(idx.get(cid, ()))
     return ids
 
 

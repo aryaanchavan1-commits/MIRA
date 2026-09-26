@@ -1,0 +1,42 @@
+{
+ "seed": 42,
+ "holdout_frac": 0.3,
+ "n_docs": 12,
+ "n_train_docs": 9,
+ "n_holdout_docs": 3,
+ "n_train_pairs": 2432,
+ "n_holdout_pairs": 288,
+ "hand_weights": {
+  "semantic": 0.35,
+  "structural": 0.15,
+  "radial": 0.15,
+  "graph": 0.15,
+  "importance": 0.08,
+  "confidence": 0.07,
+  "recency": 0.03,
+  "path": 0.02,
+  "activation": 0.12
+ },
+ "learned_weights": {
+  "semantic": 0.1593787976397035,
+  "structural": 0.0,
+  "radial": 0.31189887821150675,
+  "graph": 0.0,
+  "importance": 0.4296955170085398,
+  "confidence": 0.0,
+  "recency": 0.03320183453441665,
+  "path": 0.0,
+  "activation": 0.06582497260583323
+ },
+ "holdout_mrr_hand": 0.7474,
+ "holdout_mrr_learned": 0.6326,
+ "significance": {
+  "n_pairs": 12,
+  "mean_diff": -0.11482,
+  "ci_low": -0.23095,
+  "ci_high": -0.02261,
+  "p_value": 0.0002
+ },
+ "verdict_enable": false,
+ "epochs": 80
+}

@@ -24,6 +24,11 @@ import os
 import random
 import sys
 
+import numpy as np  # noqa: E402
+
+if hasattr(sys.stdout, "reconfigure"):  # cp1252 consoles choke on fancy glyphs
+    sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from config.auto_config import build_context  # noqa: E402
@@ -35,12 +40,15 @@ from scripts.eval_significance import paired_bootstrap  # noqa: E402
 OUT = "experiments/neural_validation.json"
 
 
-def build_pairs(ws, retriever, docs, topk):
-    """(features, label, question, node_id) rows for the given documents."""
+def build_pairs(ws, retriever, docs, topk, node_docs=None):
+    """(features, label, question, node_id) rows for the given documents.
+    node_docs: node_id -> set(doc_id) (nodes.source_ids are CHUNK ids, so the
+    caller resolves chunk->doc once and passes the map down)."""
+    node_docs = node_docs or {}
     X, y, meta = [], [], []
     for doc_id in docs:
         nodes = [n for n in ws.frame.nodes.values()
-                 if doc_id in (n.source_ids or [])]
+                 if doc_id in node_docs.get(n.id, ())]
         for n in nodes:
             q = n.concept or (n.summary or "")[:80]
             if not q or not q.strip():
@@ -69,8 +77,19 @@ def main() -> int:
     retriever = MIRARetriever(ws.frame, ws.vs, ws.gs, ws.config)
     hand_weights = dict(retriever.weights)
 
-    docs = sorted({sid for n in ws.frame.nodes.values()
-                   for sid in (n.source_ids or []) if sid.startswith("doc_")})
+    # nodes.source_ids are chunk ids; resolve chunk->doc once for grouping.
+    # Nodes sourced from >1 document are excluded (they would leak across the
+    # train/holdout split).
+    chunk_to_doc = {}
+    for d in ws.store.list_documents():
+        for c in ws.store.document_chunks(d["id"]):
+            chunk_to_doc[c["id"]] = d["id"]
+    node_docs = {}
+    for n in ws.frame.nodes.values():
+        ds = {chunk_to_doc[c] for c in (n.source_ids or []) if c in chunk_to_doc}
+        if len(ds) == 1:
+            node_docs[n.id] = ds
+    docs = sorted({d for ds in node_docs.values() for d in ds})
     rng = random.Random(args.seed)
     rng.shuffle(docs)
     n_hold = max(2, int(len(docs) * args.holdout_frac))
@@ -78,21 +97,21 @@ def main() -> int:
     print(f"{len(docs)} documents -> {len(train_docs)} train / {len(hold_docs)} holdout (grouped by document)")
 
     print("building training pairs…", flush=True)
-    X_tr, y_tr, _ = build_pairs(ws, retriever, train_docs, args.topk)
+    X_tr, y_tr, _ = build_pairs(ws, retriever, train_docs, args.topk, node_docs)
     print(f"train: {len(y_tr)} pairs ({int(sum(y_tr))} pos)")
     if len(y_tr) < 50 or sum(y_tr) < 5:
         print("insufficient training signal")
         return 1
 
     scorer = DeltaRuleScorer(epochs=args.epochs)
-    hist = scorer.fit(X_tr, y_tr)
+    hist = scorer.fit(np.asarray(X_tr, dtype="float64"), np.asarray(y_tr, dtype="float64"))
     learned_weights = scorer.weights()
     print(f"trained: loss {hist['first_loss']} -> {hist['final_loss']}")
     for f in FEATURES:
         print(f"  {f:12s} hand={hand_weights.get(f, 0):.3f} learned={learned_weights.get(f, 0):.3f}")
 
     print("building holdout pairs…", flush=True)
-    X_ho, y_ho, meta_ho = build_pairs(ws, retriever, hold_docs, args.topk)
+    X_ho, y_ho, meta_ho = build_pairs(ws, retriever, hold_docs, args.topk, node_docs)
     print(f"holdout: {len(y_ho)} pairs ({int(sum(y_ho))} pos)")
 
     # Per-question MRR under both weightings, on holdout candidates only.
@@ -119,7 +138,10 @@ def main() -> int:
     print(f"\nholdout MRR  hand={mean(rows_hand):.4f}  learned={mean(rows_learned):.4f}  "
           f"delta={bt['mean_diff']}  CI95={bt['ci_low']}..{bt['ci_high']}  p≈{bt['p_value']}")
 
-    verdict = (bt["mean_diff"] > 0 and bt["ci_low"] > 0) or bt["p_value"] < 0.05
+    # Enable ONLY on a significant holdout WIN: mean diff positive AND the CI
+    # excludes zero. The bootstrap p is two-sided — a significant loss must not
+    # enable the scorer (that inversion previously printed ENABLE on a loss).
+    verdict = bt["mean_diff"] > 0 and bt["ci_low"] > 0
     print(f"decision: {'ENABLE learned: true' if verdict else 'KEEP learned: false'} "
           "(config is only flipped when the holdout win is significant)")
 

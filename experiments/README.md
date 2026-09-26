@@ -15,6 +15,10 @@ Do not hand-edit generated tables.
 | `EXP-0004` | historical web run | Corpus-generated retrieval run; not publication evidence |
 | `01_geometry_ablation/` | reproducible wrappers | Structured, degree-preserving shuffled, and square-lattice conditions |
 | `rotational_benchmark/` | generated output | Invariance benchmark output; ignored by Git because it can be regenerated |
+| `../data_bench/bench_real_results.json` | real-data research | MuSiQue 300q × 3 seeds retrieval benchmark (mira vs flat vs hierarchical, bootstrap significance); exported to `paper/results_real.md` via `paper/export_results.py --real` |
+| `../data_bench/ablation_real_results.json` | real-data research | Leave-one-out ablation over all 9 retrieval components on the same questions |
+| `../data_bench/scale_sweep_results.json` | real-data research | Aware-vs-blind placement strategy gap across a corpus size ladder (0.05×→1×) |
+| `../experiments/neural_validation.json` | real-data research | Doc-grouped holdout verdict for the learned scorer; config never auto-flips |
 
 The older `EXP-*` manifests predate the current schema/provenance fields. They remain
 useful as transparent run records, but they must not be presented as held-out research

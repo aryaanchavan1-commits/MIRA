@@ -378,6 +378,30 @@ Compatible external datasets (LoCoMo, LongMemEval, HotpotQA, 2WikiMultiHopQA,
 MuSiQue) can be converted to the record format locally — nothing is
 downloaded without confirmation.
 
+### 13.1 Real-data benchmark (measured)
+
+`scripts/build_musique_bench.py` builds a 300-question answerable 2-hop MuSiQue set;
+`scripts/build_bench_workspace.py` ingests its 4,043 paragraphs into an isolated
+`data_bench/` workspace (82,783 nodes, bulk FAISS build); `scripts/eval_benchmark_real.py`
+runs mira_full vs flat_vector vs hierarchical_rag (3 seeds, k=8) with paired-bootstrap
+significance (`scripts/eval_significance.py`). Latest measured outcome
+(`paper/results_real.md`, auto-generated — never hand-edited):
+
+| system | MRR | recall@8 |
+|---|---|---|
+| mira_full | 0.7016 | 0.2991 |
+| flat_vector | 0.4347 | 0.3066 |
+| hierarchical_rag | 0.2367 | 0.0806 |
+
+MRR difference significant (Δ +0.267, 95% CI [0.224, 0.311], p<0.001); recall@8
+tied (p≈0.52) — MIRA ranks supporting evidence higher without surfacing more of it.
+Retrieval is deterministic given the seed (all 3 seeds identical). Answer-stage
+runs need an LLM co-resident with the 82k-node workspace and are pending on 16 GB RAM.
+Companions: `scripts/eval_ablation_real.py` (leave-one-out over all 9 components),
+`scripts/eval_scale_strategies.py` (aware-vs-blind placement across a size ladder),
+`scripts/eval_neural_validated.py` (doc-grouped holdout for the learned scorer;
+config never auto-flips).
+
 ## 14. Reproducibility
 
 CLI research runs record the command, dataset hash, resolved configuration,
