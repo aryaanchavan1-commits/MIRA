@@ -73,6 +73,9 @@ Thumbs.db
 # Hugging Face cache
 .hf_cache/
 
+# Scratch space (diagnostics, download/server logs)
+.tmp/
+
 # Pip cache
 .pipcache/
 
