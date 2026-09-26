@@ -14,7 +14,7 @@ from __future__ import annotations
 
 import logging
 import re
-from typing import Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Optional, Tuple
 
 import numpy as np
 
@@ -65,7 +65,7 @@ def place(frame: MemoryFrame, strategy: str,
     the same radial metric so ablations differ only in ring/sector)."""
     if strategy not in STRATEGIES:
         strategy = "hybrid_mira"
-    nodes = list(frame.nodes.values())
+    nodes = sorted(frame.nodes.values(), key=lambda node: node.id)
     if not nodes:
         return {"strategy": strategy, "rings": {}, "sectors": []}
 
@@ -90,7 +90,7 @@ def place(frame: MemoryFrame, strategy: str,
 
 # --- §12: radial distance ---------------------------------------------------
 def _radial_weights(config: Dict) -> Dict[str, float]:
-    w = (config.get("radial", {}) or {})
+    w = (config.get("radial", {}) or config.get("radial_distance", {}) or {})
     return {
         "alpha_semantic": float(w.get("alpha_semantic", 0.4)),
         "beta_hierarchy": float(w.get("beta_hierarchy", 0.2)),
@@ -105,7 +105,10 @@ def _apply_radial(frame: MemoryFrame, config: Dict) -> None:
     0 = core, 1 = rim. Every node gets a value."""
     from storage.graph_store import GraphStore
     ws_w = _radial_weights(config)
-    embedded = [n for n in frame.nodes.values() if n.embedding is not None]
+    embedded = sorted(
+        (n for n in frame.nodes.values() if n.embedding is not None),
+        key=lambda node: node.id,
+    )
     if not embedded:
         return
     X = np.stack([n.embedding for n in embedded])
@@ -149,7 +152,7 @@ def _place_embedding(frame: MemoryFrame, nodes: List[MemoryNode]) -> Dict:
         bands = np.quantile(dists, [0.2, 0.4, 0.6, 0.8])
         names = {}
         for ci in range(k):
-            members = [n for n, l in zip(embedded, labels) if l == ci]
+            members = [n for n, label in zip(embedded, labels) if label == ci]
             names[ci] = _token_name(members, f"sector_{ci}")
         for n, lab, d in zip(embedded, labels, dists):
             ring = int(np.sum(d > bands))
@@ -250,10 +253,10 @@ def _place_hybrid(frame: MemoryFrame, nodes: List[MemoryNode]) -> Dict:
         X = np.stack([n.embedding for n in embedded])
         k = max(2, min(8, int(len(nodes) ** 0.5)))
         labs = _kmeans(X, k)
-        for n, l in zip(embedded, labs):
-            labels[n.id] = int(l)
-        for ci in set(labs):
-            members = [n for n, l in zip(embedded, labs) if l == ci]
+        for n, label in zip(embedded, labs):
+            labels[n.id] = int(label)
+        for ci in sorted(set(int(label) for label in labs)):
+            members = [n for n, label in zip(embedded, labs) if label == ci]
             # name by the most central member's salient token, not raw counts
             members.sort(key=lambda m: -cent.get(m.id, 0.0))
             names[int(ci)] = _token_name(members[:5], f"sector_{ci}")

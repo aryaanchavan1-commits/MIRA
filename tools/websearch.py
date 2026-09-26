@@ -5,16 +5,18 @@ Priority (resolved at call time, never at import):
   2. opencli      CLI (jackwener/OpenCLI)        if installed on PATH
   3. stdlib urllib fetch of the DuckDuckGo HTML endpoint — zero dependencies
 
-Consent gates (spec §40/§41): no call leaves the machine unless
-`web_search.enabled: true` in config or the caller explicitly passes
-allow_web=True. Results are plain data (title/url/snippet) — never executed.
+Consent gates (spec §40/§41): no call leaves the machine unless offline mode
+is explicitly disabled and either `web_search.enabled: true` is set or the
+caller passes the literal boolean allow_web=True. Results are plain data
+(title/url/snippet) — never executed.
 """
 from __future__ import annotations
 
 import html as html_mod
+import ipaddress
 import logging
-import os
 import re
+import socket
 import shutil
 import subprocess
 import urllib.parse
@@ -26,6 +28,45 @@ logger = logging.getLogger("mira.websearch")
 _UA = ("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
        "(KHTML, like Gecko) Chrome/126.0 Safari/537.36")
 _TIMEOUT = 15
+
+
+def is_public_http_url(url: str) -> bool:
+    """Reject local, private, malformed, and non-HTTP fetch targets."""
+    try:
+        parsed = urllib.parse.urlparse(str(url or ""))
+        if parsed.scheme.lower() not in {"http", "https"} or not parsed.hostname:
+            return False
+        if parsed.username or parsed.password:
+            return False
+        port = parsed.port
+        if port is None:
+            port = 443 if parsed.scheme.lower() == "https" else 80
+        if port not in {80, 443}:
+            return False
+        addresses = socket.getaddrinfo(
+            parsed.hostname, port, type=socket.SOCK_STREAM)
+        if not addresses:
+            return False
+        for info in addresses:
+            address = ipaddress.ip_address(str(info[4][0]).split("%", 1)[0])
+            if (address.is_private or address.is_loopback or address.is_link_local
+                    or address.is_reserved or address.is_multicast
+                    or address.is_unspecified):
+                return False
+        return True
+    except (OSError, TypeError, ValueError):
+        return False
+
+
+def validate_public_url(url: str) -> None:
+    if not is_public_http_url(url):
+        raise ValueError("URL must be a public http(s) address")
+
+
+class _SafeRedirectHandler(urllib.request.HTTPRedirectHandler):
+    def redirect_request(self, req, fp, code, msg, headers, newurl):
+        validate_public_url(newurl)
+        return super().redirect_request(req, fp, code, msg, headers, newurl)
 
 
 def _run_cli(cmd: List[str], query: str) -> Optional[str]:
@@ -83,7 +124,8 @@ def _duckduckgo(query: str) -> List[Dict[str, Any]]:
     url = ("https://html.duckduckgo.com/html/?" +
            urllib.parse.urlencode({"q": query}))
     req = urllib.request.Request(url, headers={"User-Agent": _UA})
-    with urllib.request.urlopen(req, timeout=_TIMEOUT) as r:
+    opener = urllib.request.build_opener(_SafeRedirectHandler())
+    with opener.open(req, timeout=_TIMEOUT) as r:
         page = r.read().decode("utf-8", "replace")
     out: List[Dict[str, Any]] = []
     for m in re.finditer(
@@ -94,7 +136,9 @@ def _duckduckgo(query: str) -> List[Dict[str, Any]]:
         # DDG wraps URLs: /l/?uddg=<encoded>
         q = urllib.parse.parse_qs(urllib.parse.urlparse(href).query)
         href = q.get("uddg", [href])[0]
-        strip = lambda s: html_mod.unescape(re.sub(r"<[^>]+>", "", s)).strip()
+        def strip(value: str) -> str:
+            return html_mod.unescape(re.sub(r"<[^>]+>", "", value)).strip()
+
         out.append({"title": strip(title), "url": href, "snippet": strip(snip)[:400]})
         if len(out) >= 8:
             break
@@ -111,17 +155,44 @@ def available_backends() -> List[str]:
     return b
 
 
+def web_allowed(config: Optional[Dict[str, Any]] = None,
+                allow_web: Optional[bool] = None) -> bool:
+    """Return whether a network call is permitted at this boundary.
+
+    ``allow_web`` is deliberately strict: only the literal boolean ``True``
+    grants per-request consent.  An explicit ``offline: true`` setting always
+    wins; callers must opt out of offline mode in configuration before any
+    search or page fetch can leave the process.
+    """
+    cfg = config if isinstance(config, dict) else {}
+    # Offline is fail-closed even when an older config omitted the key.
+    offline = cfg.get("offline", True)
+    if type(offline) is not bool:
+        raise ValueError("offline must be boolean")
+    web_cfg = cfg.get("web_search", {}) or {}
+    if not isinstance(web_cfg, dict):
+        raise ValueError("web_search must be an object")
+    enabled = web_cfg.get("enabled", False)
+    if type(enabled) is not bool:
+        raise ValueError("web_search.enabled must be boolean")
+    if allow_web is not None and type(allow_web) is not bool:
+        raise ValueError("allow_web must be boolean")
+    if offline is True:
+        return False
+    if allow_web is not None:
+        return allow_web is True
+    return enabled is True
+
+
 def search(query: str, config: Optional[Dict[str, Any]] = None,
-           allow_web: bool = False, backend: str = "auto") -> Dict[str, Any]:
+           allow_web: Optional[bool] = None, backend: str = "auto") -> Dict[str, Any]:
     """Search the live web. Consent-gated; never raises on backend failure.
 
     Returns {backend, results, note}. Results are plain data.
     """
-    cfg = (config or {}).get("web_search", {}) or {}
-    if not (allow_web or cfg.get("enabled")):
+    if not web_allowed(config, allow_web):
         return {"backend": None, "results": [],
-                "note": "web search disabled (config: web_search.enabled: true "
-                        "to enable — every search leaves the machine)"}
+                "note": "web search disabled (explicit consent and offline=false required)"}
     q = (query or "").strip()
     if not q:
         return {"backend": None, "results": [], "note": "empty query"}
@@ -147,11 +218,16 @@ def search(query: str, config: Optional[Dict[str, Any]] = None,
             "note": "no backend returned results (network down or blocked)"}
 
 
-def fetch_page_text(url: str, max_chars: int = 20000) -> str:
-    """Fetch a result page as plain text for ingestion (untrusted data:
-    stripped to text, never executed, hard size cap)."""
+def fetch_page_text(url: str, max_chars: int = 20000,
+                    config: Optional[Dict[str, Any]] = None,
+                    allow_web: Optional[bool] = None) -> str:
+    """Fetch a public result page as plain text after consent validation."""
+    if not web_allowed(config, allow_web):
+        raise ValueError("web fetch requires offline=false and explicit consent")
+    validate_public_url(url)
     req = urllib.request.Request(url, headers={"User-Agent": _UA})
-    with urllib.request.urlopen(req, timeout=_TIMEOUT) as r:
+    opener = urllib.request.build_opener(_SafeRedirectHandler())
+    with opener.open(req, timeout=_TIMEOUT) as r:
         ctype = r.headers.get("Content-Type", "")
         if "html" not in ctype and "text" not in ctype and "json" not in ctype:
             raise ValueError(f"unsupported content type: {ctype}")

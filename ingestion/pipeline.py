@@ -12,12 +12,13 @@ from __future__ import annotations
 import hashlib
 import logging
 import os
+import shutil
+import uuid
 from typing import Any, Dict, List, Optional, Tuple
 
 import numpy as np
 
 from core.memory import MemoryEdge, MemoryFrame, MemoryNode, MemoryType
-from core.types import stable_hash
 from ingestion.chunker import chunk_pages
 from ingestion.extractors import (
     extract_concepts_fallback,
@@ -31,9 +32,6 @@ from storage.sqlite_store import SQLiteStore
 from storage.vector_store import VectorStore
 
 logger = logging.getLogger("mira.pipeline")
-
-# loaders module keeps the actual format parsers; spec name retained here
-from ingestion import loaders as _loaders  # noqa: F401
 
 
 class IngestionPipeline:
@@ -51,8 +49,12 @@ class IngestionPipeline:
             sha = hashlib.sha256(fh.read()).hexdigest()
         existing = self.store.find_document_by_sha(sha)
         if existing:
-            return {"document_id": existing["id"], "deduplicated": True,
-                    "n_chunks": existing.get("n_chunks", 0)}
+            if int(existing.get("n_chunks") or 0) > 0:
+                return {"document_id": existing["id"], "deduplicated": True,
+                        "n_chunks": existing.get("n_chunks", 0)}
+            # A prior process may have died after creating the document row
+            # but before finalizing it.  Treat that row as recoverable debris.
+            self._rollback_document(existing["id"])
 
         pages = load_any(path)
         if not pages:
@@ -63,20 +65,116 @@ class IngestionPipeline:
             file_type=os.path.splitext(path)[1].lower(), sha256=sha,
             n_chars=sum(len(t) for _, t in pages),
         )
-        return self._ingest_pages(pages, doc_id, title)
+        try:
+            return self._ingest_pages(pages, doc_id, title)
+        except Exception:
+            self._rollback_document(doc_id)
+            raise
 
-    def ingest_text(self, text: str, title: str = "pasted text") -> Dict[str, Any]:
+    def ingest_text(self, text: str, title: str = "pasted text",
+                    source_path: str = "(inline)") -> Dict[str, Any]:
         sha = hashlib.sha256(sanitize(text).encode("utf-8")).hexdigest()
         existing = self.store.find_document_by_sha(sha)
         if existing:
-            return {"document_id": existing["id"], "deduplicated": True,
-                    "n_chunks": existing.get("n_chunks", 0)}
-        doc_id = self.store.add_document(title=title, source_path="(inline)",
+            if int(existing.get("n_chunks") or 0) > 0:
+                return {"document_id": existing["id"], "deduplicated": True,
+                        "n_chunks": existing.get("n_chunks", 0)}
+            # A prior process may have died after creating the document row
+            # but before finalizing it.  Treat that row as recoverable debris.
+            self._rollback_document(existing["id"])
+        metadata = {"source_url": source_path} if source_path.startswith(
+            ("http://", "https://")) else {}
+        doc_id = self.store.add_document(title=title, source_path=source_path,
                                          file_type="txt", sha256=sha,
-                                         n_chars=len(text))
-        return self._ingest_pages([(1, sanitize(text))], doc_id, title)
+                                         n_chars=len(text), meta=metadata)
+        try:
+            return self._ingest_pages([(1, sanitize(text))], doc_id, title)
+        except Exception:
+            self._rollback_document(doc_id)
+            raise
 
     # ------------------------------------------------------------------
+    def _encode(self, texts: List[str], show_progress: bool = False) -> np.ndarray:
+        """Validate encoder output before any staged rows are published."""
+        texts = list(texts)
+        vectors = self.embeddings.encode(texts, show_progress=show_progress)
+        try:
+            array = np.asarray(vectors, dtype="float32")
+        except (TypeError, ValueError, OverflowError) as exc:
+            raise RuntimeError("embedding encoder returned an invalid shape") from exc
+        if array.ndim == 1 and len(texts) == 1:
+            array = array.reshape(1, -1)
+        if (array.ndim != 2 or array.shape[0] != len(texts)
+                or array.shape[1] == 0 or not np.isfinite(array).all()):
+            raise RuntimeError("embedding encoder returned an invalid vector batch")
+        return array
+
+    @staticmethod
+    def _delete_staged_rows(conn, document_id: str) -> None:
+        """Delete rows owned by one document, including chunk-only nodes."""
+        chunk_rows = conn.execute(
+            "SELECT id FROM chunks WHERE document_id=?", (document_id,)
+        ).fetchall()
+        for row in chunk_rows:
+            pattern = f'%"{str(row[0])}"%'
+            conn.execute(
+                "DELETE FROM node_history WHERE node_id IN "
+                "(SELECT id FROM nodes WHERE source_ids LIKE ?)",
+                (pattern,),
+            )
+            conn.execute(
+                "DELETE FROM edges WHERE source_id IN "
+                "(SELECT id FROM nodes WHERE source_ids LIKE ?) OR target_id IN "
+                "(SELECT id FROM nodes WHERE source_ids LIKE ?)",
+                (pattern, pattern),
+            )
+            conn.execute("DELETE FROM nodes WHERE source_ids LIKE ?", (pattern,))
+        owner_pattern = f'%"{document_id}"%'
+        conn.execute(
+            "DELETE FROM node_history WHERE node_id IN "
+            "(SELECT id FROM nodes WHERE metadata LIKE ?)",
+            (owner_pattern,),
+        )
+        conn.execute(
+            "DELETE FROM edges WHERE source_id IN "
+            "(SELECT id FROM nodes WHERE metadata LIKE ?) OR target_id IN "
+            "(SELECT id FROM nodes WHERE metadata LIKE ?)",
+            (owner_pattern, owner_pattern),
+        )
+        conn.execute("DELETE FROM nodes WHERE metadata LIKE ?", (owner_pattern,))
+        conn.execute("DELETE FROM chunks WHERE document_id=?", (document_id,))
+        conn.execute("DELETE FROM documents WHERE id=?", (document_id,))
+
+    def _rollback_document(self, document_id: str) -> None:
+        """Remove every staged row owned by a failed ingestion."""
+        try:
+            cleanup = getattr(self.store, "delete_document_cascade", None)
+            if callable(cleanup):
+                cleanup(document_id)
+                checker = getattr(self.store, "get_document", None)
+                if callable(checker) and checker(document_id):
+                    raise RuntimeError("document rollback left a document row")
+                return
+            # Compatibility for small test doubles that expose the original
+            # store API only.
+            with self.store.tx() as conn:
+                self._delete_staged_rows(conn, document_id)
+            return
+        except Exception as exc:
+            logger.exception("failed to roll back document %s: %s", document_id, exc)
+
+        # A failed cleanup must not silently leave a half-ingested document.
+        # Retry the narrow SQL deletion path used by lightweight stores; if it
+        # also fails, surface the rollback failure rather than hiding data loss.
+        try:
+            with self.store.tx() as conn:
+                self._delete_staged_rows(conn, document_id)
+            checker = getattr(self.store, "get_document", None)
+            if callable(checker) and checker(document_id):
+                raise RuntimeError("document rollback left a document row")
+        except Exception as exc:
+            raise RuntimeError("ingestion rollback failed") from exc
+
     def _ingest_pages(self, pages: List[Tuple[int, str]], doc_id: str,
                       title: str) -> Dict[str, Any]:
         chunks = chunk_pages(pages, chunk_size=int(self.config.get("chunk_size", 800)),
@@ -153,9 +251,9 @@ class IngestionPipeline:
             frame.add_node(node)
 
         # embed everything in one batch
-        all_nodes = list(frame.nodes.values())
+        all_nodes = sorted(frame.nodes.values(), key=lambda node: node.id)
         texts = [n.concept + " " + (n.summary or n.raw_text[:400]) for n in all_nodes]
-        vecs = self.embeddings.encode(texts, show_progress=False)
+        vecs = self._encode(texts, show_progress=False)
         for n, v in zip(all_nodes, vecs):
             n.embedding = v
 
@@ -182,13 +280,13 @@ class IngestionPipeline:
               config=self.config)
 
         # persist nodes, edges, vectors
-        for n in frame.nodes.values():
+        for n in sorted(frame.nodes.values(), key=lambda node: node.id):
             self.store.upsert_node({**n.to_row(), "_action": "create"})
-        for e in frame.edges:
+        for e in sorted(frame.edges, key=lambda edge: (
+                edge.source_id, edge.target_id, edge.relation_type)):
             self.store.add_edge(e.source_id, e.target_id, e.relation_type,
                                 e.weight, e.confidence, e.provenance)
         self._append_vectors(frame)
-
         self.store.set_document_chunk_count(doc_id, len(chunks))
         logger.info("ingested", extra={
             "document": doc_id, "chunks": len(chunks),
@@ -211,12 +309,19 @@ class IngestionPipeline:
             node = MemoryNode(concept=key, memory_type=MemoryType.ENTITY,
                               confidence=0.5, source_ids=[],
                               metadata={"document_id": doc_id})
-            node.embedding = self.embeddings.encode([key])[0]
+            node.embedding = self._encode([key])[0]
             frame.add_node(node)
         return node
 
     def _append_vectors(self, frame: MemoryFrame) -> None:
-        """Append new node vectors to the persisted FAISS index."""
+        """Append vectors through a temporary pair of index files.
+
+        A failed encode/placement/persistence must not leave a half-written
+        FAISS file paired with an old metadata file.  The workspace also
+        reloads after rollback, but staging here protects direct pipeline users
+        and makes the on-disk replacement crash-safe as far as the filesystem
+        permits.
+        """
         from config.auto_config import DATA_DIR
         idx_dir = os.path.join(DATA_DIR, "indexes")
         os.makedirs(idx_dir, exist_ok=True)
@@ -234,4 +339,43 @@ class IngestionPipeline:
             vs = VectorStore(dim=dim, persist_path=path)
         vs.add(np.stack([n.embedding for n in nodes]),
                [{"node_id": n.id} for n in nodes])
-        vs.save()
+        token = uuid.uuid4().hex
+        temp_path = f"{path}.{token}.tmp"
+        backup_path = f"{path}.{token}.bak"
+        meta_path = path + ".meta.json"
+        temp_meta = temp_path + ".meta.json"
+        backup_meta = backup_path + ".meta.json"
+        original_persist = vs.persist_path
+        had_index = os.path.exists(path)
+        had_meta = os.path.exists(meta_path)
+        try:
+            if had_index:
+                shutil.copy2(path, backup_path)
+            if had_meta:
+                shutil.copy2(meta_path, backup_meta)
+            vs.persist_path = temp_path
+            vs.save()
+            os.replace(temp_path, path)
+            os.replace(temp_meta, meta_path)
+        except Exception:
+            # Restore both members of the index pair if either replacement
+            # failed; never leave a new binary paired with old metadata.
+            try:
+                if had_index:
+                    os.replace(backup_path, path)
+                elif os.path.exists(path):
+                    os.remove(path)
+                if had_meta:
+                    os.replace(backup_meta, meta_path)
+                elif os.path.exists(meta_path):
+                    os.remove(meta_path)
+            except Exception:
+                logger.exception("failed to restore vector index after append failure")
+            raise
+        finally:
+            vs.persist_path = original_persist
+            for temp_file in (temp_path, temp_meta, backup_path, backup_meta):
+                try:
+                    os.remove(temp_file)
+                except FileNotFoundError:
+                    pass

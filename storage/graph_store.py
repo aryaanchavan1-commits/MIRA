@@ -8,7 +8,7 @@ convenience of centrality computations.
 from __future__ import annotations
 
 import logging
-from typing import Any, Dict, List, Optional, Set, Tuple
+from typing import Any, Dict, List, Optional, Set
 
 import networkx as nx
 
@@ -28,23 +28,37 @@ class GraphStore:
                  provenance: Optional[List[str]] = None) -> None:
         if source_id == target_id:
             return
-        # multi-relations collapse to max-weight edge; relation types kept in attrs
+        provenance = list(provenance or [])
+        # networkx.Graph has one undirected edge per pair. Keep all relation
+        # labels, but make the selected (strongest) relation authoritative for
+        # confidence and provenance as well as weight.
         if self.g.has_edge(source_id, target_id):
             cur = self.g[source_id][target_id]
-            cur["weight"] = max(cur.get("weight", 1.0), weight)
-            cur.setdefault("relations", set()).add(relation_type)
+            current_weight = float(cur.get("weight", 1.0))
+            current_confidence = float(cur.get("confidence", 0.0))
+            relations = set(cur.get("relations") or {"related"})
+            relations.add(relation_type)
+            cur["relations"] = relations
+            cur["weight"] = max(current_weight, float(weight))
+            if (float(weight), float(confidence)) > (current_weight, current_confidence):
+                cur["relation_type"] = relation_type
+                cur["confidence"] = confidence
+                cur["provenance"] = provenance
         else:
             self.g.add_edge(source_id, target_id, weight=weight,
+                            relation_type=relation_type,
                             relations={relation_type},
                             confidence=confidence,
-                            provenance=provenance or [])
+                            provenance=provenance)
 
     def build_from(self, nodes: List[Dict], edges: List[Dict]) -> None:
         self.g.clear()
-        for n in nodes:
+        for n in sorted(nodes, key=lambda item: str(item.get("id", ""))):
             self.add_node(n["id"], ring=n.get("ring"), sector=n.get("sector"),
                           memory_type=n.get("memory_type"))
-        for e in edges:
+        for e in sorted(edges, key=lambda item: (
+                str(item.get("source_id", "")), str(item.get("target_id", "")),
+                str(item.get("relation_type", "")))):
             self.add_edge(e["source_id"], e["target_id"],
                           relation_type=e.get("relation_type", "related"),
                           weight=e.get("weight", 1.0),
@@ -102,10 +116,14 @@ class GraphStore:
         out: List[Dict] = []
         for u, v, d in self.g.edges(node_id, data=True):
             out.append({"source_id": u, "target_id": v,
-                        "relation_type": sorted(d.get("relations", {"related"}))[0],
+                        "relation_type": d.get("relation_type")
+                        or sorted(d.get("relations", {"related"}))[0],
                         "weight": d.get("weight", 1.0),
-                        "confidence": d.get("confidence", 0.5)})
-        return out
+                        "confidence": d.get("confidence", 0.5),
+                        "provenance": list(d.get("provenance") or [])})
+        return sorted(out, key=lambda item: (
+            str(item["source_id"]), str(item["target_id"]),
+            str(item["relation_type"])))
 
     # ---- persistence ----
     def save(self, path: str) -> None:

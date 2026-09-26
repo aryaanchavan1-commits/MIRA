@@ -35,7 +35,7 @@ measuring *no benefit*.
 ### Where to go
 
 - **Documents** — ingest PDF/TXT/MD/JSON/CSV/DOCX into memory
-- **Chat** — ask questions with auditable retrieval paths and sources
+- **Chat** — ask questions with auditable grounded paths and sources; fallbacks are labeled
 - **Mandala** — inspect the radial topology
 - **Research Lab** — compare ablation sets on one query
 - **Benchmarks** — run baseline vs MIRA comparisons, export results

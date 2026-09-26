@@ -9,8 +9,6 @@ import re
 import time
 from typing import List
 
-import numpy as np
-
 from baselines.vector_rag import BaselineResult
 from core.memory import MemoryFrame
 
@@ -22,37 +20,37 @@ class HierarchicalRAG:
         self.frame = frame
         self._index = {n.id: n for n in frame.nodes.values()}
 
-    def retrieve(self, query_vec: np.ndarray, k: int = 8) -> BaselineResult:
+    def retrieve(self, query: str, k: int = 8) -> BaselineResult:
         t0 = time.perf_counter()
-        qtokens = set(re.findall(r"[a-z0-9]{3,}", (query_vec if isinstance(query_vec, str)
-                                                   else "").lower()))
-        # coarse level: ring 0-1 concepts, token overlap
+        qtokens = set(re.findall(r"[a-z0-9]{3,}", (query or "").lower()))
         scored = []
         for n in self.frame.nodes.values():
             if n.ring in (0, 1):
                 toks = set(re.findall(r"[a-z0-9]{3,}",
                                       (n.concept + " " + n.summary).lower()))
-                if qtokens & toks:
-                    scored.append((n.id, len(qtokens & toks)))
-        scored.sort(key=lambda kv: -kv[1])
+                overlap = qtokens & toks
+                if overlap:
+                    scored.append((n.id, len(overlap)))
+        scored.sort(key=lambda item: (-item[1], item[0]))
         out_ids: List[str] = []
         for pid, _ in scored[:3]:
             out_ids.append(pid)
-            parent = self._index[pid]
-            for cid in parent.children[:k]:
+            children = sorted(self.frame.children_of(pid))
+            for cid in children[:k]:
                 if cid in self._index:
                     out_ids.append(cid)
-                    for gcid in self._index[cid].children[:2]:
-                        if gcid in self._index:
-                            out_ids.append(gcid)
-        # fall back to embedding on low token overlap handled by caller (vector)
-        res = BaselineResult(query="", system=self.system)
+                    grandchildren = sorted(self.frame.children_of(cid))
+                    out_ids.extend(gcid for gcid in grandchildren[:2]
+                                   if gcid in self._index)
+        res = BaselineResult(query=query, system=self.system)
         seen = set()
-        for nid in out_ids[:k]:
-            if nid in seen:
+        for nid in out_ids:
+            if nid in seen or nid not in self._index:
                 continue
             seen.add(nid)
             res.items.append(self._index[nid])
             res.scores.append(1.0 / (1 + len(res.items)))
+            if len(res.items) >= k:
+                break
         res.latency_ms = round((time.perf_counter() - t0) * 1000, 2)
         return res

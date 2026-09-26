@@ -9,25 +9,33 @@ from __future__ import annotations
 
 import logging
 import os
-import shutil
 import threading
-from typing import Any, Dict, List, Optional
+import uuid
+from typing import Any, Dict, Optional
 
 from fastapi import FastAPI, File, Form, HTTPException, UploadFile
-from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
+
+from config.auto_config import DATA_DIR, build_context, runtime_summary
+from core.affect import AFFECT_DISCLOSURE
+from core.placement import STRATEGIES as PLACEMENT_STRATEGIES
+from core.retrieval import ablation_configs
+from core.workspace import Workspace
+from tools.websearch import (
+    available_backends,
+    fetch_page_text,
+    search as web_search_fn,
+    web_allowed,
+)
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("mira.server")
-
-from config.auto_config import DATA_DIR, build_context, runtime_summary
-from core.workspace import Workspace
 
 app = FastAPI(title="MIRA", docs_url="/api/docs")
 
 _ctx = build_context()
 _ws: Optional[Workspace] = None
-_ws_lock = threading.Lock()  # uvicorn serves sync handlers from a threadpool
+_ws_lock = threading.RLock()  # uvicorn serves sync handlers from a threadpool
 
 
 def ws() -> Workspace:
@@ -38,6 +46,44 @@ def ws() -> Workspace:
                 _ws = Workspace(embeddings=_ctx.embeddings, llm=_ctx.llm,
                                 config=_ctx.cfg)
     return _ws
+
+
+def _payload_bool(payload: Dict[str, Any], key: str, default=None):
+    """Read an optional consent flag without accepting truthy strings/numbers."""
+    if key not in payload:
+        return default
+    value = payload.get(key)
+    if type(value) is not bool:
+        raise HTTPException(400, f"{key} must be boolean")
+    return value
+
+
+def _payload_text(payload: Dict[str, Any], key: str, max_length: int,
+                  required: bool = False) -> str:
+    value = payload.get(key, "")
+    if not isinstance(value, str):
+        raise HTTPException(400, f"{key} must be a string")
+    value = value.strip()
+    if required and not value:
+        raise HTTPException(400, f"{key} required")
+    if len(value) > max_length:
+        raise HTTPException(400, f"{key} is too long")
+    return value
+
+
+def _payload_int(payload: Dict[str, Any], key: str, default: int,
+                 minimum: int, maximum: int) -> int:
+    value = payload.get(key, default)
+    if type(value) is not int:
+        raise HTTPException(400, f"{key} must be an integer")
+    if not minimum <= value <= maximum:
+        raise HTTPException(400, f"{key} must be between {minimum} and {maximum}")
+    return value
+
+
+_MAX_UPLOAD_BYTES = 32 * 1024 * 1024
+_WEB_BACKENDS = {"auto", "agent-reach", "opencli", "duckduckgo"}
+_DATASET_FORMATS = {"custom", "hotpotqa", "2wiki", "musique", "corpus"}
 
 
 WEB_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "web")
@@ -58,23 +104,22 @@ def _warmup() -> None:
 
 @app.get("/api/system")
 def system() -> Dict[str, Any]:
-    s = ws().stats()
-    out = runtime_summary(_ctx)
-    out["workspace"] = s
-    out["node_count"] = len(ws().frame.nodes)
+    w = ws()
+    with w.lock:
+        s = w.stats()
+        out = runtime_summary(_ctx)
+        out["workspace"] = s
+        out["node_count"] = len(w.frame.nodes)
     return out
 
 
 # ---- chat ----
-from core.retrieval import ablation_configs
-
-
 @app.post("/api/chat")
 def chat(payload: Dict[str, Any]) -> Dict[str, Any]:
-    q = (payload.get("question") or "").strip()
-    if not q:
-        raise HTTPException(400, "question required")
+    q = _payload_text(payload, "question", 4000, required=True)
     comp = payload.get("components")
+    if comp is not None and not isinstance(comp, str):
+        raise HTTPException(400, "components must be a string")
     if comp == "all":
         comp = None
     elif comp is not None:
@@ -82,40 +127,114 @@ def chat(payload: Dict[str, Any]) -> Dict[str, Any]:
         if comp not in allowed:
             raise HTTPException(400, f"unknown ablation set {comp!r}")
         comp = ablation_configs()[comp]
+    allow_web = _payload_bool(payload, "allow_web")
     try:
-        ans = ws().ask(q, active_components=comp, system_name="web",
-                       allow_web=payload.get("allow_web"))
+        w = ws()
+        with w.lock:
+            ans = w.ask(q, active_components=comp, system_name="web",
+                        allow_web=allow_web)
     except ValueError as exc:  # bad component names from API callers
         raise HTTPException(400, str(exc))
     return {
         "answer": ans.text, "mode": ans.mode,
         "agent_mode": getattr(ans, "agent_mode", "memory"),
         "memories": ans.memories,
+        "selected_evidence_ids": list(getattr(ans, "selected_evidence_ids", [])),
         "paths": ans.path_labels, "sources": ans.sources,
+        "source_refs": list(getattr(ans, "source_refs", [])),
         "metrics": ans.metrics, "note": ans.confidence_note,
+        "affect_snapshot": dict(getattr(ans, "affect_snapshot", {})),
+        "affect": dict(getattr(ans, "affect_snapshot", {})),
     }
+
+
+# ---- simulated affect (algorithmic bookkeeping only) ----
+def _affect_response() -> Dict[str, Any]:
+    w = ws()
+    with w.lock:
+        state = w.affect
+        snapshot = dict(state.snapshot())
+        snapshot["disclosure"] = AFFECT_DISCLOSURE
+        return snapshot
+
+
+@app.get("/api/affect")
+def affect_state() -> Dict[str, Any]:
+    return _affect_response()
+
+
+def _apply_affect_feedback(payload: Dict[str, Any]) -> Dict[str, Any]:
+    """Apply bounded user-supplied deltas; never infer affect from text."""
+    if not isinstance(payload, dict) or not payload:
+        raise HTTPException(400, "feedback object required")
+    wrapper_keys = {"feedback", "update"}
+    wrappers = wrapper_keys & set(payload)
+    if len(wrappers) > 1:
+        raise HTTPException(400, "provide only one of feedback or update")
+    if wrappers:
+        unknown_outer = sorted(set(payload) - wrapper_keys)
+        if unknown_outer:
+            raise HTTPException(400, f"unknown affect feedback field(s): {', '.join(unknown_outer)}")
+        raw = payload.get("feedback", payload.get("update"))
+    else:
+        raw = payload
+    if not isinstance(raw, dict) or not raw:
+        raise HTTPException(400, "feedback object required")
+    allowed = {"valence", "arousal", "confidence", "stress", "label", "reason"}
+    unknown = sorted(set(raw) - allowed)
+    if unknown:
+        raise HTTPException(400, f"unknown affect feedback field(s): {', '.join(unknown)}")
+    w = ws()
+    with w.lock:
+        try:
+            w.affect.apply_feedback(**raw)
+        except (TypeError, ValueError) as exc:
+            raise HTTPException(400, str(exc)) from exc
+        return _affect_response()
+
+
+@app.post("/api/affect/feedback")
+def affect_feedback(payload: Dict[str, Any]) -> Dict[str, Any]:
+    return _apply_affect_feedback(payload)
+
+
+# Accept the short form too; the original chat/document endpoints remain unchanged.
+@app.post("/api/affect")
+def affect_update(payload: Dict[str, Any]) -> Dict[str, Any]:
+    return _apply_affect_feedback(payload)
 
 
 # ---- mandala ----
 @app.get("/api/mandala")
 def mandala() -> Dict[str, Any]:
-    frame = ws().frame
-    nodes = [{
-        "id": n.id, "concept": n.concept, "type": n.memory_type.value,
-        "ring": n.ring, "sector": n.sector,
-        "radial": n.radial_distance, "importance": round(n.importance, 3),
-        "confidence": round(n.confidence, 3), "summary": (n.summary or "")[:200],
-        "n_sources": len(n.source_ids),
-    } for n in frame.nodes.values()]
-    edges = [{"s": e.source_id, "t": e.target_id, "r": e.relation_type,
-              "w": e.weight} for e in frame.edges]
-    return {"nodes": nodes, "edges": edges,
-            "max_rings": (_ctx.cfg.get("topology", {}) or {}).get("max_rings", 5)}
+    w = ws()
+    with w.lock:
+        frame = w.frame
+        nodes = [{
+            "id": n.id, "concept": n.concept, "type": n.memory_type.value,
+            "ring": n.ring, "sector": n.sector,
+            "radial": n.radial_distance, "importance": round(n.importance, 3),
+            "confidence": round(n.confidence, 3), "summary": (n.summary or "")[:200],
+            "n_sources": len(n.source_ids),
+        } for n in sorted(frame.nodes.values(), key=lambda node: node.id)]
+        edges = [{"s": e.source_id, "t": e.target_id, "r": e.relation_type,
+                  "w": e.weight} for e in frame.edges]
+        topology = w.config.get("topology", {}) or {}
+        if not isinstance(topology, dict):
+            topology = {}
+        return {"nodes": nodes, "edges": edges,
+                "max_rings": topology.get("max_rings", 5)}
 
 
 @app.get("/api/node/{node_id}")
 def node_detail(node_id: str) -> Dict[str, Any]:
-    frame = ws().frame
+    with ws().lock:
+        return _node_detail(node_id)
+
+
+def _node_detail(node_id: str) -> Dict[str, Any]:
+    w = ws()
+    frame = w.frame
     if node_id not in frame.nodes:
         raise HTTPException(404, "node not found")
     n = frame.nodes[node_id]
@@ -147,42 +266,94 @@ def node_detail(node_id: str) -> Dict[str, Any]:
 # ---- documents ----
 @app.get("/api/documents")
 def documents() -> Dict[str, Any]:
-    return {"documents": ws().store.list_documents()}
+    w = ws()
+    with w.lock:
+        return {"documents": w.store.list_documents()}
 
 
 @app.post("/api/documents")
 def upload_document(file: UploadFile = File(...), title: str = Form("")) -> Dict[str, Any]:
-    ext = os.path.splitext(file.filename or "")[1].lower()
+    filename = os.path.basename(file.filename or "")
+    if not filename:
+        raise HTTPException(400, "file name required")
+    ext = os.path.splitext(filename)[1].lower()
     if ext not in {".pdf", ".txt", ".md", ".json", ".csv", ".docx"}:
         raise HTTPException(400, f"unsupported file type {ext!r}")
-    dest = os.path.join(DATA_DIR, "uploads", os.path.basename(file.filename))
-    with open(dest, "wb") as fh:
-        shutil.copyfileobj(file.file, fh)
+    if len(title or "") > 300:
+        raise HTTPException(400, "title is too long")
+    upload_dir = os.path.join(DATA_DIR, "uploads", uuid.uuid4().hex)
+    os.makedirs(upload_dir, exist_ok=True)
+    dest = os.path.join(upload_dir, filename)
+    written = 0
     try:
-        stats = ws().ingest_file(dest, title=title or file.filename)
+        with open(dest, "wb") as fh:
+            while True:
+                chunk = file.file.read(1024 * 1024)
+                if not chunk:
+                    break
+                written += len(chunk)
+                if written > _MAX_UPLOAD_BYTES:
+                    raise HTTPException(413, "file exceeds 32 MB limit")
+                fh.write(chunk)
+    except HTTPException:
+        try:
+            os.remove(dest)
+            os.rmdir(upload_dir)
+        except FileNotFoundError:
+            pass
+        raise
+    try:
+        w = ws()
+        with w.lock:
+            stats = w.ingest_file(dest, title=title or filename)
     except ValueError as exc:
-        raise HTTPException(400, str(exc))
+        try:
+            os.remove(dest)
+            os.rmdir(upload_dir)
+        except FileNotFoundError:
+            pass
+        raise HTTPException(400, str(exc)) from exc
+    except Exception as exc:
+        try:
+            os.remove(dest)
+            os.rmdir(upload_dir)
+        except FileNotFoundError:
+            pass
+        raise HTTPException(500, "document ingestion failed") from exc
     return stats
 
 
 @app.delete("/api/documents/{document_id}")
 def delete_document(document_id: str) -> Dict[str, Any]:
-    removed = ws().delete_document(document_id)
+    w = ws()
+    with w.lock:
+        removed = w.delete_document(document_id)
     return {"deleted": document_id, "nodes_removed": removed}
 
 
 # ---- research lab ----
 @app.post("/api/lab")
 def lab(payload: Dict[str, Any]) -> Dict[str, Any]:
-    q = (payload.get("question") or "").strip()
-    sets = payload.get("sets") or ["full_mira", "vector_only", "graph_only", "radial_only"]
-    k = int(payload.get("k", 8))
-    if not q:
-        raise HTTPException(400, "question required")
     w = ws()
+    with w.lock:
+        return _lab(payload, w)
+
+
+def _lab(payload: Dict[str, Any], w: Workspace) -> Dict[str, Any]:
+    q = _payload_text(payload, "question", 4000, required=True)
+    raw_sets = payload.get("sets") or ["full_mira", "vector_only", "graph_only", "radial_only"]
+    if not isinstance(raw_sets, list) or not all(isinstance(name, str) for name in raw_sets):
+        raise HTTPException(400, "sets must be a list of strings")
+    sets = raw_sets[:20]
+    valid_sets = set(ablation_configs())
+    unknown_sets = sorted(set(sets) - valid_sets)
+    if unknown_sets:
+        raise HTTPException(400, f"unknown ablation set(s): {', '.join(unknown_sets)}")
+    k = _payload_int(payload, "k", 8, 1, 50)
     from core.answer import AnswerPipeline
     pipe = AnswerPipeline(w.frame, w.vs, w.gs, w.embeddings, llm=w.llm,
-                          config=w.config, doc_titles=w._doc_titles())
+                          config=w.config, doc_titles=w._doc_titles(),
+                          operation_lock=w.lock)
     retriever = pipe.retriever
     qvec = w.embeddings.encode([q])[0]
     out = {}
@@ -205,14 +376,15 @@ def lab(payload: Dict[str, Any]) -> Dict[str, Any]:
 
 
 # ---- placement strategy lab (§11) ----
-from core.placement import STRATEGIES as PLACEMENT_STRATEGIES
-
-
 @app.get("/api/strategies")
 def strategies_list() -> Dict[str, Any]:
-    return {"strategies": list(PLACEMENT_STRATEGIES),
-            "current": (_ctx.cfg.get("topology", {}) or {})
-                       .get("placement_strategy", "hybrid_mira")}
+    w = ws()
+    with w.lock:
+        topology = w.config.get("topology", {}) or {}
+        if not isinstance(topology, dict):
+            topology = {}
+        return {"strategies": list(PLACEMENT_STRATEGIES),
+                "current": topology.get("placement_strategy", "hybrid_mira")}
 
 
 @app.post("/api/strategies/{name}/apply")
@@ -220,7 +392,14 @@ def strategies_apply(name: str) -> Dict[str, Any]:
     if name not in PLACEMENT_STRATEGIES:
         raise HTTPException(400, f"unknown strategy {name!r}; "
                                  f"choose from {list(PLACEMENT_STRATEGIES)}")
-    info = ws().replace_all(strategy=name)
+    w = ws()
+    with w.lock:
+        info = w.replace_all(strategy=name)
+        topology = w.config.setdefault("topology", {})
+        if not isinstance(topology, dict):
+            topology = {}
+            w.config["topology"] = topology
+        topology["placement_strategy"] = name
     return {"applied": name, "info": info}
 
 
@@ -231,78 +410,126 @@ def strategies_sweep() -> Dict[str, Any]:
     from evaluation.datasets import corpus_dataset
     from evaluation.report import comparison_table
     w = ws()
-    current = (_ctx.cfg.get("topology", {}) or {})
-    if isinstance(current, dict):
-        current = current.get("placement_strategy", "hybrid_mira")
-    records = corpus_dataset(w, limit=25)
-    if not records:
-        raise HTTPException(400, "ingest documents first")
-    from evaluation.benchmark import mira_retrieve_fn, run_system
-    table, best_name, best_mrr = [], current, -1.0
-    for name in PLACEMENT_STRATEGIES:
-        w.replace_all(strategy=name)
-        res = run_system("full_mira", mira_retrieve_fn(w, active_components=None, k=8),
-                         w.embeddings, records, k=8)
-        row = comparison_table({"full_mira": res})
-        mrr = row[0].get("mrr") or 0.0
-        if mrr > best_mrr:
-            best_name, best_mrr = name, mrr
-        table.append({"system": name, **{k: row[0].get(k) for k in
-                      ("retrieval_recall", "mrr", "latency_ms")}})
-    w.replace_all(strategy=current)  # restore the user's default
+    with w.lock:
+        topology = w.config.get("topology", {}) or {}
+        raw_current = (topology.get("placement_strategy")
+                       if isinstance(topology, dict) else None)
+        current = (raw_current if isinstance(raw_current, str)
+                   and raw_current in PLACEMENT_STRATEGIES else "hybrid_mira")
+        table, best_name, best_mrr = [], current, -1.0
+        try:
+            records = corpus_dataset(w, limit=25)
+            if not records:
+                raise HTTPException(400, "ingest documents first")
+            from evaluation.benchmark import mira_retrieve_fn, run_system
+            for name in PLACEMENT_STRATEGIES:
+                w.replace_all(strategy=name)
+                res = run_system(
+                    "full_mira", mira_retrieve_fn(w, active_components=None, k=8),
+                    w.embeddings, records, k=8,
+                )
+                row = comparison_table({"full_mira": res})
+                mrr = row[0].get("mrr") or 0.0
+                if mrr > best_mrr:
+                    best_name, best_mrr = name, mrr
+                table.append({"system": name, **{k: row[0].get(k) for k in
+                              ("retrieval_recall", "mrr", "latency_ms")}})
+        finally:
+            # A failed benchmark must not leave the workspace in the last
+            # experimental strategy.  replace_all also restores live config.
+            w.replace_all(strategy=current)
     return {"table": table, "best": best_name, "restored": current}
 
 
 # ---- live web search (consent-gated, spec §40/§41) ----
-from tools.websearch import available_backends, fetch_page_text, search as web_search_fn
-
-
 @app.get("/api/websearch/status")
 def websearch_status() -> Dict[str, Any]:
-    return {"backends": available_backends(),
-            "enabled": bool((_ctx.cfg.get("web_search", {}) or {}).get("enabled"))}
+    try:
+        enabled = web_allowed(_ctx.cfg, None)
+    except ValueError as exc:
+        raise HTTPException(400, str(exc)) from exc
+    return {"backends": available_backends(), "enabled": enabled}
 
 
 @app.post("/api/websearch")
 def websearch(payload: Dict[str, Any]) -> Dict[str, Any]:
-    q = (payload.get("query") or "").strip()
-    if not q:
-        raise HTTPException(400, "query required")
-    # explicit user action in this request counts as consent
-    out = web_search_fn(q, _ctx.cfg, allow_web=True,
-                        backend=payload.get("backend", "auto"))
-    return out
+    q = _payload_text(payload, "query", 2000, required=True)
+    backend = payload.get("backend", "auto")
+    if not isinstance(backend, str) or backend not in _WEB_BACKENDS:
+        raise HTTPException(400, f"backend must be one of {sorted(_WEB_BACKENDS)}")
+    allow_web = _payload_bool(payload, "allow_web", None)
+    try:
+        allowed = web_allowed(_ctx.cfg, allow_web)
+    except ValueError as exc:
+        raise HTTPException(400, str(exc)) from exc
+    if not allowed:
+        return {"backend": None, "results": [],
+                "note": "web search disabled (explicit consent and offline=false required)"}
+    return web_search_fn(q, _ctx.cfg, allow_web=True, backend=backend)
 
 
 @app.post("/api/websearch/ingest")
 def websearch_ingest(payload: Dict[str, Any]) -> Dict[str, Any]:
     """Fetch a search result page and turn it into mandala memories with
     URL provenance. Text is treated as untrusted data (spec §41)."""
-    url = (payload.get("url") or "").strip()
-    if not url.startswith(("http://", "https://")):
-        raise HTTPException(400, "valid http(s) url required")
+    url = _payload_text(payload, "url", 2048, required=True)
+    title = _payload_text(payload, "title", 300)
+    allow_web = _payload_bool(payload, "allow_web", None)
     try:
-        text = fetch_page_text(url, max_chars=20000)
+        allowed = web_allowed(_ctx.cfg, allow_web)
+    except ValueError as exc:
+        raise HTTPException(400, str(exc)) from exc
+    if not allowed:
+        raise HTTPException(403, "web access disabled in offline mode or without consent")
+    try:
+        text = fetch_page_text(url, max_chars=20000,
+                               config=_ctx.cfg, allow_web=allowed)
     except Exception as exc:
         raise HTTPException(502, f"fetch failed: {exc}")
     if len(text) < 200:
         raise HTTPException(422, "page yielded too little text to ingest")
-    stats = ws().ingest_text(text, title=payload.get("title") or url)
+    w = ws()
+    with w.lock:
+        stats = w.ingest_text(text, title=title or url, source_path=url)
     return {"ingested": stats, "url": url, "chars": len(text)}
 
 
 # ---- benchmarks ----
 @app.post("/api/benchmark")
 def benchmark(payload: Dict[str, Any]) -> Dict[str, Any]:
-    dataset_path = payload.get("dataset_path") or ""
-    fmt = payload.get("format", "custom")
-    limit = int(payload.get("limit", 20))
-    k = int(payload.get("k", 8))
-    with_judge = bool(payload.get("judge", False))
-    save = bool(payload.get("save", True))
-    if dataset_path and not os.path.exists(dataset_path):
-        raise HTTPException(400, f"dataset not found: {dataset_path}")
     w = ws()
+    with w.lock:
+        return _benchmark(payload, w)
+
+
+def _safe_dataset_path(value: str) -> str:
+    if not value:
+        return ""
+    root = os.path.realpath(os.path.join(DATA_DIR, "datasets"))
+    candidate = os.path.realpath(value)
+    try:
+        inside = os.path.commonpath((root, candidate)) == root
+    except ValueError:
+        inside = False
+    if not inside:
+        raise HTTPException(400, "dataset_path must be inside data/datasets")
+    if not os.path.isfile(candidate):
+        raise HTTPException(400, f"dataset not found: {value}")
+    return candidate
+
+
+def _benchmark(payload: Dict[str, Any], w: Workspace) -> Dict[str, Any]:
+    dataset_path = _safe_dataset_path(
+        _payload_text(payload, "dataset_path", 1024))
+    fmt = payload.get("format", "custom")
+    if not isinstance(fmt, str) or fmt not in _DATASET_FORMATS:
+        raise HTTPException(400, f"format must be one of {sorted(_DATASET_FORMATS)}")
+    limit = _payload_int(payload, "limit", 20, 1, 500)
+    k = _payload_int(payload, "k", 8, 1, 50)
+    with_judge = _payload_bool(payload, "judge", False)
+    save = _payload_bool(payload, "save", True)
+    include_baselines = _payload_bool(payload, "baselines", True)
+    include_ablations = _payload_bool(payload, "ablations", True)
     from evaluation.datasets import corpus_dataset, load_any
     if dataset_path:
         records = load_any(dataset_path, fmt, ws=w, limit=limit)
@@ -315,8 +542,8 @@ def benchmark(payload: Dict[str, Any]) -> Dict[str, Any]:
     from evaluation.ablation import run_all_systems
     from evaluation.benchmark import answer_retrieve_fn, run_system
     results = run_all_systems(w, records, k=k,
-                              include_baselines=bool(payload.get("baselines", True)),
-                              include_ablations=bool(payload.get("ablations", True)))
+                              include_baselines=include_baselines,
+                              include_ablations=include_ablations)
     judge_summary = None
     if with_judge and _ctx.has_llm:
         ans_res = run_system("full_mira_answered", answer_retrieve_fn(w, k=k),
@@ -329,8 +556,9 @@ def benchmark(payload: Dict[str, Any]) -> Dict[str, Any]:
     exp_id = None
     if save:
         from evaluation.report import save_experiment
+        name = _payload_text(payload, "name", 120) or "web-run"
         exp_id = save_experiment(
-            payload.get("name", "web-run"),
+            name,
             {"dataset": dataset_path or "<corpus-generated>", "format": fmt,
              "k": k, "limit": limit},
             results, store=w.store, hw=_ctx.hw)
@@ -341,9 +569,11 @@ def benchmark(payload: Dict[str, Any]) -> Dict[str, Any]:
 
 @app.get("/api/experiments")
 def experiments() -> Dict[str, Any]:
-    exps = ws().store.list_experiments()
-    return {"experiments": [{"id": e["id"], "name": e["name"],
-                             "created_at": e["created_at"]} for e in exps]}
+    w = ws()
+    with w.lock:
+        exps = w.store.list_experiments()
+        return {"experiments": [{"id": e["id"], "name": e["name"],
+                                 "created_at": e["created_at"]} for e in exps]}
 
 
 if os.path.isdir(WEB_DIR):

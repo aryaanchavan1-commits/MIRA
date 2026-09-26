@@ -6,12 +6,12 @@ from __future__ import annotations
 
 import os
 import sys
-import tempfile
 from pathlib import Path
+from unittest.mock import patch
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
-from core.hebbian import reinforce
+from core.hebbian import W_MAX, W_MIN, reinforce, stdp_update
 from core.memory import MemoryEdge, MemoryFrame, MemoryNode, MemoryType
 
 
@@ -22,9 +22,41 @@ def test_websearch_consent_gate():
     assert out["results"] == [] and "disabled" in out["note"]
     # enabled via explicit consent flag must at least attempt (offline CI:
     # backends fail gracefully, note explains) — we only assert shape
-    out2 = search("anything", config={"web_search": {"enabled": True}},
+    out2 = search("anything",
+                  config={"offline": False, "web_search": {"enabled": True}},
                   allow_web=False, backend="duckduckgo")
     assert set(out2.keys()) == {"backend", "results", "note"}
+
+
+def test_websearch_requires_literal_consent_and_offline_default():
+    from tools.websearch import search
+
+    with patch("tools.websearch._duckduckgo",
+               return_value=[{"url": "https://example.test"}]) as backend:
+        assert search("q", config={}, allow_web=True,
+                      backend="duckduckgo")["results"] == []
+        assert backend.call_count == 0
+        assert search("q", config={"offline": True,
+                                    "web_search": {"enabled": True}},
+                      allow_web=True, backend="duckduckgo")["results"] == []
+        assert backend.call_count == 0
+
+    for malformed in ("true", 1, []):
+        with patch("tools.websearch._duckduckgo") as backend:
+            try:
+                search("q", config={"offline": False}, allow_web=malformed,
+                       backend="duckduckgo")
+            except ValueError:
+                pass
+            else:
+                raise AssertionError("malformed consent must be rejected")
+            assert backend.call_count == 0
+
+    with patch("tools.websearch._duckduckgo",
+               return_value=[{"url": "https://example.test"}]) as backend:
+        out = search("q", config={"offline": False}, allow_web=True,
+                     backend="duckduckgo")
+        assert out["results"] and backend.call_count == 1
 
 
 def test_websearch_parse_jsonish():
@@ -83,6 +115,110 @@ def test_hebbian_bounded_and_persisted():
     st.close()  # before dir cleanup: WAL sidecars lock the dir on Windows
     import shutil
     shutil.rmtree(td, ignore_errors=True)
+
+
+def test_stdp_trace_respects_order_window_and_bounds():
+    forward = _frame()
+    before = forward.get_edge("a", "b").weight
+    changed = stdp_update(
+        forward,
+        [{"node": "a", "tick": 0, "spike": True},
+         {"node": "b", "tick": 1, "spike": True}],
+        lr=0.2, depression=0.1, window=1, decay=0.0,
+    )
+    assert changed and forward.get_edge("a", "b").weight > before
+    assert W_MIN <= forward.get_edge("a", "b").weight <= W_MAX
+
+    reverse = _frame()
+    before = reverse.get_edge("a", "b").weight
+    stdp_update(
+        reverse,
+        [{"node": "b", "tick": 0, "spike": True},
+         {"node": "a", "tick": 1, "spike": True}],
+        lr=0.2, depression=0.1, window=1, decay=0.0,
+    )
+    assert reverse.get_edge("a", "b").weight < before
+
+    outside = _frame()
+    weights = [e.weight for e in outside.edges]
+    assert not stdp_update(
+        outside,
+        [{"node": "a", "tick": 0, "spike": True},
+         {"node": "b", "tick": 3, "spike": True}],
+        window=1, decay=0.0,
+    )
+    assert [e.weight for e in outside.edges] == weights
+
+    capped = _frame()
+    capped.get_edge("a", "b").weight = W_MAX
+    stdp_update(
+        capped,
+        [{"node": "a", "tick": 0, "spike": True},
+         {"node": "b", "tick": 1, "spike": True}],
+        lr=0.5, window=1,
+    )
+    assert capped.get_edge("a", "b").weight == W_MAX
+
+    floor = _frame()
+    floor.get_edge("a", "b").weight = W_MIN
+    stdp_update(
+        floor,
+        [{"node": "b", "tick": 0, "spike": True},
+         {"node": "a", "tick": 1, "spike": True}],
+        depression=0.5, window=1,
+    )
+    assert floor.get_edge("a", "b").weight == W_MIN
+
+
+def test_stdp_is_deterministic_for_the_same_trace():
+    trace = [{"node": "a", "tick": 0, "spike": True},
+             {"node": "b", "tick": 1, "spike": True}]
+    first, second = _frame(), _frame()
+    changes_first = stdp_update(first, trace, window=1, decay=0.01)
+    changes_second = stdp_update(second, trace, window=1, decay=0.01)
+    assert changes_first == changes_second
+    assert [e.weight for e in first.edges] == [e.weight for e in second.edges]
+
+
+def test_stdp_persists_strengthening_and_homeostatic_decay():
+    class Store:
+        def __init__(self):
+            self.updates = []
+
+        def update_edge_weight(self, source, target, weight):
+            self.updates.append((source, target, weight))
+
+    frame = _frame()
+    frame.add_node(MemoryNode(id="d", concept="d", memory_type=MemoryType.FACT,
+                              summary="d content", source_ids=["cx"]))
+    frame.add_edge(MemoryEdge("c", "d", relation_type="rel"))
+    store = Store()
+    changes = stdp_update(
+        frame,
+        [{"node": "a", "tick": 0, "spike": True},
+         {"node": "b", "tick": 1, "spike": True}],
+        lr=0.1, decay=0.1, window=1, store=store,
+    )
+    changed_pairs = {(a, b) for a, b, _ in changes}
+    assert ("a", "b") in changed_pairs
+    assert ("c", "d") in changed_pairs
+    assert {(a, b) for a, b, _ in store.updates} >= changed_pairs
+
+
+def test_legacy_reinforce_persists_decayed_edges_without_changing_return_api():
+    class Store:
+        def __init__(self):
+            self.updates = []
+
+        def update_edge_weight(self, source, target, weight):
+            self.updates.append((source, target, weight))
+
+    frame = _frame()
+    store = Store()
+    reported = reinforce(frame, [["a", "b"]], lr=0.1, decay=0.1, store=store)
+    assert all(a == "a" and b == "b" for a, b, _ in reported)
+    assert any((a, b) == ("a", "c") for a, b, _ in store.updates)
+    assert any((a, b) == ("a", "b") for a, b, _ in store.updates)
 
 
 if __name__ == "__main__":

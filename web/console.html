@@ -10,30 +10,35 @@
 <body class="console-body">
 <aside class="side">
   <a class="brand" href="/"><span class="brand-mark">◎</span> MIRA</a>
-  <nav class="side-nav">
-    <button data-view="overview" class="active">Overview</button>
-    <button data-view="chat">Chat</button>
-    <button data-view="mandala">Mandala</button>
-    <button data-view="documents">Documents</button>
-    <button data-view="websearch">Web Search</button>
-    <button data-view="lab">Research Lab</button>
-    <button data-view="benchmarks">Benchmarks</button>
-    <button data-view="research">Research</button>
+  <nav class="side-nav" aria-label="Console sections">
+    <button type="button" data-view="overview" class="active" aria-controls="view-overview" aria-current="page">Overview</button>
+    <button type="button" data-view="chat" aria-controls="view-chat">Chat</button>
+    <button type="button" data-view="mandala" aria-controls="view-mandala">Mandala</button>
+    <button type="button" data-view="documents" aria-controls="view-documents">Documents</button>
+    <button type="button" data-view="websearch" aria-controls="view-websearch">Web Search</button>
+    <button type="button" data-view="lab" aria-controls="view-lab">Research Lab</button>
+    <button type="button" data-view="benchmarks" aria-controls="view-benchmarks">Benchmarks</button>
+    <button type="button" data-view="research" aria-controls="view-research">Research</button>
   </nav>
-  <div class="side-status" id="side-status">Loading system…</div>
+  <div class="side-status" id="side-status" role="status" aria-live="polite" aria-atomic="true">Loading system…</div>
 </aside>
 
-<main class="main">
+<main class="main" aria-label="MIRA console">
   <!-- OVERVIEW -->
   <section class="view active" id="view-overview">
     <h1>System overview</h1>
     <div class="stat-grid" id="stats"></div>
+    <section class="card affect-panel" id="affect-panel" aria-labelledby="affect-panel-title" aria-busy="true">
+      <h2 id="affect-panel-title">Simulated affect state</h2>
+      <p class="small muted">Simulated algorithmic state, not consciousness.</p>
+      <div id="affect-output" class="affect-output" role="status" aria-live="polite" aria-atomic="true">Loading affect state…</div>
+    </section>
     <div class="card">
-      <h3>Resolved runtime</h3>
+      <h2>Resolved runtime</h2>
       <div class="kv" id="runtime"></div>
     </div>
     <div class="card">
-      <h3>Notices</h3>
+      <h2>Notices</h2>
       <ul class="ticks" id="notices"></ul>
     </div>
   </section>
@@ -41,78 +46,107 @@
   <!-- CHAT -->
   <section class="view" id="view-chat">
     <h1>Chat with your memory</h1>
-    <form id="chat-form" class="chat-form">
-      <input id="chat-q" placeholder="Ask a multi-hop question…" autocomplete="off">
-      <select id="chat-set">
-        <option value="all">full MIRA</option>
-        <option value="vector_only">vector only</option>
-        <option value="graph_only">graph only</option>
-        <option value="hierarchy_only">hierarchy only</option>
-        <option value="radial_only">radial only</option>
-      </select>
-      <label class="check"><input id="chat-web" type="checkbox"> allow live web</label>
-      <button class="btn btn-primary" type="submit">Ask</button>
+    <form id="chat-form" class="chat-form" novalidate aria-busy="false">
+      <div class="form-field">
+        <label for="chat-q">Question</label>
+        <input id="chat-q" placeholder="Ask a multi-hop question…" autocomplete="off" required aria-describedby="chat-q-error">
+        <small class="field-error" id="chat-q-error" aria-live="polite"></small>
+      </div>
+      <div class="form-field">
+        <label for="chat-set">Retrieval set</label>
+        <select id="chat-set" required>
+          <option value="all">full MIRA</option>
+          <option value="vector_only">vector only</option>
+          <option value="graph_only">graph only</option>
+          <option value="hierarchy_only">hierarchy only</option>
+          <option value="radial_only">radial only</option>
+        </select>
+      </div>
+      <label class="check"><input id="chat-web" type="checkbox"> Allow live web</label>
+      <button class="btn btn-primary" id="chat-submit" type="submit">Ask</button>
     </form>
-    <div id="chat-out" class="chat-out"><p class="small muted">Agent answers from memory first; weak memory + web consent → live search; otherwise model knowledge (labeled).</p></div>
+    <div id="chat-out" class="chat-out" role="log" aria-live="polite" aria-relevant="additions text" aria-busy="false"><p class="small muted">Agent answers from memory first; weak memory + web consent → live search; otherwise model knowledge (labeled).</p></div>
   </section>
 
   <!-- MANDALA -->
   <section class="view" id="view-mandala">
     <h1>Mandala topology</h1>
-    <p class="small muted">Angle = sector · radius = ring. Size = importance · color = memory type. Click a node to inspect it.</p>
+    <p class="small muted" id="mandala-help">Angle = sector · radius = ring. Size = importance · color = memory type. Select the canvas with a pointer, or use the keyboard-accessible node list below.</p>
+    <p class="small muted status" id="mandala-status" role="status" aria-live="polite" aria-atomic="true">Loading topology…</p>
     <div class="mandala-wrap">
-      <canvas id="mandala-canvas"></canvas>
-      <div class="node-panel" id="node-panel"><p class="small muted">Select a node…</p></div>
+      <canvas id="mandala-canvas" role="img" aria-label="Radial memory mandala" aria-describedby="mandala-help" aria-busy="true">Use the node list below to inspect memories with a keyboard.</canvas>
+      <div class="node-panel" id="node-panel" role="region" aria-label="Selected memory" aria-live="polite" aria-atomic="true" aria-busy="false"><p class="small muted">Select a node…</p></div>
     </div>
-    <div class="legend" id="legend"></div>
+    <details class="node-browser">
+      <summary>Browse memory nodes</summary>
+      <ul class="node-list" id="node-list" aria-label="Memory nodes" aria-busy="true"></ul>
+    </details>
+    <div class="legend" id="legend" aria-label="Memory type legend"></div>
     <div class="card" style="margin-top:1.2rem">
-      <h3>Placement strategy lab</h3>
+      <h2>Placement strategy lab</h2>
       <p class="small muted">The mandala's ring/sector layout is itself a research variable (§11):
         re-place every memory with a different strategy, benchmark retrieval, and compare.
         The sweep restores your default strategy afterwards.</p>
-      <form id="strat-form" class="bench-form">
-        <label>Strategy <select id="strat-select"></select></label>
-        <button class="btn btn-secondary" type="submit">Apply strategy</button>
+      <form id="strat-form" class="bench-form" aria-busy="false">
+        <label class="form-field" for="strat-select">Strategy
+          <select id="strat-select" required></select>
+        </label>
+        <button class="btn btn-secondary" id="strat-apply" type="submit">Apply strategy</button>
         <button class="btn btn-secondary" type="button" id="strat-sweep">Benchmark all strategies</button>
       </form>
-      <div id="strat-out" class="small"></div>
+      <div id="strat-out" class="small" role="status" aria-live="polite" aria-atomic="false" aria-busy="false"></div>
     </div>
   </section>
 
   <!-- DOCUMENTS -->
   <section class="view" id="view-documents">
     <h1>Documents</h1>
-    <form id="upload-form" class="upload-form">
-      <input type="file" id="doc-file" accept=".pdf,.txt,.md,.json,.csv,.docx" required>
-      <input id="doc-title" placeholder="Title (optional)">
-      <button class="btn btn-primary" type="submit">Ingest</button>
+    <form id="upload-form" class="upload-form" novalidate aria-busy="false">
+      <div class="form-field">
+        <label for="doc-file">Document file</label>
+        <input type="file" id="doc-file" accept=".pdf,.txt,.md,.json,.csv,.docx" required aria-describedby="doc-file-error">
+        <small class="field-error" id="doc-file-error" aria-live="polite"></small>
+      </div>
+      <div class="form-field">
+        <label for="doc-title">Title <span class="muted">(optional)</span></label>
+        <input id="doc-title" placeholder="Document title">
+      </div>
+      <button class="btn btn-primary" id="upload-submit" type="submit">Ingest</button>
     </form>
-    <div id="upload-status" class="small"></div>
-    <div class="card"><h3>Ingested</h3><div id="doc-list" class="doc-list"></div></div>
+    <div id="upload-status" class="small status" role="status" aria-live="polite" aria-atomic="true" aria-busy="false"></div>
+    <div class="card">
+      <h2>Ingested</h2>
+      <div id="doc-status" class="small status" role="status" aria-live="polite" aria-atomic="true"></div>
+      <div id="doc-list" class="doc-list" aria-live="polite" aria-busy="true"></div>
+    </div>
   </section>
 
   <!-- RESEARCH LAB -->
   <section class="view" id="view-lab">
     <h1>Research Lab</h1>
     <p class="small muted">Same query, different retrieval components. Jaccard ≈ 1.0 between two sets means they retrieve the same memories.</p>
-    <form id="lab-form" class="chat-form">
-      <input id="lab-q" placeholder="Query…" autocomplete="off">
-      <button class="btn btn-primary" type="submit">Run comparison</button>
+    <form id="lab-form" class="chat-form" novalidate aria-busy="false">
+      <div class="form-field">
+        <label for="lab-q">Research query</label>
+        <input id="lab-q" placeholder="Query…" autocomplete="off" required aria-describedby="lab-q-error">
+        <small class="field-error" id="lab-q-error" aria-live="polite"></small>
+      </div>
+      <button class="btn btn-primary" id="lab-submit" type="submit">Run comparison</button>
     </form>
-    <div id="lab-out"></div>
+    <div id="lab-out" role="status" aria-live="polite" aria-atomic="false" aria-busy="false"></div>
   </section>
 
   <!-- BENCHMARKS -->
   <section class="view" id="view-benchmarks">
     <h1>Benchmarks</h1>
-    <form id="bench-form" class="bench-form card">
+    <form id="bench-form" class="bench-form card" aria-busy="false">
       <label>Dataset path (optional) <input id="bench-ds" placeholder="empty = generate from ingested corpus"></label>
       <label>Format <select id="bench-fmt"><option value="">corpus (auto)</option><option>custom</option><option>hotpotqa</option><option>2wiki</option><option>musique</option></select></label>
       <label>Questions <input id="bench-n" type="number" value="20" min="1" max="500"></label>
       <label class="check"><input id="bench-judge" type="checkbox"> LLM-as-judge</label>
-      <button class="btn btn-primary" type="submit">Run benchmark</button>
+      <button class="btn btn-primary" id="bench-submit" type="submit">Run benchmark</button>
     </form>
-    <div id="bench-out"></div>
+    <div id="bench-out" role="status" aria-live="polite" aria-atomic="false" aria-busy="false"></div>
   </section>
 
   <!-- WEB SEARCH -->
@@ -120,24 +154,30 @@
     <h1>Live Web Search</h1>
     <p class="small muted">Searches leave the machine when you click Search. Results are plain data;
       ingest turns a page into mandala memories with URL provenance.</p>
-    <form id="ws-form" class="bench-form card">
-      <label>Query <input id="ws-q" placeholder="research question or keywords"></label>
-      <label>Backend <select id="ws-backend">
-        <option value="auto">auto (agent-reach → opencli → duckduckgo)</option>
-        <option value="agent-reach">agent-reach</option>
-        <option value="opencli">opencli</option>
-        <option value="duckduckgo">duckduckgo</option>
-      </select></label>
-      <button class="btn btn-primary" type="submit">Search</button>
+    <form id="ws-form" class="bench-form card" novalidate aria-busy="false">
+      <label class="form-field" for="ws-q">Query
+        <input id="ws-q" placeholder="Research question or keywords" required aria-describedby="ws-q-error">
+        <small class="field-error" id="ws-q-error" aria-live="polite"></small>
+      </label>
+      <label class="form-field" for="ws-backend">Backend
+        <select id="ws-backend" required>
+          <option value="auto">auto (agent-reach → opencli → duckduckgo)</option>
+          <option value="agent-reach">agent-reach</option>
+          <option value="opencli">opencli</option>
+          <option value="duckduckgo">duckduckgo</option>
+        </select>
+      </label>
+      <label class="check"><input id="ws-consent" type="checkbox"> I consent to a live network request</label>
+      <button class="btn btn-primary" id="ws-submit" type="submit">Search</button>
     </form>
-    <div id="ws-out"></div>
+    <div id="ws-out" role="status" aria-live="polite" aria-atomic="false" aria-busy="false"></div>
   </section>
 
   <!-- RESEARCH -->
   <section class="view" id="view-research">
     <h1>The research</h1>
     <div class="card">
-      <h3>The problem in AI</h3>
+      <h2>The problem in AI</h2>
       <p>Standard RAG treats memory as a <em>flat bag of text chunks</em>: embed everything,
       rank by cosine similarity, paste the top-k into the model. That has three structural
       failures: it loses <strong>structure</strong> (a fact and the concept it belongs to are
@@ -146,55 +186,55 @@
       <strong>context</strong> on near-duplicate chunks.</p>
     </div>
     <div class="card">
-      <h3>The hypothesis</h3>
-      <p>Inspired by the radial organization of mandalas — a center, concentric rings of
-      decreasing generality, and semantic sectors — MIRA arranges memory as a formal
+      <h2>The hypothesis</h2>
+      <p>Inspired by the radial organization of mandalas, with a center, concentric rings of
+      decreasing generality, and semantic sectors, MIRA arranges memory as a formal
       topology: <strong>ring 0</strong> core, <strong>ring 1</strong> major concepts,
       <strong>ring 2</strong> subconcepts, <strong>ring 3</strong> facts/evidence,
       <strong>ring 4</strong> source documents. Every node carries a computed
       <strong>radial distance</strong> (semantic + hierarchical + graph + temporal distance).
-      Retrieval scores nine components, including <strong>spreading activation</strong> —
+      Retrieval scores nine components, including <strong>spreading activation</strong>, with
       energy that propagates through the graph the way activation spreads in associative
       memory (Collins &amp; Loftus 1975).</p>
       <p class="small muted">Honesty: MIRA is <em>inspired by</em> mandala organization principles
       and by biological memory dynamics. It does not claim mandalas were neural networks
       or that this simulates a brain. Whether radial organization helps is an empirical
-      question — the system is built to answer it, including with “no”.</p>
+      question: the system is built to answer it, including with “no”.</p>
     </div>
     <div class="card">
-      <h3>Three biological timescales</h3>
+      <h2>Three biological timescales</h2>
       <ul class="ticks small">
-        <li><strong>Fast (per query)</strong> — spreading activation propagates energy through the mandala to surface multi-hop associates that vector search misses.</li>
-        <li><strong>Medium (per answer)</strong> — nine-component scoring weighs semantic, structural, radial, graph, activation, confidence, recency and path evidence.</li>
-        <li><strong>Slow (consolidation)</strong> — Hebbian plasticity: edges along successful retrieval paths strengthen, unused edges decay. The wiring adapts to use.</li>
+        <li><strong>Fast (per query)</strong>: spreading activation propagates energy through the mandala to surface multi-hop associates that vector search misses.</li>
+        <li><strong>Medium (per answer)</strong>: nine-component scoring weighs semantic, structural, radial, graph, activation, confidence, recency and path evidence.</li>
+        <li><strong>Slow (consolidation)</strong>: accepted grounded answers can strengthen path edges; LIF spike timing adds bounded STDP-like potentiation/depression, and inactive edges decay. This is an engineering heuristic, not biochemical STDP.</li>
       </ul>
     </div>
     <div class="card">
-      <h3>What it is used for</h3>
+      <h2>What it is used for</h2>
       <ul class="ticks small">
-        <li>A private, offline research memory over your own PDFs, notes and web pages — answers always cite document/page/chunk provenance.</li>
+        <li>A private research memory over your own PDFs, notes and web pages. Grounded answers include document/page/chunk provenance; identity and parametric answers are labeled and do not fabricate sources.</li>
         <li>An <strong>experimental laboratory</strong>: every mechanism (vector, graph, hierarchy, radial, activation) is individually switchable and benchmarkable.</li>
         <li>A <strong>learning memory</strong>: a delta-rule unit learns the retrieval weights from your corpus; web-fetched pages become permanent memories; Hebbian consolidation rewires the graph toward what you actually ask.</li>
       </ul>
     </div>
     <div class="card">
-      <h3>Measured so far (this installation, corpus-generated QA — sanity benchmark)</h3>
+      <h2>Sanity checks (not research conclusions)</h2>
       <ul class="ticks small">
-        <li>Trained neural scorer vs hand-tuned weights: <strong>MRR 0.365 → 0.488 (+34%)</strong>; the unit learned that semantic (0.69) + activation (0.25) deserve most of the weight.</li>
-        <li>Agent routing verified: memory → cited answers; web escalation → live pages ingested as permanent memories; ungrounded parametric answers always labeled.</li>
-        <li>Topological upgrade: radial distance now computed for every node; rings follow §9 semantics (1 core · 19 major · 139 sub · 21 facts · 22 documents at time of writing).</li>
+        <li>The optional learned scorer is disabled by default; earlier single-corpus numbers are not held-out evidence.</li>
+        <li>Agent routing checks cover memory answers, consented web ingestion, and labeled ungrounded fallbacks.</li>
+        <li>Topology diagnostics verify placement, radial distance, and provenance plumbing.</li>
       </ul>
-      <p class="small muted">These are single-corpus sanity numbers, not headline claims. Run the
-      Benchmarks page on real datasets (HotpotQA, MuSiQue) for publishable results; the
+      <p class="small muted">These checks validate implementation behavior, not general AI quality. Run the
+      Benchmarks page on real datasets with exact evidence labels for research claims; the
       paper draft lives in <code>paper/mira_paper.md</code>.</p>
     </div>
     <div class="card">
-      <h3>What problem this solves in AI, concretely</h3>
+      <h2>What problem this solves in AI, concretely</h2>
       <ul class="ticks small">
-        <li><strong>Context efficiency</strong> — compression keeps only answer-critical evidence, so a 1.5B model on 4 GB VRAM behaves like a much larger one on its own corpus.</li>
-        <li><strong>Auditable grounding</strong> — no answer without a retrieval path and sources; nothing is cited that was not retrieved.</li>
-        <li><strong>Continual learning without fine-tuning</strong> — the memory grows (web ingest) and rewires (Hebbian) while the model stays frozen; external memory instead of expensive retraining.</li>
-        <li><strong>Honest evaluation culture</strong> — ablations and baselines are first-class, so improvements are attributable to specific mechanisms.</li>
+        <li><strong>Context efficiency</strong>: compression keeps only answer-critical evidence, so a 1.5B model on 4 GB VRAM behaves like a much larger one on its own corpus.</li>
+        <li><strong>Auditable grounding</strong>: grounded answers show retained evidence, paths, and provenance; identity and parametric answers are explicitly labeled and never receive fabricated citations.</li>
+        <li><strong>Continual learning without fine-tuning</strong>: the memory grows (web ingest) and rewires (Hebbian) while the model stays frozen; external memory instead of expensive retraining.</li>
+        <li><strong>Honest evaluation culture</strong>: ablations and baselines are first-class diagnostics; causal attribution requires frozen candidate controls.</li>
       </ul>
     </div>
   </section>

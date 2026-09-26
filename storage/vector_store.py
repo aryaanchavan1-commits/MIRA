@@ -9,6 +9,8 @@ from __future__ import annotations
 import json
 import logging
 import os
+import shutil
+import uuid
 from typing import Dict, List, Optional, Tuple
 
 import numpy as np
@@ -100,6 +102,50 @@ class VectorStore:
             json.dump({"dim": self.dim, "_next": self._next,
                        "id_meta": {str(k): v for k, v in self.id_meta.items()}}, fh)
 
+    def save_atomic(self) -> None:
+        if not self.persist_path:
+            return
+        path = self.persist_path
+        meta_path = path + ".meta.json"
+        token = uuid.uuid4().hex
+        temp_path = f"{path}.{token}.tmp"
+        temp_meta = temp_path + ".meta.json"
+        backup_path = f"{path}.{token}.bak"
+        backup_meta = backup_path + ".meta.json"
+        had_index = os.path.exists(path)
+        had_meta = os.path.exists(meta_path)
+        os.makedirs(os.path.dirname(path) or ".", exist_ok=True)
+        try:
+            if had_index:
+                shutil.copy2(path, backup_path)
+            if had_meta:
+                shutil.copy2(meta_path, backup_meta)
+            faiss.write_index(self.index, temp_path)
+            with open(temp_meta, "w", encoding="utf-8") as fh:
+                json.dump({"dim": self.dim, "_next": self._next,
+                           "id_meta": {str(k): v for k, v in self.id_meta.items()}}, fh)
+            os.replace(temp_path, path)
+            os.replace(temp_meta, meta_path)
+        except Exception:
+            try:
+                if had_index:
+                    os.replace(backup_path, path)
+                elif os.path.exists(path):
+                    os.remove(path)
+                if had_meta:
+                    os.replace(backup_meta, meta_path)
+                elif os.path.exists(meta_path):
+                    os.remove(meta_path)
+            except Exception:
+                logger.exception("failed to restore vector index")
+            raise
+        finally:
+            for temp_file in (temp_path, temp_meta, backup_path, backup_meta):
+                try:
+                    os.remove(temp_file)
+                except FileNotFoundError:
+                    pass
+
     @classmethod
     def load(cls, persist_path: str) -> "VectorStore":
         if not os.path.exists(persist_path):
@@ -113,5 +159,4 @@ class VectorStore:
         store.index = index
         store._next = meta.get("_next", index.ntotal)
         store.id_meta = {int(k): v for k, v in meta.get("id_meta", {}).items()}
-        return store
         return store

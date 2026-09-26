@@ -9,7 +9,6 @@ score = α·semantic + β·structural + γ·radial + δ·graph
 """
 from __future__ import annotations
 
-import hashlib
 import logging
 import os
 import re
@@ -21,7 +20,7 @@ import numpy as np
 
 from core.activation import SpreadingActivation
 from core.memory import MemoryFrame, MemoryNode
-from core.types import iso_now, new_id, parse_float, stable_hash, utcnow, datetime
+from core.types import parse_float, stable_hash, utcnow, datetime
 from storage.graph_store import GraphStore
 from storage.vector_store import VectorStore
 
@@ -46,9 +45,12 @@ class RetrievalResult:
     latency_ms: float = 0.0
     n_candidates: int = 0
     query: str = ""
+    # Present for the optional LIF-inspired activation path; empty for the
+    # backward-compatible continuous path or when activation is ablated.
+    activation_trace: List[Dict[str, Any]] = field(default_factory=list)
 
     def path_labels(self) -> List[str]:
-        return [" → ".join(p) for p in self.paths]
+        return [" -> ".join(p) for p in self.paths]
 
 
 class MIRARetriever:
@@ -96,7 +98,7 @@ class MIRARetriever:
     def _semantic(self, qvec: np.ndarray, node: MemoryNode) -> float:
         """Cosine similarity — dot products are only meaningful for
         normalized embeddings; the hashing fallback's are not."""
-        if node.embedding is None or qvec is None:
+        if self.vs is None or node.embedding is None or qvec is None:
             return 0.0
         qn = np.linalg.norm(qvec)
         nn = np.linalg.norm(node.embedding)
@@ -153,51 +155,60 @@ class MIRARetriever:
         if unknown:
             raise ValueError(f"unknown retrieval components: {sorted(unknown)}")
         active = set(active_components) if active_components else set(ALL_COMPONENTS)
+        active_names = tuple(sorted(active))
         k = final_k or self.final_k
 
         # 1-2. semantic candidates from FAISS (§20 steps 3-4)
         cands: Dict[str, RetrievedItem] = {}
-        for score, meta in self.vs.search(query_vec, k=self.candidate_k):
-            nid = meta.get("node_id")
-            if nid in self._node_index:
-                cands[nid] = RetrievedItem(node=self._node_index[nid], path=[nid])
+        if self.vs is not None:
+            for score, meta in self.vs.search(query_vec, k=self.candidate_k):
+                nid = meta.get("node_id")
+                if nid in self._node_index:
+                    cands[nid] = RetrievedItem(node=self._node_index[nid], path=[nid])
 
         # 3. graph expansion: one hop from top semantic hits, keep multi-hop paths (§22)
         # (semantic scores are computed here, before scoring, because seed
         # selection drives both graph expansion and activation seeding)
         seeds = [nid for nid, _ in sorted(
             ((nid, self._semantic(query_vec, self._node_index[nid])) for nid in cands),
-            key=lambda kv: -kv[1])][:5]
+            key=lambda kv: (-round(float(kv[1]), 5), kv[0]))][:5]
         for seed in seeds:
-            for nid in self.gs.neighborhood(seed, radius=1):
+            for nid in sorted(self.gs.neighborhood(seed, radius=1)):
                 if nid not in cands and nid in self._node_index:
                     path = self.gs.weighted_path(seed, nid)[: self.max_hops + 1]
                     cands[nid] = RetrievedItem(node=self._node_index[nid], path=path)
-        # 3b. spreading activation (bio-inspired, §new): inject nodes reached
-        # through multi-hop energy propagation from the semantic seeds —
+        # 3b. Bio-NN-inspired activation: inject nodes reached through
+        # bounded multi-hop propagation from the semantic seeds —
         # surfaces associates that neither vector nor 1-hop expansion finds.
         act_map: Dict[str, float] = {}
+        activation_trace: List[Dict[str, Any]] = []
         if "activation" in active:
             seed_scores = {nid: self._semantic(query_vec, self._node_index[nid])
                            for nid in seeds}
-            act_map = dict(self.activation.activate(seed_scores)[:16])
-            for nid in act_map:
+            act_map = dict(self.activation.activate(
+                seed_scores, trace=activation_trace)[:16])
+            for nid in sorted(act_map):
                 if nid not in cands and nid in self._node_index:
                     cands[nid] = RetrievedItem(node=self._node_index[nid], path=[nid])
         # 4. hierarchical candidates: ring 0-1 concepts matching query tokens
         qtokens = {t for t in re.findall(r"[a-z0-9]{3,}", query.lower())}
-        for n in self.frame.nodes.values():
+        for node_id in sorted(self.frame.nodes):
+            n = self.frame.nodes[node_id]
             if n.ring in (0, 1) and n.id not in cands:
-                toks = set(re.findall(r"[a-z0-9]{3,}", (n.concept + " " + n.summary).lower()))
+                toks = set(re.findall(
+                    r"[a-z0-9]{3,}",
+                    (n.concept + " " + (n.summary or "")).lower(),
+                ))
                 if qtokens & toks:
                     cands[n.id] = RetrievedItem(node=n, path=[n.id])
 
-        result = RetrievalResult(query=query)
+        result = RetrievalResult(query=query, activation_trace=activation_trace)
         result.n_candidates = len(cands)
 
         # 5. score with active components only (§21)
-        wsum = sum(self.weights[c] for c in active) or 1.0
-        for item in cands.values():
+        wsum = sum(self.weights[c] for c in active_names) or 1.0
+        for node_id in sorted(cands):
+            item = cands[node_id]
             n = item.node
             comp_scores = {
                 "semantic": self._semantic(query_vec, n),
@@ -207,14 +218,16 @@ class MIRARetriever:
                 "importance": float(np.clip(n.importance, 0, 1)),
                 "confidence": float(np.clip(n.confidence, 0, 1)),
                 "recency": self._recency(n),
-                "path": self._path_score(n, item.path) if "path" in active else 0.0,
+                "path": self._path_score(n, item.path) if "path" in active_names else 0.0,
                 "activation": float(np.clip(act_map.get(n.id, 0.0), 0.0, 1.0)),
             }
             item.components = comp_scores
-            item.score = sum(self.weights[c] * comp_scores[c] for c in active) / wsum
+            item.score = sum(
+                self.weights[c] * comp_scores[c] for c in active_names
+            ) / wsum
 
         # 6. rerank (§21/§20 step 11)
-        ranked = sorted(cands.values(), key=lambda it: -it.score)[:k]
+        ranked = sorted(cands.values(), key=lambda it: (-it.score, it.node.id))[:k]
         result.items = ranked
         result.paths = [it.path for it in ranked if len(it.path) > 1]
         result.latency_ms = round((time.perf_counter() - t0) * 1000, 2)
@@ -225,7 +238,8 @@ class MIRARetriever:
         sqlite_store.log_retrieval(
             stable_hash(result.query), system, result.n_candidates,
             len(result.items), result.latency_ms, context_tokens,
-            {"active_components": ",".join(result.items[0].components.keys()) if result.items else ""},
+            {"active_components": ",".join(sorted(result.items[0].components))
+             if result.items else ""},
         )
 
 

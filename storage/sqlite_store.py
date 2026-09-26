@@ -11,7 +11,7 @@ import logging
 import os
 import sqlite3
 from contextlib import contextmanager
-from typing import Any, Dict, Iterable, List, Optional
+from typing import Dict, Iterable, List, Optional
 
 from core.types import iso_now, new_id
 
@@ -184,6 +184,49 @@ class SQLiteStore:
         row = self._conn.execute("SELECT * FROM documents WHERE sha256=?", (sha256,)).fetchone()
         return dict(row) if row else None
 
+    def delete_document_cascade(self, document_id: str) -> int:
+        """Hard-remove one document's staged or committed graph artifacts.
+
+        Concept/entity nodes created by ingestion have no chunk source ids, so
+        matching only ``source_ids`` leaves orphaned graph state behind.  The
+        document metadata marker is part of the ownership boundary as well.
+        The whole cleanup is one SQLite transaction, making it safe to call
+        from an ingestion rollback path.
+        """
+        with self.tx() as c:
+            chunk_rows = c.execute(
+                "SELECT id FROM chunks WHERE document_id=?", (document_id,)
+            ).fetchall()
+            chunk_ids = {str(row[0]) for row in chunk_rows}
+            rows = c.execute(
+                "SELECT id, source_ids, metadata FROM nodes"
+            ).fetchall()
+            node_ids = set()
+            for row in rows:
+                node_id = str(row[0])
+                try:
+                    source_ids = set(json.loads(row[1] or "[]"))
+                except (TypeError, ValueError, json.JSONDecodeError):
+                    source_ids = set()
+                try:
+                    metadata = json.loads(row[2] or "{}")
+                except (TypeError, ValueError, json.JSONDecodeError):
+                    metadata = {}
+                owner = metadata.get("document_id") if isinstance(metadata, dict) else None
+                owners = owner if isinstance(owner, (list, tuple, set)) else [owner]
+                if chunk_ids.intersection(source_ids) or document_id in owners:
+                    node_ids.add(node_id)
+            for node_id in sorted(node_ids):
+                c.execute("DELETE FROM node_history WHERE node_id=?", (node_id,))
+                c.execute("DELETE FROM edges WHERE source_id=? OR target_id=?",
+                          (node_id, node_id))
+            if node_ids:
+                c.executemany("DELETE FROM nodes WHERE id=?",
+                              [(node_id,) for node_id in sorted(node_ids)])
+            c.execute("DELETE FROM chunks WHERE document_id=?", (document_id,))
+            c.execute("DELETE FROM documents WHERE id=?", (document_id,))
+        return len(node_ids)
+
     # ---- nodes ----
     def upsert_node(self, node: Dict) -> None:
         vals = [node.get(col) for col in _NODE_COLS]
@@ -210,6 +253,19 @@ class SQLiteStore:
                  json.dumps({k: node.get(k) for k in _NODE_COLS}, ensure_ascii=False, default=str)),
             )
 
+    def update_placements(self, placements: Iterable[Dict]) -> int:
+        rows = list(placements)
+        with self.tx() as c:
+            for placement in rows:
+                c.execute(
+                    "UPDATE nodes SET ring=?, sector=?, depth=?, "
+                    "radial_distance=? WHERE id=?",
+                    (placement.get("ring"), placement.get("sector"),
+                     placement.get("depth"), placement.get("radial_distance"),
+                     placement.get("id")),
+                )
+        return len(rows)
+
     def get_node(self, node_id: str) -> Optional[Dict]:
         row = self._conn.execute("SELECT * FROM nodes WHERE id=?", (node_id,)).fetchone()
         if not row:
@@ -220,7 +276,8 @@ class SQLiteStore:
         return d
 
     def all_nodes(self, include_inactive: bool = False) -> List[Dict]:
-        q = "SELECT * FROM nodes" if include_inactive else "SELECT * FROM nodes WHERE status='active'"
+        q = ("SELECT * FROM nodes ORDER BY id" if include_inactive
+              else "SELECT * FROM nodes WHERE status='active' ORDER BY id")
         rows = self._conn.execute(q).fetchall()
         out = []
         for r in rows:
@@ -250,7 +307,9 @@ class SQLiteStore:
             )
 
     def all_edges(self) -> List[Dict]:
-        rows = self._conn.execute("SELECT * FROM edges").fetchall()
+        rows = self._conn.execute(
+            "SELECT * FROM edges ORDER BY source_id, target_id, relation_type"
+        ).fetchall()
         out = []
         for r in rows:
             d = dict(r)

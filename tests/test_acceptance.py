@@ -9,7 +9,6 @@ Run:  .venv/Scripts/python.exe -m tests.test_acceptance
 from __future__ import annotations
 
 import json
-import os
 import sys
 import tempfile
 from pathlib import Path
@@ -34,10 +33,10 @@ built between 1788 and 1791, is one of Berlin's most famous landmarks."""
 
 
 def main() -> None:
-    from config.auto_config import build_context, runtime_summary
+    from config.auto_config import build_context
     from core.workspace import Workspace
     from evaluation.ablation import run_all_systems
-    from evaluation.report import comparison_table, save_experiment
+    from evaluation.report import comparison_table
 
     # 1-3. hardware detection + model selection (§50 steps 1-3)
     ctx = build_context()
@@ -97,14 +96,13 @@ def main() -> None:
         results = run_all_systems(ws, records, k=5,
                                   include_baselines=True, include_ablations=True)
         table = comparison_table(results)
-        assert len(table) >= 13, "3 baselines + 10 MIRA configurations"
+        assert len(table) == 15, "3 baselines + 12 MIRA configurations"
         print(f"[6] benchmark: {len(table)} systems compared")
         for row in table[:4]:
             print(f"    {row['system']:>18}: recall={row['retrieval_recall']} "
                   f"mrr={row['mrr']} ctx={row['context_tokens']}")
 
         # 20. export experiment (§50 step 20)
-        old = None
         import evaluation.report as report
         real_dir = report.EXPERIMENTS_DIR
         report.EXPERIMENTS_DIR = Path("experiments")

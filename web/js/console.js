@@ -2,8 +2,76 @@
 "use strict";
 
 const $ = (id) => document.getElementById(id);
-const esc = (s) => String(s ?? "").replace(/[&<>"]/g,
-  c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+const esc = (s) => String(s ?? "").replace(/[&<>"']/g,
+  c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const setBusy = (element, busy) => element.setAttribute("aria-busy", String(busy));
+const setStatus = (element, message, state = "") => {
+  element.textContent = message;
+  element.classList.remove("status-error", "status-success");
+  if (state) element.classList.add(`status-${state}`);
+};
+const setPending = (button, busy, label = "Working…") => {
+  button.disabled = busy;
+  button.setAttribute("aria-busy", String(busy));
+  if (busy) {
+    button.dataset.idleText = button.textContent;
+    button.textContent = label;
+  } else {
+    button.textContent = button.dataset.idleText || button.textContent;
+    delete button.dataset.idleText;
+  }
+};
+const validateRequired = (input, error, message) => {
+  const valid = input.files ? input.files.length > 0 : Boolean(input.value.trim());
+  input.setAttribute("aria-invalid", String(!valid));
+  error.textContent = valid ? "" : message;
+  return valid;
+};
+const revalidateWhenFixed = (input, error, message, event = "input") =>
+  input.addEventListener(event, () => {
+    if (input.getAttribute("aria-invalid") === "true") validateRequired(input, error, message);
+  });
+const fmt = (value, digits = 3) => {
+  const number = Number(value);
+  return Number.isFinite(number) ? number.toFixed(digits) : "—";
+};
+const boundedAffectValue = (value, bounds) => {
+  if (value === null || value === "" || typeof value === "boolean") return "—";
+  const number = Number(value);
+  return Number.isFinite(number)
+    ? Math.min(bounds[1], Math.max(bounds[0], number)).toFixed(3)
+    : "—";
+};
+const affectText = (value, fallback, limit = 240) => {
+  const text = typeof value === "string" ? value.trim() : "";
+  return esc((text || fallback).slice(0, limit));
+};
+const affectMarkup = (snapshot) => {
+  const state = snapshot && typeof snapshot === "object" && !Array.isArray(snapshot) ? snapshot : {};
+  return `
+    <div class="affect-readout" role="group" aria-label="Simulated affect snapshot">
+      <p class="affect-title">Simulated affect snapshot</p>
+      <dl class="affect-metrics" aria-label="Bounded affect values">
+        <div><dt>Valence <span class="affect-range">−1 to 1</span></dt><dd>${boundedAffectValue(state.valence, [-1, 1])}</dd></div>
+        <div><dt>Arousal <span class="affect-range">0 to 1</span></dt><dd>${boundedAffectValue(state.arousal, [0, 1])}</dd></div>
+        <div><dt>Confidence <span class="affect-range">0 to 1</span></dt><dd>${boundedAffectValue(state.confidence, [0, 1])}</dd></div>
+        <div><dt>Stress <span class="affect-range">0 to 1</span></dt><dd>${boundedAffectValue(state.stress, [0, 1])}</dd></div>
+      </dl>
+      <dl class="affect-details">
+        <div><dt>Label</dt><dd>${affectText(state.label, "unavailable", 64)}</dd></div>
+        <div><dt>Reason</dt><dd>${affectText(state.last_reason ?? state.reason, "unavailable", 160)}</dd></div>
+      </dl>
+      <p class="affect-disclosure">${affectText(state.disclosure, "Simulated algorithmic state, not consciousness.")}</p>
+    </div>`;
+};
+const safeHttpUrl = (value) => {
+  try {
+    const url = new URL(String(value));
+    return ["http:", "https:"].includes(url.protocol) ? url.href : "#";
+  } catch {
+    return "#";
+  }
+};
 
 /* fetch wrapper: never crashes on non-JSON error bodies (the user-facing bug:
    "Unexpected token 'I', \"Internal S...\" is not valid JSON") */
@@ -20,29 +88,48 @@ async function api(url, opts = {}) {
 }
 
 /* ---------- view switching ---------- */
-document.querySelectorAll(".side-nav button").forEach(btn => {
+const navButtons = document.querySelectorAll(".side-nav button");
+navButtons.forEach(btn => {
   btn.addEventListener("click", () => {
-    document.querySelectorAll(".side-nav button").forEach(b => b.classList.remove("active"));
-    document.querySelectorAll(".view").forEach(v => v.classList.remove("active"));
-    btn.classList.add("active");
-    $("view-" + btn.dataset.view).classList.add("active");
+    navButtons.forEach(b => {
+      const active = b === btn;
+      b.classList.toggle("active", active);
+      if (active) b.setAttribute("aria-current", "page");
+      else b.removeAttribute("aria-current");
+      $("view-" + b.dataset.view).classList.toggle("active", active);
+    });
     if (btn.dataset.view === "mandala" && window.__miraMandalaRefresh) window.__miraMandalaRefresh();
   });
 });
 
 /* ---------- overview ---------- */
 let __bootTries = 0;
+async function loadOverviewAffect() {
+  const panel = $("affect-panel");
+  const output = $("affect-output");
+  setBusy(panel, true);
+  setStatus(output, "Loading affect state…");
+  try {
+    output.innerHTML = affectMarkup(await api("/api/affect"));
+  } catch (err) {
+    setStatus(output, `Could not load affect state: ${err.message || err}`, "error");
+  } finally {
+    setBusy(panel, false);
+  }
+}
 async function loadOverview() {
+  loadOverviewAffect();
   try {
     const d = await api("/api/system");
     const w = d.workspace || {};
+    const hardware = d.hardware || {};
+    const runtime = d.runtime || {};
     $("stats").innerHTML = [
       ["Memory nodes", w.nodes ?? 0], ["Edges", w.edges ?? 0],
       ["Documents", w.documents ?? 0], ["Vectors", w.vectors ?? 0],
-    ].map(([k, v]) => `<div class="stat"><div class="v">${v}</div><div class="k">${k}</div></div>`).join("");
-    const r = d.runtime || {};
-    $("runtime").innerHTML = Object.entries(r)
-      .map(([k, v]) => `<div><span class="k">${esc(k)}</span><span class="v">${esc(String(v))}</span></div>`).join("");
+    ].map(([k, v]) => `<div class="stat"><div class="v">${esc(v)}</div><div class="k">${k}</div></div>`).join("");
+    $("runtime").innerHTML = Object.entries(runtime)
+      .map(([k, v]) => `<div><span class="k">${esc(k)}</span><span class="v">${esc(v)}</span></div>`).join("");
     const notes = [];
     if (!(d.llm || {}).available) notes.push("No local LLM loaded — answers use the extractive fallback.");
     if ((d.embeddings || {}).backend !== "st") notes.push("Embeddings on hashing fallback — retrieval quality degraded.");
@@ -50,31 +137,42 @@ async function loadOverview() {
     $("notices").innerHTML = notes.length
       ? notes.map(n => `<li>${n}</li>`).join("")
       : "<li>All systems nominal.</li>";
+    $("side-status").classList.remove("status-error", "status-success");
     $("side-status").innerHTML =
-      `<strong>${esc(d.hardware.gpu_name || d.hardware.cpu_name || "?")}</strong><br>` +
-      `tier ${esc(String(d.runtime.tier ?? d.hardware.tier ?? "?"))} · ${esc(String(d.runtime.performance_mode || ""))}<br>` +
-      `${w.nodes ?? 0} nodes · ${w.documents ?? 0} docs`;
+      `<strong>${esc(hardware.gpu_name || hardware.cpu_name || "?")}</strong><br>` +
+      `tier ${esc(runtime.tier ?? hardware.tier ?? "?")} · ${esc(runtime.performance_mode || "")}<br>` +
+      `${esc(w.nodes ?? 0)} nodes · ${esc(w.documents ?? 0)} docs`;
   } catch (e) {
     __bootTries++;
-    $("side-status").textContent = __bootTries <= 24
+    setStatus($("side-status"), __bootTries <= 24
       ? `Warming up… loading embedding model and LLM (${__bootTries})`
-      : "API offline — is the server running?";
+      : "API offline — is the server running?", "error");
     if (__bootTries <= 24) setTimeout(loadOverview, 5000);
   }
 }
 
 /* ---------- chat ---------- */
-$("chat-form").addEventListener("submit", async (e) => {
+const chatForm = $("chat-form");
+const chatOutput = $("chat-out");
+const chatSubmit = $("chat-submit");
+revalidateWhenFixed($("chat-q"), $("chat-q-error"), "Enter a question.");
+chatForm.addEventListener("submit", async (e) => {
   e.preventDefault();
-  const q = $("chat-q").value.trim();
-  if (!q) return;
+  if (chatSubmit.disabled) return;
+  const input = $("chat-q");
+  if (!validateRequired(input, $("chat-q-error"), "Enter a question.")) {
+    input.focus();
+    return;
+  }
+  const q = input.value.trim();
   const set = $("chat-set").value;
-  $("chat-out").insertAdjacentHTML("beforeend",
+  chatOutput.insertAdjacentHTML("beforeend",
     `<div class="bubble"><strong>You</strong><p>${esc(q)}</p></div>`);
-  $("chat-q").value = "";
-  const busy = document.createElement("div");
-  busy.className = "bubble"; busy.textContent = "Retrieving and composing…";
-  $("chat-out").appendChild(busy);
+  input.value = "";
+  const pending = document.createElement("div");
+  pending.className = "bubble"; pending.textContent = "Retrieving and composing…";
+  chatOutput.appendChild(pending);
+  setBusy(chatForm, true); setBusy(chatOutput, true); setPending(chatSubmit, true, "Asking…");
   try {
     const d = await api("/api/chat", {
       method: "POST", headers: { "Content-Type": "application/json" },
@@ -82,85 +180,147 @@ $("chat-form").addEventListener("submit", async (e) => {
     });
     const m = d.metrics || {};
     const rows = (d.memories || []).slice(0, 6).map((x, i) =>
-      `<tr><td>${i + 1}</td><td>${esc(x.concept)}</td><td>${esc(x.type)}</td>` +
-      `<td>${x.ring ?? "—"}</td><td>${(+x.score).toFixed(3)}</td></tr>`).join("");
+      `<tr><td>${i + 1}</td><th scope="row">${esc(x.concept)}</th><td>${esc(x.type)}</td>` +
+      `<td>${esc(x.ring ?? "—")}</td><td>${fmt(x.score)}</td></tr>`).join("");
     const src = (d.sources || []).map(s => `<li>${esc(s)}</li>`).join("");
     const amode = d.agent_mode || "memory";
     const amodeTag = amode === "memory" ? "from memory"
       : amode === "web" ? "fetched live from the web"
+      : amode === "identity" ? "project identity"
       : "model knowledge — ungrounded";
-    busy.innerHTML = `
+    const compression = Number(m.compression_ratio);
+    const affect = affectMarkup(d.affect_snapshot);
+    pending.innerHTML = `
       <strong>Answer <span class="muted small">(${esc(d.mode)} · ${esc(amodeTag)})</span></strong>
       <p>${esc(d.answer)}</p>
       ${d.paths && d.paths.length ? `<div class="path">${d.paths.map(esc).join("<br>")}</div>` : ""}
-      <div class="meta"><span>${(m.latency_ms ?? 0).toFixed ? (m.latency_ms).toFixed(0) : m.latency_ms} ms</span>
-        <span>${m.n_memories ?? "—"} memories</span>
-        <span>${m.context_tokens ?? "—"} ctx tokens</span>
-        <span>compression ${(m.compression_ratio ?? 0) * 1 || "—"}×</span></div>
-      ${rows ? `<details><summary>Retrieved memories</summary><table><tr><th>#</th><th>concept</th><th>type</th><th>ring</th><th>score</th></tr>${rows}</table></details>` : ""}
+      <div class="meta"><span>${fmt(m.latency_ms, 0)} ms</span>
+        <span>${esc(m.n_memories ?? "—")} memories</span>
+        <span>${esc(m.context_tokens ?? "—")} ctx tokens</span>
+        <span>compression ${Number.isFinite(compression) && compression !== 0 ? compression : "—"}×</span></div>
+      ${affect}
+      ${rows ? `<details><summary>Retrieved memories</summary><div class="table-wrap" role="region" aria-label="Retrieved memories" tabindex="0"><table><thead><tr><th scope="col">#</th><th scope="col">concept</th><th scope="col">type</th><th scope="col">ring</th><th scope="col">score</th></tr></thead><tbody>${rows}</tbody></table></div></details>` : ""}
       ${src ? `<details><summary>Sources</summary><ul class="ticks small">${src}</ul></details>` : ""}`;
   } catch (err) {
-    busy.innerHTML = `<p class="small" style="color:var(--warn)">Error: ${esc(err.message)}</p>`;
+    pending.innerHTML = `<p class="small status-error" role="alert">Error: ${esc(err.message)}</p>`;
+  } finally {
+    setBusy(chatForm, false); setBusy(chatOutput, false); setPending(chatSubmit, false);
   }
 });
 
 /* ---------- documents ---------- */
+const docList = $("doc-list");
 async function loadDocs() {
-  const d = await api("/api/documents");
-  $("doc-list").innerHTML = (d.documents || []).map(x =>
-    `<div class="doc-row"><span>${esc(x.title)} <span class="muted small">· ${x.n_chunks} chunks · ${x.file_type}</span></span>
-     <button class="del" data-id="${x.id}">delete</button></div>`).join("")
-    || `<p class="small muted">Nothing ingested yet.</p>`;
-  document.querySelectorAll(".doc-row .del").forEach(b =>
-    b.addEventListener("click", async () => {
-      await fetch("/api/documents/" + b.dataset.id, { method: "DELETE" });
-      loadDocs();
-    }));
+  setBusy(docList, true);
+  try {
+    const d = await api("/api/documents");
+    const documents = d.documents || [];
+    docList.innerHTML = documents.map(x =>
+      `<div class="doc-row"><span><span class="doc-title">${esc(x.title)}</span> <span class="muted small">· ${esc(x.n_chunks)} chunks · ${esc(x.file_type)}</span></span>
+       <button class="del" type="button" data-id="${esc(x.id)}" aria-label="Delete ${esc(x.title)}">delete</button></div>`).join("")
+      || `<p class="small muted">Nothing ingested yet.</p>`;
+    docList.querySelectorAll(".del").forEach(button => {
+      button.addEventListener("click", async () => {
+        const title = button.closest(".doc-row").querySelector(".doc-title").textContent;
+        if (!window.confirm(`Delete “${title}”? This removes the document and its memory nodes.`)) return;
+        setPending(button, true, "Deleting…");
+        setStatus($("doc-status"), `Deleting “${title}”…`);
+        try {
+          await api(`/api/documents/${encodeURIComponent(button.dataset.id)}`, { method: "DELETE" });
+          setStatus($("doc-status"), `Deleted “${title}”.`, "success");
+          await loadDocs();
+        } catch (err) {
+          setPending(button, false);
+          button.textContent = "Retry delete";
+          setStatus($("doc-status"), `Could not delete “${title}”: ${err.message || err}`, "error");
+        }
+      });
+    });
+  } catch (err) {
+    docList.innerHTML = `<p class="small status-error" role="alert">Could not load documents: ${esc(err.message || err)}</p>`;
+  } finally {
+    setBusy(docList, false);
+  }
 }
-$("upload-form").addEventListener("submit", async (e) => {
+
+const uploadForm = $("upload-form");
+const uploadStatus = $("upload-status");
+const uploadSubmit = $("upload-submit");
+revalidateWhenFixed($("doc-file"), $("doc-file-error"), "Choose a document to ingest.", "change");
+uploadForm.addEventListener("submit", async (e) => {
   e.preventDefault();
+  if (uploadSubmit.disabled) return;
+  const file = $("doc-file");
+  if (!validateRequired(file, $("doc-file-error"), "Choose a document to ingest.")) {
+    file.focus();
+    return;
+  }
   const fd = new FormData();
-  fd.append("file", $("doc-file").files[0]);
-  fd.append("title", $("doc-title").value);
-  $("upload-status").textContent = "Ingesting… (chunking, embedding, placing on the mandala)";
+  fd.append("file", file.files[0]);
+  fd.append("title", $("doc-title").value.trim());
+  setStatus(uploadStatus, "Ingesting… (chunking, embedding, placing on the mandala)");
+  setBusy(uploadForm, true); setBusy(uploadStatus, true); setPending(uploadSubmit, true, "Ingesting…");
   try {
     const d = await api("/api/documents", { method: "POST", body: fd });
-    $("upload-status").textContent =
-      `Ingested: ${d.n_chunks} chunks → ${d.n_nodes} nodes, ${d.n_edges} edges.`;
-    loadDocs();
+    setStatus(uploadStatus,
+      `Ingested: ${d.n_chunks} chunks → ${d.n_nodes} nodes, ${d.n_edges} edges.`, "success");
+    uploadForm.reset();
+    $("doc-file").removeAttribute("aria-invalid");
+    await loadDocs();
   } catch (err) {
-    $("upload-status").textContent = "Ingest failed: " + (err.message || err);
+    setStatus(uploadStatus, `Ingest failed: ${err.message || err}`, "error");
+  } finally {
+    setBusy(uploadForm, false); setBusy(uploadStatus, false); setPending(uploadSubmit, false);
   }
 });
 
 /* ---------- research lab ---------- */
-$("lab-form").addEventListener("submit", async (e) => {
+const labForm = $("lab-form");
+const labOutput = $("lab-out");
+const labSubmit = $("lab-submit");
+revalidateWhenFixed($("lab-q"), $("lab-q-error"), "Enter a research query.");
+labForm.addEventListener("submit", async (e) => {
   e.preventDefault();
-  const q = $("lab-q").value.trim();
-  if (!q) return;
-  $("lab-out").innerHTML = `<p class="small muted">Running…</p>`;
-  const d = await api("/api/lab", {
-    method: "POST", headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ question: q }),
-  });
-  if (d.detail) { $("lab-out").innerHTML = `<p class="small" style="color:var(--warn)">${esc(d.detail)}</p>`; return; }
-  let html = "";
-  for (const [name, r] of Object.entries(d.results)) {
-    html += `<h3 style="margin-top:1.4rem">${esc(name)} <span class="muted small">· ${r.latency_ms.toFixed(1)} ms · ${r.n_candidates} candidates</span></h3>`;
-    html += `<table class="lab-table"><tr><th>#</th><th>concept</th><th>type</th><th>ring</th><th>score</th><th>hops</th></tr>`;
-    r.items.slice(0, 8).forEach((it, i) => {
-      html += `<tr><td>${i + 1}</td><td>${esc(it.concept)}</td><td>${esc(it.type)}</td><td>${it.ring ?? "—"}</td><td>${(+it.score).toFixed(3)}</td><td>${it.hops}</td></tr>`;
-    });
-    html += `</table>`;
+  if (labSubmit.disabled) return;
+  const input = $("lab-q");
+  if (!validateRequired(input, $("lab-q-error"), "Enter a research query.")) {
+    input.focus();
+    return;
   }
-  html += `<h3 style="margin-top:1.4rem">Jaccard overlap</h3><pre class="formula">${esc(JSON.stringify(d.jaccard, null, 1))}</pre>`;
-  $("lab-out").innerHTML = html;
+  labOutput.innerHTML = `<p class="small muted">Running retrieval comparison…</p>`;
+  setBusy(labForm, true); setBusy(labOutput, true); setPending(labSubmit, true, "Running…");
+  try {
+    const d = await api("/api/lab", {
+      method: "POST", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ question: input.value.trim() }),
+    });
+    let html = "";
+    for (const [name, result] of Object.entries(d.results || {})) {
+      html += `<h2 style="margin-top:1.4rem">${esc(name)} <span class="muted small">· ${fmt(result.latency_ms, 1)} ms · ${esc(result.n_candidates)} candidates</span></h2>`;
+      html += `<div class="table-wrap" role="region" aria-label="${esc(name)} retrieval results" tabindex="0"><table class="lab-table"><thead><tr><th scope="col">#</th><th scope="col">concept</th><th scope="col">type</th><th scope="col">ring</th><th scope="col">score</th><th scope="col">hops</th></tr></thead><tbody>`;
+      (result.items || []).slice(0, 8).forEach((item, i) => {
+        html += `<tr><td>${i + 1}</td><th scope="row">${esc(item.concept)}</th><td>${esc(item.type)}</td><td>${esc(item.ring ?? "—")}</td><td>${fmt(item.score)}</td><td>${esc(item.hops)}</td></tr>`;
+      });
+      html += `</tbody></table></div>`;
+    }
+    html += `<h2 style="margin-top:1.4rem">Jaccard overlap</h2><pre class="formula">${esc(JSON.stringify(d.jaccard || {}, null, 1))}</pre>`;
+    labOutput.innerHTML = html;
+  } catch (err) {
+    labOutput.innerHTML = `<p class="small status-error" role="alert">Research Lab failed: ${esc(err.message || err)}</p>`;
+  } finally {
+    setBusy(labForm, false); setBusy(labOutput, false); setPending(labSubmit, false);
+  }
 });
 
 /* ---------- benchmarks ---------- */
-$("bench-form").addEventListener("submit", async (e) => {
+const benchForm = $("bench-form");
+const benchOutput = $("bench-out");
+const benchSubmit = $("bench-submit");
+benchForm.addEventListener("submit", async (e) => {
   e.preventDefault();
-  $("bench-out").innerHTML = `<p class="small muted">Running benchmark… (this really runs every system)</p>`;
+  if (benchSubmit.disabled) return;
+  benchOutput.innerHTML = `<p class="small muted">Running benchmark… (this really runs every system)</p>`;
+  setBusy(benchForm, true); setBusy(benchOutput, true); setPending(benchSubmit, true, "Running…");
   try {
     const d = await api("/api/benchmark", {
       method: "POST", headers: { "Content-Type": "application/json" },
@@ -170,101 +330,155 @@ $("bench-form").addEventListener("submit", async (e) => {
       }),
     });
     const cols = ["system", "retrieval_recall", "mrr", "answer_token_f1", "context_tokens", "latency_ms"];
-    let html = `<p class="small muted">${d.n_questions} questions · experiment ${esc(d.experiment_id || "not saved")}</p>`;
-    if (d.judge) html += `<p class="small">judge: correctness ${d.judge.judge_correctness ?? "—"} / faithfulness ${d.judge.judge_faithfulness ?? "—"} (${d.judge.n_judged ?? 0} judged)</p>`;
-    html += `<table class="bench-table"><tr>${cols.map(c => `<th>${c}</th>`).join("")}</tr>`;
-    for (const row of d.table) {
-      html += `<tr>${cols.map(c => `<td>${row[c] ?? "—"}</td>`).join("")}</tr>`;
+    let html = `<p class="small muted">${esc(d.n_questions)} questions · experiment ${esc(d.experiment_id || "not saved")}</p>`;
+    if (d.judge) html += `<p class="small">judge: correctness ${esc(d.judge.judge_correctness ?? "—")} / faithfulness ${esc(d.judge.judge_faithfulness ?? "—")} (${esc(d.judge.n_judged ?? 0)} judged)</p>`;
+    html += `<div class="table-wrap" role="region" aria-label="Benchmark results" tabindex="0"><table class="bench-table"><thead><tr>${cols.map(c => `<th scope="col">${c}</th>`).join("")}</tr></thead><tbody>`;
+    for (const row of d.table || []) {
+      html += `<tr>${cols.map((c, i) => i === 0
+        ? `<th scope="row">${esc(row[c] ?? "—")}</th>`
+        : `<td>${esc(row[c] ?? "—")}</td>`).join("")}</tr>`;
     }
-    html += `</table>`;
-    $("bench-out").innerHTML = html;
+    html += `</tbody></table></div>`;
+    benchOutput.innerHTML = html;
   } catch (err) {
-    $("bench-out").innerHTML = `<p class="small" style="color:var(--warn)">Error: ${esc(err.message)}</p>`;
+    benchOutput.innerHTML = `<p class="small status-error" role="alert">Benchmark failed: ${esc(err.message || err)}</p>`;
+  } finally {
+    setBusy(benchForm, false); setBusy(benchOutput, false); setPending(benchSubmit, false);
   }
 });
 
 /* ---------- live web search ---------- */
-$("ws-form").addEventListener("submit", async (e) => {
+const wsForm = $("ws-form");
+const wsOutput = $("ws-out");
+const wsSubmit = $("ws-submit");
+revalidateWhenFixed($("ws-q"), $("ws-q-error"), "Enter a search query.");
+wsForm.addEventListener("submit", async (e) => {
   e.preventDefault();
-  const q = $("ws-q").value.trim();
-  if (!q) return;
-  $("ws-out").innerHTML = `<p class="small muted">Searching…</p>`;
+  if (wsSubmit.disabled) return;
+  const input = $("ws-q");
+  if (!validateRequired(input, $("ws-q-error"), "Enter a search query.")) {
+    input.focus();
+    return;
+  }
+  wsOutput.innerHTML = `<p class="small muted">Searching the web…</p>`;
+  setBusy(wsForm, true); setBusy(wsOutput, true); setPending(wsSubmit, true, "Searching…");
   try {
     const d = await api("/api/websearch", {
       method: "POST", headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ query: q, backend: $("ws-backend").value }),
+      body: JSON.stringify({
+        query: input.value.trim(), backend: $("ws-backend").value,
+        allow_web: $("ws-consent").checked,
+      }),
     });
     if (!d.results || !d.results.length) {
-      $("ws-out").innerHTML = `<p class="small" style="color:var(--warn)">${esc(d.note || "no results")}</p>`;
+      wsOutput.innerHTML = `<p class="small status-error" role="alert">${esc(d.note || "No web results found.")}</p>`;
       return;
     }
-    $("ws-out").innerHTML =
+    wsOutput.innerHTML =
       `<p class="small muted">backend: ${esc(d.backend)} · ${d.results.length} results</p>` +
-      d.results.map((r, i) => `
+      d.results.map((result, i) => {
+        const title = result.title || result.url;
+        const url = safeHttpUrl(result.url);
+        return `
         <div class="doc-row">
-          <span><a href="${esc(r.url)}" target="_blank" rel="noopener">${esc(r.title || r.url)}</a>
-            <div class="muted small">${esc((r.snippet || "").slice(0, 200))}</div></span>
-          <button class="btn btn-secondary ws-ingest" data-i="${i}">Ingest into memory</button>
-        </div>`).join("");
-    let lastResults = d.results;
-    document.querySelectorAll(".ws-ingest").forEach(b =>
-      b.addEventListener("click", async () => {
-        const r = lastResults[+b.dataset.i];
-        b.textContent = "Fetching…"; b.disabled = true;
+          <span><a href="${esc(url)}" target="_blank" rel="noopener">${esc(title)}</a>
+            <div class="muted small">${esc(String(result.snippet || "").slice(0, 200))}</div></span>
+          <button class="btn btn-secondary ws-ingest" type="button" data-i="${i}" aria-label="Ingest ${esc(title)} into memory">Ingest into memory</button>
+        </div>`;
+      }).join("");
+    const lastResults = d.results;
+    wsOutput.querySelectorAll(".ws-ingest").forEach(button => {
+      button.addEventListener("click", async () => {
+        const result = lastResults[+button.dataset.i];
+        button.classList.remove("status-error");
+        button.setAttribute("aria-label", "Ingest this page into memory");
+        setPending(button, true, "Fetching…"); setBusy(wsOutput, true);
         try {
-          const d2 = await api("/api/websearch/ingest", {
+          const ingested = await api("/api/websearch/ingest", {
             method: "POST", headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ url: r.url, title: r.title || r.url }),
+              body: JSON.stringify({
+                url: result.url, title: result.title || result.url,
+                allow_web: $("ws-consent").checked,
+              }),
+
           });
-          const s = d2.ingested || {};
-          b.textContent = `✓ ${s.n_chunks ?? "?"} chunks → ${s.n_nodes ?? "?"} nodes`;
+          const stats = ingested.ingested || {};
+          setPending(button, false);
+          button.textContent = `Ingested: ${stats.n_chunks ?? "?"} chunks → ${stats.n_nodes ?? "?"} nodes`;
         } catch (err) {
-          b.textContent = "failed"; b.disabled = false;
+          setPending(button, false);
+          button.textContent = "Retry ingest";
+          button.classList.add("status-error");
+          button.setAttribute("aria-label", `Web page ingest failed: ${err.message || err}. Retry ingest.`);
+        } finally {
+          setBusy(wsOutput, false);
         }
-      }));
+      });
+    });
   } catch (err) {
-    $("ws-out").innerHTML = `<p class="small" style="color:var(--warn)">Error: ${esc(err.message)}</p>`;
+    wsOutput.innerHTML = `<p class="small status-error" role="alert">Web search failed: ${esc(err.message || err)}</p>`;
+  } finally {
+    setBusy(wsForm, false); setBusy(wsOutput, false); setPending(wsSubmit, false);
   }
 });
 
 /* ---------- placement strategy lab ---------- */
+const stratForm = $("strat-form");
+const stratOutput = $("strat-out");
+const stratApply = $("strat-apply");
+const stratSweep = $("strat-sweep");
 async function initStrategyLab() {
   try {
     const d = await api("/api/strategies");
-    const sel = $("strat-select");
-    sel.innerHTML = (d.strategies || []).map(s =>
-      `<option value="${esc(s)}" ${s === d.current ? "selected" : ""}>${esc(s)}</option>`).join("");
-  } catch (e) { /* mandala view only */ }
+    $("strat-select").innerHTML = (d.strategies || []).map(strategy =>
+      `<option value="${esc(strategy)}" ${strategy === d.current ? "selected" : ""}>${esc(strategy)}</option>`).join("");
+  } catch (err) {
+    $("strat-select").disabled = true;
+    stratApply.disabled = true;
+    stratOutput.innerHTML = `<p class="status-error" role="alert">Could not load placement strategies: ${esc(err.message || err)}</p>`;
+  }
 }
-$("strat-form").addEventListener("submit", async (e) => {
+stratForm.addEventListener("submit", async (e) => {
   e.preventDefault();
-  const s = $("strat-select").value;
-  $("strat-out").innerHTML = `<p class="muted">Re-placing all memories with “${esc(s)}”…</p>`;
+  if (stratApply.disabled) return;
+  const strategy = $("strat-select").value;
+  if (!strategy) return;
+  stratOutput.innerHTML = `<p class="muted">Re-placing all memories with “${esc(strategy)}”…</p>`;
+  setBusy(stratForm, true); setBusy(stratOutput, true); setPending(stratApply, true, "Applying…");
+  stratSweep.disabled = true;
   try {
-    const d = await api("/api/strategies/" + encodeURIComponent(s) + "/apply", { method: "POST" });
-    const r = d.info && d.info.radial;
-    $("strat-out").innerHTML = `<p>✓ applied <strong>${esc(d.applied)}</strong>` +
-      (r ? ` — radial distances recomputed for ${r.computed} nodes` : "") + `.</p>`;
+    const d = await api(`/api/strategies/${encodeURIComponent(strategy)}/apply`, { method: "POST" });
+    const radial = d.info && d.info.radial;
+    stratOutput.innerHTML = `<p class="status-success">Applied <strong>${esc(d.applied)}</strong>` +
+      (radial ? ` — radial distances recomputed for ${esc(radial.computed)} nodes` : "") + `.</p>`;
     if (window.__miraMandalaRefresh) window.__miraMandalaRefresh();
   } catch (err) {
-    $("strat-out").innerHTML = `<p style="color:var(--warn)">Error: ${esc(err.message)}</p>`;
+    stratOutput.innerHTML = `<p class="status-error" role="alert">Could not apply strategy: ${esc(err.message || err)}</p>`;
+  } finally {
+    setBusy(stratForm, false); setBusy(stratOutput, false); setPending(stratApply, false);
+    stratSweep.disabled = false;
   }
 });
-$("strat-sweep").addEventListener("click", async () => {
-  $("strat-out").innerHTML = `<p class="muted">Benchmarking all strategies (place → measure → restore)…</p>`;
+stratSweep.addEventListener("click", async () => {
+  stratOutput.innerHTML = `<p class="muted">Benchmarking all strategies (place → measure → restore)…</p>`;
+  setBusy(stratForm, true); setBusy(stratOutput, true); setPending(stratSweep, true, "Benchmarking…");
+  stratApply.disabled = true;
   try {
     const d = await api("/api/strategies/sweep", { method: "POST" });
-    let html = `<table class="bench-table"><tr><th>strategy</th><th>recall</th><th>mrr</th><th>latency ms</th></tr>`;
-    for (const r of d.table) {
-      html += `<tr${r.system === d.best ? " style='color:var(--gold)'" : ""}>` +
-        `<td>${esc(r.system)}</td><td>${r.retrieval_recall ?? "—"}</td>` +
-        `<td>${r.mrr ?? "—"}</td><td>${(r.latency_ms ?? 0).toFixed ? r.latency_ms.toFixed(1) : r.latency_ms}</td></tr>`;
+    let html = `<div class="table-wrap" role="region" aria-label="Placement strategy benchmark" tabindex="0"><table class="bench-table"><thead><tr><th scope="col">strategy</th><th scope="col">recall</th><th scope="col">mrr</th><th scope="col">latency ms</th></tr></thead><tbody>`;
+    for (const row of d.table || []) {
+      html += `<tr${row.system === d.best ? " style='color:var(--gold)'" : ""}>` +
+        `<th scope="row">${esc(row.system)}</th><td>${esc(row.retrieval_recall ?? "—")}</td>` +
+        `<td>${esc(row.mrr ?? "—")}</td><td>${fmt(row.latency_ms, 1)}</td></tr>`;
     }
-    html += `</table><p class="muted small">best: ${esc(d.best)} (restored: ${esc(d.restored)})</p>`;
-    $("strat-out").innerHTML = html;
+    html += `</tbody></table></div><p class="muted small">best: ${esc(d.best)} (restored: ${esc(d.restored)})</p>`;
+    stratOutput.innerHTML = html;
     if (window.__miraMandalaRefresh) window.__miraMandalaRefresh();
   } catch (err) {
-    $("strat-out").innerHTML = `<p style="color:var(--warn)">Error: ${esc(err.message)}</p>`;
+    stratOutput.innerHTML = `<p class="status-error" role="alert">Strategy benchmark failed: ${esc(err.message || err)}</p>`;
+  } finally {
+    setBusy(stratForm, false); setBusy(stratOutput, false); setPending(stratSweep, false);
+    stratApply.disabled = $("strat-select").disabled;
   }
 });
 

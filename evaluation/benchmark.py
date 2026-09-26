@@ -10,16 +10,30 @@ from __future__ import annotations
 import json
 import logging
 import time
-from typing import Any, Callable, Dict, List, Optional, Set
+from contextlib import nullcontext
+from typing import Any, Callable, Dict, List, Set
 
 import numpy as np
 
-from core.memory import MemoryFrame
 from evaluation.metrics import aggregate, context_tokens, mrr, recall_at_k, token_f1
 
 logger = logging.getLogger("mira.benchmark")
 
 Record = Dict[str, Any]  # {question, answer, supporting_ids?: [node ids]}
+
+
+def _workspace_guard(ws):
+    """Use the workspace consistency lock when the adapter has one."""
+    lock = getattr(ws, "lock", None)
+    return lock if hasattr(lock, "__enter__") else nullcontext()
+
+
+def _active_names(active) -> List[str]:
+    from core.retrieval import ALL_COMPONENTS
+    if isinstance(active, str):
+        names = [name.strip() for name in active.split(",") if name.strip()]
+        active = None if not names or names == ["all"] else names
+    return list(ALL_COMPONENTS if active is None else sorted(set(active)))
 
 
 def load_dataset(path: str) -> List[Record]:
@@ -54,7 +68,13 @@ def run_system(name: str, retrieve_fn: Callable[[str, np.ndarray], Dict[str, Any
     for rec in records:
         qvec = embeddings.encode([rec["question"]])[0]
         out = retrieve_fn(rec["question"], qvec)
-        ids = out["node_ids"]
+        # Answer-stage adapters explicitly report the ids that survived
+        # compression.  Retrieval-only adapters retain their full candidate
+        # list; never silently fall back to candidates for an answer run.
+        if "selected_evidence_ids" in out:
+            ids = list(out.get("selected_evidence_ids") or [])
+        else:
+            ids = list(out.get("node_ids") or [])
         relevant: Set[str] = set(rec.get("supporting_ids") or [])
         row: Dict[str, Any] = {
             "question": rec["question"],
@@ -63,12 +83,21 @@ def run_system(name: str, retrieve_fn: Callable[[str, np.ndarray], Dict[str, Any
             "evidence_text": out.get("context_text") or "",
             "latency_ms": out.get("latency_ms", 0.0),
             "retrieval_latency_ms": out.get("retrieval_latency_ms", out.get("latency_ms", 0.0)),
-            "n_retrieved": len(ids),
-            "context_tokens": context_tokens(out.get("context_text", "")),
+            "n_retrieved": int(out.get("n_retrieved", len(ids))),
+            "n_candidates": int(out.get("n_candidates", out.get("n_retrieved", len(ids)))),
+            "context_tokens": out.get("context_tokens", context_tokens(out.get("context_text", ""))),
+            "active_components": out.get("active_components"),
+            "candidate_policy": out.get("candidate_policy"),
+            "answer_metrics": dict(out.get("metrics") or {}),
         }
+        if "selected_evidence_ids" in out:
+            row["selected_evidence_ids"] = list(ids)
+        candidate_ids = out.get("candidate_ids", out.get("node_ids", []))
+        if candidate_ids:
+            row["candidate_ids"] = list(candidate_ids)
         if relevant:
             row["retrieval_recall"] = recall_at_k(ids, relevant, k)
-            row["mrr"] = mrr(ids, relevant)
+            row["mrr"] = mrr(ids, relevant, k)
         if out.get("answer") is not None:
             row["answer_token_f1"] = token_f1(out["answer"], rec["answer"])
         rows.append(row)
@@ -86,17 +115,23 @@ def mira_retrieve_fn(ws, active_components=None, k: int = 8,
     frame reference after ingestion."""
     def fn(question: str, qvec: np.ndarray) -> Dict[str, Any]:
         from core.answer import AnswerPipeline
-        pipe = AnswerPipeline(ws.frame, ws.vs, ws.gs, ws.embeddings,
-                              llm=ws.llm, config=ws.config,
-                              doc_titles=ws._doc_titles())
-        res = pipe.retriever.retrieve(question, qvec,
-                                      active_components=active_components,
-                                      final_k=k)
-        out: Dict[str, Any] = {
-            "node_ids": [it.node.id for it in res.items],
-            "latency_ms": res.latency_ms,
-        }
-        return out
+        with _workspace_guard(ws):
+            pipe = AnswerPipeline(ws.frame, ws.vs, ws.gs, ws.embeddings,
+                                  llm=ws.llm, config=ws.config,
+                                  doc_titles=ws._doc_titles(),
+                                  operation_lock=getattr(ws, "_lock", None))
+            res = pipe.retriever.retrieve(question, qvec,
+                                          active_components=active_components,
+                                          final_k=k)
+            out: Dict[str, Any] = {
+                "node_ids": [it.node.id for it in res.items],
+                "n_retrieved": len(res.items),
+                "n_candidates": res.n_candidates,
+                "latency_ms": res.latency_ms,
+                "active_components": _active_names(active_components),
+                "candidate_policy": "shared",
+            }
+            return out
     return fn
 
 
@@ -106,24 +141,44 @@ def answer_retrieve_fn(ws, active_components=None, k: int = 8) -> Callable:
     keep their own retrieval-only fns and are compared at retrieval level."""
     def fn(question: str, qvec: np.ndarray) -> Dict[str, Any]:
         from core.answer import AnswerPipeline
-        pipe = AnswerPipeline(ws.frame, ws.vs, ws.gs, ws.embeddings,
-                              llm=ws.llm, config=ws.config,
-                              doc_titles=ws._doc_titles())
-        ans = pipe.ask(question, active_components=active_components,
-                       system_name="bench")
-        return {
-            "node_ids": [m.get("id") for m in ans.memories if m.get("id")],
-            "answer": ans.text if ans.mode != "no_evidence" else None,
-            "context_text": ans.context_text,
-            "latency_ms": ans.metrics.get("latency_ms", 0.0),
-        }
+        with _workspace_guard(ws):
+            pipe = AnswerPipeline(ws.frame, ws.vs, ws.gs, ws.embeddings,
+                                  llm=ws.llm, config=ws.config,
+                                  doc_titles=ws._doc_titles(),
+                                  operation_lock=getattr(ws, "_lock", None))
+            ans = pipe.ask(question, active_components=active_components,
+                           system_name="bench", query_vec=qvec, final_k=k)
+            if hasattr(ans, "selected_evidence_ids"):
+                selected_ids = list(ans.selected_evidence_ids or [])
+            else:
+                # Compatibility for Answer-like test doubles that predate the
+                # explicit field; real pipeline answers always populate it.
+                selected_ids = [m.get("id") for m in ans.memories if m.get("id")]
+            return {
+                "node_ids": [m.get("id") for m in ans.memories if m.get("id")],
+                "candidate_ids": list(ans.metrics.get("candidate_ids", [])),
+                "selected_evidence_ids": selected_ids,
+                "n_retrieved": ans.metrics.get("n_retrieved", len(selected_ids)),
+                "n_candidates": ans.metrics.get("n_candidates", len(selected_ids)),
+                "n_memories": ans.metrics.get("n_memories", len(selected_ids)),
+                "answer": ans.text if ans.mode != "no_evidence" else None,
+                "context_text": ans.context_text,
+                "context_tokens": ans.metrics.get("context_tokens", 0),
+                "latency_ms": ans.metrics.get("latency_ms", 0.0),
+                "metrics": dict(ans.metrics),
+                "active_components": _active_names(active_components),
+                "candidate_policy": "shared",
+            }
     return fn
 
 
 def baseline_retrieve_fn(system, k: int = 8) -> Callable:
-    """system: VectorRAG / GraphRAG / HierarchicalRAG instance."""
+    """Build an adapter for a named baseline retrieval implementation."""
+    system_name = getattr(system, "system", "")
+    vector_based = system_name in {"vector_rag", "graph_rag"}
+
     def fn(question: str, qvec: np.ndarray) -> Dict[str, Any]:
-        if hasattr(system, "retrieve") and "query_vec" in system.retrieve.__code__.co_varnames:
+        if vector_based:
             res = system.retrieve(qvec, k=k)
         else:
             res = system.retrieve(question, k=k)

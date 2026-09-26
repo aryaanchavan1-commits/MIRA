@@ -46,21 +46,36 @@ retrieval_score:             # §21: MIRA retrieval score — experimental
   zeta_confidence: 0.07
   eta_recency: 0.03
   theta_path: 0.02
-  iota_activation: 0.12      # spreading-activation component (bio-inspired)
-  learned: true              # refit 2026-09 on the 12-doc corpus (1632 pairs):
-                             # MRR 0.316 -> 0.470, recall 0.567 -> 0.650 vs hand
-                             # weights; radial weight rose 0.02 -> 0.32 with scale.
-                             # Refit after major corpus growth.
+  iota_activation: 0.12      # Bio-NN-inspired activation component
+  learned: false             # enable only after a held-out, document-grouped
+                             # validation run records the scorer and split.
 
-activation:                  # spreading-activation dynamics (core/activation.py)
-  hops: 2                    # energy propagation depth
-  decay: 0.5                 # activation retained per hop
-  fanout_normalize: true     # synaptic scaling: busy hubs don't over-fire
+activation:                  # Bio-NN-inspired retrieval dynamics (core/activation.py)
+  mode: lif_like             # configured production mode; continuous remains compatible
+  ticks: 3                   # bounded LIF-inspired update ticks per query
+  leak: 0.5                  # fraction of membrane voltage lost per LIF tick
+  threshold: 0.8             # bounded spike threshold in [0, 1]
+  reset_voltage: 0.0         # post-spike membrane reset
+  refractory_ticks: 1        # ticks for which a neuron cannot spike again
+  top_k_neighbors: 4         # sparse fan-out cap per spiking node
+  edge_weight_scale: 1.0     # bounded LIF edge-current scale
+  max_trace_events: 4096     # bounded per-query voltage/spike audit trail
+  hops: 2                    # continuous-mode energy propagation depth
+  decay: 0.5                 # continuous-mode activation retained per hop
+  fanout_normalize: true     # continuous-mode synaptic scaling
   seed_semantic_weight: 1.0
   seed_importance_weight: 0.3
 
 memory:
-  hebbian: true              # consolidate used retrieval paths (core/hebbian.py)
+  hebbian: true              # master toggle for accepted-answer consolidation
+  stdp:                      # optional STDP-like rule over the LIF audit trace
+    enabled: true             # only runs after an accepted grounded route
+    window_ticks: 1           # small pre/post timing window
+    potentiation: 0.05
+    depression: 0.02
+    decay: 0.002              # homeostasis for inactive edges
+    spike_only: true
+    max_events: 4096          # bounded trace work per accepted answer
 
 web_search:                  # every search leaves the machine — off by default
   enabled: false             # true = allow live search (agent-reach/opencli/DDG)

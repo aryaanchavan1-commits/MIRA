@@ -5,7 +5,7 @@ Vector seeds → one-hop graph expansion → degree-weighted merge.
 from __future__ import annotations
 
 import time
-from typing import Dict, List
+from typing import Dict
 
 import numpy as np
 
@@ -36,12 +36,13 @@ class GraphRAG:
             if nid in self._index:
                 scores[nid] = scores.get(nid, 0.0) + float(score)
         # graph expansion component: 1 hop from vector seeds, weighted by degree
-        seeds = [nid for nid, _ in sorted(scores.items(), key=lambda kv: -kv[1])[:3]]
+        seeds = [nid for nid, _ in sorted(scores.items(),
+                                          key=lambda kv: (-kv[1], kv[0]))[:3]]
         for seed in seeds:
-            for nid in self.gs.neighborhood(seed, radius=1):
+            for nid in sorted(self.gs.neighborhood(seed, radius=1)):
                 if nid in self._index and nid not in scores:
                     scores[nid] = 0.5 * min(1.0, self._degree.get(nid, 0) / 5.0)
-        top = sorted(scores.items(), key=lambda kv: -kv[1])[:k]
+        top = sorted(scores.items(), key=lambda kv: (-kv[1], kv[0]))[:k]
         res = BaselineResult(query="", system=self.system)
         for nid, s in top:
             res.items.append(self._index[nid])

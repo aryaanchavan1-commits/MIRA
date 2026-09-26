@@ -3,15 +3,16 @@ distance, re-placement of existing memories."""
 from __future__ import annotations
 
 import sys
+import threading
 from pathlib import Path
-
-import numpy as np
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from core.memory import MemoryEdge, MemoryFrame, MemoryNode, MemoryType
 from core.placement import place
+from core.workspace import Workspace
 from models.embeddings import init_embeddings
+from storage.graph_store import GraphStore
 
 
 def _frame() -> MemoryFrame:
@@ -76,6 +77,83 @@ def test_replace_all_reassigns():
     r_after = {n.id: (n.ring, n.sector) for n in f.nodes.values()}
     assert r_before != r_after, "different strategies must produce different mandalas"
     assert all(n.radial_distance is not None for n in f.nodes.values())
+
+
+def test_workspace_hydrates_edges_before_graph_build():
+    source = MemoryNode(id="a", concept="source", memory_type=MemoryType.CONCEPT)
+    target = MemoryNode(id="b", concept="target", memory_type=MemoryType.FACT,
+                        parent_id="a")
+    edge = MemoryEdge(source_id="a", target_id="b", relation_type="supports")
+
+    class Store:
+        def all_nodes(self):
+            return [source.to_row(), target.to_row()]
+
+        def all_edges(self):
+            return [edge.to_row()]
+
+    workspace = Workspace.__new__(Workspace)
+    workspace.store = Store()
+    workspace.frame = MemoryFrame()
+    workspace.gs = GraphStore()
+    workspace._load_frame()
+    assert len(workspace.frame.edges) == 1
+    assert workspace.gs.g.number_of_edges() == 1
+    assert workspace.gs.neighborhood("a") == {"a", "b"}
+
+
+def test_workspace_strategy_apply_updates_live_config():
+    class Store:
+        def __init__(self):
+            self.rows = []
+
+        def upsert_node(self, row):
+            self.rows.append(row)
+
+    workspace = Workspace.__new__(Workspace)
+    workspace._lock = threading.RLock()
+    workspace.config = {"topology": {"placement_strategy": "hybrid_mira"}}
+    workspace.frame = MemoryFrame()
+    node = MemoryNode(id="n", concept="node", memory_type=MemoryType.FACT,
+                      summary="node")
+    workspace.frame.add_node(node)
+    workspace.store = Store()
+    info = workspace.replace_all(strategy="temporal")
+    assert info["strategy"] == "temporal"
+    assert workspace.config["topology"]["placement_strategy"] == "temporal"
+    assert workspace.store.rows and workspace.store.rows[0]["id"] == "n"
+
+
+def test_workspace_strategy_failure_restores_live_placement():
+    class FailingStore:
+        def __init__(self):
+            self.calls = 0
+
+        def upsert_node(self, row):
+            self.calls += 1
+            if self.calls == 2:
+                raise RuntimeError("placement write failed")
+
+    workspace = Workspace.__new__(Workspace)
+    workspace._lock = threading.RLock()
+    workspace.config = {"topology": {"placement_strategy": "hybrid_mira"}}
+    workspace.frame = MemoryFrame()
+    for node_id in ("a", "b"):
+        workspace.frame.add_node(MemoryNode(
+            id=node_id, concept=node_id, memory_type=MemoryType.FACT,
+            summary=node_id))
+    workspace.store = FailingStore()
+    before = {node_id: (node.ring, node.sector, node.depth)
+              for node_id, node in workspace.frame.nodes.items()}
+    try:
+        workspace.replace_all(strategy="temporal")
+    except RuntimeError:
+        pass
+    else:
+        raise AssertionError("placement persistence failure must propagate")
+    assert workspace.config["topology"]["placement_strategy"] == "hybrid_mira"
+    assert {node_id: (node.ring, node.sector, node.depth)
+            for node_id, node in workspace.frame.nodes.items()} == before
 
 
 if __name__ == "__main__":

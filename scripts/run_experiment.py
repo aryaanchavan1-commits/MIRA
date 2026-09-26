@@ -11,10 +11,19 @@ hardware, seed, versions, and git commit (see evaluation/report.py).
 from __future__ import annotations
 
 import argparse
+import hashlib
 import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+
+
+def _sha256(path: str) -> str:
+    digest = hashlib.sha256()
+    with open(path, "rb") as handle:
+        for block in iter(lambda: handle.read(1024 * 1024), b""):
+            digest.update(block)
+    return digest.hexdigest()
 
 
 def main() -> None:
@@ -28,6 +37,8 @@ def main() -> None:
     ap.add_argument("--no-baselines", action="store_true")
     ap.add_argument("--no-ablations", action="store_true")
     ap.add_argument("--name", default="cli-run")
+    ap.add_argument("--study-type", choices=["smoke", "research"],
+                    default="smoke")
     args = ap.parse_args()
 
     from config.auto_config import build_context
@@ -63,10 +74,18 @@ def main() -> None:
                 answers={i: r.get("evidence_text", "") for i, r in enumerate(ans_res["rows"])})
             print(f"[mira] judge: {judge_summary}")
 
+    provenance = {
+        "command": " ".join(sys.argv),
+        "dataset_sha256": _sha256(args.dataset),
+        "resolved_config": ctx.cfg,
+        "embedding": ctx.embeddings.info(),
+        "llm": ctx.llm.info() if ctx.llm else {"available": False},
+    }
     exp_id = save_experiment(args.name,
                              {"dataset": args.dataset, "format": args.format,
                               "k": args.k, "limit": args.limit, "judge": bool(judge_summary)},
-                             results, store=ws.store, hw=ctx.hw)
+                             results, store=ws.store, hw=ctx.hw,
+                             study_type=args.study_type, provenance=provenance)
     print(f"[mira] experiment saved: experiments/{exp_id}/")
     print(f"{'system':>22} | recall |   mrr  |  ctx   |  ms")
     for row in comparison_table(results):

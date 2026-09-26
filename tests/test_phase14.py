@@ -1,4 +1,4 @@
-"""Phase 14 tests: bio-inspired activation dynamics + learned neural scorer.
+"""Phase 14 tests: Bio-NN-inspired activation dynamics + learned neural scorer.
 
 Also regression-guards the label-only concept-node suppression that keeps
 structural nodes out of answer contexts.
@@ -16,7 +16,7 @@ from core.activation import SpreadingActivation
 from core.compression import compress
 from core.memory import MemoryEdge, MemoryFrame, MemoryNode, MemoryType
 from core.retrieval import MIRARetriever, ablation_configs
-from core.retrieval import RetrievalResult
+from core.ranking import apply_weights
 from core.neural import DeltaRuleScorer, FEATURES
 from models.embeddings import init_embeddings
 from storage.graph_store import GraphStore
@@ -47,6 +47,117 @@ def build_frame() -> tuple:
 def _retriever(frame, vs, gs, config=None) -> MIRARetriever:
     cfg = config or {"retrieval": {"candidate_k": 8, "final_k": 4, "max_hops": 3}}
     return MIRARetriever(frame, vs, gs, cfg)
+
+
+def _lif_config(**overrides):
+    activation = {
+        "mode": "lif_like",
+        "ticks": 3,
+        "leak": 0.5,
+        "threshold": 0.8,
+        "reset_voltage": 0.0,
+        "refractory_ticks": 1,
+        "top_k_neighbors": 0,
+        "max_trace_events": 128,
+    }
+    activation.update(overrides)
+    return {"activation": activation}
+
+
+def test_lif_below_threshold_has_no_spike():
+    frame, *_ = build_frame()
+    act = SpreadingActivation(frame, _lif_config())
+    assert act.activate({"n0": 0.5}) == []
+    assert act.last_trace
+    assert all(event["spike"] is False for event in act.last_trace)
+    assert all(0.0 <= event["post_voltage"] <= 1.0
+               for event in act.last_trace)
+
+
+def test_lif_spike_reset_and_refractory_are_exact():
+    frame, *_ = build_frame()
+    act = SpreadingActivation(frame, _lif_config(
+        ticks=4, threshold=0.8, reset_voltage=0.2, refractory_ticks=1,
+    ))
+    out = act.activate({"n0": 1.0})
+    events = act.last_trace
+    assert out == [("n0", 1.0)]
+    assert [event["spike"] for event in events] == [True, False, False, False]
+    assert events[0]["pre_voltage"] == 0.0
+    assert events[0]["post_voltage"] == 0.2
+    assert events[1]["pre_voltage"] == 0.2
+    assert events[1]["post_voltage"] == 0.2  # refractory hold
+    assert abs(events[2]["post_voltage"] - 0.1) < 1e-9
+    assert abs(events[3]["post_voltage"] - 0.05) < 1e-9
+
+
+def test_lif_is_deterministic_across_queries():
+    frame, *_ = build_frame()
+    cfg = _lif_config(ticks=3, top_k_neighbors=2)
+    first = SpreadingActivation(frame, cfg)
+    second = SpreadingActivation(frame, cfg)
+    first_out = first.activate({"n0": 1.0, "n1": 0.7})
+    second_out = second.activate({"n0": 1.0, "n1": 0.7})
+    assert first_out == second_out
+    assert first.last_trace == second.last_trace
+
+
+def test_lif_propagates_only_bounded_top_neighbors_without_dense_matrix():
+    frame = MemoryFrame()
+    for index in range(7):
+        frame.add_node(MemoryNode(id=f"n{index}", concept=f"n{index}"))
+    for index in range(1, 7):
+        frame.add_edge(MemoryEdge(
+            source_id="n0", target_id=f"n{index}",
+            weight=1.0 if index <= 2 else 0.1,
+        ))
+    act = SpreadingActivation(frame, _lif_config(
+        ticks=2, leak=0.0, threshold=0.5, refractory_ticks=0,
+        top_k_neighbors=2,
+    ))
+    out = act.activate({"n0": 1.0})
+    assert {node for node, _ in out} == {"n0", "n1", "n2"}
+    assert act._mat is None, "LIF mode must not build a dense adjacency matrix"
+    assert all(len(row) <= 2 for row in act._neighbors)
+    assert {event["node"] for event in act.last_trace} <= {"n0", "n1", "n2"}
+    assert all(0.0 <= event["post_voltage"] <= 1.0
+               for event in act.last_trace)
+
+
+def test_continuous_mode_remains_compatible_and_trace_free():
+    frame, n0, *_ = build_frame()
+    n0.importance = 0.8
+    act = SpreadingActivation(frame, {"activation": {
+        "mode": "continuous", "hops": 0,
+        "seed_semantic_weight": 0.2, "seed_importance_weight": 0.5,
+    }})
+    out = dict(act.activate({"n0": 1.0}))
+    assert abs(out["n0"] - 0.6) < 1e-6
+    assert act.last_trace == []
+
+
+def test_lif_trace_attaches_to_retrieval_result():
+    frame, n0, *_ = build_frame()
+    emb = init_embeddings("stub")
+    for node in frame.nodes.values():
+        node.embedding = emb.encode([node.concept])[0]
+    order = list(frame.nodes.values())
+    vectors = np.stack([node.embedding for node in order])
+    vs = VectorStore(dim=vectors.shape[1])
+    vs.add(vectors, [{"node_id": node.id} for node in order])
+    gs = GraphStore()
+    gs.build_from([node.to_row() for node in order],
+                  [edge.to_row() for edge in frame.edges])
+    config = {
+        "retrieval": {"candidate_k": 8, "final_k": 4, "max_hops": 3},
+        **_lif_config(top_k_neighbors=2),
+    }
+    result = _retriever(frame, vs, gs, config).retrieve(
+        "photosynthesis", n0.embedding.copy(), active_components=("activation",),
+    )
+    assert result.activation_trace
+    required = {"tick", "node", "pre_voltage", "post_voltage", "threshold", "spike"}
+    assert all(required <= set(event) for event in result.activation_trace)
 
 
 def test_activation_spreads_through_graph():
@@ -140,6 +251,13 @@ def test_label_only_nodes_excluded_from_context():
     ctx = compress(res, max_tokens=256, target_ratio=0.6)
     assert "appearing 3x" not in ctx.text, \
         f"label-only node leaked into context: {ctx.text[:200]}"
+
+
+def test_retrieval_component_iteration_is_order_independent():
+    components = {"semantic": 0.7, "graph": 0.4, "activation": 0.2}
+    weights = {"semantic": 0.5, "graph": 0.3, "activation": 0.2}
+    assert apply_weights(components, weights, ["activation", "semantic", "graph"]) == \
+        apply_weights(components, weights, ["graph", "semantic", "activation"])
 
 
 if __name__ == "__main__":

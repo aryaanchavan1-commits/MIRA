@@ -13,7 +13,7 @@ import logging
 import os
 import yaml
 from dataclasses import dataclass, field
-from typing import Any, Dict, Optional
+from typing import Any, Dict, List, Optional
 
 from core.hardware import HardwareProfile, RuntimeConfig, auto_configure, detect_hardware, validate_runtime
 from models import model_manager
@@ -75,12 +75,14 @@ def build_context(config_path: Optional[str] = None,
     rc = auto_configure(hw, cfg)
     warnings = validate_runtime(rc, hw)
 
+    raw_offline = cfg.get("offline", True)
+    if type(raw_offline) is not bool:
+        raise ValueError("offline must be boolean")
     ctx = MIRAContext(hw=hw, cfg=cfg, rc=rc, warnings=warnings,
-                      offline=bool(cfg.get("offline", True)))
+                      offline=raw_offline)
 
     # embeddings (device chosen by auto_configure)
     from models.embeddings import EmbeddingBackend
-    emb_cfg = cfg.get("models", {}).get("embeddings", {}) or {}
     allow_dl = (not ctx.offline) and bool(cfg.get("models", {}).get("allow_download", False))
     ctx.embeddings = EmbeddingBackend(
         rc.embedding_model, device=rc.embedding_device, allow_download=allow_dl)

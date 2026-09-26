@@ -29,7 +29,102 @@ temporal information can improve evidence retrieval and multi-hop reasoning
 while reducing irrelevant context. **This is tested, never assumed** — every
 default weight in the config is marked *experimental*.
 
-## 2. Architecture
+## 2. Research hypotheses and scientific scope
+
+MIRA is currently a **symbolic memory and retrieval architecture**: a weighted graph
+of memory records with semantic, radial, hierarchical, temporal, path, and activation
+features. The mandala is an explicit organizational prior, not a claim that historical
+mandalas were neural networks or that MIRA is a biological brain simulation.
+
+### Transparent simulated affect
+
+MIRA also keeps a small, deterministic **algorithmic affect state** attached to each
+workspace. It records bounded `valence`, `arousal`, `confidence`, and `stress` values
+from observable route, evidence, citation, and explicit-feedback signals. Every answer
+includes an immutable snapshot and an explicit `simulated: true` disclosure. The state
+is in-memory, resets when the process restarts, and never writes to or overrides the
+mandala memory. It is not biological emotion, sentience, consciousness, or a learned
+model of human feelings.
+
+The state is deliberately inspectable rather than anthropomorphic. Grounded memory/web
+answers increase confidence and reduce stress; parametric, no-evidence, and citation-
+error signals lower confidence or raise stress; identity answers remain neutral because
+they are deterministic metadata rather than retrieved evidence. `/api/affect` exposes
+the current snapshot and `/api/affect/feedback` accepts only bounded, explicit deltas.
+
+### H1 — radial organization
+
+> With semantic embeddings, graph topology, context budget, and query set held fixed,
+> adding radial placement and radial scoring improves retrieval or multi-hop evidence
+> selection over vector-only and vector-plus-graph controls.
+
+This is falsifiable: if the radial term is removed without a measurable loss, the
+mandala-specific contribution is not supported.
+
+### H2 — structured topology
+
+> A structured graph with controlled radial/hierarchical relations improves paired
+> retrieval over a deterministic degree-preserving rewiring and a descriptive
+> regular square lattice, when node count and reported degree/edge statistics
+> are disclosed. The lattice is not degree- or edge-matched.
+
+The comparison is between **symbolic graph conditions**. It is not evidence of
+head-direction cells, grid cells, or biological neural computation.
+
+### H3 — coordinate-rotation null control
+
+> Applying the same orthogonal transformation to every node embedding and query vector
+> should preserve retrieval rankings for the current implementation, because angular
+> coordinates are presentation metadata and are not consumed by the retriever.
+
+A score of approximately 1.0 for paired top-k Jaccard is an implementation-invariance
+result, not a learned rotational representation. A future biological-claims experiment
+must use a separately specified recurrent model and preregister its metrics.
+
+### Controlled benchmark
+
+The headless benchmark is implemented in `evaluation/rotation.py` and exposed through
+`scripts/run_rotational_benchmark.py`. It uses fixed timestamps, deterministic stub
+embeddings, in-memory stores, no LLM, no network, and no live database:
+
+```bat
+.venv\Scripts\python.exe scripts\run_rotational_benchmark.py --replicates 3 --rotations 4 --output experiments\rotational_benchmark
+```
+
+Conditions:
+
+| Condition | Meaning |
+|---|---|
+| `structured_full` | Deterministic structured graph with radial/hierarchical coordinates |
+| `degree_preserving_shuffled` | Deterministic double-edge rewiring preserving edge count and degree sequence |
+| `square_lattice` | Descriptive regular two-dimensional lattice comparator; not degree-matched |
+
+Primary outputs are paired top-k Jaccard, top-1 agreement, recall@k, MRR, latency,
+degree statistics, rewiring invariants, and a JSON manifest. The output explicitly
+records that the study is **not a biological neural simulation**.
+
+### Related neuroscience, used as context rather than equivalence
+
+- Doeller, Barry, and Burgess (2010), *Nature*: evidence for grid-like signals in a
+  human memory network.
+- Nau et al. (2018), *Nature Neuroscience*: hexadirectional coding of visual space in
+  human entorhinal cortex.
+- Banino et al. (2018), *Nature*: grid-like representations emerging in artificial agents.
+- Bronstein et al. (2021), *Geometric Deep Learning: Grids, Groups, Graphs, Geodesics,
+  and Gauges*.
+- Cohen and Welling (2016), *Group Equivariant Convolutional Networks*.
+
+These works motivate geometric and neuroscience-inspired hypotheses; they do not
+establish that MIRA implements the same circuits.
+
+### Indic-pattern extension
+
+A future `data/kolam_patterns/` study should use images with explicit provenance,
+artist/tradition attribution, and a documented license. Synthetic patterns may be used
+for smoke tests, but must not be presented as authentic traditional kolam data. The
+initial benchmark therefore does not fabricate cultural artifacts.
+
+## 3. Architecture
 
 ```text
                   MIRA
@@ -48,7 +143,7 @@ default weight in the config is marked *experimental*.
      Rings       Sectors      Paths
                    │
                    ▼
-             RADIAL SEARCH     (8-component score, per-component ablation)
+              RADIAL SEARCH     (9-component score, per-component ablation)
                    │
                    ▼
              EVIDENCE GRAPH    (smallest high-confidence paths)
@@ -63,7 +158,7 @@ default weight in the config is marked *experimental*.
                 ANSWER         (memories + path + sources + metrics)
 ```
 
-## 3. Memory representation
+## 4. Memory representation
 
 - **MemoryNode** — `id, concept, summary, raw_text, memory_type, parent_id,
   children, ring, sector, depth, radial_distance, embedding, importance,
@@ -74,7 +169,7 @@ default weight in the config is marked *experimental*.
 - Ten memory types (semantic, episodic, procedural, working, fact, entity,
   event, document, concept, relation); the enum is extensible.
 
-## 4. Mandala topology
+## 5. Mandala topology
 
 - **Rings** — ring 0 = core/root concept, ring 1 = major concepts, ring 2 =
   subconcepts/entities, ring 3 = facts/evidence, ring 4+ = raw document
@@ -86,7 +181,7 @@ default weight in the config is marked *experimental*.
 - **Placement strategies** (switchable, comparable in the UI):
   `embedding_clusters`, `graph_centrality`, `hierarchy`, `temporal`, `hybrid_mira`.
 
-## 5. Retrieval algorithm
+## 6. Retrieval algorithm
 
 Score (all components individually switchable for ablation):
 
@@ -95,28 +190,31 @@ score = α·semantic + β·structural + γ·radial + δ·graph
       + ε·importance + ζ·confidence + η·recency + θ·path + ι·activation
 ```
 
-**Spreading activation (ι)** — the bio-inspired component (Collins & Loftus 1975;
-ACT-R). Retrieved seeds inject activation energy into the memory graph; energy
-spreads along edges with per-hop decay and fan-out normalization (synaptic
-scaling: busy hubs don't over-fire). Associates reached through energy
-propagation surface as candidates even when vector similarity misses them.
-This is a *mechanism inspired by neural activation dynamics*, not a simulation
-of a biological brain.
+**Bio-NN-inspired activation (ι)** — production uses a bounded, deterministic
+`lif_like` mode: seed energy leaks through a membrane accumulator, crosses a
+threshold, resets, enters a refractory period, and propagates through a capped
+sparse neighbor frontier. Each query exposes a bounded voltage/spike trace.
+The older continuous mode remains available for comparison. This is an
+algorithmic mechanism inspired by neural dynamics, not a biological brain
+simulation.
 
-**Hebbian consolidation (slow timescale).** Edges along successful multi-hop
-retrieval paths strengthen ("neurons that fire together wire together",
-Hebb 1949) while all edges decay slightly each pass (homeostasis) — so the
-memory's wiring literally adapts to what it is used for. Bounded, logged,
-persisted; toggle with `memory.hebbian`.
+**Hebbian/STDP-like consolidation (slow timescale).** Accepted grounded
+answers can strengthen path edges, while a bounded timing rule uses the LIF
+spike trace for STDP-like potentiation/depression and homeostatic decay.
+Updates are clamped, persisted, and invalidate live graph/activation caches.
+This is an engineering heuristic inspired by synaptic timing, not biochemical
+STDP or proof that the update improved answer quality. A verified user
+accept/reject or benchmark error signal is still required for predictive
+plasticity.
 
 **Learned weights (optional)** — one neural unit (9 sigmoid inputs, delta-rule
-training, Widrow-Hoff 1960) can replace the hand-tuned coefficients. Train on
-corpus QA with `python scripts/train_neural.py`, then set
-`retrieval_score.learned: true`. The learned weights are inspectable and the
-learned-vs-hand setting is itself ablatable.
+training, Widrow-Hoff 1960) can replace the hand-tuned coefficients. It is
+disabled by default; enable it only after a held-out, document-grouped validation
+run records the split, scorer hash, and effective weights. The learned-vs-hand
+setting is itself ablatable.
 
 Pipeline: query analysis → embedding → semantic (FAISS) → seed selection →
-graph expansion with explicit multi-hop paths → **spreading activation** →
+graph expansion with available path provenance → **spreading activation** →
 hierarchical candidates → merge → score → rerank → path selection → evidence
 selection → compression → SLM → answer. Answers show only the auditable
 retrieval path and cited evidence — never a hidden chain-of-thought.
@@ -127,7 +225,10 @@ Every query is routed by evidence strength, and the route is labeled on the
 answer:
 
 ```text
-query ──▶ retrieve from the mandala
+query ──▶ identity route? ── yes ──▶ deterministic project identity
+            │ no
+            ▼
+         retrieve from the mandala
             │ strong evidence (cosine ≥ gate, real context)
             ▼                      
         MEMORY ANSWER (cited)          ← default path
@@ -140,29 +241,42 @@ query ──▶ retrieve from the mandala
    permanent memories — the agent literally grows its mandala to learn)
 ```
 
-## 6. Baselines and ablations
+Creator questions are answered deterministically as: MIRA was made by Aryan
+Chavan, a Bio-NN-inspired mandala-based symbolic memory and retrieval research
+system. This is project metadata, not retrieved evidence.
+
+**Affect integration.** After routing, `AgentPipeline` updates the workspace-owned
+state and freezes an immutable snapshot on the returned `Answer`. The update uses only
+observable answer signals, applies a fixed neutral-baseline decay, and is advisory: it
+cannot change retrieval, memory placement, citations, or the mandala. The web console
+shows the snapshot in Overview and each answer; the legacy Streamlit chat shows the same
+bounded values and disclosure.
+
+## 7. Baselines and ablations
 
 | System | What it is |
 |---|---|
 | Baseline A `vector_rag` | naive FAISS cosine retrieval |
 | Baseline B `graph_rag` | vector seeds + degree-weighted graph expansion |
 | Baseline C `hierarchical_rag` | coarse-to-fine tree descent |
-| Baseline D `full_mira` | all 8 components |
+| Baseline D `full_mira` | all 9 components |
 
 Ablation sets: `vector_only`, `graph_only`, `hierarchy_only`, `radial_only`,
 `vector_graph`, `vector_hierarchy`, `vector_radial`, `graph_hierarchy`,
-`graph_radial`, `full_mira` — runnable per-query (Research Lab) or over a
-dataset (Benchmarks). All systems share the same frame, stores, embedding
-model, dataset, context budget, and hardware.
+`graph_radial`, `activation_only`, `vector_activation`, `full_mira` — runnable
+per-query (Research Lab) or over a dataset (Benchmarks). All systems share the
+same frame, stores, embedding model, dataset, context budget, and hardware. The
+topology benchmark additionally reports degree and edge-count invariants for every
+condition.
 
-## 7. Metrics (computed, never fabricated)
+## 8. Metrics (computed, never fabricated)
 
 Retrieval recall@k, precision@k, MRR, answer token-F1 (lexical proxy — stated
 as such, not an LLM judge), context tokens, compression ratio, latency,
 candidates count, throughput. Resource usage (RAM/VRAM) is measured live on
 the Hardware page.
 
-## 8. Installation
+## 9. Installation
 
 ```bat
 git clone <repo> MIRA
@@ -179,19 +293,24 @@ your system Python. No Docker required.
 frontend) at `http://127.0.0.1:8000` and opens your browser. The frontend is
 hand-built vanilla JS with a canvas mandala — no node_modules, no build step,
 fully offline. (`run.bat streamlit` starts the legacy Streamlit UI instead.)
-The HTTP API is documented at `/api/docs` when the server is running.
+The HTTP API is documented at `/api/docs` when the server is running. The affect
+state is available at `GET /api/affect`; bounded explicit feedback is accepted at
+`POST /api/affect/feedback` (or the short `POST /api/affect` form). These endpoints
+update only the simulated state, never the mandala.
 
 Command-line experiments (reproducible, headless):
 
 ```bat
 .venv\Scripts\python.exe scripts/run_experiment.py --dataset data/datasets/custom.json --limit 50 --judge
-.venv\Scripts\python.exe paper/export_results.py   -- rematerialize paper tables
+.venv\Scripts\python.exe paper/export_results.py --exp EXP-0005
+.venv\Scripts\python.exe paper/export_results.py --allow-smoke --exp EXP-0005
+.venv\Scripts\python.exe scripts/run_rotational_benchmark.py --replicates 3 --rotations 4 --output experiments/rotational_benchmark
 ```
 
 The paper draft lives in `paper/mira_paper.md`; its result tables are
 generated **only** from saved experiment directories — never written by hand.
 
-## 9. Hardware requirements & auto-configuration
+## 10. Hardware requirements & auto-configuration
 
 Works from CPU-only laptops upward. At startup MIRA detects CPU/RAM/GPU/VRAM/
 CUDA/disk and selects a safe runtime: smallest-fitting GGUF (0.5B–3B, Q4/Q5),
@@ -203,16 +322,17 @@ modes: `safe | balanced | fast | research`.
 The reference development machine is an RTX 3050 Laptop (4 GB) with 16 GB RAM;
 nothing is hard-coded to it.
 
-## 10. Offline mode
+## 11. Offline mode
 
 `offline: true` (default) makes MIRA strictly local: no external APIs, no
 telemetry, no downloads, no network calls. Downloads additionally require
 `models.allow_download: true` plus explicit UI confirmation with a precheck of
 disk and memory budgets.
 
-**Live web search (opt-in, consent-gated).** When `web_search.enabled: true`
-(or per-request consent), the Web Search view can query the live web through
-pluggable backends, tried in priority order:
+**Live web search (opt-in, consent-gated).** Web access requires
+`offline: false`, `web_search.enabled: true` (or an explicit per-request
+boolean consent), and a public http(s) fetch target. The Web Search view can
+query the live web through pluggable backends, tried in priority order:
 
 1. **agent-reach** (`Panniantong/Agent-Reach`) — unified read/search across
    Twitter/X, Reddit, YouTube, GitHub and more, zero API keys, if installed on PATH
@@ -222,10 +342,11 @@ pluggable backends, tried in priority order:
 
 Search results are plain data (never executed). One click ingests a page into
 the mandala: chunked → embedded → memory nodes/edges → placed on rings and
-sectors with URL provenance. While offline mode stays on, no search is possible
-— the gate is deliberate.
+sectors with URL provenance. While offline mode stays on, no search is possible;
+the gate is deliberate. Fetch URLs are checked against public DNS/IP ranges to
+reduce SSRF risk.
 
-## 11. Training (optional, safety-gated)
+## 12. Training (optional, safety-gated)
 
 Fine-tuning is **never** automatic. `training/lora.py` runs a precheck
 (VRAM ≥ 5 GB usable, RAM, disk, dataset ≥ 50 samples, GGUF base) and prints
@@ -234,29 +355,37 @@ will skip, and the system keeps working with external memory. The dataset
 builder emits only provenance-grounded samples (`query, memory_context,
 retrieval_path, evidence, answer`), each traced to real ingested chunks.
 
-## 12. Benchmarking
+## 13. Benchmarking
 
 1. Ingest documents (Documents page).
 2. Create a dataset — local JSON/JSONL of
    `{"question", "answer", "supporting_ids?"}` (Benchmarks page can generate
    a clearly-labeled synthetic one from your chunks).
-3. Run benchmarks — all baselines + all ablations, one table.
+3. Run benchmarks — all baselines + all ablations, one table. The web API accepts
+   dataset files only from `data/datasets/`; the CLI remains a local-file tool.
 4. Save — each experiment lands in `experiments/EXP-XXXX/` with `config.json`
-   (hardware, versions, git commit, seed, weights), `results.json`,
-   `results.csv`, `summary.md`, plus a row in SQLite.
-5. Compare/export on the Experiments page (JSON/CSV/Markdown).
+   (study type, available runtime metadata, seed, and declared provenance),
+   `results.json`, `results.csv`, `summary.md`, plus a row in SQLite.
+5. Compare/export on the Experiments page (JSON/CSV/Markdown). The paper exporter
+   rejects smoke runs unless `--allow-smoke` is explicitly supplied.
+
+See `experiments/README.md` for the artifact inventory, historical-run labels,
+geometry-ablation commands, and the rule that generated output is never
+hand-edited. Simulated affect is advisory and is not part of retrieval metrics;
+its deterministic checks live in `tests/test_affect.py`.
 
 Compatible external datasets (LoCoMo, LongMemEval, HotpotQA, 2WikiMultiHopQA,
 MuSiQue) can be converted to the record format locally — nothing is
 downloaded without confirmation.
 
-## 13. Reproducibility
+## 14. Reproducibility
 
-Every experiment stores: experiment_id, timestamp, git commit, model +
-quantization, embedding model, dataset, retrieval parameters and weights,
-hardware profile, software versions, random seed, and full results.
+CLI research runs record the command, dataset hash, resolved configuration,
+embedding/LLM metadata, hardware, software versions, seed, git commit, dirty-tree
+state, study type, and full results. Older or UI-created smoke manifests may not
+contain every field and must not be treated as publication-ready evidence.
 
-## 14. Positioning against prior work
+## 15. Positioning against prior work
 
 - **GraphRAG** (Edge et al., 2024) retrieves over LLM-extracted entity
   communities; **HippoRAG** (Wang et al., 2024) over Personalized PageRank
@@ -273,17 +402,17 @@ hardware profile, software versions, random seed, and full results.
 A full related-work discussion and formal mechanism definitions are in
 `paper/mira_paper.md`.
 
-## 15. How to interpret results
+## 16. How to interpret results
 
-- Compare `full_mira` against `vector_only` first — that isolates the
-  contribution of everything beyond pure similarity.
-- Jaccard overlap in the Research Lab shows *whether* the extra components
-  change retrieval at all; identical retrieval means no benefit for that query.
-- Token-F1 is a proxy; for publishable claims add an LLM judge or human
-  evaluation on top.
+- Compare `full_mira` against `vector_only` as a scoring-arm smoke check; it
+  does not isolate candidate-generation effects until the candidate pool is frozen.
+- Jaccard overlap shows whether extra components change retrieval for a query;
+  identical retrieval is evidence of no measured difference, not proof of a win.
+- Token-F1 is a proxy. Publishable answer claims require a shared answer/context
+  stage, held-out evidence labels, and an independent or human evaluation.
 - Report negative results as they are. Do not tune weights on the test set.
 
-## 15. Limitations
+## 17. Limitations
 
 - NetworkX centrality is O(n) per compute — fine for laptop-scale corpora,
   swap `storage/graph_store.py` for larger graphs.
@@ -291,32 +420,36 @@ A full related-work discussion and formal mechanism definitions are in
 - Sector naming is lexical (top tokens); it can produce imperfect labels.
 - The synthetic chunk-derived benchmark measures lexical memorization, not
   multi-hop reasoning — build real QA sets for real claims.
+- Simulated affect is a fixed, inspectable state machine. It is workspace-scoped and
+  resets on restart; it is not evidence of emotion, sentience, or human-like feeling.
 - llama-cpp-python PyPI wheels are CPU-only; GPU offload needs a CUDA wheel.
 
-## 16. Project structure
+## 18. Project structure
 
 ```text
 MIRA/
 ├── run.bat / setup.bat / app.py
 ├── config/          config.yaml, auto_config.py
 ├── core/            hardware, memory, mandala, placement, retrieval,
-│                    ranking, compression, conflicts, updater, answer, workspace
+│                    ranking, compression, conflicts, updater, answer,
+│                    workspace, affect
 ├── ingestion/       loaders, chunker, extractors, pipeline
 ├── models/          model_manager, llm, embeddings (+ models/*.gguf)
 ├── storage/         sqlite_store, vector_store, graph_store
 ├── baselines/       vector_rag, graph_rag, hierarchical_rag
-├── evaluation/      benchmark, metrics, ablation, report
+├── evaluation/      benchmark, metrics, ablation, report, rotation
 ├── training/        dataset_builder, lora, evaluator
 ├── visualization/   mandala_view (plotly polar)
 ├── ui/pages/        Dashboard, Chat, Mandala, Memory Explorer, Documents,
 │                    Research Lab, Benchmarks, Experiments, Models,
 │                    Hardware, Settings, Logs
+├── scripts/         reproducible runners, including rotational benchmark
 ├── tests/           phase test suites (assert-based, no frameworks)
 ├── data/            mira.db, indexes/, uploads/, datasets/
-├── experiments/     EXP-0001/ ...
+├── experiments/     EXP-0001/ ... · README.md · geometry wrappers
 └── logs/            mira.log
 ```
 
-## 17. License
+## 19. License
 
 MIT — see `LICENSE`.

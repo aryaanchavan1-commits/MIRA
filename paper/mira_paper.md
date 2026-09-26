@@ -13,9 +13,11 @@ underexplored structural alternative: a **radial memory topology** in which memo
 organized in concentric rings around a core concept, partitioned into semantic sectors,
 and positioned by a formally defined radial distance combining semantic, hierarchical,
 graph, and temporal signals. We implement MIRA, a local-first research platform in which
-the radial mechanism is one switchable component among eight, each independently
-ablatable, evaluated against naive vector RAG, hybrid vector+graph RAG, and hierarchical
-retrieval under identical models, embeddings, datasets, context budgets, and hardware.
+the radial mechanism is one switchable component among nine, each independently
+  ablatable, evaluated against naive vector RAG, hybrid vector+graph RAG, and hierarchical
+retrieval under a declared, shared protocol when the answer-stage experiment is
+run; the current default runs are retrieval-only smoke measurements, not
+answer-quality evidence.
 **[Results TBF — populated only from measured runs.]** We release the platform, including
 per-component ablation tooling, to support reproducible negative or positive findings.
 
@@ -39,23 +41,31 @@ memory. We treat it as an *organizational prior*: generality belongs near the ce
 evidence near the rim, and related content shares a sector. The research contribution is
 a **formal, measurable mechanism** derived from this prior — not the visual metaphor.
 
-Our central question: **when model, context budget, dataset, and hardware are held
-constant, does adding a radial component to retrieval improve multi-hop evidence
-retrieval over flat vector retrieval and over established graph/hierarchical baselines?**
+Our central question: **under a declared shared protocol, does adding a radial
+component to retrieval improve multi-hop evidence retrieval over flat vector
+retrieval and the included graph/hierarchical controls?** Established external
+baselines remain future work.
 
-We answer with a system built to be refuted: every retrieval component is individually
-switchable, all retrieval weights are configurable and marked experimental, and the
-benchmark harness runs all configurations on the identical corpus and inference stack.
+We answer with a system built to be refuted: every retrieval component is
+individually switchable, all retrieval weights are configurable and marked
+experimental, and the benchmark harness records the conditions for each run.
 
 ### Contributions
 
 1. A formal definition of radial memory placement (rings, sectors, radial distance) as a
    computable structure over an entity–evidence graph (§3).
-2. MIRA, an eight-component retrieval score with per-component ablation, plus a
-   benchmark harness guaranteeing identical conditions across systems (§4).
+2. MIRA, a nine-component retrieval score with per-component scoring ablations,
+   plus a benchmark harness that records conditions and refuses to promote smoke
+   manifests into paper tables (§4).
 3. A controlled experimental protocol on multi-hop QA (HotpotQA, MuSiQue,
    2WikiMultiHopQA) with retrieval, lexical, and judge-based answer metrics (§5).
 4. **[Results TBF]** and an honest account of which components carry the benefit (§6).
+
+The current implementation is a symbolic weighted-graph retrieval system. Its
+bio-inspired terminology describes algorithmic analogies—activation propagation,
+Hebbian reinforcement, and radial organization—not simulated hippocampal or entorhinal
+circuits. Claims about head-direction or grid-cell mechanisms require a separately
+specified recurrent neural model and independent activity analysis.
 
 ---
 
@@ -84,10 +94,18 @@ is a coarse-to-fine tree descent without radial or graph components.
 recency × importance × relevance — an influence on our component design. MemGPT (Packer
 et al., 2023) manages context as paging. Neither uses radial coordinates.
 
-**Positioning.** To our knowledge, no published RAG system uses ring/sector radial
-placement as a first-class retrieval signal with ablation. The closest analogue is the
-"importance" dimension in agent memory, which MIRA makes structural (distance to core)
-rather than a scalar score.
+**Neuroscience and geometric context.** Doeller, Barry, and Burgess (2010) reported
+evidence for grid-like signals in a human memory network; Nau et al. (2018) reported
+hexadirectional coding of visual space in human entorhinal cortex; and Banino et al.
+(2018) showed grid-like representations emerging in artificial agents. Geometric deep
+learning work such as Bronstein et al. (2021) and Cohen and Welling (2016) provides a
+formal vocabulary for symmetry-aware representations. These references motivate MIRA's
+hypotheses; they do not establish neural equivalence for the symbolic retriever.
+
+**Positioning.** We make a narrower novelty claim than "the first mandala-inspired
+system": we study whether a specified radial/hierarchical graph prior changes measured
+retrieval under controlled ablations. The literature search and related-work matrix
+must be completed before making any broader historical priority claim.
 
 ---
 
@@ -113,7 +131,7 @@ A **mandala placement** assigns each node v:
 > ρ(v) = α·d_sem(v) + β·d_hier(v) + γ·d_graph(v) + δ·d_temp(v)
 
 where d_sem is (1 − cosine similarity to the sector centroid), d_hier is r(v)/(R−1),
-d_graph is (1 − normalized betweenness/degree centrality), and d_temp is normalized
+d_graph is (1 − normalized degree centrality), and d_temp is normalized
 recency age. **All four weights are experimental defaults**, stored with every experiment
 (§5.4); the placement strategies themselves are switchable (embedding-only, centrality-
 only, hierarchy-only, temporal-only, hybrid), so placement is an experimental variable
@@ -122,17 +140,27 @@ rather than a fixed pipeline stage.
 ### 3.2 Radial retrieval
 
 Given query q with embedding e(q), candidate retrieval merges: (i) FAISS cosine
-neighbors, (ii) one-hop graph expansions of the top vector seeds with explicit multi-hop
-paths, and (iii) ring-0/1 concepts with lexical overlap to q. Each candidate v is scored:
+neighbors, (ii) one-hop graph expansions of the top vector seeds, retaining
+available path provenance, and (iii) ring-0/1 concepts with lexical overlap to q.
+Each candidate v is scored:
 
 > S(v) = α·sim(e(q), e(v)) + β·(1 − r(v)/(R−1)) + γ·(1 − ρ(v)) + δ·centrality(v)
 >        + ε·importance(v) + ζ·confidence(v) + η·recency(v) + θ·path(v)
+>        + ι·activation(v)
 
 where path(v) rewards short high-confidence derivation chains
-(path(v) = 2·∏ edge-confidence · 1/|path|). The score is **normalized by the sum of
-active weights**, so any subset of components yields a comparable ranking — this is what
-makes ablation meaningful. Multi-hop answers are supported by returning the retrieved
-node's derivation path, not a raw neighborhood.
+(path(v) = 2·∏ edge-confidence · 1/|path|), and activation(v) is the normalized
+spreading-activation signal. The score is **normalized by the sum of active weights**,
+so any subset of components yields a comparable ranking — this is what makes ablation
+meaningful. Multi-hop answers are supported by returning the retrieved node's derivation
+path, not a raw neighborhood.
+
+The production activation mode is `lif_like`: a bounded, deterministic
+leak/threshold/reset/refractory process with capped sparse fan-out and an
+auditable voltage/spike trace. Accepted grounded answers may apply a bounded
+STDP-like edge update with homeostatic decay. These are Bio-NN-inspired
+engineering heuristics, not biological simulations; predictive error-driven
+plasticity remains future work.
 
 ### 3.3 Context assembly
 
@@ -150,8 +178,9 @@ index, NetworkX graph, llama.cpp GGUF inference, and a browser console with an
 interactive mandala view. Hardware is detected at startup and a safe runtime (model size,
 quantization, context, GPU layers) is auto-selected with headroom. All retrieval
 weights, placement strategies, and ablation sets are configuration; every experiment
-stores its full configuration, hardware snapshot, software versions, seed, and git
-commit. Answer generation uses a strict extractive prompt with a degenerate-output
+stores its declared configuration, hardware snapshot, software versions, seed,
+study type, provenance metadata, and git state. Runs without a complete research
+manifest remain smoke results. Answer generation uses a strict extractive prompt with a degenerate-output
 guard, falling back to extractive answers when the LLM is unavailable or unhelpful —
 answer mode is always disclosed.
 
@@ -166,8 +195,8 @@ answer mode is always disclosed.
 | Vector RAG (A) | FAISS cosine only |
 | Graph RAG (B) | vector seeds + degree-weighted expansion |
 | Hierarchical (C) | parent–child descent, lexical coarse match |
-| MIRA (D) | all eight |
-| Ablations | vector / graph / hierarchy / radial only; all 2-way combinations |
+| MIRA (D) | all nine |
+| Ablations | vector / graph / hierarchy / radial / activation only; selected pairwise combinations |
 
 ### 5.2 Datasets
 
@@ -185,17 +214,31 @@ Judge failures are counted, never imputed.
 
 ### 5.4 Controls and reproducibility
 
-Identical model (Qwen2.5-1.5B-Instruct Q4_K_M), embedding model (MiniLM-L6), context
-budget, k, hardware, and seed across systems; the experiment record includes git commit,
-weights, and hardware. N seeds × question subsamples with significance tests
-(paired bootstrap over questions) are planned for the final results.
+For a valid answer-stage run, the model (Qwen2.5-1.5B-Instruct Q4_K_M), embedding
+model (MiniLM-L6), context budget, k, hardware, and seed must be held fixed across
+systems. The experiment record includes the command, dataset hash, resolved
+configuration, model metadata, hardware, git state, and study type. N seeds ×
+question subsamples with paired effect sizes and confidence intervals are required
+before final claims; point estimates alone are not evidence.
+
+### 5.5 Controlled topology and rotation study
+
+The headless runner `scripts/run_rotational_benchmark.py` evaluates three graph
+conditions in memory: `structured_full`, `degree_preserving_shuffled`, and
+`square_lattice`. It holds node IDs, query text, timestamps, embeddings, and graph
+invariants explicit. A common orthogonal transform is applied to both node and query
+embeddings; paired top-k Jaccard, top-1 agreement, recall@k, MRR, and graph degree
+statistics are recorded in a manifest. Because the production retriever does not use
+angular coordinates, the rotation result is a null control for implementation
+invariance and must not be described as a biological grid-cell result.
 
 ---
 
 ## 6. Results
 
 **[TBF — this section is populated exclusively by `python paper/export_results.py`
-from saved experiment directories. No numbers are written by hand.]**
+from a saved `study_type: research` manifest. Smoke runs are rejected unless
+`--allow-smoke` is supplied for inspection. No numbers are written by hand.]**
 
 Planned tables:
 1. Main table: all systems × {recall, MRR, token-F1, judge, context tokens, latency}
@@ -222,8 +265,10 @@ Planned tables:
 
 ## 8. Conclusion
 
-**[TBF after runs.]** The platform is complete and the experiment is runnable; the
-honest state of this research is *hypothesis stated, instrument built, results pending*.
+**[TBF after valid runs.]** The platform is runnable, but the honest state of
+this research is *hypothesis stated, instrument built, results pending*. The
+current smoke harness does not establish answer quality, multi-hop reasoning, or
+causal component benefits.
 A negative result — radial organization adding nothing beyond graph+hierarchy — is a
 publishable outcome of this instrument, and the harness is built to make that outcome
 easy to demonstrate.
@@ -243,3 +288,12 @@ easy to demonstrate.
 - Packer, C. et al. (2023). *MemGPT: Towards LLMs as Operating Systems.*
 - Lewis, P. et al. (2020). *Retrieval-Augmented Generation for Knowledge-Intensive NLP.*
   NeurIPS.
+- Doeller, C. F., Barry, C., & Burgess, N. (2010). Evidence for grid cells in a human
+  memory network. *Nature*, 463, 657–661.
+- Nau, M. et al. (2018). Hexadirectional coding of visual space in human entorhinal
+  cortex. *Nature Neuroscience*, 21, 188–190.
+- Banino, A. et al. (2018). Vector-based navigation using grid-like representations in
+  artificial agents. *Nature*, 557, 429–433.
+- Bronstein, M. M. et al. (2021). Geometric deep learning: Grids, groups, graphs,
+  geodesics, and gauges. *IEEE Signal Processing Magazine*, 38(4), 106–123.
+- Cohen, T. S. & Welling, M. (2016). Group equivariant convolutional networks. *ICML*.

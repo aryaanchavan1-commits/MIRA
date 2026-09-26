@@ -87,3 +87,5 @@ Thumbs.db
 *.gguf
 models/
 data/
+experiments/rotational_benchmark/
+experiments/01_geometry_ablation/*/

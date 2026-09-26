@@ -56,7 +56,11 @@ class EmbeddingBackend:
         self.model = None
         self.backend_kind = "hashing"  # set to "st" on successful load
         self.dim = FALLBACK_DIM
-        self._load_attempted = False
+        self.last_error = ""
+        # Direct construction is used by tests and small integrations too;
+        # these names are explicit requests for the deterministic backend.
+        # Mark them loaded here so encode()/info() never import a model runtime.
+        self._load_attempted = str(model_name).strip().lower() in ("stub", "hashing")
 
     def _load(self) -> None:
         if self._load_attempted:
@@ -80,6 +84,7 @@ class EmbeddingBackend:
                 logger.warning("embedding load attempt %d failed: %s", attempt, exc)
         self.backend_kind = "hashing"
         self.dim = FALLBACK_DIM
+        self.last_error = str(last_exc) if last_exc else "embedding model load failed"
         logger.warning("embedding model load failed (%s) — using hashing fallback "
                        "(retrieval quality degraded, pipeline still functional)", last_exc)
 
@@ -92,6 +97,7 @@ class EmbeddingBackend:
                 self.dim = int(model.get_sentence_embedding_dimension())
                 self.model = model
                 self.backend_kind = "st"
+                self.last_error = ""
                 self.device = dev
                 logger.info("embedding model loaded",
                             extra={"model": self.model_name, "device": dev, "dim": self.dim})
@@ -108,7 +114,7 @@ class EmbeddingBackend:
         self._load()  # lazy backend means info() must trigger the real load
         return {"model": self.model_name, "backend": self.backend_kind,
                 "device": self.device if self.backend_kind == "st" else "cpu",
-                "dim": self.dim}
+                "dim": self.dim, "error": self.last_error}
 
     def encode(self, texts: List[str], batch_size: int = 32,
                show_progress: bool = False) -> np.ndarray:
@@ -122,9 +128,12 @@ class EmbeddingBackend:
                     texts, batch_size=batch_size, show_progress_bar=show_progress,
                     normalize_embeddings=True, convert_to_numpy=True,
                 )
-                return np.ascontiguousarray(vecs, dtype="float32")
+                result = np.ascontiguousarray(vecs, dtype="float32")
+                self.last_error = ""
+                return result
             except Exception as exc:
-                logger.warning("st encode failed (%s) — falling back to hashing", exc)
+                self.last_error = str(exc)
+                raise RuntimeError("sentence-transformer encode failed") from exc
         return self._hash_encode(texts)
 
     # ---- deterministic fallback ----

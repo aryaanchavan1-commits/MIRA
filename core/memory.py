@@ -133,7 +133,7 @@ class MemoryFrame:
         return None
 
     def children_of(self, node_id: str) -> List[str]:
-        return [n.id for n in self.nodes.values() if n.parent_id == node_id]
+        return sorted(n.id for n in self.nodes.values() if n.parent_id == node_id)
 
     def neighbors(self, node_id: str) -> Dict[str, List[str]]:
         out: Dict[str, List[str]] = {}

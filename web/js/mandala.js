@@ -2,6 +2,21 @@
    Angle = sector slice, radius = ring. Nodes are clickable (console). */
 "use strict";
 
+const mandalaEsc = (value) => String(value ?? "").replace(/[&<>"']/g,
+  character => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[character]));
+
+async function mandalaApi(url) {
+  const response = await fetch(url);
+  const text = await response.text();
+  let data = null;
+  try { data = text ? JSON.parse(text) : null; } catch { /* non-JSON response */ }
+  if (!response.ok) {
+    const detail = data && (data.detail ?? data.error);
+    throw new Error(detail ? String(detail) : `${response.status} ${response.statusText}`);
+  }
+  return data;
+}
+
 const MIRA_TYPE_COLORS = {
   semantic: "#7a8cf0", episodic: "#e0a44a", procedural: "#58b98f",
   working: "#e06a5a", fact: "#5a9be0", entity: "#b07ae0",
@@ -18,7 +33,7 @@ class MiraMandala {
     this.edges = [];
     this.angleOf = new Map();
     this.radiusOf = new Map();
-    this.rotation = opts.spin ? 0 : null;
+    this.rotation = opts.spin && !window.matchMedia("(prefers-reduced-motion: reduce)").matches ? 0 : null;
     this.hover = null;
     this.onSelect = opts.onSelect || null;
     if (opts.interactive) {
@@ -30,10 +45,12 @@ class MiraMandala {
   }
 
   setData(nodes, edges, maxRings = 5) {
-    this.nodes = nodes;
-    this.edges = edges;
+    this.nodes = Array.isArray(nodes) ? nodes : [];
+    this.edges = Array.isArray(edges) ? edges : [];
+    this.angleOf.clear();
+    this.radiusOf.clear();
     const sectors = new Map();
-    for (const n of nodes) {
+    for (const n of this.nodes) {
       const s = n.sector || "unassigned";
       if (!sectors.has(s)) sectors.set(s, []);
       sectors.get(s).push(n);
@@ -65,9 +82,10 @@ class MiraMandala {
   _fit() {
     const r = this.canvas.getBoundingClientRect();
     if (r.width === 0) return;
-    this.canvas.width = r.width * devicePixelRatio;
-    this.canvas.height = r.height * devicePixelRatio;
-    this.ctx.setTransform(devicePixelRatio, 0, 0, devicePixelRatio, 0, 0);
+    const ratio = Math.min(window.devicePixelRatio || 1, 2);
+    this.canvas.width = Math.round(r.width * ratio);
+    this.canvas.height = Math.round(r.height * ratio);
+    this.ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
     if (this.nodes.length) this.draw();
   }
 
@@ -84,6 +102,7 @@ class MiraMandala {
   draw() {
     const ctx = this.ctx;
     const w = this.canvas.clientWidth, h = this.canvas.clientHeight;
+    if (!w || !h) return;
     ctx.clearRect(0, 0, w, h);
     if (!this.nodes.length) {
       ctx.fillStyle = "#a39c8d";
@@ -191,12 +210,14 @@ class MiraMandala {
 function initHeroMandala() {
   const canvas = document.getElementById("hero-mandala");
   if (!canvas) return;
-  const m = new MiraMandala(canvas, { interactive: false, spin: true });
-  fetch("/api/mandala").then(r => r.json()).then(d => {
+  const motionPreference = window.matchMedia("(prefers-reduced-motion: reduce)");
+  const m = new MiraMandala(canvas, { interactive: false, spin: !motionPreference.matches });
+  mandalaApi("/api/mandala").then(d => {
     m.setData(d.nodes, d.edges, d.max_rings || 5);
   }).catch(() => m.setData([], [], 5));
+  if (motionPreference.matches) return;
   (function loop() {
-    if (!document.body.contains(canvas)) return;
+    if (!document.body.contains(canvas) || motionPreference.matches) return;
     m.rotation += 0.0006;
     m.draw();
     requestAnimationFrame(loop);
@@ -208,44 +229,121 @@ function initConsoleMandala() {
   const canvas = document.getElementById("mandala-canvas");
   const panel = document.getElementById("node-panel");
   const legend = document.getElementById("legend");
-  if (!canvas || canvas.dataset.init) return;
+  const nodeList = document.getElementById("node-list");
+  const status = document.getElementById("mandala-status");
+  if (!canvas || !panel || !legend || !nodeList || !status || canvas.dataset.init) return;
   canvas.dataset.init = "1";
   const m = new MiraMandala(canvas, { interactive: true, onSelect: select });
+  let selectionRequest = 0;
+
+  const setStatus = (message, state = "") => {
+    status.textContent = message;
+    status.classList.remove("status-error", "status-success");
+    if (state) status.classList.add(`status-${state}`);
+  };
+  const metric = (value, digits = 2) => {
+    const number = Number(value);
+    return Number.isFinite(number) ? number.toFixed(digits) : "—";
+  };
+
+  function renderLegend(nodes) {
+    const items = Object.entries(MIRA_TYPE_COLORS)
+      .filter(([type]) => nodes.some(node => node.type === type))
+      .map(([type, color]) => {
+        const item = document.createElement("span");
+        const dot = document.createElement("span");
+        dot.className = "dot";
+        dot.style.backgroundColor = color;
+        item.append(dot, document.createTextNode(type));
+        return item;
+      });
+    legend.replaceChildren(...items);
+  }
 
   async function refresh() {
+    canvas.setAttribute("aria-busy", "true");
+    nodeList.setAttribute("aria-busy", "true");
+    setStatus("Loading topology…");
     try {
-      const d = await (await fetch("/api/mandala")).json();
-      m.setData(d.nodes, d.edges, d.max_rings || 5);
-      legend.innerHTML = Object.entries(MIRA_TYPE_COLORS)
-        .filter(([t]) => d.nodes.some(n => n.type === t))
-        .map(([t, c]) => `<span><span class="dot" style="background:${c}"></span>${t}</span>`)
-        .join("");
-    } catch (e) { panel.innerHTML = `<p class="small muted">API offline.</p>`; }
+      const d = await mandalaApi("/api/mandala") || {};
+      const nodes = (Array.isArray(d.nodes) ? d.nodes : []).filter(node => node && node.id != null);
+      m.setData(nodes, d.edges, d.max_rings || 5);
+      renderLegend(nodes);
+      const fragment = document.createDocumentFragment();
+      if (!nodes.length) {
+        const item = document.createElement("li");
+        item.className = "small muted";
+        item.textContent = "No memory nodes are available yet.";
+        fragment.appendChild(item);
+      } else {
+        nodes.forEach(node => {
+          const item = document.createElement("li");
+          const button = document.createElement("button");
+          button.type = "button";
+          const type = node.type || "memory";
+          const ring = node.ring ?? "—";
+          button.textContent = `${node.concept || "Untitled memory"} — ${type}, ring ${ring}`;
+          button.addEventListener("click", () => select(node));
+          item.appendChild(button);
+          fragment.appendChild(item);
+        });
+      }
+      nodeList.replaceChildren(fragment);
+      setStatus(nodes.length ? `${nodes.length} memory nodes loaded.` : "Topology loaded with no memory nodes.",
+        nodes.length ? "success" : "");
+    } catch (err) {
+      m.setData([], [], 5);
+      panel.setAttribute("aria-busy", "false");
+      legend.replaceChildren();
+      nodeList.replaceChildren();
+      const item = document.createElement("li");
+      item.className = "small status-error";
+      item.textContent = "Memory nodes could not be loaded.";
+      nodeList.appendChild(item);
+      panel.innerHTML = `<p class="small status-error" role="alert">Could not load topology: ${mandalaEsc(err.message || err)}</p>`;
+      setStatus("Topology unavailable. Check the API and try again.", "error");
+    } finally {
+      canvas.setAttribute("aria-busy", "false");
+      nodeList.setAttribute("aria-busy", "false");
+    }
   }
   window.__miraMandalaRefresh = refresh;
 
-  async function select(n) {
-    panel.innerHTML = `<p class="small muted">Loading…</p>`;
-    const d = await (await fetch("/api/node/" + n.id)).json();
-    const tags = [
-      d.type, "ring " + (d.ring ?? "—"), d.sector || "—",
-      "conf " + (+d.confidence).toFixed(2), "imp " + (+d.importance).toFixed(2),
-    ].map(t => `<span class="tag">${t}</span>`).join("");
-    const prov = (d.provenance || []).map(p =>
-      `<li>${p.document} p.${p.page ?? "—"} — <code>${p.chunk_id}</code></li>`).join("");
-    const nb = (d.neighbors || []).slice(0, 8).map(x =>
-      `<li><a href="#" data-nid="${x.id}">${x.concept}</a> · ${x.relation}</li>`).join("");
-    panel.innerHTML = `
-      <h4>${d.concept}</h4>${tags}
-      ${d.summary ? `<p class="small" style="margin-top:.6rem">${d.summary}</p>` : ""}
-      ${d.raw_text ? `<details><summary>raw text</summary><p class="small muted">${d.raw_text}</p></details>` : ""}
-      ${prov ? `<p class="small" style="margin-top:.6rem"><strong>Provenance</strong></p><ul class="ticks small">${prov}</ul>` : ""}
-      ${nb ? `<p class="small" style="margin-top:.6rem"><strong>Neighbors</strong></p><ul class="ticks small">${nb}</ul>` : ""}`;
-    panel.querySelectorAll("[data-nid]").forEach(a =>
-      a.addEventListener("click", (e) => {
-        e.preventDefault();
-        select({ id: a.dataset.nid });
-      }));
+  async function select(node) {
+    const request = ++selectionRequest;
+    panel.setAttribute("aria-busy", "true");
+    panel.innerHTML = `<p class="small muted">Loading memory details…</p>`;
+    try {
+      const d = await mandalaApi(`/api/node/${encodeURIComponent(node.id)}`) || {};
+      if (request !== selectionRequest) return;
+      const label = value => value == null || value === "" ? "—" : String(value);
+      const tags = [
+        label(d.type), `ring ${label(d.ring)}`, label(d.sector),
+        `conf ${metric(d.confidence)}`, `imp ${metric(d.importance)}`,
+      ].map(tag => `<span class="tag">${mandalaEsc(tag)}</span>`).join("");
+      const provenance = (Array.isArray(d.provenance) ? d.provenance : []).map(item =>
+        `<li>${mandalaEsc(item.document ?? "?")} p.${mandalaEsc(item.page ?? "—")} — <code>${mandalaEsc(item.chunk_id)}</code></li>`).join("");
+      const neighbors = (Array.isArray(d.neighbors) ? d.neighbors : []).slice(0, 8).map(item =>
+        `<li><a href="#" data-nid="${mandalaEsc(item.id)}">${mandalaEsc(item.concept || item.id)}</a> · ${mandalaEsc(item.relation || "related")}</li>`).join("");
+      panel.innerHTML = `
+        <h4>${mandalaEsc(d.concept || "Untitled memory")}</h4>${tags}
+        ${d.summary ? `<p class="small" style="margin-top:.6rem">${mandalaEsc(d.summary)}</p>` : ""}
+        ${d.raw_text ? `<details><summary>Raw text</summary><p class="small muted">${mandalaEsc(d.raw_text)}</p></details>` : ""}
+        ${provenance ? `<p class="small" style="margin-top:.6rem"><strong>Provenance</strong></p><ul class="ticks small">${provenance}</ul>` : ""}
+        ${neighbors ? `<p class="small" style="margin-top:.6rem"><strong>Neighbors</strong></p><ul class="ticks small">${neighbors}</ul>` : ""}`;
+      panel.querySelectorAll("[data-nid]").forEach(link => {
+        link.addEventListener("click", event => {
+          event.preventDefault();
+          select({ id: link.dataset.nid });
+        });
+      });
+    } catch (err) {
+      if (request === selectionRequest) {
+        panel.innerHTML = `<p class="small status-error" role="alert">Could not load this memory: ${mandalaEsc(err.message || err)}</p>`;
+      }
+    } finally {
+      if (request === selectionRequest) panel.setAttribute("aria-busy", "false");
+    }
   }
   refresh();
 }

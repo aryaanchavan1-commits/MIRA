@@ -21,9 +21,9 @@ def build_frame() -> tuple:
     n0 = MemoryNode(id="n0", concept="photosynthesis", memory_type=MemoryType.CONCEPT,
                     summary="plants convert sunlight into chemical energy")
     n1 = MemoryNode(id="n1", concept="chlorophyll", memory_type=MemoryType.ENTITY,
-                    summary="pigment that absorbs light in photosynthesis")
+                     summary="pigment that absorbs light in photosynthesis", parent_id="n0")
     n2 = MemoryNode(id="n2", concept="light reactions", memory_type=MemoryType.CONCEPT,
-                    summary="first stage of photosynthesis producing ATP")
+                     summary="first stage of photosynthesis producing ATP", parent_id="n0")
     for n in (n0, n1, n2):
         frame.add_node(n)
     frame.add_edge(MemoryEdge(source_id="n0", target_id="n1", relation_type="has_part"))
@@ -58,7 +58,10 @@ def main() -> None:
     assert "n1" in ids or "n2" in ids, "graph baseline expands to neighbors"
 
     hrag = HierarchicalRAG(frame, vs).retrieve("photosynthesis", k=3)
-    assert hrag.latency_ms >= 0  # token path may miss tiny vocab; must not crash
+    hids = {n.id for n in hrag.items}
+    assert hrag.latency_ms >= 0
+    assert "n0" in hids
+    assert "n1" in hids or "n2" in hids, "hierarchy uses maintained parent links"
 
     print("PHASE10 TESTS PASS")
 

@@ -17,8 +17,8 @@ ctx = get_ctx()
 ws = get_workspace(ctx)
 
 header("Chat",
-       "Answers come from ingested memories only. Every answer shows its "
-       "retrieved memories, reasoning path, and source documents.")
+       "Grounded answers show retained evidence, retrieval paths, and source "
+       "documents. Identity and parametric fallbacks are labeled explicitly.")
 
 if ws.stats()["nodes"] == 0:
     st.info("Ingest a document first on the **Documents** page.")
@@ -52,8 +52,10 @@ if question:
         st.markdown(ans.text)
         if ans.confidence_note:
             st.caption(f"⚠️ {ans.confidence_note}")
-        st.caption(f"answer mode: **{ans.mode}** "
-                   f"({'local GGUF' if ans.mode == 'llm' else 'deterministic fallback'})")
+        mode_label = ("project identity" if ans.agent_mode == "identity"
+                      else "local GGUF" if ans.mode == "llm"
+                      else "deterministic fallback")
+        st.caption(f"answer mode: **{ans.mode}** ({mode_label})")
 
         tabs = st.tabs(["Retrieved memories", "Reasoning path", "Sources", "Metrics"])
         with tabs[0]:
@@ -84,5 +86,16 @@ if question:
             st.caption(f"candidates: {ans.metrics['n_candidates']} · "
                        f"retrieval: {ans.metrics['retrieval_ms']:.1f} ms · "
                        f"mode: {ans.metrics['llm_mode']}")
+            affect = ans.affect_snapshot
+            st.markdown("**Simulated affect state**")
+            acols = st.columns(4)
+            acols[0].metric("Valence", f"{affect.get('valence', 0):.3f}")
+            acols[1].metric("Arousal", f"{affect.get('arousal', 0):.3f}")
+            acols[2].metric("Confidence", f"{affect.get('confidence', 0):.3f}")
+            acols[3].metric("Stress", f"{affect.get('stress', 0):.3f}")
+            st.caption(f"label: {affect.get('label', '—')} · "
+                       f"reason: {affect.get('last_reason', '—')}")
+            st.caption("Simulated algorithmic state, not consciousness. "
+                       "It is derived only from observable answer signals.")
 
     st.session_state.history.append({"role": "assistant", "text": ans.text})

@@ -8,7 +8,6 @@ from __future__ import annotations
 
 import csv
 import json
-import os
 import platform
 import subprocess
 from datetime import datetime, timezone
@@ -32,6 +31,16 @@ def _git_commit() -> str:
         return ""
 
 
+def _git_dirty() -> bool:
+    try:
+        output = subprocess.run(
+            ["git", "status", "--porcelain"], cwd=PROJECT_ROOT,
+            capture_output=True, text=True, timeout=5).stdout
+        return bool(output.strip())
+    except Exception:
+        return False
+
+
 def _next_exp_dir() -> Path:
     existing = [p.name for p in EXPERIMENTS_DIR.iterdir()
                 if p.is_dir() and p.name.startswith("EXP-")] \
@@ -45,21 +54,28 @@ def _next_exp_dir() -> Path:
 def save_experiment(name: str, config: Dict[str, Any],
                     results: Dict[str, Dict[str, Any]],
                     store=None, seed: int = 42,
-                    hw=None) -> str:
+                    hw=None, study_type: str = "smoke",
+                    provenance: Optional[Dict[str, Any]] = None) -> str:
     """Persist one experiment run. Returns the experiment id."""
+    if study_type not in {"smoke", "research"}:
+        raise ValueError("study_type must be 'smoke' or 'research'")
     d = _next_exp_dir()
     stamp = datetime.now(timezone.utc).isoformat()
 
     meta = {
+        "schema_version": 2,
         "experiment_id": d.name,
         "name": name,
+        "study_type": study_type,
         "created_at": stamp,
         "git_commit": _git_commit(),
+        "git_dirty": _git_dirty(),
         "seed": seed,
         "python": platform.python_version(),
         "platform": platform.platform(),
         "hardware": hw.to_dict() if hw else {},
         "config": config,
+        "provenance": provenance or {},
         "software": {"numpy": _ver("numpy"), "faiss": _ver("faiss"),
                      "networkx": _ver("networkx")},
     }
@@ -98,7 +114,8 @@ def _summary_md(meta: Dict[str, Any], results: Dict[str, Dict[str, Any]]) -> str
     lines = [f"# {meta['name']}", "",
              f"- experiment: `{meta['experiment_id']}`",
              f"- created: {meta['created_at']}",
-             f"- git: `{meta['git_commit']}` · seed: {meta['seed']}", "",
+             f"- study: `{meta['study_type']}`",
+             f"- git: `{meta['git_commit']}` · dirty: `{meta['git_dirty']}` · seed: {meta['seed']}`", "",
              "| system | " + " | ".join(METRIC_ORDER) + " |",
              "|---|" + "---|" * len(METRIC_ORDER)]
     for sysname, res in results.items():

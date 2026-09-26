@@ -32,7 +32,10 @@ class LLMBackend:
         self.requested_gpu_layers = n_gpu_layers
         self.n_gpu_layers_used = 0
         self.n_threads = n_threads
-        self.n_batch = n_batch
+        try:
+            self.n_batch = max(1, int(n_batch))
+        except (TypeError, ValueError):
+            self.n_batch = 64
         self.available = False
         self.load_error = ""
         self._llm: Any = None
@@ -70,9 +73,8 @@ class LLMBackend:
                     n_ctx=n_ctx,
                     n_gpu_layers=gpu_layers,
                     n_threads=self.n_threads,
-                    n_batch=64,
-                    n_ubatch=64,  # small physical batch avoids the Q4_K_M CPU
-                                  # repack buffer assert (repack.cpp:4238)
+                    n_batch=self.n_batch,
+                    n_ubatch=min(64, self.n_batch),  # keep physical batch bounded
                     verbose=verbose,
                 )
                 self.n_gpu_layers_used = gpu_layers
@@ -89,6 +91,8 @@ class LLMBackend:
                 logger.warning("llm load failed with gpu_layers=%s ctx=%s: %s",
                                gpu_layers, n_ctx, exc)
                 self._llm = None
+                if "failed to load model from file" in self.load_error.lower():
+                    break
         self.available = False
 
     # ---- generation ----
