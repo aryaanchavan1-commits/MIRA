@@ -424,7 +424,31 @@ embedding/LLM metadata, hardware, software versions, seed, git commit, dirty-tre
 state, study type, and full results. Older or UI-created smoke manifests may not
 contain every field and must not be treated as publication-ready evidence.
 
-## 15. Positioning against prior work
+## 15. Applications across AI fields
+
+The memory layer is model-agnostic: anything that needs an LLM or agent to
+**remember, rank, and cite** its own growing corpus — locally — can sit on
+top of it. Measured properties that transfer:
+
+- **Higher-precision evidence ranking** (MRR +0.24–0.27 over flat/bm25 on two
+  multi-hop datasets) → fewer wrong citations in any grounded-answer system.
+- **Recall stability under scale** (hybrid placement held recall while blind
+  placement degraded) → corpora that grow (support bots, research notes).
+- **Component attribution** (every retrieval signal is independently
+  ablatable) → tune the memory to a domain by measurement, not intuition.
+- **Frugal/local-first** (4GB GPU, zero cloud calls, DPDP-friendly) →
+  deployment where data cannot leave the device.
+
+Concrete fits: **personal knowledge assistants** (long-lived notes with
+cited answers), **customer-support copilots** (product docs, ticket history),
+**legal/medical reference retrieval** (citation-first answers, on-premise),
+**education tech in Indian languages** (with a multilingual embedder; BM25
+fallback measured), **agent memory** (episodic + semantic with spreading-
+activation recall), **edge/defense/offline** deployments (no-network
+capability is architectural, not an afterthought), and **research
+reproducibility** itself (the bench/builder/exporter loop).
+
+## 16. Positioning against prior work
 
 - **GraphRAG** (Edge et al., 2024) retrieves over LLM-extracted entity
   communities; **HippoRAG** (Wang et al., 2024) over Personalized PageRank
@@ -441,7 +465,7 @@ contain every field and must not be treated as publication-ready evidence.
 A full related-work discussion and formal mechanism definitions are in
 `paper/mira_paper.md`.
 
-## 16. How to interpret results
+## 17. How to interpret results
 
 - Compare `full_mira` against `vector_only` as a scoring-arm smoke check; it
   does not isolate candidate-generation effects until the candidate pool is frozen.
@@ -451,7 +475,7 @@ A full related-work discussion and formal mechanism definitions are in
   stage, held-out evidence labels, and an independent or human evaluation.
 - Report negative results as they are. Do not tune weights on the test set.
 
-## 17. Limitations
+## 18. Limitations
 
 - NetworkX centrality is O(n) per compute — fine for laptop-scale corpora,
   swap `storage/graph_store.py` for larger graphs.
@@ -463,7 +487,7 @@ A full related-work discussion and formal mechanism definitions are in
   resets on restart; it is not evidence of emotion, sentience, or human-like feeling.
 - llama-cpp-python PyPI wheels are CPU-only; GPU offload needs a CUDA wheel.
 
-## 18. Project structure
+## 19. Project structure
 
 ```text
 MIRA/
@@ -489,6 +513,6 @@ MIRA/
 └── logs/            mira.log
 ```
 
-## 19. License
+## 20. License
 
 MIT — see `LICENSE`.
