@@ -99,3 +99,11 @@ data_bench/**
 !data_bench/ablation_real_results.json
 !data_bench/scale_sweep_results.json
 !data_bench/bench_real_answers.json
+
+# other bench workspaces: heavy binaries stay local; result JSONs whitelisted
+data_hotpot/**
+data_hotpotqa/**
+data_indic/**
+!data_indic/indicqa_results.json
+!data_indic/benchmarks/indicqa_hi_bench.json
+!data_indic/benchmarks/indicqa_mr_bench.json
