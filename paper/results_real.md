@@ -59,6 +59,32 @@ MRR (mira vs flat): d=0.24013 CI [0.2023, 0.28002], p~0.0001. Recall@8 slightly 
 
 The English-centric MiniLM embedder collapses on Devanagari (dense MRR ~0.02-0.04) while unicode-aware BM25 remains robust (0.39-0.45). Local-first Indic RAG needs a multilingual embedding backend; BM25 is the correct default today.
 
+### IndicQA with multilingual embedder (paraphrase-multilingual-MiniLM-L12-v2)
+
+| language | system | MRR | recall@8 |
+|---|---|---|---|
+| hi | mira_full | 0.3144 | 0.2005 |
+| hi | flat_vector | 0.3939 | 0.2140 |
+| hi | bm25 | 0.3925 | 0.2329 |
+| mr | mira_full | 0.1645 | 0.1345 |
+| mr | flat_vector | 0.2090 | 0.1702 |
+| mr | bm25 | 0.4518 | 0.3613 |
+
+The multilingual embedder lifts dense retrieval ~10-15× (Hindi flat MRR 0.021 → 0.394), confirming the backend was the language barrier.
+
+### IndicQA at full scale (3151 questions, complete corpora)
+
+| language | system | MRR | recall@8 |
+|---|---|---|---|
+| hi | mira_full | 0.2736 | 0.1884 |
+| hi | flat_vector | 0.3273 | 0.2025 |
+| hi | bm25 | 0.3726 | 0.2389 |
+| mr | mira_full | 0.1924 | 0.1564 |
+| mr | flat_vector | 0.2322 | 0.1695 |
+| mr | bm25 | 0.4498 | 0.3398 |
+
+Honest boundary at full scale: BM25 stays the strongest Indic system and MIRA does not yet beat either baseline on single-paragraph extractive QA — the topology's advantage is demonstrated on multi-hop document-scale corpora; Indic-aware extraction is the gated next step.
+
 ### Answer stage (n=50, model qwen2.5-1.5b-instruct-q4_k_m.gguf)
 
 | system | token-F1 |

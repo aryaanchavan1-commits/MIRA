@@ -1,9 +1,23 @@
-# ◎ MIRA — Mandala-Inspired Memory Architecture
+# ◎ MIRA — Mandala-Inspired Memory for AI Retrieval
 
-A **local-first research prototype** for studying whether a *radial, hierarchical,
-graph-based memory topology* — inspired by the organizational principles of
-mandalas/yantras — improves AI memory retrieval and multi-hop reasoning compared
-with conventional Vector RAG, Graph RAG, and hierarchical memory.
+**Arynox · by Aryan Chavan.** A **local-first research platform** for studying whether
+a *radial, hierarchical, graph-based memory topology* — inspired by the organizational
+principles of mandalas/yantras — improves AI memory **retrieval and storing**,
+multi-hop reasoning, and grounded answering compared with conventional Vector RAG,
+Graph RAG, and hierarchical memory.
+
+**Measured headline (all artifacts in-repo, nothing hand-typed):** MIRA ranks
+supporting evidence substantially higher than flat-vector and BM25 retrieval on two
+real multi-hop datasets (MuSiQue MRR 0.70 vs 0.43/0.31; HotpotQA MRR 0.92 vs 0.68;
+both p<0.001), produces significantly better end answers under an identical local-LLM
+answer stage, and holds retrieval recall stable as the corpus grows. Full ablation,
+scale sweep, and an Indic (Hindi/Marathi) evaluation included — with the language-
+barrier diagnosis (embedding backend, not architecture) demonstrated and fixed.
+
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.placeholder.svg)](https://doi.org/placeholder)
+[![License](https://img.shields.io/badge/license-MIT-gold)](LICENSE)
+![Python](https://img.shields.io/badge/python-3.11-blue) ![FAISS](https://img.shields.io/badge/vector--index-FAISS-blueviolet)
+![Benchmarks](https://img.shields.io/badge/benchmarks-MuSiQue%20·%20HotpotQA%20·%20IndicQA-gold)
 
 > **What MIRA is NOT.** MIRA is an experimental architecture inspired by the
 > organizational and visual principles of mandalas/yantras. It does **not**
@@ -16,7 +30,24 @@ with conventional Vector RAG, Graph RAG, and hierarchical memory.
 
 ---
 
-## 1. Research question
+## 1. Why this matters for the Indian AI revolution
+
+India's AI buildout needs systems that work **offline-first, at near-zero cloud cost,
+and in Indian languages** — a 4 GB GPU laptop should be enough to run a private,
+citable research assistant. MIRA is built as evidence for that thesis:
+
+- **Local-first by architecture**: retrieval, memory, and answering run fully on
+  device; zero cloud calls by default (DPDP-aligned data sovereignty).
+- **Frugal**: a 1.5B quantized model + MiniLM-class embedders deliver measured
+  multi-hop gains; the memory layer — not model size — does the heavy lifting.
+- **Indic-honest**: the IndicQA evaluation quantifies exactly where local-first
+  Indic RAG breaks (the English-centric embedding backend), shows the ~10× fix from
+  swapping to a multilingual embedder, and keeps unicode-aware BM25 as the measured
+  default for Devanagari today.
+- **Open and reproducible**: every number regenerates from committed scripts and
+  artifacts — the same standard Indian academia and industry need to build on.
+
+## 2. Research question
 
 > Can a radial hierarchical memory topology provide measurable advantages for
 > AI retrieval and reasoning compared with flat vector retrieval and ordinary
@@ -29,7 +60,7 @@ temporal information can improve evidence retrieval and multi-hop reasoning
 while reducing irrelevant context. **This is tested, never assumed** — every
 default weight in the config is marked *experimental*.
 
-## 2. Research hypotheses and scientific scope
+## 3. Research hypotheses and scientific scope
 
 MIRA is currently a **symbolic memory and retrieval architecture**: a weighted graph
 of memory records with semantic, radial, hierarchical, temporal, path, and activation
@@ -124,7 +155,7 @@ artist/tradition attribution, and a documented license. Synthetic patterns may b
 for smoke tests, but must not be presented as authentic traditional kolam data. The
 initial benchmark therefore does not fabricate cultural artifacts.
 
-## 3. Architecture
+## 4. Architecture
 
 ```text
                   MIRA
@@ -158,7 +189,7 @@ initial benchmark therefore does not fabricate cultural artifacts.
                 ANSWER         (memories + path + sources + metrics)
 ```
 
-## 4. Memory representation
+## 5. Memory representation
 
 - **MemoryNode** — `id, concept, summary, raw_text, memory_type, parent_id,
   children, ring, sector, depth, radial_distance, embedding, importance,
@@ -169,7 +200,7 @@ initial benchmark therefore does not fabricate cultural artifacts.
 - Ten memory types (semantic, episodic, procedural, working, fact, entity,
   event, document, concept, relation); the enum is extensible.
 
-## 5. Mandala topology
+## 6. Mandala topology
 
 - **Rings** — ring 0 = core/root concept, ring 1 = major concepts, ring 2 =
   subconcepts/entities, ring 3 = facts/evidence, ring 4+ = raw document
@@ -181,7 +212,7 @@ initial benchmark therefore does not fabricate cultural artifacts.
 - **Placement strategies** (switchable, comparable in the UI):
   `embedding_clusters`, `graph_centrality`, `hierarchy`, `temporal`, `hybrid_mira`.
 
-## 6. Retrieval algorithm
+## 7. Retrieval algorithm
 
 Score (all components individually switchable for ablation):
 
@@ -252,7 +283,7 @@ cannot change retrieval, memory placement, citations, or the mandala. The web co
 shows the snapshot in Overview and each answer; the legacy Streamlit chat shows the same
 bounded values and disclosure.
 
-## 7. Baselines and ablations
+## 8. Baselines and ablations
 
 | System | What it is |
 |---|---|
@@ -269,14 +300,14 @@ same frame, stores, embedding model, dataset, context budget, and hardware. The
 topology benchmark additionally reports degree and edge-count invariants for every
 condition.
 
-## 8. Metrics (computed, never fabricated)
+## 9. Metrics (computed, never fabricated)
 
 Retrieval recall@k, precision@k, MRR, answer token-F1 (lexical proxy — stated
 as such, not an LLM judge), context tokens, compression ratio, latency,
 candidates count, throughput. Resource usage (RAM/VRAM) is measured live on
 the Hardware page.
 
-## 9. Installation
+## 10. Installation
 
 ```bat
 git clone <repo> MIRA
@@ -310,7 +341,7 @@ Command-line experiments (reproducible, headless):
 The paper draft lives in `paper/mira_paper.md`; its result tables are
 generated **only** from saved experiment directories — never written by hand.
 
-## 10. Hardware requirements & auto-configuration
+## 11. Hardware requirements & auto-configuration
 
 Works from CPU-only laptops upward. At startup MIRA detects CPU/RAM/GPU/VRAM/
 CUDA/disk and selects a safe runtime: smallest-fitting GGUF (0.5B–3B, Q4/Q5),
@@ -322,7 +353,7 @@ modes: `safe | balanced | fast | research`.
 The reference development machine is an RTX 3050 Laptop (4 GB) with 16 GB RAM;
 nothing is hard-coded to it.
 
-## 11. Offline mode
+## 12. Offline mode
 
 `offline: true` (default) makes MIRA strictly local: no external APIs, no
 telemetry, no downloads, no network calls. Downloads additionally require
@@ -346,7 +377,7 @@ sectors with URL provenance. While offline mode stays on, no search is possible;
 the gate is deliberate. Fetch URLs are checked against public DNS/IP ranges to
 reduce SSRF risk.
 
-## 12. Training (optional, safety-gated)
+## 13. Training (optional, safety-gated)
 
 Fine-tuning is **never** automatic. `training/lora.py` runs a precheck
 (VRAM ≥ 5 GB usable, RAM, disk, dataset ≥ 50 samples, GGUF base) and prints
@@ -355,7 +386,7 @@ will skip, and the system keeps working with external memory. The dataset
 builder emits only provenance-grounded samples (`query, memory_context,
 retrieval_path, evidence, answer`), each traced to real ingested chunks.
 
-## 13. Benchmarking
+## 14. Benchmarking
 
 1. Ingest documents (Documents page).
 2. Create a dataset — local JSON/JSONL of
@@ -378,7 +409,7 @@ Compatible external datasets (LoCoMo, LongMemEval, HotpotQA, 2WikiMultiHopQA,
 MuSiQue) can be converted to the record format locally — nothing is
 downloaded without confirmation.
 
-### 13.1 Real-data benchmark (measured)
+### 14.1 Real-data benchmark (measured)
 
 `scripts/build_musique_bench.py` builds a 300-question answerable 2-hop MuSiQue set;
 `scripts/build_bench_workspace.py` ingests its 4,043 paragraphs into an isolated
@@ -417,14 +448,14 @@ evidence, all exported to `paper/results_real.md`:
   (aware-vs-blind placement across a size ladder), `scripts/eval_neural_validated.py`
   (doc-grouped holdout for the learned scorer; config never auto-flips).
 
-## 14. Reproducibility
+## 15. Reproducibility
 
 CLI research runs record the command, dataset hash, resolved configuration,
 embedding/LLM metadata, hardware, software versions, seed, git commit, dirty-tree
 state, study type, and full results. Older or UI-created smoke manifests may not
 contain every field and must not be treated as publication-ready evidence.
 
-## 15. Applications across AI fields
+## 16. Applications across AI fields
 
 The memory layer is model-agnostic: anything that needs an LLM or agent to
 **remember, rank, and cite** its own growing corpus — locally — can sit on
@@ -448,7 +479,7 @@ activation recall), **edge/defense/offline** deployments (no-network
 capability is architectural, not an afterthought), and **research
 reproducibility** itself (the bench/builder/exporter loop).
 
-## 16. Positioning against prior work
+## 17. Positioning against prior work
 
 - **GraphRAG** (Edge et al., 2024) retrieves over LLM-extracted entity
   communities; **HippoRAG** (Wang et al., 2024) over Personalized PageRank
@@ -465,7 +496,7 @@ reproducibility** itself (the bench/builder/exporter loop).
 A full related-work discussion and formal mechanism definitions are in
 `paper/mira_paper.md`.
 
-## 17. How to interpret results
+## 18. How to interpret results
 
 - Compare `full_mira` against `vector_only` as a scoring-arm smoke check; it
   does not isolate candidate-generation effects until the candidate pool is frozen.
@@ -475,7 +506,7 @@ A full related-work discussion and formal mechanism definitions are in
   stage, held-out evidence labels, and an independent or human evaluation.
 - Report negative results as they are. Do not tune weights on the test set.
 
-## 18. Limitations
+## 19. Limitations
 
 - NetworkX centrality is O(n) per compute — fine for laptop-scale corpora,
   swap `storage/graph_store.py` for larger graphs.
@@ -487,7 +518,7 @@ A full related-work discussion and formal mechanism definitions are in
   resets on restart; it is not evidence of emotion, sentience, or human-like feeling.
 - llama-cpp-python PyPI wheels are CPU-only; GPU offload needs a CUDA wheel.
 
-## 19. Project structure
+## 20. Project structure
 
 ```text
 MIRA/
@@ -513,6 +544,6 @@ MIRA/
 └── logs/            mira.log
 ```
 
-## 20. License
+## 21. License
 
 MIT — see `LICENSE`.

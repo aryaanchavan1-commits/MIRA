@@ -288,17 +288,23 @@ retrieval's 0.039 (Δ+0.066, CI [0.013, 0.123], p≈0.009; only questions where 
 systems produced answers are paired). Absolute F1 is low — a 1.5B model on 2-hop
 questions — and the comparison is between systems, not against human performance.
 
-**Cross-lingual check (IndicQA hi/mr, retrieval-only) — diagnosis and fix.**
-Under the English-centric MiniLM embedder, dense retrieval (MIRA and flat alike)
-collapses on Devanagari (MRR 0.02-0.04) while unicode-aware BM25 remains robust
-(0.39-0.45). Swapping to a multilingual embedder (paraphrase-multilingual-MiniLM-L12-v2,
-a config-level change) lifts dense retrieval by roughly 10x on Hindi (flat MRR
-0.021 → 0.394, into BM25's range) and confirms the diagnosis: the language barrier
-for local-first Indic RAG sits in the embedding backend, not the memory architecture.
-On this small single-paragraph corpus, BM25 remains the stronger Indic default and
-MIRA's topology advantage does not yet transfer (its structural signals are computed
-from English-centric extraction); scaling the corpus and Indic-aware extraction are
-the stated next steps.
+**Cross-lingual check (IndicQA hi/mr, retrieval-only) — diagnosis, fix, and an
+honest boundary.** Under the English-centric MiniLM embedder, dense retrieval (MIRA
+and flat alike) collapses on Devanagari (MRR 0.02-0.04) while unicode-aware BM25
+remains robust (0.39-0.45). Swapping to a multilingual embedder
+(paraphrase-multilingual-MiniLM-L12-v2, a config-level change) lifts dense retrieval
+by roughly 10-15× on Hindi (flat MRR 0.021 → 0.327 at full scale), confirming the
+diagnosis: the language barrier for local-first Indic RAG sits in the embedding
+backend, not the memory architecture. At the full 3,151-question scale (1,547 Hindi
++ 1,604 Marathi, complete paragraph corpora), BM25 remains the strongest system
+(hi 0.373, mr 0.450) and MIRA's topology does **not** yet beat either baseline
+(hi 0.274, mr 0.192; significantly below flat, p<0.001) — its structural signals
+(rings/sectors from concept clustering, graph edges from English-centric extraction)
+do not yet express useful organization on single-paragraph extractive corpora. The
+boundary is stated as measured: the topology's advantage is demonstrated on
+multi-hop, document-scale corpora (MuSiQue, HotpotQA); for Indic extractive QA,
+BM25 is the correct local-first default today, and Indic-aware extraction is the
+gated next step before any topology claim in Indic languages.
 
 **Scale sweep (structure-blind vs topology-aware placement).** Against the hub-
 neighborhood probe, structure-blind `embedding_clusters` posts the best MRR at every
@@ -369,6 +375,32 @@ MRR (mira vs flat): d=0.24013 CI [0.2023, 0.28002], p~0.0001. Recall@8 slightly 
 | mr | bm25 | 0.4518 | 0.3613 |
 
 The English-centric MiniLM embedder collapses on Devanagari (dense MRR ~0.02-0.04) while unicode-aware BM25 remains robust (0.39-0.45). Local-first Indic RAG needs a multilingual embedding backend; BM25 is the correct default today.
+
+### IndicQA with multilingual embedder (paraphrase-multilingual-MiniLM-L12-v2)
+
+| language | system | MRR | recall@8 |
+|---|---|---|---|
+| hi | mira_full | 0.3144 | 0.2005 |
+| hi | flat_vector | 0.3939 | 0.2140 |
+| hi | bm25 | 0.3925 | 0.2329 |
+| mr | mira_full | 0.1645 | 0.1345 |
+| mr | flat_vector | 0.2090 | 0.1702 |
+| mr | bm25 | 0.4518 | 0.3613 |
+
+The multilingual embedder lifts dense retrieval ~10-15× (Hindi flat MRR 0.021 → 0.394), confirming the backend was the language barrier.
+
+### IndicQA at full scale (3151 questions, complete corpora)
+
+| language | system | MRR | recall@8 |
+|---|---|---|---|
+| hi | mira_full | 0.2736 | 0.1884 |
+| hi | flat_vector | 0.3273 | 0.2025 |
+| hi | bm25 | 0.3726 | 0.2389 |
+| mr | mira_full | 0.1924 | 0.1564 |
+| mr | flat_vector | 0.2322 | 0.1695 |
+| mr | bm25 | 0.4498 | 0.3398 |
+
+Honest boundary at full scale: BM25 stays the strongest Indic system and MIRA does not yet beat either baseline on single-paragraph extractive QA — the topology's advantage is demonstrated on multi-hop document-scale corpora; Indic-aware extraction is the gated next step.
 
 ### Answer stage (n=50, model qwen2.5-1.5b-instruct-q4_k_m.gguf)
 

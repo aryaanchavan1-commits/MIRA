@@ -1,0 +1,855 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc 3.11" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <meta name="dcterms.date" content="2026-09-27" />
+  <meta name="keywords" content="retrieval-augmented generation, memory
+topology, radial organization, ablation study, local-first AI, Indic
+languages" />
+  <title>MIRA — Mandala-Inspired Memory for AI Retrieval</title>
+  <style>
+    /* Default styles provided by pandoc.
+    ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+    */
+    html {
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+    }
+    body {
+      margin: 0 auto;
+      max-width: 36em;
+      padding-left: 50px;
+      padding-right: 50px;
+      padding-top: 50px;
+      padding-bottom: 50px;
+      hyphens: auto;
+      overflow-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+    @media (max-width: 600px) {
+      body {
+        font-size: 0.9em;
+        padding: 12px;
+      }
+      h1 {
+        font-size: 1.8em;
+      }
+    }
+    @media print {
+      html {
+        background-color: white;
+      }
+      body {
+        background-color: transparent;
+        color: black;
+      }
+      p, h2, h3 {
+        orphans: 3;
+        widows: 3;
+      }
+      h2, h3, h4 {
+        page-break-after: avoid;
+      }
+    }
+    p {
+      margin: 1em 0;
+    }
+    a {
+      color: #1a1a1a;
+    }
+    a:visited {
+      color: #1a1a1a;
+    }
+    img {
+      max-width: 100%;
+    }
+    svg {
+      height: auto;
+      max-width: 100%;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: 1.4em;
+    }
+    h5, h6 {
+      font-size: 1em;
+      font-style: italic;
+    }
+    h6 {
+      font-weight: normal;
+    }
+    ol, ul {
+      padding-left: 1.7em;
+      margin-top: 1em;
+    }
+    li > ol, li > ul {
+      margin-top: 0;
+    }
+    blockquote {
+      margin: 1em 0 1em 1.7em;
+      padding-left: 1em;
+      border-left: 2px solid #e6e6e6;
+      color: #606060;
+    }
+    code {
+      white-space: pre-wrap;
+      font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+      font-size: 85%;
+      margin: 0;
+      hyphens: manual;
+    }
+    pre {
+      margin: 1em 0;
+      overflow: auto;
+    }
+    pre code {
+      padding: 0;
+      overflow: visible;
+      overflow-wrap: normal;
+    }
+    .sourceCode {
+     background-color: transparent;
+     overflow: visible;
+    }
+    hr {
+      border: none;
+      border-top: 1px solid #1a1a1a;
+      height: 1px;
+      margin: 1em 0;
+    }
+    table {
+      margin: 1em 0;
+      border-collapse: collapse;
+      width: 100%;
+      overflow-x: auto;
+      display: block;
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+    table caption {
+      margin-bottom: 0.75em;
+    }
+    tbody {
+      margin-top: 0.5em;
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    th {
+      border-top: 1px solid #1a1a1a;
+      padding: 0.25em 0.5em 0.25em 0.5em;
+    }
+    td {
+      padding: 0.125em 0.5em 0.25em 0.5em;
+    }
+    header {
+      margin-bottom: 4em;
+      text-align: center;
+    }
+    #TOC li {
+      list-style: none;
+    }
+    #TOC ul {
+      padding-left: 1.3em;
+    }
+    #TOC > ul {
+      padding-left: 0;
+    }
+    #TOC a:not(:hover) {
+      text-decoration: none;
+    }
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: 1.5em;}
+    div.column{flex: auto;}
+    @media screen {
+    div.columns{gap: min(4vw, 1.5em);}
+    div.column{overflow-x: auto;}
+    }
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+  </style>
+</head>
+<body>
+<header id="title-block-header">
+<h1 class="title">MIRA — Mandala-Inspired Memory for AI Retrieval</h1>
+<p class="date">2026-09-27</p>
+</header>
+<h2 id="reproducibility-statement">Reproducibility statement</h2>
+<p>Every quantitative claim in this paper is generated from committed
+run artifacts by <code>paper/export_results.py --real</code>; no table
+is hand-edited. All experiments run on a single consumer laptop (RTX
+3050 4GB, 16 GB RAM) with zero cloud calls. Artifacts and builders:</p>
+<ul>
+<li><code>data_bench/bench_real_results.json</code></li>
+<li><code>data_bench/bench_real_answers.json</code></li>
+<li><code>data_bench/ablation_real_results.json</code></li>
+<li><code>data_bench/scale_sweep_results.json</code></li>
+<li><code>data_bench/hotpotqa_bench_real_results.json</code></li>
+<li><code>data_indic/indicqa_results.json</code></li>
+<li><code>data_indic_ml/indicqa_ml_results.json</code></li>
+<li><code>experiments/neural_validation.json</code></li>
+</ul>
+<hr />
+<h2 id="abstract">Abstract</h2>
+<p>Retrieval-augmented generation (RAG) systems predominantly organize
+memory as a flat vector collection, optionally augmented by entity
+graphs or hierarchy. We investigate an underexplored structural
+alternative: a <strong>radial memory topology</strong> in which memories
+are organized in concentric rings around a core concept, partitioned
+into semantic sectors, and positioned by a formally defined radial
+distance combining semantic, hierarchical, graph, and temporal signals.
+We implement MIRA, a local-first research platform in which the radial
+mechanism is one switchable component among nine, each independently
+ablatable, evaluated against naive vector RAG, hybrid vector+graph RAG,
+and hierarchical retrieval under a declared, shared protocol when the
+answer-stage experiment is run; the current default runs are
+retrieval-only smoke measurements, not answer-quality evidence.
+<strong>[Measured: on 300 MuSiQue 2-hop questions over an 82,783-node
+workspace, MIRA reaches MRR 0.702 vs 0.435 for flat vector RAG and 0.307
+for BM25 (paired bootstrap ΔMRR +0.267, 95% CI [0.224, 0.311],
+p≈0.0001). The ranking advantage replicates on 300 HotpotQA bridge
+questions (MRR 0.918 vs 0.677 flat, Δ+0.240, p≈0.0001), while recall@8
+stays statistically tied or slightly favors flat on both datasets. With
+the answer stage held identical (Qwen2.5-1.5B), MIRA’s end answers score
+significantly higher token-F1 than flat retrieval’s (Δ+0.066, p≈0.009).
+An IndicQA (hi/mr) evaluation quantifies a deployment-relevant
+limitation: the English-centric embedder collapses on Devanagari while
+BM25 remains robust — local-first Indic RAG needs multilingual embedding
+backends.]</strong> We release the platform, including per-component
+ablation tooling, to support reproducible negative or positive
+findings.</p>
+<hr />
+<h2 id="introduction">1. Introduction</h2>
+<p>The dominant paradigm for retrieval-augmented generation embeds
+documents into a dense vector space and retrieves nearest neighbors
+(Lewis et al., 2020). Extensions enrich this with entity graphs (Edge et
+al., 2024, GraphRAG), hierarchical summarization trees (Sarthi et al.,
+2024, RAPTOR), or neuroscience-motivated associative indexing (Wang et
+al., 2024, HippoRAG). These methods each add <em>one</em> organizational
+axis — community structure, hierarchy, or association — on top of
+semantic similarity.</p>
+<p>This paper asks a complementary question: what does the
+<strong>radial axis</strong> contribute? Mandalas and yantras — across
+Hindu, Buddhist, and Jain traditions — organize symbolic content in
+concentric rings around a center, partitioned by directional sectors,
+with proximity to the center encoding importance or generality. We do
+<strong>not</strong> claim historical continuity with modern AI, and we
+do not treat the mandala as a source of truth about memory. We treat it
+as an <em>organizational prior</em>: generality belongs near the center,
+evidence near the rim, and related content shares a sector. The research
+contribution is a <strong>formal, measurable mechanism</strong> derived
+from this prior — not the visual metaphor.</p>
+<p>Our central question: <strong>under a declared shared protocol, does
+adding a radial component to retrieval improve multi-hop evidence
+retrieval over flat vector retrieval and the included graph/hierarchical
+controls?</strong> Established external baselines remain future
+work.</p>
+<p>We answer with a system built to be refuted: every retrieval
+component is individually switchable, all retrieval weights are
+configurable and marked experimental, and the benchmark harness records
+the conditions for each run.</p>
+<h3 id="contributions">Contributions</h3>
+<ol type="1">
+<li>A formal definition of radial memory placement (rings, sectors,
+radial distance) as a computable structure over an entity–evidence graph
+(§3).</li>
+<li>MIRA, a nine-component retrieval score with per-component scoring
+ablations, plus a benchmark harness that records conditions and refuses
+to promote smoke manifests into paper tables (§4).</li>
+<li>A controlled experimental protocol on multi-hop QA (HotpotQA,
+MuSiQue, 2WikiMultiHopQA) with retrieval, lexical, and judge-based
+answer metrics (§5).</li>
+<li><strong>[Results TBF]</strong> and an honest account of which
+components carry the benefit (§6).</li>
+</ol>
+<p>The current implementation is a symbolic weighted-graph retrieval
+system. Its bio-inspired terminology describes algorithmic
+analogies—activation propagation, Hebbian reinforcement, and radial
+organization—not simulated hippocampal or entorhinal circuits. Claims
+about head-direction or grid-cell mechanisms require a separately
+specified recurrent neural model and independent activity analysis.</p>
+<hr />
+<h2 id="related-work">2. Related Work</h2>
+<p><strong>Flat dense retrieval.</strong> DPR (Karpukhin et al., 2020)
+and its descendants retrieve by cosine similarity over chunk embeddings.
+This is our Baseline A. Its failure mode on multi-hop questions is well
+documented: no single chunk contains the bridge entity.</p>
+<p><strong>Graph-augmented RAG.</strong> GraphRAG (Edge et al., 2024)
+builds an entity graph from LLM extractions and retrieves over community
+summaries. HippoRAG (Wang et al., 2024) uses a Personalized PageRank
+over an entity graph to simulate hippocampal indexing. Both demonstrate
+that <em>structure beyond the vector</em> helps multi-hop retrieval.
+MIRA differs in its ring/sector radial coordinates and in treating graph
+centrality as one ablatable component rather than the primary index. Our
+Baseline B (vector + degree-weighted graph expansion) is deliberately
+weaker than GraphRAG to establish a floor, not a ceiling; §7 discusses
+the threat this poses to claims.</p>
+<p><strong>Hierarchical RAG.</strong> RAPTOR (Sarthi et al., 2024)
+recursively clusters and summarizes chunks into a tree, retrieving
+across levels. MIRA’s ring assignment over a parent–child graph is a
+generalization: rings are computed from a configurable mix of signals
+(hierarchy, centrality, semantics, recency) rather than from clustering
+alone. Baseline C is a coarse-to-fine tree descent without radial or
+graph components.</p>
+<p><strong>Memory for agents.</strong> Generative Agents (Park et al.,
+2023) score memories by recency × importance × relevance — an influence
+on our component design. MemGPT (Packer et al., 2023) manages context as
+paging. Neither uses radial coordinates.</p>
+<p><strong>Neuroscience and geometric context.</strong> Doeller, Barry,
+and Burgess (2010) reported evidence for grid-like signals in a human
+memory network; Nau et al. (2018) reported hexadirectional coding of
+visual space in human entorhinal cortex; and Banino et al. (2018) showed
+grid-like representations emerging in artificial agents. Geometric deep
+learning work such as Bronstein et al. (2021) and Cohen and Welling
+(2016) provides a formal vocabulary for symmetry-aware representations.
+These references motivate MIRA’s hypotheses; they do not establish
+neural equivalence for the symbolic retriever.</p>
+<p><strong>Positioning.</strong> We make a narrower novelty claim than
+“the first mandala-inspired system”: we study whether a specified
+radial/hierarchical graph prior changes measured retrieval under
+controlled ablations. The literature search and related-work matrix must
+be completed before making any broader historical priority claim.</p>
+<hr />
+<h2 id="the-radial-memory-model">3. The Radial Memory Model</h2>
+<h3 id="structure">3.1 Structure</h3>
+<p>A memory corpus is a directed graph G = (V, E) whose nodes carry a
+memory type (concept, fact, entity, document, …), textual content,
+importance, confidence, temporal bounds, and chunk-level provenance.
+Edges are typed relations (has_part, evidence, supports, mentions) with
+weights.</p>
+<p>A <strong>mandala placement</strong> assigns each node v:</p>
+<ul>
+<li><strong>ring</strong> r(v) ∈ {0..R−1}: distance from the corpus core
+along the derivation graph — documents and core concepts near 0, derived
+evidence near R−1 — computed by a BFS over the parent–child structure
+with centrality tie-breaking (ring 0 = highest centrality concept /
+document root);</li>
+<li><strong>sector</strong> s(v): membership in one of k embedding
+clusters (k discovered, not fixed), named lexically from member tokens
+for human inspection;</li>
+<li><strong>radial distance</strong> ρ(v) ∈ [0, 1], the formal core of
+this work:</li>
+</ul>
+<blockquote>
+<p>ρ(v) = α·d_sem(v) + β·d_hier(v) + γ·d_graph(v) + δ·d_temp(v)</p>
+</blockquote>
+<p>where d_sem is (1 − cosine similarity to the sector centroid), d_hier
+is r(v)/(R−1), d_graph is (1 − normalized degree centrality), and d_temp
+is normalized recency age. <strong>All four weights are experimental
+defaults</strong>, stored with every experiment (§5.4); the placement
+strategies themselves are switchable (embedding-only, centrality- only,
+hierarchy-only, temporal-only, hybrid), so placement is an experimental
+variable rather than a fixed pipeline stage.</p>
+<h3 id="radial-retrieval">3.2 Radial retrieval</h3>
+<p>Given query q with embedding e(q), candidate retrieval merges: (i)
+FAISS cosine neighbors, (ii) one-hop graph expansions of the top vector
+seeds, retaining available path provenance, and (iii) ring-0/1 concepts
+with lexical overlap to q. Each candidate v is scored:</p>
+<blockquote>
+<p>S(v) = α·sim(e(q), e(v)) + β·(1 − r(v)/(R−1)) + γ·(1 − ρ(v)) +
+δ·centrality(v) + ε·importance(v) + ζ·confidence(v) + η·recency(v) +
+θ·path(v) + ι·activation(v)</p>
+</blockquote>
+<p>where path(v) rewards short high-confidence derivation chains
+(path(v) = 2·∏ edge-confidence · 1/|path|), and activation(v) is the
+normalized spreading-activation signal. The score is <strong>normalized
+by the sum of active weights</strong>, so any subset of components
+yields a comparable ranking — this is what makes ablation meaningful.
+Multi-hop answers are supported by returning the retrieved node’s
+derivation path, not a raw neighborhood.</p>
+<p>The production activation mode is <code>lif_like</code>: a bounded,
+deterministic leak/threshold/reset/refractory process with capped sparse
+fan-out and an auditable voltage/spike trace. Accepted grounded answers
+may apply a bounded STDP-like edge update with homeostatic decay. These
+are Bio-NN-inspired engineering heuristics, not biological simulations;
+predictive error-driven plasticity remains future work.</p>
+<h3 id="context-assembly">3.3 Context assembly</h3>
+<p>Retrieved nodes pass through dedup → sentence-level selection → token
+budgeting, with provenance (document, page, chunk) preserved per unit.
+Structural nodes without content are excluded from answer contexts by
+construction — they participate in the graph and placement but never
+masquerade as evidence.</p>
+<hr />
+<h2 id="the-mira-platform">4. The MIRA Platform</h2>
+<p>MIRA is a local-first implementation: FastAPI server, SQLite
+persistence, FAISS vector index, NetworkX graph, llama.cpp GGUF
+inference, and a browser console with an interactive mandala view.
+Hardware is detected at startup and a safe runtime (model size,
+quantization, context, GPU layers) is auto-selected with headroom. All
+retrieval weights, placement strategies, and ablation sets are
+configuration; every experiment stores its declared configuration,
+hardware snapshot, software versions, seed, study type, provenance
+metadata, and git state. Runs without a complete research manifest
+remain smoke results. Answer generation uses a strict extractive prompt
+with a degenerate-output guard, falling back to extractive answers when
+the LLM is unavailable or unhelpful — answer mode is always
+disclosed.</p>
+<hr />
+<h2 id="experimental-design">5. Experimental Design</h2>
+<h3 id="systems">5.1 Systems</h3>
+<table>
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<thead>
+<tr>
+<th>System</th>
+<th>Components active</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Vector RAG (A)</td>
+<td>FAISS cosine only</td>
+</tr>
+<tr>
+<td>Graph RAG (B)</td>
+<td>vector seeds + degree-weighted expansion</td>
+</tr>
+<tr>
+<td>Hierarchical (C)</td>
+<td>parent–child descent, lexical coarse match</td>
+</tr>
+<tr>
+<td>MIRA (D)</td>
+<td>all nine</td>
+</tr>
+<tr>
+<td>Ablations</td>
+<td>vector / graph / hierarchy / radial / activation only; selected
+pairwise combinations</td>
+</tr>
+</tbody>
+</table>
+<h3 id="datasets">5.2 Datasets</h3>
+<p>HotpotQA (distractor), 2WikiMultiHopQA, MuSiQue, loaded from local
+files; supporting titles are resolved to memory node ids after ingesting
+the source corpora, enabling retrieval-level metrics. A corpus-derived
+synthetic set is used only for smoke tests and is never the basis of
+claims.</p>
+<h3 id="metrics">5.3 Metrics</h3>
+<p>Retrieval recall@k, MRR over supporting nodes, context tokens
+consumed, latency, answer token-F1 (lexical proxy, stated as such), and
+an LLM-as-judge pair (correctness, faithfulness, 1–5) using the same
+local GGUF — with the self-judging caveat stated. Judge failures are
+counted, never imputed.</p>
+<h3 id="controls-and-reproducibility">5.4 Controls and
+reproducibility</h3>
+<p>For a valid answer-stage run, the model (Qwen2.5-1.5B-Instruct
+Q4_K_M), embedding model (MiniLM-L6), context budget, k, hardware, and
+seed must be held fixed across systems. The experiment record includes
+the command, dataset hash, resolved configuration, model metadata,
+hardware, git state, and study type. N seeds × question subsamples with
+paired effect sizes and confidence intervals are required before final
+claims; point estimates alone are not evidence.</p>
+<h3 id="controlled-topology-and-rotation-study">5.5 Controlled topology
+and rotation study</h3>
+<p>The headless runner <code>scripts/run_rotational_benchmark.py</code>
+evaluates three graph conditions in memory:
+<code>structured_full</code>, <code>degree_preserving_shuffled</code>,
+and <code>square_lattice</code>. It holds node IDs, query text,
+timestamps, embeddings, and graph invariants explicit. A common
+orthogonal transform is applied to both node and query embeddings;
+paired top-k Jaccard, top-1 agreement, recall@k, MRR, and graph degree
+statistics are recorded in a manifest. Because the production retriever
+does not use angular coordinates, the rotation result is a null control
+for implementation invariance and must not be described as a biological
+grid-cell result.</p>
+<hr />
+<h2
+id="resultsmeasured-retrieval-stage-canonical-result-tables-follow.">6.
+Results<strong>Measured (retrieval stage):</strong> canonical result
+tables follow.</h2>
+<p>Headline: MRR 0.7016 (mira_full) vs 0.4347 (flat_vector) vs 0.2367
+(hierarchical_rag); MRR difference significant, recall@8 difference not
+(flat edges 0.3066 vs 0.2991). Metrics were identical across all 3 seeds
+— retrieval here is deterministic given the seed, so the seed protocol
+exercised pipeline robustness rather than sampling variance.
+Answer-stage (token-F1, judge) numbers are pending: the local LLM could
+not co-reside with the 82k-node workspace within 16 GB RAM.</p>
+<p><strong>Ablation (same 300 questions).</strong> The semantic
+component is the workhorse (removal collapses MRR to 0.4422, Δ+0.259).
+The structural/radial geometry contributes a significant +0.044 MRR —
+but at a recall cost (recall@8 rises to 0.359 without it): the geometry
+concentrates gold evidence at top ranks while slightly narrowing the
+top-8 net. Graph and recency components are micro-contributors (d≈0,
+bit-identical rankings); spreading activation slightly <em>hurts</em>
+MRR while diversifying candidates. The learned scorer (Δ-rule) was
+validated on a document-grouped holdout and <strong>lost</strong> to the
+hand weights (0.633 vs 0.747, p=0.0002) —
+<code>retrieval_score.learned</code> stays off.</p>
+<p><strong>BM25 control (same 300 questions).</strong> Okapi BM25 over
+the same node texts scores MRR 0.3066 / recall@8 0.2736 — below
+flat-vector, so the embedding systems’ lead is not generic matching
+ability, and MIRA’s advantage over it is Δ+0.395 (p&lt;0.001).</p>
+<p><strong>Answer stage (n=50, Qwen2.5-1.5B held fixed).</strong> With
+compression and the answer prompt identical across systems, MIRA’s
+answers score token-F1 0.076 vs flat retrieval’s 0.039 (Δ+0.066, CI
+[0.013, 0.123], p≈0.009; only questions where both systems produced
+answers are paired). Absolute F1 is low — a 1.5B model on 2-hop
+questions — and the comparison is between systems, not against human
+performance.</p>
+<p><strong>Cross-lingual check (IndicQA hi/mr, retrieval-only) —
+diagnosis and fix.</strong> Under the English-centric MiniLM embedder,
+dense retrieval (MIRA and flat alike) collapses on Devanagari (MRR
+0.02-0.04) while unicode-aware BM25 remains robust (0.39-0.45). Swapping
+to a multilingual embedder (paraphrase-multilingual-MiniLM-L12-v2, a
+config-level change) lifts dense retrieval by roughly 10x on Hindi (flat
+MRR 0.021 → 0.394, into BM25’s range) and confirms the diagnosis: the
+language barrier for local-first Indic RAG sits in the embedding
+backend, not the memory architecture. On this small single-paragraph
+corpus, BM25 remains the stronger Indic default and MIRA’s topology
+advantage does not yet transfer (its structural signals are computed
+from English-centric extraction); scaling the corpus and Indic-aware
+extraction are the stated next steps.</p>
+<p><strong>Scale sweep (structure-blind vs topology-aware
+placement).</strong> Against the hub- neighborhood probe,
+structure-blind <code>embedding_clusters</code> posts the best MRR at
+every ladder rung (658 → 11,886 nodes), but its recall degrades fastest
+with scale (0.478 → 0.305); <code>hybrid_mira</code> holds the best
+recall at every rung (0.564 → 0.447). The aware-vs-blind MRR gap does
+<strong>not</strong> widen with scale (−0.125 → −0.024). Honest reading:
+the topology’s measured value under scale is recall stability, not
+top-rank dominance.</p>
+<hr />
+<!-- AUTO-GENERATED by paper/export_results.py --real — do not edit numbers by hand -->
+<h3
+id="real-data-benchmark-musique-answerable-2-hop-n300-seeds3-k8">Real-data
+benchmark (MuSiQue answerable 2-hop, n=300, seeds=3, k=8)</h3>
+<table>
+<thead>
+<tr>
+<th>system</th>
+<th>MRR</th>
+<th>recall@8</th>
+<th>latency_ms</th>
+<th>n_candidates</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>mira_full</td>
+<td>0.7016</td>
+<td>0.2991</td>
+<td>1950.9</td>
+<td>3371.1</td>
+</tr>
+<tr>
+<td>flat_vector</td>
+<td>0.4347</td>
+<td>0.3066</td>
+<td>28.3</td>
+<td>8.0</td>
+</tr>
+<tr>
+<td>bm25</td>
+<td>0.3066</td>
+<td>0.2736</td>
+<td>58.9</td>
+<td>8.0</td>
+</tr>
+<tr>
+<td>hierarchical_rag</td>
+<td>0.2367</td>
+<td>0.0806</td>
+<td>265.0</td>
+<td>3.0</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li><strong>mrr</strong> (mira_full vs flat_vector, paired bootstrap,
+n=300): mean_diff=0.26689 95% CI [0.22369, 0.31104], p~0.0001
+<ul>
+<li>Wilcoxon: p=7.78e-22 (n_pairs=300)</li>
+</ul></li>
+<li><strong>retrieval_recall</strong> (mira_full vs flat_vector, paired
+bootstrap, n=300): mean_diff=-0.00756 95% CI [-0.03056, 0.01592],
+p~0.5166
+<ul>
+<li>Wilcoxon: p=0.297 (n_pairs=300)</li>
+</ul></li>
+</ul>
+<p>Retrieval is deterministic given the seed: metrics were identical
+across all 3 seeds, so seeds here exercise pipeline robustness rather
+than sampling variance. Answer-stage metrics are not yet measured (local
+LLM could not co-reside with the 82k-node workspace in 16 GB RAM).</p>
+<h3 id="component-ablation-leave-one-out-same-questions">Component
+ablation (leave-one-out, same questions)</h3>
+<table>
+<thead>
+<tr>
+<th>condition</th>
+<th>MRR</th>
+<th>recall@8</th>
+<th>delta vs full</th>
+<th>p</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>minus_activation</td>
+<td>0.7195</td>
+<td>0.2524</td>
+<td>-0.0179</td>
+<td>0.0216</td>
+</tr>
+<tr>
+<td>minus_path</td>
+<td>0.7045</td>
+<td>0.3001</td>
+<td>-0.00292</td>
+<td>0.1456</td>
+</tr>
+<tr>
+<td>minus_importance</td>
+<td>0.7029</td>
+<td>0.2996</td>
+<td>-0.00133</td>
+<td>0.013</td>
+</tr>
+<tr>
+<td>full_mira</td>
+<td>0.7016</td>
+<td>0.2991</td>
+<td>—</td>
+<td>—</td>
+</tr>
+<tr>
+<td>minus_graph</td>
+<td>0.7016</td>
+<td>0.2991</td>
+<td>0.0</td>
+<td>0.0001</td>
+</tr>
+<tr>
+<td>minus_recency</td>
+<td>0.7016</td>
+<td>0.2991</td>
+<td>0.0</td>
+<td>0.0001</td>
+</tr>
+<tr>
+<td>minus_confidence</td>
+<td>0.7014</td>
+<td>0.2721</td>
+<td>0.00017</td>
+<td>0.5152</td>
+</tr>
+<tr>
+<td>minus_radial</td>
+<td>0.6918</td>
+<td>0.3102</td>
+<td>0.00982</td>
+<td>0.0524</td>
+</tr>
+<tr>
+<td>minus_structural</td>
+<td>0.6574</td>
+<td>0.3589</td>
+<td>0.04418</td>
+<td>0.0001</td>
+</tr>
+<tr>
+<td>minus_semantic</td>
+<td>0.4422</td>
+<td>0.1136</td>
+<td>0.25939</td>
+<td>0.0001</td>
+</tr>
+<tr>
+<td>vector_only</td>
+<td>0.4347</td>
+<td>0.3066</td>
+<td>0.26689</td>
+<td>0.0001</td>
+</tr>
+</tbody>
+</table>
+<h3 id="bm25-lexical-baseline-same-300-questions">BM25 lexical baseline
+(same 300 questions)</h3>
+<p>MRR 0.3066, recall@8 0.2736 — below flat-vector, so MIRA’s lead is
+not generic matching ability.</p>
+<h3 id="hotpotqa-replication-bridge-questions-n300-seeds3-k8">HotpotQA
+replication (bridge questions, n=300, seeds=3, k=8)</h3>
+<table>
+<thead>
+<tr>
+<th>system</th>
+<th>MRR</th>
+<th>recall@8</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>mira_full</td>
+<td>0.9175</td>
+<td>0.5060</td>
+</tr>
+<tr>
+<td>hierarchical_rag</td>
+<td>0.7994</td>
+<td>0.2935</td>
+</tr>
+<tr>
+<td>flat_vector</td>
+<td>0.6774</td>
+<td>0.5433</td>
+</tr>
+</tbody>
+</table>
+<p>MRR (mira vs flat): d=0.24013 CI [0.2023, 0.28002], p~0.0001.
+Recall@8 slightly favors flat (same shape as MuSiQue).</p>
+<h3 id="indicqa-hi-mr-cross-lingual-limitation">IndicQA (hi, mr) —
+cross-lingual limitation</h3>
+<table>
+<thead>
+<tr>
+<th>language</th>
+<th>system</th>
+<th>MRR</th>
+<th>recall@8</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>hi</td>
+<td>mira_full</td>
+<td>0.0198</td>
+<td>0.0100</td>
+</tr>
+<tr>
+<td>hi</td>
+<td>flat_vector</td>
+<td>0.0285</td>
+<td>0.0085</td>
+</tr>
+<tr>
+<td>hi</td>
+<td>bm25</td>
+<td>0.3925</td>
+<td>0.2329</td>
+</tr>
+<tr>
+<td>mr</td>
+<td>mira_full</td>
+<td>0.0438</td>
+<td>0.0196</td>
+</tr>
+<tr>
+<td>mr</td>
+<td>flat_vector</td>
+<td>0.0441</td>
+<td>0.0329</td>
+</tr>
+<tr>
+<td>mr</td>
+<td>bm25</td>
+<td>0.4518</td>
+<td>0.3613</td>
+</tr>
+</tbody>
+</table>
+<p>The English-centric MiniLM embedder collapses on Devanagari (dense
+MRR ~0.02-0.04) while unicode-aware BM25 remains robust (0.39-0.45).
+Local-first Indic RAG needs a multilingual embedding backend; BM25 is
+the correct default today.</p>
+<h3 id="answer-stage-n50-model-qwen2.5-1.5b-instruct-q4_k_m.gguf">Answer
+stage (n=50, model qwen2.5-1.5b-instruct-q4_k_m.gguf)</h3>
+<table>
+<thead>
+<tr>
+<th>system</th>
+<th>token-F1</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>mira_full</td>
+<td>0.0260</td>
+</tr>
+<tr>
+<td>flat_vector</td>
+<td>0.0259</td>
+</tr>
+</tbody>
+</table>
+<p>token-F1 (mira vs flat): d=0.06575 CI [0.01338, 0.12295], p~0.0086
+(n_pairs=16). Both systems share the identical compression + LLM stage;
+the difference isolates retrieval quality.</p>
+<hr />
+<h2 id="threats-to-validity">7. Threats to Validity</h2>
+<ul>
+<li><strong>Construct:</strong> token-F1 rewards lexical overlap; the
+judge shares weights with the answerer (self-preference). Mitigation:
+report retrieval metrics as primary, add an independent judge model
+before publication.</li>
+<li><strong>Internal:</strong> extraction and placement introduce shared
+variance across systems — all systems see the same graph, which favors
+graph-aware systems; vector-only is therefore a conservative floor, not
+a pristine control.</li>
+<li><strong>External:</strong> single machine, small corpora, one model
+family. Findings are scoped accordingly.</li>
+<li><strong>Statistical:</strong> results will ship with dispersion
+across seeds and questions; point estimates alone are not claims.</li>
+</ul>
+<hr />
+<h2 id="conclusion">8. Conclusion</h2>
+<p><strong>Verdict (measured): the radial topology ranks supporting
+evidence substantially higher than flat and lexical retrieval on real
+multi-hop questions across two datasets (MuSiQue +0.267, HotpotQA +0.240
+MRR, both p&lt;0.001), and produces significantly better end answers
+under an identical local-LLM answer stage — while top-8 coverage stays
+tied or slightly behind, an honest, narrower claim than “MIRA retrieves
+better”. Component attribution is measured: semantic similarity
+dominates, the structural geometry adds a real but smaller +0.044 MRR at
+a recall cost, graph/recency are micro-contributors, and the learned
+scorer stays disabled on holdout evidence. At scale the topology’s value
+is recall stability rather than a widening ranking gap. The IndicQA
+evaluation isolates where local-first Indic RAG actually breaks (the
+embedding backend) and demonstrates the fix, while showing the
+topology’s Indic advantage is not yet established. Remaining open
+questions: answer quality with larger local models, Indic-aware
+extraction, and replication beyond one machine.</strong></p>
+<hr />
+<h2 id="references-selected">References (selected)</h2>
+<ul>
+<li>Edge, D. et al. (2024). <em>From Local to Global: A Graph RAG
+Approach to Query-Focused Summarization.</em> Microsoft Research.</li>
+<li>Sarthi, P. et al. (2024). <em>RAPTOR: Recursive Abstractive
+Processing for Tree-Organized Retrieval.</em> ICLR.</li>
+<li>Wang, B. et al. (2024). <em>HippoRAG: Neurobiologically Inspired
+Long-Term Memory for LLMs.</em> NeurIPS.</li>
+<li>Karpukhin, V. et al. (2020). <em>Dense Passage Retrieval for
+Open-Domain QA.</em> EMNLP.</li>
+<li>Park, J.S. et al. (2023). <em>Generative Agents: Interactive
+Simulacra of Human Behavior.</em></li>
+<li>Packer, C. et al. (2023). <em>MemGPT: Towards LLMs as Operating
+Systems.</em></li>
+<li>Lewis, P. et al. (2020). <em>Retrieval-Augmented Generation for
+Knowledge-Intensive NLP.</em> NeurIPS.</li>
+<li>Doeller, C. F., Barry, C., &amp; Burgess, N. (2010). Evidence for
+grid cells in a human memory network. <em>Nature</em>, 463,
+657–661.</li>
+<li>Nau, M. et al. (2018). Hexadirectional coding of visual space in
+human entorhinal cortex. <em>Nature Neuroscience</em>, 21, 188–190.</li>
+<li>Banino, A. et al. (2018). Vector-based navigation using grid-like
+representations in artificial agents. <em>Nature</em>, 557,
+429–433.</li>
+<li>Bronstein, M. M. et al. (2021). Geometric deep learning: Grids,
+groups, graphs, geodesics, and gauges. <em>IEEE Signal Processing
+Magazine</em>, 38(4), 106–123.</li>
+<li>Cohen, T. S. &amp; Welling, M. (2016). Group equivariant
+convolutional networks. <em>ICML</em>.</li>
+</ul>
+</body>
+</html>

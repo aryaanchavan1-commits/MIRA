@@ -1,0 +1,198 @@
+{
+ "embedder": "paraphrase-multilingual-MiniLM-L12-v2",
+ "scale": "all questions, full paragraph corpus",
+ "languages": {
+  "hi": {
+   "lang": "hi",
+   "n_questions": 1547,
+   "n_paragraphs": 261,
+   "n_nodes": 1641,
+   "n_gold": 1506,
+   "embedder": "paraphrase-multilingual-MiniLM-L12-v2",
+   "summary": {
+    "mira_full": {
+     "mrr": 0.2736,
+     "retrieval_recall": 0.1884,
+     "latency_ms": 16.6945
+    },
+    "flat_vector": {
+     "mrr": 0.3273,
+     "retrieval_recall": 0.2025,
+     "latency_ms": 3.681
+    },
+    "bm25": {
+     "mrr": 0.3726,
+     "retrieval_recall": 0.2389,
+     "latency_ms": 9.5004
+    }
+   },
+   "sig_mira_vs_flat_mrr": {
+    "bootstrap": {
+     "n_pairs": 1503,
+     "mean_diff": -0.05362,
+     "ci_low": -0.06882,
+     "ci_high": -0.03801,
+     "p_value": 0.0001
+    }
+   },
+   "sig_mira_vs_flat_retrieval_recall": {
+    "bootstrap": {
+     "n_pairs": 1503,
+     "mean_diff": -0.01408,
+     "ci_low": -0.01944,
+     "ci_high": -0.0088,
+     "p_value": 0.0001
+    }
+   }
+  },
+  "mr": {
+   "lang": "mr",
+   "n_questions": 1604,
+   "n_paragraphs": 250,
+   "n_nodes": 1237,
+   "n_gold": 1585,
+   "embedder": "paraphrase-multilingual-MiniLM-L12-v2",
+   "summary": {
+    "mira_full": {
+     "mrr": 0.1924,
+     "retrieval_recall": 0.1564,
+     "latency_ms": 12.3406
+    },
+    "flat_vector": {
+     "mrr": 0.2322,
+     "retrieval_recall": 0.1695,
+     "latency_ms": 3.6457
+    },
+    "bm25": {
+     "mrr": 0.4498,
+     "retrieval_recall": 0.3398,
+     "latency_ms": 7.5276
+    }
+   },
+   "sig_mira_vs_flat_mrr": {
+    "bootstrap": {
+     "n_pairs": 1581,
+     "mean_diff": -0.03952,
+     "ci_low": -0.05232,
+     "ci_high": -0.0268,
+     "p_value": 0.0001
+    }
+   },
+   "sig_mira_vs_flat_retrieval_recall": {
+    "bootstrap": {
+     "n_pairs": 1581,
+     "mean_diff": -0.01307,
+     "ci_low": -0.01929,
+     "ci_high": -0.00706,
+     "p_value": 0.0001
+    }
+   }
+  }
+ },
+ "small_120q_run": {
+  "hi": {
+   "lang": "hi",
+   "n_questions": 120,
+   "n_nodes": 1513,
+   "n_gold": 117,
+   "embedder": "paraphrase-multilingual-MiniLM-L12-v2",
+   "summary": {
+    "mira_full": {
+     "mrr": 0.3144,
+     "retrieval_recall": 0.2005,
+     "latency_ms": 38.2733
+    },
+    "flat_vector": {
+     "mrr": 0.3939,
+     "retrieval_recall": 0.214,
+     "latency_ms": 8.6121
+    },
+    "bm25": {
+     "mrr": 0.3925,
+     "retrieval_recall": 0.2329,
+     "latency_ms": 30.048
+    }
+   },
+   "sig_mira_vs_flat_mrr": {
+    "bootstrap": {
+     "n_pairs": 117,
+     "mean_diff": -0.07948,
+     "ci_low": -0.13957,
+     "ci_high": -0.01926,
+     "p_value": 0.0106
+    },
+    "wilcoxon": {
+     "n_pairs": 117,
+     "statistic": 337.0,
+     "p_value": 0.009859177624678047
+    }
+   },
+   "sig_mira_vs_flat_retrieval_recall": {
+    "bootstrap": {
+     "n_pairs": 117,
+     "mean_diff": -0.01353,
+     "ci_low": -0.03063,
+     "ci_high": 0.00356,
+     "p_value": 0.1092
+    },
+    "wilcoxon": {
+     "n_pairs": 117,
+     "statistic": 148.0,
+     "p_value": 0.047234721387401736
+    }
+   }
+  },
+  "mr": {
+   "lang": "mr",
+   "n_questions": 120,
+   "n_nodes": 1187,
+   "n_gold": 119,
+   "embedder": "paraphrase-multilingual-MiniLM-L12-v2",
+   "summary": {
+    "mira_full": {
+     "mrr": 0.1645,
+     "retrieval_recall": 0.1345,
+     "latency_ms": 26.971
+    },
+    "flat_vector": {
+     "mrr": 0.209,
+     "retrieval_recall": 0.1702,
+     "latency_ms": 9.971
+    },
+    "bm25": {
+     "mrr": 0.4518,
+     "retrieval_recall": 0.3613,
+     "latency_ms": 21.8908
+    }
+   },
+   "sig_mira_vs_flat_mrr": {
+    "bootstrap": {
+     "n_pairs": 119,
+     "mean_diff": -0.04448,
+     "ci_low": -0.0888,
+     "ci_high": -0.00421,
+     "p_value": 0.03
+    },
+    "wilcoxon": {
+     "n_pairs": 119,
+     "statistic": 114.0,
+     "p_value": 0.07085948288986908
+    }
+   },
+   "sig_mira_vs_flat_retrieval_recall": {
+    "bootstrap": {
+     "n_pairs": 119,
+     "mean_diff": -0.03571,
+     "ci_low": -0.06092,
+     "ci_high": -0.0119,
+     "p_value": 0.001
+    },
+    "wilcoxon": {
+     "n_pairs": 119,
+     "statistic": 26.5,
+     "p_value": 0.004999794198926682
+    }
+   }
+  }
+ }
+}

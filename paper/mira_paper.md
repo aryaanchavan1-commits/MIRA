@@ -274,17 +274,23 @@ retrieval's 0.039 (Δ+0.066, CI [0.013, 0.123], p≈0.009; only questions where 
 systems produced answers are paired). Absolute F1 is low — a 1.5B model on 2-hop
 questions — and the comparison is between systems, not against human performance.
 
-**Cross-lingual check (IndicQA hi/mr, retrieval-only) — diagnosis and fix.**
-Under the English-centric MiniLM embedder, dense retrieval (MIRA and flat alike)
-collapses on Devanagari (MRR 0.02-0.04) while unicode-aware BM25 remains robust
-(0.39-0.45). Swapping to a multilingual embedder (paraphrase-multilingual-MiniLM-L12-v2,
-a config-level change) lifts dense retrieval by roughly 10x on Hindi (flat MRR
-0.021 → 0.394, into BM25's range) and confirms the diagnosis: the language barrier
-for local-first Indic RAG sits in the embedding backend, not the memory architecture.
-On this small single-paragraph corpus, BM25 remains the stronger Indic default and
-MIRA's topology advantage does not yet transfer (its structural signals are computed
-from English-centric extraction); scaling the corpus and Indic-aware extraction are
-the stated next steps.
+**Cross-lingual check (IndicQA hi/mr, retrieval-only) — diagnosis, fix, and an
+honest boundary.** Under the English-centric MiniLM embedder, dense retrieval (MIRA
+and flat alike) collapses on Devanagari (MRR 0.02-0.04) while unicode-aware BM25
+remains robust (0.39-0.45). Swapping to a multilingual embedder
+(paraphrase-multilingual-MiniLM-L12-v2, a config-level change) lifts dense retrieval
+by roughly 10-15× on Hindi (flat MRR 0.021 → 0.327 at full scale), confirming the
+diagnosis: the language barrier for local-first Indic RAG sits in the embedding
+backend, not the memory architecture. At the full 3,151-question scale (1,547 Hindi
++ 1,604 Marathi, complete paragraph corpora), BM25 remains the strongest system
+(hi 0.373, mr 0.450) and MIRA's topology does **not** yet beat either baseline
+(hi 0.274, mr 0.192; significantly below flat, p<0.001) — its structural signals
+(rings/sectors from concept clustering, graph edges from English-centric extraction)
+do not yet express useful organization on single-paragraph extractive corpora. The
+boundary is stated as measured: the topology's advantage is demonstrated on
+multi-hop, document-scale corpora (MuSiQue, HotpotQA); for Indic extractive QA,
+BM25 is the correct local-first default today, and Indic-aware extraction is the
+gated next step before any topology claim in Indic languages.
 
 **Scale sweep (structure-blind vs topology-aware placement).** Against the hub-
 neighborhood probe, structure-blind `embedding_clusters` posts the best MRR at every

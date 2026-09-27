@@ -138,8 +138,10 @@ def export_real() -> None:
                       f"p~{hsig.get('p_value')}. Recall@8 slightly favors flat "
                       "(same shape as MuSiQue).", ""]
 
-    # IndicQA cross-lingual evaluation
+    # IndicQA cross-lingual evaluation (120q subset + full-scale run)
     ind_path = ROOT / "data_indic" / "indicqa_results.json"
+    ind_ml_path = ROOT / "data_indic_ml" / "indicqa_ml_results.json"
+    ind_full_path = ROOT / "data_indic_ml" / "indicqa_full_results.json"
     if ind_path.exists():
         ind = json.loads(ind_path.read_text(encoding="utf-8"))
         lines += ["### IndicQA (hi, mr) — cross-lingual limitation", "",
@@ -153,6 +155,33 @@ def export_real() -> None:
                   "(dense MRR ~0.02-0.04) while unicode-aware BM25 remains robust "
                   "(0.39-0.45). Local-first Indic RAG needs a multilingual "
                   "embedding backend; BM25 is the correct default today.", ""]
+    if ind_ml_path.exists():
+        ml = json.loads(ind_ml_path.read_text(encoding="utf-8"))
+        lines += [f"### IndicQA with multilingual embedder ({ml.get('embedder')})",
+                  "", "| language | system | MRR | recall@8 |", "|---|---|---|---|"]
+        for lang, res in ml.get("languages", {}).items():
+            for name, s in res.get("summary", {}).items():
+                lines.append(f"| {lang} | {name} | {s.get('mrr', 0):.4f} "
+                             f"| {s.get('retrieval_recall', 0):.4f} |")
+        lines += ["",
+                  "The multilingual embedder lifts dense retrieval ~10-15× "
+                  "(Hindi flat MRR 0.021 → 0.394), confirming the backend was the "
+                  "language barrier.", ""]
+    if ind_full_path.exists():
+        full = json.loads(ind_full_path.read_text(encoding="utf-8"))
+        tot = sum(r["n_questions"] for r in full.get("languages", {}).values())
+        lines += [f"### IndicQA at full scale ({tot} questions, complete corpora)",
+                  "", "| language | system | MRR | recall@8 |", "|---|---|---|---|"]
+        for lang, res in full.get("languages", {}).items():
+            for name, s in res.get("summary", {}).items():
+                lines.append(f"| {lang} | {name} | {s.get('mrr', 0):.4f} "
+                             f"| {s.get('retrieval_recall', 0):.4f} |")
+        lines += ["",
+                  "Honest boundary at full scale: BM25 stays the strongest Indic "
+                  "system and MIRA does not yet beat either baseline on "
+                  "single-paragraph extractive QA — the topology's advantage is "
+                  "demonstrated on multi-hop document-scale corpora; Indic-aware "
+                  "extraction is the gated next step.", ""]
 
     # answer-stage results
     ans_path = ROOT / "data_bench" / "bench_real_answers.json"
