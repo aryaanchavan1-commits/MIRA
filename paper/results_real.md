@@ -6,6 +6,7 @@
 |---|---|---|---|---|
 | mira_full | 0.7016 | 0.2991 | 1950.9 | 3371.1 |
 | flat_vector | 0.4347 | 0.3066 | 28.3 | 8.0 |
+| bm25 | 0.3066 | 0.2736 | 58.9 | 8.0 |
 | hierarchical_rag | 0.2367 | 0.0806 | 265.0 | 3.0 |
 
 - **mrr** (mira_full vs flat_vector, paired bootstrap, n=300): mean_diff=0.26689 95% CI [0.22369, 0.31104], p~0.0001
@@ -30,3 +31,39 @@ Retrieval is deterministic given the seed: metrics were identical across all 3 s
 | minus_structural | 0.6574 | 0.3589 | 0.04418 | 0.0001 |
 | minus_semantic | 0.4422 | 0.1136 | 0.25939 | 0.0001 |
 | vector_only | 0.4347 | 0.3066 | 0.26689 | 0.0001 |
+
+### BM25 lexical baseline (same 300 questions)
+
+MRR 0.3066, recall@8 0.2736 — below flat-vector, so MIRA's lead is not generic matching ability.
+
+### HotpotQA replication (bridge questions, n=300, seeds=3, k=8)
+
+| system | MRR | recall@8 |
+|---|---|---|
+| mira_full | 0.9175 | 0.5060 |
+| hierarchical_rag | 0.7994 | 0.2935 |
+| flat_vector | 0.6774 | 0.5433 |
+
+MRR (mira vs flat): d=0.24013 CI [0.2023, 0.28002], p~0.0001. Recall@8 slightly favors flat (same shape as MuSiQue).
+
+### IndicQA (hi, mr) — cross-lingual limitation
+
+| language | system | MRR | recall@8 |
+|---|---|---|---|
+| hi | mira_full | 0.0198 | 0.0100 |
+| hi | flat_vector | 0.0285 | 0.0085 |
+| hi | bm25 | 0.3925 | 0.2329 |
+| mr | mira_full | 0.0438 | 0.0196 |
+| mr | flat_vector | 0.0441 | 0.0329 |
+| mr | bm25 | 0.4518 | 0.3613 |
+
+The English-centric MiniLM embedder collapses on Devanagari (dense MRR ~0.02-0.04) while unicode-aware BM25 remains robust (0.39-0.45). Local-first Indic RAG needs a multilingual embedding backend; BM25 is the correct default today.
+
+### Answer stage (n=50, model qwen2.5-1.5b-instruct-q4_k_m.gguf)
+
+| system | token-F1 |
+|---|---|
+| mira_full | 0.0260 |
+| flat_vector | 0.0259 |
+
+token-F1 (mira vs flat): d=0.06575 CI [0.01338, 0.12295], p~0.0086 (n_pairs=16). Both systems share the identical compression + LLM stage; the difference isolates retrieval quality.

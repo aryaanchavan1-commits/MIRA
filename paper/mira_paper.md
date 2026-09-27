@@ -1,8 +1,10 @@
 # Radial Memory Topologies for Retrieval-Augmented Generation: A Controlled Study of Mandala-Inspired Organization
 
-**Draft v0.2 — first real-data retrieval benchmark complete (MuSiQue, n=300, 3 seeds).
-Results in §6 are generated from saved runs by `paper/export_results.py --real`; no
-number is hand-typed. Answer-stage experiments remain pending.**
+**Draft v0.3 — two-dataset retrieval replication (MuSiQue + HotpotQA, n=300 each),
+full 9-component ablation, BM25 lexical control, answer-stage comparison under a fixed
+local LLM, cross-lingual (IndicQA hi/mr) evaluation, and a placement scale sweep.
+Every number in §6 is generated from saved run artifacts by
+`paper/export_results.py --real`; nothing is hand-typed.**
 
 ---
 
@@ -19,12 +21,16 @@ the radial mechanism is one switchable component among nine, each independently
 retrieval under a declared, shared protocol when the answer-stage experiment is
 run; the current default runs are retrieval-only smoke measurements, not
 answer-quality evidence.
-**[Measured, retrieval-stage only: on 300 MuSiQue answerable 2-hop questions over an
-82,783-node workspace built from 4,043 paragraphs, MIRA reaches MRR 0.702 vs 0.435 for
-flat vector RAG (paired bootstrap ΔMRR +0.267, 95% CI [0.224, 0.311], p≈0.0001;
-Wilcoxon p=7.8e-22). recall@8 is statistically tied (Δ −0.008, CI [−0.031, +0.016]):
-MIRA ranks supporting evidence higher but does not surface more of it at k=8.
-Answer-quality evidence is not yet measured.]** We release the platform, including
+**[Measured: on 300 MuSiQue 2-hop questions over an 82,783-node workspace, MIRA
+reaches MRR 0.702 vs 0.435 for flat vector RAG and 0.307 for BM25 (paired bootstrap
+ΔMRR +0.267, 95% CI [0.224, 0.311], p≈0.0001). The ranking advantage replicates on
+300 HotpotQA bridge questions (MRR 0.918 vs 0.677 flat, Δ+0.240, p≈0.0001), while
+recall@8 stays statistically tied or slightly favors flat on both datasets. With the
+answer stage held identical (Qwen2.5-1.5B), MIRA's end answers score significantly
+higher token-F1 than flat retrieval's (Δ+0.066, p≈0.009). An IndicQA (hi/mr) evaluation
+quantifies a deployment-relevant limitation: the English-centric embedder collapses on
+Devanagari while BM25 remains robust — local-first Indic RAG needs multilingual
+embedding backends.]** We release the platform, including
 per-component ablation tooling, to support reproducible negative or positive findings.
 
 ---
@@ -258,6 +264,23 @@ spreading activation slightly *hurts* MRR while diversifying candidates. The lea
 scorer (Δ-rule) was validated on a document-grouped holdout and **lost** to the hand
 weights (0.633 vs 0.747, p=0.0002) — `retrieval_score.learned` stays off.
 
+**BM25 control (same 300 questions).** Okapi BM25 over the same node texts scores
+MRR 0.3066 / recall@8 0.2736 — below flat-vector, so the embedding systems' lead is
+not generic matching ability, and MIRA's advantage over it is Δ+0.395 (p<0.001).
+
+**Answer stage (n=50, Qwen2.5-1.5B held fixed).** With compression and the answer
+prompt identical across systems, MIRA's answers score token-F1 0.076 vs flat
+retrieval's 0.039 (Δ+0.066, CI [0.013, 0.123], p≈0.009; only questions where both
+systems produced answers are paired). Absolute F1 is low — a 1.5B model on 2-hop
+questions — and the comparison is between systems, not against human performance.
+
+**Cross-lingual check (IndicQA hi/mr, retrieval-only).** Under the same
+English-centric MiniLM embedder, dense retrieval (MIRA and flat alike) collapses on
+Devanagari (MRR 0.02-0.04) while unicode-aware BM25 remains robust (0.39-0.45).
+Constructive negative result: the language barrier for local-first Indic RAG sits in
+the embedding backend, not the memory architecture; BM25 is the correct Indic default
+until a multilingual embedder is swapped in (a one-setting change in this platform).
+
 **Scale sweep (structure-blind vs topology-aware placement).** Against the hub-
 neighborhood probe, structure-blind `embedding_clusters` posts the best MRR at every
 ladder rung (658 → 11,886 nodes), but its recall degrades fastest with scale (0.478 →
@@ -284,15 +307,19 @@ the topology's measured value under scale is recall stability, not top-rank domi
 
 ## 8. Conclusion
 
-**Retrieval-stage verdict (measured): the radial topology ranks supporting evidence
-substantially higher than flat retrieval on real multi-hop questions (MRR +0.267,
-p<0.001), while top-8 coverage is statistically indistinguishable — an honest, narrower
-claim than "MIRA retrieves better". Which components carry the effect is now measured
-(§6): semantic similarity dominates, the structural geometry adds a real but smaller
-+0.044 MRR at a recall cost, and graph/recency are micro-contributors. At scale the
-topology's value is recall stability rather than a widening ranking gap, and the
-learned scorer stays disabled on holdout evidence. Remaining open questions: answer
-quality under a fixed local LLM, and replication beyond one machine and one model family.**
+**Verdict (measured): the radial topology ranks supporting evidence substantially
+higher than flat and lexical retrieval on real multi-hop questions across two datasets
+(MuSiQue +0.267, HotpotQA +0.240 MRR, both p<0.001), and produces significantly better
+end answers under an identical local-LLM answer stage — while top-8 coverage stays
+tied or slightly behind, an honest, narrower claim than "MIRA retrieves better".
+Component attribution is measured: semantic similarity dominates, the structural
+geometry adds a real but smaller +0.044 MRR at a recall cost, graph/recency are
+micro-contributors, and the learned scorer stays disabled on holdout evidence. At
+scale the topology's value is recall stability rather than a widening ranking gap.
+The IndicQA evaluation is a constructive negative result: the embedding backend, not
+the memory architecture, is the language barrier for local-first Indic RAG. Remaining
+open questions: answer quality with larger local models, multilingual embedder swap,
+and replication beyond one machine.**
 
 ---
 

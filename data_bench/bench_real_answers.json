@@ -1,0 +1,4431 @@
+{
+ "n": 50,
+ "model": "qwen2.5-1.5b-instruct-q4_k_m.gguf",
+ "gpu_layers": -1,
+ "n_ctx": 4096,
+ "rows": {
+  "mira_full": [
+   {
+    "question": "What is the record label for the band which performed Pythons?",
+    "reference_answer": "Kanine Records",
+    "answer_text": "",
+    "evidence_text": "",
+    "latency_ms": 985.0,
+    "retrieval_latency_ms": 985.0,
+    "n_retrieved": 8,
+    "n_candidates": 49,
+    "context_tokens": 0,
+    "active_components": [
+     "semantic",
+     "structural",
+     "radial",
+     "graph",
+     "importance",
+     "confidence",
+     "recency",
+     "path",
+     "activation"
+    ],
+    "candidate_policy": "shared",
+    "answer_metrics": {
+     "latency_ms": 985.0,
+     "retrieval_ms": 984.71,
+     "n_candidates": 49,
+     "n_retrieved": 8,
+     "n_memories": 0,
+     "n_selected_evidence": 0,
+     "n_excluded_candidates": 8,
+     "context_tokens": 0,
+     "raw_tokens": 26,
+     "compression_ratio": 0.0,
+     "citation_error": 0,
+     "context_budget": 2048,
+     "completion_budget": 0,
+     "llm_mode": "no_evidence",
+     "candidate_ids": [
+      "mem_c2ab1cec6013",
+      "mem_1f2c6d267b6b",
+      "mem_5448b890c6e6",
+      "mem_7df68cd7bbf3",
+      "mem_72f88077c9ae",
+      "mem_c24bf732e1ad",
+      "mem_cf9f5aaa246d",
+      "mem_2909d1934ab2"
+     ]
+    },
+    "selected_evidence_ids": [],
+    "candidate_ids": [
+     "mem_c2ab1cec6013",
+     "mem_1f2c6d267b6b",
+     "mem_5448b890c6e6",
+     "mem_7df68cd7bbf3",
+     "mem_72f88077c9ae",
+     "mem_c24bf732e1ad",
+     "mem_cf9f5aaa246d",
+     "mem_2909d1934ab2"
+    ],
+    "retrieval_recall": 0.0,
+    "mrr": 0.0
+   },
+   {
+    "question": "According to the agency that published U.S. and World Population Clock, what is the total area in square miles?",
+    "reference_answer": "17.037 square miles",
+    "answer_text": "",
+    "evidence_text": "",
+    "latency_ms": 70.9,
+    "retrieval_latency_ms": 70.9,
+    "n_retrieved": 8,
+    "n_candidates": 55,
+    "context_tokens": 0,
+    "active_components": [
+     "semantic",
+     "structural",
+     "radial",
+     "graph",
+     "importance",
+     "confidence",
+     "recency",
+     "path",
+     "activation"
+    ],
+    "candidate_policy": "shared",
+    "answer_metrics": {
+     "latency_ms": 70.9,
+     "retrieval_ms": 70.6,
+     "n_candidates": 55,
+     "n_retrieved": 8,
+     "n_memories": 0,
+     "n_selected_evidence": 0,
+     "n_excluded_candidates": 8,
+     "context_tokens": 0,
+     "raw_tokens": 14,
+     "compression_ratio": 0.0,
+     "citation_error": 0,
+     "context_budget": 2048,
+     "completion_budget": 0,
+     "llm_mode": "no_evidence",
+     "candidate_ids": [
+      "mem_3a7e624d1ab1",
+      "mem_bd85632cda8e",
+      "mem_26cc8bf5191c",
+      "mem_e5258c8caf3c",
+      "mem_91bf7544a224",
+      "mem_f3c477879cba",
+      "mem_eef6c4ba27d9",
+      "mem_8e6ed2d788d4"
+     ]
+    },
+    "selected_evidence_ids": [],
+    "candidate_ids": [
+     "mem_3a7e624d1ab1",
+     "mem_bd85632cda8e",
+     "mem_26cc8bf5191c",
+     "mem_e5258c8caf3c",
+     "mem_91bf7544a224",
+     "mem_f3c477879cba",
+     "mem_eef6c4ba27d9",
+     "mem_8e6ed2d788d4"
+    ],
+    "retrieval_recall": 0.0,
+    "mrr": 0.0
+   },
+   {
+    "question": "Who is the child of the cast member of Green Ice?",
+    "reference_answer": "Tatum O'Neal",
+    "answer_text": "The question \"Who is the child of the cast member of Green Ice?\" cannot be answered using the provided memory excerpts.",
+    "evidence_text": "[1] (ring3 \u00b7 number) Green Ice is the soundtrack to the 1981 United Kingdom science fiction film \"Green Ice\" starring Ryan O'Neal. The soundtrack was recorded by Bill Wyman and contains 18 original songs.",
+    "latency_ms": 2519.0,
+    "retrieval_latency_ms": 2519.0,
+    "n_retrieved": 8,
+    "n_candidates": 48,
+    "context_tokens": 34,
+    "active_components": [
+     "semantic",
+     "structural",
+     "radial",
+     "graph",
+     "importance",
+     "confidence",
+     "recency",
+     "path",
+     "activation"
+    ],
+    "candidate_policy": "shared",
+    "answer_metrics": {
+     "latency_ms": 2519.0,
+     "retrieval_ms": 72.72,
+     "n_candidates": 48,
+     "n_retrieved": 8,
+     "n_memories": 1,
+     "n_selected_evidence": 1,
+     "n_excluded_candidates": 7,
+     "context_tokens": 34,
+     "raw_tokens": 70,
+     "compression_ratio": 0.486,
+     "citation_error": 0,
+     "context_budget": 2048,
+     "completion_budget": 512,
+     "llm_mode": "llm",
+     "candidate_ids": [
+      "mem_04db0b28f1d6",
+      "mem_376bda168eeb",
+      "mem_194c71de9d09",
+      "mem_19027dd6d0c9",
+      "mem_4ee3e5205a59",
+      "mem_1f93cf747304",
+      "mem_825f411335c1",
+      "mem_17ca5154a3c4"
+     ]
+    },
+    "selected_evidence_ids": [
+     "mem_376bda168eeb"
+    ],
+    "candidate_ids": [
+     "mem_04db0b28f1d6",
+     "mem_376bda168eeb",
+     "mem_194c71de9d09",
+     "mem_19027dd6d0c9",
+     "mem_4ee3e5205a59",
+     "mem_1f93cf747304",
+     "mem_825f411335c1",
+     "mem_17ca5154a3c4"
+    ],
+    "retrieval_recall": 0.25,
+    "mrr": 1.0,
+    "answer_token_f1": 0.0
+   },
+   {
+    "question": "Who is the other child of Chian Hsiao-chang's father?",
+    "reference_answer": "Chiang Hsiao-wu",
+    "answer_text": "The other child of Chiang Hsiao-chang's father is Chiang Fang-liang. [1]",
+    "evidence_text": "[1] (ring3 \u00b7 spencer) Chiang Hsiao-chang (; born 1938) is the only daughter of Chiang Ching-kuo, the President of the Republic of China in Taiwan from 1978 to 1988. Her mother is Faina Ipatyevna Vakhreva, also known as Chiang Fang-liang.",
+    "latency_ms": 1776.7,
+    "retrieval_latency_ms": 1776.7,
+    "n_retrieved": 8,
+    "n_candidates": 75,
+    "context_tokens": 40,
+    "active_components": [
+     "semantic",
+     "structural",
+     "radial",
+     "graph",
+     "importance",
+     "confidence",
+     "recency",
+     "path",
+     "activation"
+    ],
+    "candidate_policy": "shared",
+    "answer_metrics": {
+     "latency_ms": 1776.7,
+     "retrieval_ms": 61.6,
+     "n_candidates": 75,
+     "n_retrieved": 8,
+     "n_memories": 1,
+     "n_selected_evidence": 1,
+     "n_excluded_candidates": 7,
+     "context_tokens": 40,
+     "raw_tokens": 78,
+     "compression_ratio": 0.513,
+     "citation_error": 0,
+     "context_budget": 2048,
+     "completion_budget": 512,
+     "llm_mode": "llm",
+     "candidate_ids": [
+      "mem_a00bde725640",
+      "mem_6ed6fa6c4ca8",
+      "mem_08062958774e",
+      "mem_032c3a862b00",
+      "mem_23a8e949b7bb",
+      "mem_5a7884758bf2",
+      "mem_825f411335c1",
+      "mem_85dee63bde06"
+     ]
+    },
+    "selected_evidence_ids": [
+     "mem_6ed6fa6c4ca8"
+    ],
+    "candidate_ids": [
+     "mem_a00bde725640",
+     "mem_6ed6fa6c4ca8",
+     "mem_08062958774e",
+     "mem_032c3a862b00",
+     "mem_23a8e949b7bb",
+     "mem_5a7884758bf2",
+     "mem_825f411335c1",
+     "mem_85dee63bde06"
+    ],
+    "retrieval_recall": 0.25,
+    "mrr": 1.0,
+    "answer_token_f1": 0.23529411764705882
+   },
+   {
+    "question": "Who is the father of the performer of Je dis aime?",
+    "reference_answer": "Louis Chedid",
+    "answer_text": "",
+    "evidence_text": "",
+    "latency_ms": 43.9,
+    "retrieval_latency_ms": 43.9,
+    "n_retrieved": 8,
+    "n_candidates": 43,
+    "context_tokens": 0,
+    "active_components": [
+     "semantic",
+     "structural",
+     "radial",
+     "graph",
+     "importance",
+     "confidence",
+     "recency",
+     "path",
+     "activation"
+    ],
+    "candidate_policy": "shared",
+    "answer_metrics": {
+     "latency_ms": 43.9,
+     "retrieval_ms": 43.76,
+     "n_candidates": 43,
+     "n_retrieved": 8,
+     "n_memories": 0,
+     "n_selected_evidence": 0,
+     "n_excluded_candidates": 8,
+     "context_tokens": 0,
+     "raw_tokens": 16,
+     "compression_ratio": 0.0,
+     "citation_error": 0,
+     "context_budget": 2048,
+     "completion_budget": 0,
+     "llm_mode": "no_evidence",
+     "candidate_ids": [
+      "mem_0d007a96906b",
+      "mem_b2818365abc4",
+      "mem_7ce22a84dd13",
+      "mem_54f5047b8a9f",
+      "mem_3f060822e532",
+      "mem_06fad0318ff3",
+      "mem_9202e794add3",
+      "mem_2716bfae4262"
+     ]
+    },
+    "selected_evidence_ids": [],
+    "candidate_ids": [
+     "mem_0d007a96906b",
+     "mem_b2818365abc4",
+     "mem_7ce22a84dd13",
+     "mem_54f5047b8a9f",
+     "mem_3f060822e532",
+     "mem_06fad0318ff3",
+     "mem_9202e794add3",
+     "mem_2716bfae4262"
+    ],
+    "retrieval_recall": 0.0,
+    "mrr": 0.0
+   },
+   {
+    "question": "Who is the spouse of the screenwriter of The Actress?",
+    "reference_answer": "Garson Kanin",
+    "answer_text": "",
+    "evidence_text": "",
+    "latency_ms": 40.1,
+    "retrieval_latency_ms": 40.1,
+    "n_retrieved": 8,
+    "n_candidates": 43,
+    "context_tokens": 0,
+    "active_components": [
+     "semantic",
+     "structural",
+     "radial",
+     "graph",
+     "importance",
+     "confidence",
+     "recency",
+     "path",
+     "activation"
+    ],
+    "candidate_policy": "shared",
+    "answer_metrics": {
+     "latency_ms": 40.1,
+     "retrieval_ms": 39.91,
+     "n_candidates": 43,
+     "n_retrieved": 8,
+     "n_memories": 0,
+     "n_selected_evidence": 0,
+     "n_excluded_candidates": 8,
+     "context_tokens": 0,
+     "raw_tokens": 8,
+     "compression_ratio": 0.0,
+     "citation_error": 0,
+     "context_budget": 2048,
+     "completion_budget": 0,
+     "llm_mode": "no_evidence",
+     "candidate_ids": [
+      "mem_0e66f4630ca4",
+      "mem_1b3ee09dfdb4",
+      "mem_148952ab0bdc",
+      "mem_ef967c91ece8",
+      "mem_3a068876fae2",
+      "mem_55a3d6485c73",
+      "mem_b5e065e8c8eb",
+      "mem_53ca4fcde294"
+     ]
+    },
+    "selected_evidence_ids": [],
+    "candidate_ids": [
+     "mem_0e66f4630ca4",
+     "mem_1b3ee09dfdb4",
+     "mem_148952ab0bdc",
+     "mem_ef967c91ece8",
+     "mem_3a068876fae2",
+     "mem_55a3d6485c73",
+     "mem_b5e065e8c8eb",
+     "mem_53ca4fcde294"
+    ],
+    "retrieval_recall": 0.0,
+    "mrr": 0.0
+   },
+   {
+    "question": "What university did the author of The Secret World of Og go to?",
+    "reference_answer": "University of British Columbia",
+    "answer_text": "The memory does not contain enough information.",
+    "evidence_text": "[1] (ring3 \u00b7 only) The Secret World of Og is a children's novel written by Pierre Berton and illustrated by his daughter Patsy. It was first published in 1961 by McClelland and Stewart.",
+    "latency_ms": 945.7,
+    "retrieval_latency_ms": 945.7,
+    "n_retrieved": 8,
+    "n_candidates": 42,
+    "context_tokens": 33,
+    "active_components": [
+     "semantic",
+     "structural",
+     "radial",
+     "graph",
+     "importance",
+     "confidence",
+     "recency",
+     "path",
+     "activation"
+    ],
+    "candidate_policy": "shared",
+    "answer_metrics": {
+     "latency_ms": 945.7,
+     "retrieval_ms": 53.43,
+     "n_candidates": 42,
+     "n_retrieved": 8,
+     "n_memories": 1,
+     "n_selected_evidence": 1,
+     "n_excluded_candidates": 7,
+     "context_tokens": 33,
+     "raw_tokens": 74,
+     "compression_ratio": 0.446,
+     "citation_error": 0,
+     "context_budget": 2048,
+     "completion_budget": 512,
+     "llm_mode": "llm",
+     "candidate_ids": [
+      "mem_68a1e5ee0ae1",
+      "mem_d0a82bd69b4d",
+      "mem_5b8927226bab",
+      "mem_a2d8b825e770",
+      "mem_01447e84bdc4",
+      "mem_db30fc33a754",
+      "mem_9c494d9868d5",
+      "mem_c6807e345201"
+     ]
+    },
+    "selected_evidence_ids": [
+     "mem_d0a82bd69b4d"
+    ],
+    "candidate_ids": [
+     "mem_68a1e5ee0ae1",
+     "mem_d0a82bd69b4d",
+     "mem_5b8927226bab",
+     "mem_a2d8b825e770",
+     "mem_01447e84bdc4",
+     "mem_db30fc33a754",
+     "mem_9c494d9868d5",
+     "mem_c6807e345201"
+    ],
+    "retrieval_recall": 0.25,
+    "mrr": 1.0,
+    "answer_token_f1": 0.0
+   },
+   {
+    "question": "Who did Hayek work for upon being hired by the author of Bureaucracy?",
+    "reference_answer": "the Austrian government",
+    "answer_text": "",
+    "evidence_text": "[1] (ring3 \u00b7 million) His opponents have attacked Hayek as a leading promoter of \"neoliberalism\". A British scholar, Samuel Brittan, concluded in 2010, \"Hayek's book [The Constitution of Liberty] is still probably the most comprehensive statement of the underlying ideas of the moderate free market philosophy espoused by neoliberals.\" Brittan adds that although Raymond Plant (2009) comes out in the end against Hayek's doctrines, Plant gives The Constitution of Liberty a \"more thorough and fair-minded analysis than it has received even from its professed adherents\".",
+    "latency_ms": 1468.6,
+    "retrieval_latency_ms": 1468.6,
+    "n_retrieved": 8,
+    "n_candidates": 62,
+    "context_tokens": 85,
+    "active_components": [
+     "semantic",
+     "structural",
+     "radial",
+     "graph",
+     "importance",
+     "confidence",
+     "recency",
+     "path",
+     "activation"
+    ],
+    "candidate_policy": "shared",
+    "answer_metrics": {
+     "latency_ms": 1468.6,
+     "retrieval_ms": 53.22,
+     "n_candidates": 62,
+     "n_retrieved": 8,
+     "n_memories": 0,
+     "n_selected_evidence": 0,
+     "n_excluded_candidates": 8,
+     "context_tokens": 85,
+     "raw_tokens": 94,
+     "compression_ratio": 0.904,
+     "citation_error": 0,
+     "context_budget": 2048,
+     "completion_budget": 512,
+     "llm_mode": "no_evidence",
+     "candidate_ids": [
+      "mem_1e0ff519a3ea",
+      "mem_58afc55bff92",
+      "mem_9d8f2a48f116",
+      "mem_06c27516a1b5",
+      "mem_ee9ceacd886f",
+      "mem_0b7d1c6ab88f",
+      "mem_5ff6a807c5b2",
+      "mem_e9b903fb0c80"
+     ]
+    },
+    "selected_evidence_ids": [],
+    "candidate_ids": [
+     "mem_1e0ff519a3ea",
+     "mem_58afc55bff92",
+     "mem_9d8f2a48f116",
+     "mem_06c27516a1b5",
+     "mem_ee9ceacd886f",
+     "mem_0b7d1c6ab88f",
+     "mem_5ff6a807c5b2",
+     "mem_e9b903fb0c80"
+    ],
+    "retrieval_recall": 0.0,
+    "mrr": 0.0
+   },
+   {
+    "question": "What former contestant did the performer of Addicted ask to marry him?",
+    "reference_answer": "Diana DeGarmo",
+    "answer_text": "",
+    "evidence_text": "",
+    "latency_ms": 54.0,
+    "retrieval_latency_ms": 54.0,
+    "n_retrieved": 8,
+    "n_candidates": 55,
+    "context_tokens": 0,
+    "active_components": [
+     "semantic",
+     "structural",
+     "radial",
+     "graph",
+     "importance",
+     "confidence",
+     "recency",
+     "path",
+     "activation"
+    ],
+    "candidate_policy": "shared",
+    "answer_metrics": {
+     "latency_ms": 54.0,
+     "retrieval_ms": 53.84,
+     "n_candidates": 55,
+     "n_retrieved": 8,
+     "n_memories": 0,
+     "n_selected_evidence": 0,
+     "n_excluded_candidates": 8,
+     "context_tokens": 0,
+     "raw_tokens": 18,
+     "compression_ratio": 0.0,
+     "citation_error": 0,
+     "context_budget": 2048,
+     "completion_budget": 0,
+     "llm_mode": "no_evidence",
+     "candidate_ids": [
+      "mem_01060939d30c",
+      "mem_c6f23005d5da",
+      "mem_3e3b9c529fc3",
+      "mem_f3c581e96612",
+      "mem_a90dcdb9f92b",
+      "mem_f2ddd84e2633",
+      "mem_756cdb50c23b",
+      "mem_f04828d95ca6"
+     ]
+    },
+    "selected_evidence_ids": [],
+    "candidate_ids": [
+     "mem_01060939d30c",
+     "mem_c6f23005d5da",
+     "mem_3e3b9c529fc3",
+     "mem_f3c581e96612",
+     "mem_a90dcdb9f92b",
+     "mem_f2ddd84e2633",
+     "mem_756cdb50c23b",
+     "mem_f04828d95ca6"
+    ],
+    "retrieval_recall": 0.0,
+    "mrr": 0.0
+   },
+   {
+    "question": "Who is the father of Empress Wang's husband?",
+    "reference_answer": "Yang Xingmi",
+    "answer_text": "The father of Empress Wang's husband is Yang Pu, the final ruler and the only emperor of the Wu state founded upon the territory that Yang Xingmi took.",
+    "evidence_text": "[1] (ring3 \u00b7 spencer) Empress Dowager Wang (\u738b\u592a\u540e, personal name unknown) (died 928) was a concubine of the late-Tang Dynasty warlord Yang Xingmi and the mother of his son Yang Pu, the final ruler and the only emperor of the Wu state founded upon the territory that Yang Xingmi took. During Yang Pu's reign as emperor, she was honored as empress dowager.\n[2] (ring3 \u00b7 spencer) Empress Wang (\u738b\u7687\u540e, personal name unknown), known as Empress Rang (\u8b93\u7687\u540e, \"empress of the emperor who yielded\") during Southern Tang, was the wife and empress of Yang Pu (Emperor Rui), the final ruler of the Chinese Five Dynasties and Ten Kingdoms period state Wu. As he was the only ruler who claimed the title of emperor, she was the only person to carry the title of empress during Wu.",
+    "latency_ms": 3166.0,
+    "retrieval_latency_ms": 3166.0,
+    "n_retrieved": 8,
+    "n_candidates": 65,
+    "context_tokens": 135,
+    "active_components": [
+     "semantic",
+     "structural",
+     "radial",
+     "graph",
+     "importance",
+     "confidence",
+     "recency",
+     "path",
+     "activation"
+    ],
+    "candidate_policy": "shared",
+    "answer_metrics": {
+     "latency_ms": 3166.0,
+     "retrieval_ms": 46.58,
+     "n_candidates": 65,
+     "n_retrieved": 8,
+     "n_memories": 2,
+     "n_selected_evidence": 2,
+     "n_excluded_candidates": 6,
+     "context_tokens": 135,
+     "raw_tokens": 138,
+     "compression_ratio": 0.978,
+     "citation_error": 0,
+     "context_budget": 2048,
+     "completion_budget": 512,
+     "llm_mode": "llm",
+     "candidate_ids": [
+      "mem_2f1641386035",
+      "mem_95e75fe8490e",
+      "mem_48790632bcfe",
+      "mem_292345b21141",
+      "mem_288cefcbd8a0",
+      "mem_0daea4a5a618",
+      "mem_360a71dccff6",
+      "mem_24581482016f"
+     ]
+    },
+    "selected_evidence_ids": [
+     "mem_0daea4a5a618",
+     "mem_360a71dccff6"
+    ],
+    "candidate_ids": [
+     "mem_2f1641386035",
+     "mem_95e75fe8490e",
+     "mem_48790632bcfe",
+     "mem_292345b21141",
+     "mem_288cefcbd8a0",
+     "mem_0daea4a5a618",
+     "mem_360a71dccff6",
+     "mem_24581482016f"
+    ],
+    "retrieval_recall": 0.5,
+    "mrr": 1.0,
+    "answer_token_f1": 0.12903225806451613
+   },
+   {
+    "question": "What is the place of birth of the person who submitted the first version of the equal rights amendment to congress in 1923?",
+    "reference_answer": "Mount Laurel Township",
+    "answer_text": "",
+    "evidence_text": "",
+    "latency_ms": 89.5,
+    "retrieval_latency_ms": 89.5,
+    "n_retrieved": 8,
+    "n_candidates": 47,
+    "context_tokens": 0,
+    "active_components": [
+     "semantic",
+     "structural",
+     "radial",
+     "graph",
+     "importance",
+     "confidence",
+     "recency",
+     "path",
+     "activation"
+    ],
+    "candidate_policy": "shared",
+    "answer_metrics": {
+     "latency_ms": 89.5,
+     "retrieval_ms": 89.1,
+     "n_candidates": 47,
+     "n_retrieved": 8,
+     "n_memories": 0,
+     "n_selected_evidence": 0,
+     "n_excluded_candidates": 8,
+     "context_tokens": 0,
+     "raw_tokens": 18,
+     "compression_ratio": 0.0,
+     "citation_error": 0,
+     "context_budget": 2048,
+     "completion_budget": 0,
+     "llm_mode": "no_evidence",
+     "candidate_ids": [
+      "mem_7c1a6a75bbcd",
+      "mem_fa78c8959cdf",
+      "mem_ca331f51481c",
+      "mem_8734a67aae9e",
+      "mem_deb7be31f294",
+      "mem_8168073ea3f4",
+      "mem_441945682512",
+      "mem_acdfdd784887"
+     ]
+    },
+    "selected_evidence_ids": [],
+    "candidate_ids": [
+     "mem_7c1a6a75bbcd",
+     "mem_fa78c8959cdf",
+     "mem_ca331f51481c",
+     "mem_8734a67aae9e",
+     "mem_deb7be31f294",
+     "mem_8168073ea3f4",
+     "mem_441945682512",
+     "mem_acdfdd784887"
+    ],
+    "retrieval_recall": 0.0,
+    "mrr": 0.0
+   },
+   {
+    "question": "Who played the character in the Santa Clause 3 that has a series named after it that includes Frost at Christmas?",
+    "reference_answer": "Martin Short",
+    "answer_text": "",
+    "evidence_text": "",
+    "latency_ms": 95.4,
+    "retrieval_latency_ms": 95.4,
+    "n_retrieved": 8,
+    "n_candidates": 46,
+    "context_tokens": 0,
+    "active_components": [
+     "semantic",
+     "structural",
+     "radial",
+     "graph",
+     "importance",
+     "confidence",
+     "recency",
+     "path",
+     "activation"
+    ],
+    "candidate_policy": "shared",
+    "answer_metrics": {
+     "latency_ms": 95.4,
+     "retrieval_ms": 95.11,
+     "n_candidates": 46,
+     "n_retrieved": 8,
+     "n_memories": 0,
+     "n_selected_evidence": 0,
+     "n_excluded_candidates": 8,
+     "context_tokens": 0,
+     "raw_tokens": 16,
+     "compression_ratio": 0.0,
+     "citation_error": 0,
+     "context_budget": 2048,
+     "completion_budget": 0,
+     "llm_mode": "no_evidence",
+     "candidate_ids": [
+      "mem_bc8f0aed271e",
+      "mem_8a956a88db6e",
+      "mem_b7197c00264d",
+      "mem_7ac2b3986c75",
+      "mem_584e9a9b20ab",
+      "mem_18d305fb4a80",
+      "mem_5c4f299b6a05",
+      "mem_fdd73b46b701"
+     ]
+    },
+    "selected_evidence_ids": [],
+    "candidate_ids": [
+     "mem_bc8f0aed271e",
+     "mem_8a956a88db6e",
+     "mem_b7197c00264d",
+     "mem_7ac2b3986c75",
+     "mem_584e9a9b20ab",
+     "mem_18d305fb4a80",
+     "mem_5c4f299b6a05",
+     "mem_fdd73b46b701"
+    ],
+    "retrieval_recall": 0.0,
+    "mrr": 0.0
+   },
+   {
+    "question": "This cast member in \"Search for the Gods\" also plays a character in which film?",
+    "reference_answer": "The Hateful Eight",
+    "answer_text": "The cast member in \"Search for the Gods\" also plays a character in \"The Terminator\" (1984). [1]",
+    "evidence_text": "[1] (ring3 \u00b7 only) Search for the Gods is a 1975 television film directed by Jud Taylor, and stars Kurt Russell and Stephen McHattie. It was intended to be the pilot episode of a TV series that never made it into production.",
+    "latency_ms": 3023.4,
+    "retrieval_latency_ms": 3023.4,
+    "n_retrieved": 8,
+    "n_candidates": 62,
+    "context_tokens": 42,
+    "active_components": [
+     "semantic",
+     "structural",
+     "radial",
+     "graph",
+     "importance",
+     "confidence",
+     "recency",
+     "path",
+     "activation"
+    ],
+    "candidate_policy": "shared",
+    "answer_metrics": {
+     "latency_ms": 3023.4,
+     "retrieval_ms": 71.98,
+     "n_candidates": 62,
+     "n_retrieved": 8,
+     "n_memories": 1,
+     "n_selected_evidence": 1,
+     "n_excluded_candidates": 7,
+     "context_tokens": 42,
+     "raw_tokens": 82,
+     "compression_ratio": 0.512,
+     "citation_error": 0,
+     "context_budget": 2048,
+     "completion_budget": 512,
+     "llm_mode": "llm",
+     "candidate_ids": [
+      "mem_b27863220b0b",
+      "mem_44ba5210e5b2",
+      "mem_132c10d6fe81",
+      "mem_0f2eab6629fc",
+      "mem_1e7f029fd442",
+      "mem_6667ecfb669b",
+      "mem_2e03b608ef7a",
+      "mem_3f5387479fb9"
+     ]
+    },
+    "selected_evidence_ids": [
+     "mem_b27863220b0b"
+    ],
+    "candidate_ids": [
+     "mem_b27863220b0b",
+     "mem_44ba5210e5b2",
+     "mem_132c10d6fe81",
+     "mem_0f2eab6629fc",
+     "mem_1e7f029fd442",
+     "mem_6667ecfb669b",
+     "mem_2e03b608ef7a",
+     "mem_3f5387479fb9"
+    ],
+    "retrieval_recall": 0.25,
+    "mrr": 1.0,
+    "answer_token_f1": 0.1
+   },
+   {
+    "question": "Who founded the company that distributed the film UHF?",
+    "reference_answer": "Mike Medavoy",
+    "answer_text": "",
+    "evidence_text": "",
+    "latency_ms": 51.7,
+    "retrieval_latency_ms": 51.7,
+    "n_retrieved": 8,
+    "n_candidates": 31,
+    "context_tokens": 0,
+    "active_components": [
+     "semantic",
+     "structural",
+     "radial",
+     "graph",
+     "importance",
+     "confidence",
+     "recency",
+     "path",
+     "activation"
+    ],
+    "candidate_policy": "shared",
+    "answer_metrics": {
+     "latency_ms": 51.7,
+     "retrieval_ms": 51.52,
+     "n_candidates": 31,
+     "n_retrieved": 8,
+     "n_memories": 0,
+     "n_selected_evidence": 0,
+     "n_excluded_candidates": 8,
+     "context_tokens": 0,
+     "raw_tokens": 26,
+     "compression_ratio": 0.0,
+     "citation_error": 0,
+     "context_budget": 2048,
+     "completion_budget": 0,
+     "llm_mode": "no_evidence",
+     "candidate_ids": [
+      "mem_ba4452615962",
+      "mem_2a9f5ec661fd",
+      "mem_4f894ea39956",
+      "mem_93ca42615240",
+      "mem_dc777553df95",
+      "mem_ac77c3f26e5b",
+      "mem_677064e49be2",
+      "mem_7ab8f8499bb5"
+     ]
+    },
+    "selected_evidence_ids": [],
+    "candidate_ids": [
+     "mem_ba4452615962",
+     "mem_2a9f5ec661fd",
+     "mem_4f894ea39956",
+     "mem_93ca42615240",
+     "mem_dc777553df95",
+     "mem_ac77c3f26e5b",
+     "mem_677064e49be2",
+     "mem_7ab8f8499bb5"
+    ],
+    "retrieval_recall": 0.0,
+    "mrr": 0.0
+   },
+   {
+    "question": "Who is the city that AvtoVAZ's headquarters is located in named after?",
+    "reference_answer": "Palmiro Togliatti",
+    "answer_text": "The city that AvtoVAZ's headquarters is located in is named after Alexander I of Russia. This is because AvtoVAZ is a joint venture between General Motors and AvtoVAZ, and the headquarters of AvtoVAZ is located in Tolyatti, which is named after Alexander I.",
+    "evidence_text": "[1] (ring3 \u00b7 million) GM-AvtoVAZ is a joint venture in Russia between General Motors and AvtoVAZ set up in 2001 and began producing the Chevrolet Niva, based on the Lada Niva, at its factory in Tolyatti from 2002. Though both companies have an equal share of ownership, the venture is managed exclusively by General Motors.",
+    "latency_ms": 4224.3,
+    "retrieval_latency_ms": 4224.3,
+    "n_retrieved": 8,
+    "n_candidates": 37,
+    "context_tokens": 55,
+    "active_components": [
+     "semantic",
+     "structural",
+     "radial",
+     "graph",
+     "importance",
+     "confidence",
+     "recency",
+     "path",
+     "activation"
+    ],
+    "candidate_policy": "shared",
+    "answer_metrics": {
+     "latency_ms": 4224.3,
+     "retrieval_ms": 50.68,
+     "n_candidates": 37,
+     "n_retrieved": 8,
+     "n_memories": 1,
+     "n_selected_evidence": 1,
+     "n_excluded_candidates": 7,
+     "context_tokens": 55,
+     "raw_tokens": 59,
+     "compression_ratio": 0.932,
+     "citation_error": 0,
+     "context_budget": 2048,
+     "completion_budget": 512,
+     "llm_mode": "llm",
+     "candidate_ids": [
+      "mem_66cd4412ab27",
+      "mem_e1f0807a1446",
+      "mem_2773038a946d",
+      "mem_d9d077e3f2d0",
+      "mem_e84e5da10c3a",
+      "mem_684b82f54e49",
+      "mem_a00ac3f6422d",
+      "mem_f557e8dde3c8"
+     ]
+    },
+    "selected_evidence_ids": [
+     "mem_f557e8dde3c8"
+    ],
+    "candidate_ids": [
+     "mem_66cd4412ab27",
+     "mem_e1f0807a1446",
+     "mem_2773038a946d",
+     "mem_d9d077e3f2d0",
+     "mem_e84e5da10c3a",
+     "mem_684b82f54e49",
+     "mem_a00ac3f6422d",
+     "mem_f557e8dde3c8"
+    ],
+    "retrieval_recall": 0.25,
+    "mrr": 1.0,
+    "answer_token_f1": 0.0
+   },
+   {
+    "question": "In what county is William W. Blair's birthplace located?",
+    "reference_answer": "Orleans County",
+    "answer_text": "William W. Blair's birthplace is located in LaSalle County, Illinois. [1]",
+    "evidence_text": "[1] (ring3 \u00b7 spencer) Blair was born in Holley, New York. In 1839, his family moved to LaSalle County, Illinois.",
+    "latency_ms": 2258.8,
+    "retrieval_latency_ms": 2258.8,
+    "n_retrieved": 8,
+    "n_candidates": 41,
+    "context_tokens": 20,
+    "active_components": [
+     "semantic",
+     "structural",
+     "radial",
+     "graph",
+     "importance",
+     "confidence",
+     "recency",
+     "path",
+     "activation"
+    ],
+    "candidate_policy": "shared",
+    "answer_metrics": {
+     "latency_ms": 2258.8,
+     "retrieval_ms": 47.26,
+     "n_candidates": 41,
+     "n_retrieved": 8,
+     "n_memories": 1,
+     "n_selected_evidence": 1,
+     "n_excluded_candidates": 7,
+     "context_tokens": 20,
+     "raw_tokens": 38,
+     "compression_ratio": 0.526,
+     "citation_error": 0,
+     "context_budget": 2048,
+     "completion_budget": 512,
+     "llm_mode": "llm",
+     "candidate_ids": [
+      "mem_278303e2b873",
+      "mem_6f73397e6de7",
+      "mem_f17cf1b4cf8b",
+      "mem_379b5d3bf3a2",
+      "mem_49bcea5d7ebf",
+      "mem_fb3487ac9125",
+      "mem_b9e80d3cfda6",
+      "mem_d6f1b112fb19"
+     ]
+    },
+    "selected_evidence_ids": [
+     "mem_6f73397e6de7"
+    ],
+    "candidate_ids": [
+     "mem_278303e2b873",
+     "mem_6f73397e6de7",
+     "mem_f17cf1b4cf8b",
+     "mem_379b5d3bf3a2",
+     "mem_49bcea5d7ebf",
+     "mem_fb3487ac9125",
+     "mem_b9e80d3cfda6",
+     "mem_d6f1b112fb19"
+    ],
+    "retrieval_recall": 0.25,
+    "mrr": 1.0,
+    "answer_token_f1": 0.14285714285714285
+   },
+   {
+    "question": "In what league did Jose Miranda's team compete?",
+    "reference_answer": "United Soccer League",
+    "answer_text": "Jose Miranda's team competed in the Southwest Independent Soccer League. [1]",
+    "evidence_text": "[1] (ring3 \u00b7 spencer) In 1989, Miranda joined the Tucson Amigos for the 1989\u201390 Southwest Independent Soccer League. He earned Rookie of the Year honors with the Amigos.\n[2] (ring4 \u00b7 notable) He broke his leg during the season. This led to his taking the boy\u2019s head coaching position at Sunnyside High School.",
+    "latency_ms": 3432.8,
+    "retrieval_latency_ms": 3432.8,
+    "n_retrieved": 8,
+    "n_candidates": 52,
+    "context_tokens": 53,
+    "active_components": [
+     "semantic",
+     "structural",
+     "radial",
+     "graph",
+     "importance",
+     "confidence",
+     "recency",
+     "path",
+     "activation"
+    ],
+    "candidate_policy": "shared",
+    "answer_metrics": {
+     "latency_ms": 3432.8,
+     "retrieval_ms": 51.49,
+     "n_candidates": 52,
+     "n_retrieved": 8,
+     "n_memories": 2,
+     "n_selected_evidence": 2,
+     "n_excluded_candidates": 6,
+     "context_tokens": 53,
+     "raw_tokens": 74,
+     "compression_ratio": 0.716,
+     "citation_error": 0,
+     "context_budget": 2048,
+     "completion_budget": 512,
+     "llm_mode": "llm",
+     "candidate_ids": [
+      "mem_e79a0291bde2",
+      "mem_0787e9622d7d",
+      "mem_b60370a7cced",
+      "mem_d1184df0f3d0",
+      "mem_2d4fed65945e",
+      "mem_ffa4b46c5ece",
+      "mem_8a4dd37d5f29",
+      "mem_b78249ae685e"
+     ]
+    },
+    "selected_evidence_ids": [
+     "mem_0787e9622d7d",
+     "mem_2d4fed65945e"
+    ],
+    "candidate_ids": [
+     "mem_e79a0291bde2",
+     "mem_0787e9622d7d",
+     "mem_b60370a7cced",
+     "mem_d1184df0f3d0",
+     "mem_2d4fed65945e",
+     "mem_ffa4b46c5ece",
+     "mem_8a4dd37d5f29",
+     "mem_b78249ae685e"
+    ],
+    "retrieval_recall": 0.3333333333333333,
+    "mrr": 1.0,
+    "answer_token_f1": 0.26666666666666666
+   },
+   {
+    "question": "Where is the country with ISO code ISO 3166-2:CV located?",
+    "reference_answer": "central Atlantic Ocean",
+    "answer_text": "The country with ISO code ISO 3166-2:CV is located in Cabo Verde, which is part of the ISO 3166-2 standard. [1]",
+    "evidence_text": "[1] (ring3 \u00b7 million) ISO 3166-2:CV is the entry for Cabo Verde in ISO 3166-2, part of the ISO 3166 standard published by the International Organization for Standardization (ISO), which defines codes for the names of the principal subdivisions (e.g., provinces or states) of all countries coded in ISO 3166-1.",
+    "latency_ms": 4885.0,
+    "retrieval_latency_ms": 4885.0,
+    "n_retrieved": 8,
+    "n_candidates": 86,
+    "context_tokens": 50,
+    "active_components": [
+     "semantic",
+     "structural",
+     "radial",
+     "graph",
+     "importance",
+     "confidence",
+     "recency",
+     "path",
+     "activation"
+    ],
+    "candidate_policy": "shared",
+    "answer_metrics": {
+     "latency_ms": 4885.0,
+     "retrieval_ms": 63.21,
+     "n_candidates": 86,
+     "n_retrieved": 8,
+     "n_memories": 1,
+     "n_selected_evidence": 1,
+     "n_excluded_candidates": 7,
+     "context_tokens": 50,
+     "raw_tokens": 101,
+     "compression_ratio": 0.495,
+     "citation_error": 0,
+     "context_budget": 2048,
+     "completion_budget": 512,
+     "llm_mode": "llm",
+     "candidate_ids": [
+      "mem_9f26a06f30a0",
+      "mem_14fc1ed973cc",
+      "mem_0cd9290cf88a",
+      "mem_0fe039d2930c",
+      "mem_558b7cdc0a90",
+      "mem_c318e81f5357",
+      "mem_ded398d45dfd",
+      "mem_cd618bfae51b"
+     ]
+    },
+    "selected_evidence_ids": [
+     "mem_9f26a06f30a0"
+    ],
+    "candidate_ids": [
+     "mem_9f26a06f30a0",
+     "mem_14fc1ed973cc",
+     "mem_0cd9290cf88a",
+     "mem_0fe039d2930c",
+     "mem_558b7cdc0a90",
+     "mem_c318e81f5357",
+     "mem_ded398d45dfd",
+     "mem_cd618bfae51b"
+    ],
+    "retrieval_recall": 0.25,
+    "mrr": 1.0,
+    "answer_token_f1": 0.0
+   },
+   {
+    "question": "What is the capital of the county which contains Hickory Grove Estates, Mississippi?",
+    "reference_answer": "Starkville",
+    "answer_text": "The capital of the county which contains Hickory Grove Estates, Mississippi, is Clayton Village. [1]",
+    "evidence_text": "[1] (ring3 \u00b7 starbucks) Hickory Grove Estates is an unincorporated community located in Oktibbeha County, Mississippi. Hickory Grove Estates is approximately south-southwest of Clayton Village.\n[2] (ring3 \u00b7 starbucks) Hickory Grove is a town in Grant County, Wisconsin, United States. The population was 443 at the 2000 census.",
+    "latency_ms": 2426.9,
+    "retrieval_latency_ms": 2426.9,
+    "n_retrieved": 8,
+    "n_candidates": 54,
+    "context_tokens": 48,
+    "active_components": [
+     "semantic",
+     "structural",
+     "radial",
+     "graph",
+     "importance",
+     "confidence",
+     "recency",
+     "path",
+     "activation"
+    ],
+    "candidate_policy": "shared",
+    "answer_metrics": {
+     "latency_ms": 2426.9,
+     "retrieval_ms": 65.85,
+     "n_candidates": 54,
+     "n_retrieved": 8,
+     "n_memories": 2,
+     "n_selected_evidence": 2,
+     "n_excluded_candidates": 6,
+     "context_tokens": 48,
+     "raw_tokens": 69,
+     "compression_ratio": 0.696,
+     "citation_error": 0,
+     "context_budget": 2048,
+     "completion_budget": 512,
+     "llm_mode": "llm",
+     "candidate_ids": [
+      "mem_ec28568af29c",
+      "mem_2f66ce5fec9e",
+      "mem_e5920aff0c70",
+      "mem_10dd7061727f",
+      "mem_31c2a2afbfe6",
+      "mem_0aa200b2a35b",
+      "mem_254f631fc21b",
+      "mem_94d976f2197e"
+     ]
+    },
+    "selected_evidence_ids": [
+     "mem_e5920aff0c70",
+     "mem_94d976f2197e"
+    ],
+    "candidate_ids": [
+     "mem_ec28568af29c",
+     "mem_2f66ce5fec9e",
+     "mem_e5920aff0c70",
+     "mem_10dd7061727f",
+     "mem_31c2a2afbfe6",
+     "mem_0aa200b2a35b",
+     "mem_254f631fc21b",
+     "mem_94d976f2197e"
+    ],
+    "retrieval_recall": 0.16666666666666666,
+    "mrr": 1.0,
+    "answer_token_f1": 0.0
+   },
+   {
+    "question": "How many games does the team play that had the most champion league wins between 1992 and 2013?",
+    "reference_answer": "38",
+    "answer_text": "",
+    "evidence_text": "",
+    "latency_ms": 54.6,
+    "retrieval_latency_ms": 54.6,
+    "n_retrieved": 8,
+    "n_candidates": 48,
+    "context_tokens": 0,
+    "active_components": [
+     "semantic",
+     "structural",
+     "radial",
+     "graph",
+     "importance",
+     "confidence",
+     "recency",
+     "path",
+     "activation"
+    ],
+    "candidate_policy": "shared",
+    "answer_metrics": {
+     "latency_ms": 54.6,
+     "retrieval_ms": 54.48,
+     "n_candidates": 48,
+     "n_retrieved": 8,
+     "n_memories": 0,
+     "n_selected_evidence": 0,
+     "n_excluded_candidates": 8,
+     "context_tokens": 0,
+     "raw_tokens": 15,
+     "compression_ratio": 0.0,
+     "citation_error": 0,
+     "context_budget": 2048,
+     "completion_budget": 0,
+     "llm_mode": "no_evidence",
+     "candidate_ids": [
+      "mem_e4d85d5a041e",
+      "mem_b86ae6a21172",
+      "mem_2b6b28b66f5b",
+      "mem_b2053f0c085f",
+      "mem_bdf929f73378",
+      "mem_94a6553523fe",
+      "mem_587ea466a00a",
+      "mem_108ecd057ba8"
+     ]
+    },
+    "selected_evidence_ids": [],
+    "candidate_ids": [
+     "mem_e4d85d5a041e",
+     "mem_b86ae6a21172",
+     "mem_2b6b28b66f5b",
+     "mem_b2053f0c085f",
+     "mem_bdf929f73378",
+     "mem_94a6553523fe",
+     "mem_587ea466a00a",
+     "mem_108ecd057ba8"
+    ],
+    "retrieval_recall": 0.0,
+    "mrr": 0.0
+   },
+   {
+    "question": "What is the record label of the co-writer and recording artist of Permission to Fly?",
+    "reference_answer": "Hollywood Records",
+    "answer_text": "",
+    "evidence_text": "",
+    "latency_ms": 47.8,
+    "retrieval_latency_ms": 47.8,
+    "n_retrieved": 8,
+    "n_candidates": 47,
+    "context_tokens": 0,
+    "active_components": [
+     "semantic",
+     "structural",
+     "radial",
+     "graph",
+     "importance",
+     "confidence",
+     "recency",
+     "path",
+     "activation"
+    ],
+    "candidate_policy": "shared",
+    "answer_metrics": {
+     "latency_ms": 47.8,
+     "retrieval_ms": 47.67,
+     "n_candidates": 47,
+     "n_retrieved": 8,
+     "n_memories": 0,
+     "n_selected_evidence": 0,
+     "n_excluded_candidates": 8,
+     "context_tokens": 0,
+     "raw_tokens": 8,
+     "compression_ratio": 0.0,
+     "citation_error": 0,
+     "context_budget": 2048,
+     "completion_budget": 0,
+     "llm_mode": "no_evidence",
+     "candidate_ids": [
+      "mem_ca18c8fd5537",
+      "mem_fa0f65dfa3b7",
+      "mem_2d623b3c9bbd",
+      "mem_e1e8cea24edf",
+      "mem_4f0f27302ffe",
+      "mem_8b6b1e6ae740",
+      "mem_412281bc1ae1",
+      "mem_c27b9b5da936"
+     ]
+    },
+    "selected_evidence_ids": [],
+    "candidate_ids": [
+     "mem_ca18c8fd5537",
+     "mem_fa0f65dfa3b7",
+     "mem_2d623b3c9bbd",
+     "mem_e1e8cea24edf",
+     "mem_4f0f27302ffe",
+     "mem_8b6b1e6ae740",
+     "mem_412281bc1ae1",
+     "mem_c27b9b5da936"
+    ],
+    "retrieval_recall": 0.0,
+    "mrr": 0.0
+   },
+   {
+    "question": "Where was the creator of the Lap Engine educated?",
+    "reference_answer": "University of Glasgow",
+    "answer_text": "The Lap Engine was designed by James Watt, who was educated at the University of Glasgow. [1]",
+    "evidence_text": "[1] (ring3 \u00b7 million) The Lap Engine is a beam engine designed by James Watt, built by Boulton and Watt in 1788. It is now preserved at the Science Museum, London.",
+    "latency_ms": 1389.7,
+    "retrieval_latency_ms": 1389.7,
+    "n_retrieved": 8,
+    "n_candidates": 51,
+    "context_tokens": 31,
+    "active_components": [
+     "semantic",
+     "structural",
+     "radial",
+     "graph",
+     "importance",
+     "confidence",
+     "recency",
+     "path",
+     "activation"
+    ],
+    "candidate_policy": "shared",
+    "answer_metrics": {
+     "latency_ms": 1389.7,
+     "retrieval_ms": 43.33,
+     "n_candidates": 51,
+     "n_retrieved": 8,
+     "n_memories": 1,
+     "n_selected_evidence": 1,
+     "n_excluded_candidates": 7,
+     "context_tokens": 31,
+     "raw_tokens": 62,
+     "compression_ratio": 0.5,
+     "citation_error": 0,
+     "context_budget": 2048,
+     "completion_budget": 512,
+     "llm_mode": "llm",
+     "candidate_ids": [
+      "mem_a44afb92a238",
+      "mem_947a5a75898c",
+      "mem_0fa1d47637ef",
+      "mem_07426ad2f7a7",
+      "mem_5f969bccd717",
+      "mem_a96a381fee1e",
+      "mem_29be6637896f",
+      "mem_f1ae72d9a095"
+     ]
+    },
+    "selected_evidence_ids": [
+     "mem_947a5a75898c"
+    ],
+    "candidate_ids": [
+     "mem_a44afb92a238",
+     "mem_947a5a75898c",
+     "mem_0fa1d47637ef",
+     "mem_07426ad2f7a7",
+     "mem_5f969bccd717",
+     "mem_a96a381fee1e",
+     "mem_29be6637896f",
+     "mem_f1ae72d9a095"
+    ],
+    "retrieval_recall": 0.25,
+    "mrr": 1.0,
+    "answer_token_f1": 0.3
+   },
+   {
+    "question": "Where did the producer of Julius Caesar study or work?",
+    "reference_answer": "Clifton College",
+    "answer_text": "",
+    "evidence_text": "",
+    "latency_ms": 59.0,
+    "retrieval_latency_ms": 59.0,
+    "n_retrieved": 8,
+    "n_candidates": 46,
+    "context_tokens": 0,
+    "active_components": [
+     "semantic",
+     "structural",
+     "radial",
+     "graph",
+     "importance",
+     "confidence",
+     "recency",
+     "path",
+     "activation"
+    ],
+    "candidate_policy": "shared",
+    "answer_metrics": {
+     "latency_ms": 59.0,
+     "retrieval_ms": 58.92,
+     "n_candidates": 46,
+     "n_retrieved": 8,
+     "n_memories": 0,
+     "n_selected_evidence": 0,
+     "n_excluded_candidates": 8,
+     "context_tokens": 0,
+     "raw_tokens": 15,
+     "compression_ratio": 0.0,
+     "citation_error": 0,
+     "context_budget": 2048,
+     "completion_budget": 0,
+     "llm_mode": "no_evidence",
+     "candidate_ids": [
+      "mem_0499328edb56",
+      "mem_1a6aa199e05f",
+      "mem_b87e5899b28f",
+      "mem_ec53f5c9c1e6",
+      "mem_3eb173af095d",
+      "mem_5920dd9cb45a",
+      "mem_d5cf11394d10",
+      "mem_ffe969427e94"
+     ]
+    },
+    "selected_evidence_ids": [],
+    "candidate_ids": [
+     "mem_0499328edb56",
+     "mem_1a6aa199e05f",
+     "mem_b87e5899b28f",
+     "mem_ec53f5c9c1e6",
+     "mem_3eb173af095d",
+     "mem_5920dd9cb45a",
+     "mem_d5cf11394d10",
+     "mem_ffe969427e94"
+    ],
+    "retrieval_recall": 0.0,
+    "mrr": 0.0
+   },
+   {
+    "question": "What was the old show that was named after a character that Walt Disney created in 1928 called?",
+    "reference_answer": "The Mickey Mouse Club",
+    "answer_text": "",
+    "evidence_text": "",
+    "latency_ms": 79.5,
+    "retrieval_latency_ms": 79.5,
+    "n_retrieved": 8,
+    "n_candidates": 45,
+    "context_tokens": 0,
+    "active_components": [
+     "semantic",
+     "structural",
+     "radial",
+     "graph",
+     "importance",
+     "confidence",
+     "recency",
+     "path",
+     "activation"
+    ],
+    "candidate_policy": "shared",
+    "answer_metrics": {
+     "latency_ms": 79.5,
+     "retrieval_ms": 79.2,
+     "n_candidates": 45,
+     "n_retrieved": 8,
+     "n_memories": 0,
+     "n_selected_evidence": 0,
+     "n_excluded_candidates": 8,
+     "context_tokens": 0,
+     "raw_tokens": 20,
+     "compression_ratio": 0.0,
+     "citation_error": 0,
+     "context_budget": 2048,
+     "completion_budget": 0,
+     "llm_mode": "no_evidence",
+     "candidate_ids": [
+      "mem_a8b5a0762b71",
+      "mem_80e67696667f",
+      "mem_2b6d998857f4",
+      "mem_52ecc33550fc",
+      "mem_f31b80f15d11",
+      "mem_94f47853f72f",
+      "mem_bd0d7ea3c780",
+      "mem_faf52165ac3f"
+     ]
+    },
+    "selected_evidence_ids": [],
+    "candidate_ids": [
+     "mem_a8b5a0762b71",
+     "mem_80e67696667f",
+     "mem_2b6d998857f4",
+     "mem_52ecc33550fc",
+     "mem_f31b80f15d11",
+     "mem_94f47853f72f",
+     "mem_bd0d7ea3c780",
+     "mem_faf52165ac3f"
+    ],
+    "retrieval_recall": 0.0,
+    "mrr": 0.0
+   },
+   {
+    "question": "What event caused the founder of Australia's liberal party to become Prime Minister?",
+    "reference_answer": "Lyons' death in 1939",
+    "answer_text": "",
+    "evidence_text": "",
+    "latency_ms": 66.1,
+    "retrieval_latency_ms": 66.1,
+    "n_retrieved": 8,
+    "n_candidates": 46,
+    "context_tokens": 0,
+    "active_components": [
+     "semantic",
+     "structural",
+     "radial",
+     "graph",
+     "importance",
+     "confidence",
+     "recency",
+     "path",
+     "activation"
+    ],
+    "candidate_policy": "shared",
+    "answer_metrics": {
+     "latency_ms": 66.1,
+     "retrieval_ms": 65.79,
+     "n_candidates": 46,
+     "n_retrieved": 8,
+     "n_memories": 0,
+     "n_selected_evidence": 0,
+     "n_excluded_candidates": 8,
+     "context_tokens": 0,
+     "raw_tokens": 20,
+     "compression_ratio": 0.0,
+     "citation_error": 0,
+     "context_budget": 2048,
+     "completion_budget": 0,
+     "llm_mode": "no_evidence",
+     "candidate_ids": [
+      "mem_c81d3f6d220e",
+      "mem_10d0751b608b",
+      "mem_c1a47c299d86",
+      "mem_af0508074527",
+      "mem_5ce3e0964acd",
+      "mem_bc68db99db18",
+      "mem_dac20bc8e4fc",
+      "mem_20707ec292ce"
+     ]
+    },
+    "selected_evidence_ids": [],
+    "candidate_ids": [
+     "mem_c81d3f6d220e",
+     "mem_10d0751b608b",
+     "mem_c1a47c299d86",
+     "mem_af0508074527",
+     "mem_5ce3e0964acd",
+     "mem_bc68db99db18",
+     "mem_dac20bc8e4fc",
+     "mem_20707ec292ce"
+    ],
+    "retrieval_recall": 0.0,
+    "mrr": 0.0
+   },
+   {
+    "question": "Bancroft's county borders what county?",
+    "reference_answer": "Haliburton County",
+    "answer_text": "",
+    "evidence_text": "",
+    "latency_ms": 69.9,
+    "retrieval_latency_ms": 69.9,
+    "n_retrieved": 8,
+    "n_candidates": 29,
+    "context_tokens": 0,
+    "active_components": [
+     "semantic",
+     "structural",
+     "radial",
+     "graph",
+     "importance",
+     "confidence",
+     "recency",
+     "path",
+     "activation"
+    ],
+    "candidate_policy": "shared",
+    "answer_metrics": {
+     "latency_ms": 69.9,
+     "retrieval_ms": 69.64,
+     "n_candidates": 29,
+     "n_retrieved": 8,
+     "n_memories": 0,
+     "n_selected_evidence": 0,
+     "n_excluded_candidates": 8,
+     "context_tokens": 0,
+     "raw_tokens": 14,
+     "compression_ratio": 0.0,
+     "citation_error": 0,
+     "context_budget": 2048,
+     "completion_budget": 0,
+     "llm_mode": "no_evidence",
+     "candidate_ids": [
+      "mem_6931fff83684",
+      "mem_619001b69df8",
+      "mem_afea2e037a93",
+      "mem_8137aaaa0353",
+      "mem_88a9c5356c85",
+      "mem_b930d8bb422c",
+      "mem_505dc3068f2d",
+      "mem_46536c82a954"
+     ]
+    },
+    "selected_evidence_ids": [],
+    "candidate_ids": [
+     "mem_6931fff83684",
+     "mem_619001b69df8",
+     "mem_afea2e037a93",
+     "mem_8137aaaa0353",
+     "mem_88a9c5356c85",
+     "mem_b930d8bb422c",
+     "mem_505dc3068f2d",
+     "mem_46536c82a954"
+    ],
+    "retrieval_recall": 0.0,
+    "mrr": 0.0
+   },
+   {
+    "question": "Who is the mother of the founder of Mormonism?",
+    "reference_answer": "Lucy Mack Smith",
+    "answer_text": "",
+    "evidence_text": "",
+    "latency_ms": 66.5,
+    "retrieval_latency_ms": 66.5,
+    "n_retrieved": 8,
+    "n_candidates": 43,
+    "context_tokens": 0,
+    "active_components": [
+     "semantic",
+     "structural",
+     "radial",
+     "graph",
+     "importance",
+     "confidence",
+     "recency",
+     "path",
+     "activation"
+    ],
+    "candidate_policy": "shared",
+    "answer_metrics": {
+     "latency_ms": 66.5,
+     "retrieval_ms": 66.21,
+     "n_candidates": 43,
+     "n_retrieved": 8,
+     "n_memories": 0,
+     "n_selected_evidence": 0,
+     "n_excluded_candidates": 8,
+     "context_tokens": 0,
+     "raw_tokens": 15,
+     "compression_ratio": 0.0,
+     "citation_error": 0,
+     "context_budget": 2048,
+     "completion_budget": 0,
+     "llm_mode": "no_evidence",
+     "candidate_ids": [
+      "mem_57ef316cda2a",
+      "mem_e356bbb62798",
+      "mem_a6a85bc45d33",
+      "mem_b3a86dffe771",
+      "mem_d32bb0e9c162",
+      "mem_12b1f1a31dc5",
+      "mem_af36aa533ca4",
+      "mem_5cfd76cfb2d7"
+     ]
+    },
+    "selected_evidence_ids": [],
+    "candidate_ids": [
+     "mem_57ef316cda2a",
+     "mem_e356bbb62798",
+     "mem_a6a85bc45d33",
+     "mem_b3a86dffe771",
+     "mem_d32bb0e9c162",
+     "mem_12b1f1a31dc5",
+     "mem_af36aa533ca4",
+     "mem_5cfd76cfb2d7"
+    ],
+    "retrieval_recall": 0.0,
+    "mrr": 0.0
+   },
+   {
+    "question": "What political party does the person that Adversary in the House is based on a member of?",
+    "reference_answer": "Socialist Party of America",
+    "answer_text": "",
+    "evidence_text": "",
+    "latency_ms": 67.7,
+    "retrieval_latency_ms": 67.7,
+    "n_retrieved": 8,
+    "n_candidates": 34,
+    "context_tokens": 0,
+    "active_components": [
+     "semantic",
+     "structural",
+     "radial",
+     "graph",
+     "importance",
+     "confidence",
+     "recency",
+     "path",
+     "activation"
+    ],
+    "candidate_policy": "shared",
+    "answer_metrics": {
+     "latency_ms": 67.7,
+     "retrieval_ms": 67.42,
+     "n_candidates": 34,
+     "n_retrieved": 8,
+     "n_memories": 0,
+     "n_selected_evidence": 0,
+     "n_excluded_candidates": 8,
+     "context_tokens": 0,
+     "raw_tokens": 20,
+     "compression_ratio": 0.0,
+     "citation_error": 0,
+     "context_budget": 2048,
+     "completion_budget": 0,
+     "llm_mode": "no_evidence",
+     "candidate_ids": [
+      "mem_b591c2ffe691",
+      "mem_12cb74c41678",
+      "mem_a8b67ea4e6ff",
+      "mem_41c5969b1183",
+      "mem_eed53b464e38",
+      "mem_f48628b0e96b",
+      "mem_7a8f145ba350",
+      "mem_b05d3304a5df"
+     ]
+    },
+    "selected_evidence_ids": [],
+    "candidate_ids": [
+     "mem_b591c2ffe691",
+     "mem_12cb74c41678",
+     "mem_a8b67ea4e6ff",
+     "mem_41c5969b1183",
+     "mem_eed53b464e38",
+     "mem_f48628b0e96b",
+     "mem_7a8f145ba350",
+     "mem_b05d3304a5df"
+    ],
+    "retrieval_recall": 0.0,
+    "mrr": 0.0
+   },
+   {
+    "question": "The singer, who starred in Shake It Up, signed to which record label?",
+    "reference_answer": "Hollywood Records",
+    "answer_text": "",
+    "evidence_text": "",
+    "latency_ms": 66.1,
+    "retrieval_latency_ms": 66.1,
+    "n_retrieved": 8,
+    "n_candidates": 40,
+    "context_tokens": 0,
+    "active_components": [
+     "semantic",
+     "structural",
+     "radial",
+     "graph",
+     "importance",
+     "confidence",
+     "recency",
+     "path",
+     "activation"
+    ],
+    "candidate_policy": "shared",
+    "answer_metrics": {
+     "latency_ms": 66.1,
+     "retrieval_ms": 65.79,
+     "n_candidates": 40,
+     "n_retrieved": 8,
+     "n_memories": 0,
+     "n_selected_evidence": 0,
+     "n_excluded_candidates": 8,
+     "context_tokens": 0,
+     "raw_tokens": 12,
+     "compression_ratio": 0.0,
+     "citation_error": 0,
+     "context_budget": 2048,
+     "completion_budget": 0,
+     "llm_mode": "no_evidence",
+     "candidate_ids": [
+      "mem_6a21e95bb105",
+      "mem_0da88893622f",
+      "mem_45ac65ae5f58",
+      "mem_25315d2a36ee",
+      "mem_b30e262a9013",
+      "mem_07615e3b927e",
+      "mem_5cc1ee828fbf",
+      "mem_6b62972759a1"
+     ]
+    },
+    "selected_evidence_ids": [],
+    "candidate_ids": [
+     "mem_6a21e95bb105",
+     "mem_0da88893622f",
+     "mem_45ac65ae5f58",
+     "mem_25315d2a36ee",
+     "mem_b30e262a9013",
+     "mem_07615e3b927e",
+     "mem_5cc1ee828fbf",
+     "mem_6b62972759a1"
+    ],
+    "retrieval_recall": 0.0,
+    "mrr": 0.0
+   },
+   {
+    "question": "Who did Hay work for after being hired by his other notable influence regarding resource distribution other than Max Weber?",
+    "reference_answer": "the Austrian government",
+    "answer_text": "",
+    "evidence_text": "",
+    "latency_ms": 67.4,
+    "retrieval_latency_ms": 67.4,
+    "n_retrieved": 8,
+    "n_candidates": 32,
+    "context_tokens": 0,
+    "active_components": [
+     "semantic",
+     "structural",
+     "radial",
+     "graph",
+     "importance",
+     "confidence",
+     "recency",
+     "path",
+     "activation"
+    ],
+    "candidate_policy": "shared",
+    "answer_metrics": {
+     "latency_ms": 67.4,
+     "retrieval_ms": 67.11,
+     "n_candidates": 32,
+     "n_retrieved": 8,
+     "n_memories": 0,
+     "n_selected_evidence": 0,
+     "n_excluded_candidates": 8,
+     "context_tokens": 0,
+     "raw_tokens": 11,
+     "compression_ratio": 0.0,
+     "citation_error": 0,
+     "context_budget": 2048,
+     "completion_budget": 0,
+     "llm_mode": "no_evidence",
+     "candidate_ids": [
+      "mem_a2229fc33366",
+      "mem_1e0ff519a3ea",
+      "mem_a7ac56cca14e",
+      "mem_4bc32d2a31d4",
+      "mem_be1e1bcbbf63",
+      "mem_370ce0a510ec",
+      "mem_58afc55bff92",
+      "mem_9d8f2a48f116"
+     ]
+    },
+    "selected_evidence_ids": [],
+    "candidate_ids": [
+     "mem_a2229fc33366",
+     "mem_1e0ff519a3ea",
+     "mem_a7ac56cca14e",
+     "mem_4bc32d2a31d4",
+     "mem_be1e1bcbbf63",
+     "mem_370ce0a510ec",
+     "mem_58afc55bff92",
+     "mem_9d8f2a48f116"
+    ],
+    "retrieval_recall": 0.0,
+    "mrr": 0.0
+   },
+   {
+    "question": "Whose sister played Susie in miracle on 34th street?",
+    "reference_answer": "Lana Wood",
+    "answer_text": "",
+    "evidence_text": "",
+    "latency_ms": 66.2,
+    "retrieval_latency_ms": 66.2,
+    "n_retrieved": 8,
+    "n_candidates": 31,
+    "context_tokens": 0,
+    "active_components": [
+     "semantic",
+     "structural",
+     "radial",
+     "graph",
+     "importance",
+     "confidence",
+     "recency",
+     "path",
+     "activation"
+    ],
+    "candidate_policy": "shared",
+    "answer_metrics": {
+     "latency_ms": 66.2,
+     "retrieval_ms": 65.92,
+     "n_candidates": 31,
+     "n_retrieved": 8,
+     "n_memories": 0,
+     "n_selected_evidence": 0,
+     "n_excluded_candidates": 8,
+     "context_tokens": 0,
+     "raw_tokens": 17,
+     "compression_ratio": 0.0,
+     "citation_error": 0,
+     "context_budget": 2048,
+     "completion_budget": 0,
+     "llm_mode": "no_evidence",
+     "candidate_ids": [
+      "mem_cd582e487f7f",
+      "mem_77e3017f3dab",
+      "mem_e6edfa9269f4",
+      "mem_28d04041e616",
+      "mem_68f3ec4b135b",
+      "mem_bde51c0f77b2",
+      "mem_b44062e2be04",
+      "mem_d74fce1881dd"
+     ]
+    },
+    "selected_evidence_ids": [],
+    "candidate_ids": [
+     "mem_cd582e487f7f",
+     "mem_77e3017f3dab",
+     "mem_e6edfa9269f4",
+     "mem_28d04041e616",
+     "mem_68f3ec4b135b",
+     "mem_bde51c0f77b2",
+     "mem_b44062e2be04",
+     "mem_d74fce1881dd"
+    ],
+    "retrieval_recall": 0.0,
+    "mrr": 0.0
+   },
+   {
+    "question": "Who is the spouse of a cast member from King of the Mountain?",
+    "reference_answer": "Lisa Rinna",
+    "answer_text": "",
+    "evidence_text": "",
+    "latency_ms": 62.3,
+    "retrieval_latency_ms": 62.3,
+    "n_retrieved": 8,
+    "n_candidates": 31,
+    "context_tokens": 0,
+    "active_components": [
+     "semantic",
+     "structural",
+     "radial",
+     "graph",
+     "importance",
+     "confidence",
+     "recency",
+     "path",
+     "activation"
+    ],
+    "candidate_policy": "shared",
+    "answer_metrics": {
+     "latency_ms": 62.3,
+     "retrieval_ms": 62.01,
+     "n_candidates": 31,
+     "n_retrieved": 8,
+     "n_memories": 0,
+     "n_selected_evidence": 0,
+     "n_excluded_candidates": 8,
+     "context_tokens": 0,
+     "raw_tokens": 10,
+     "compression_ratio": 0.0,
+     "citation_error": 0,
+     "context_budget": 2048,
+     "completion_budget": 0,
+     "llm_mode": "no_evidence",
+     "candidate_ids": [
+      "mem_2cd7f6dbf302",
+      "mem_6667ecfb669b",
+      "mem_2e03b608ef7a",
+      "mem_17ca5154a3c4",
+      "mem_3f5387479fb9",
+      "mem_2b6bd9140f1a",
+      "mem_5eda8fbd7946",
+      "mem_781f05eff4d4"
+     ]
+    },
+    "selected_evidence_ids": [],
+    "candidate_ids": [
+     "mem_2cd7f6dbf302",
+     "mem_6667ecfb669b",
+     "mem_2e03b608ef7a",
+     "mem_17ca5154a3c4",
+     "mem_3f5387479fb9",
+     "mem_2b6bd9140f1a",
+     "mem_5eda8fbd7946",
+     "mem_781f05eff4d4"
+    ],
+    "retrieval_recall": 0.0,
+    "mrr": 0.0
+   },
+   {
+    "question": "What district is the headquarter of Julia's House located?",
+    "reference_answer": "East Dorset",
+    "answer_text": "The headquarter of Julia's House is located in Corfe Mullen, Dorset, England. [2]",
+    "evidence_text": "[1] (ring0 \u00b7 spencer) Augustus became something of a \"paternal\" grandfather to Julia the Elder's children, too, including Julia the Younger. A \"formal\" adoption \"in the family of the Caesars\" among the offspring of Agrippa and Julia the Elder is however only recorded regarding Vipsania Julia's brothers Gaius Vipsanius Agrippa\u2014hence Gaius Julius Caesar\u2014and Lucius Vipsanius Agrippa\u2014hence Lucius Julius Caesar.\n[2] (ring3 \u00b7 starbucks) Julia's House is a children's hospice located in Corfe Mullen, Dorset, England. It is a hospice in Dorset for children with life-limiting conditions.",
+    "latency_ms": 2373.4,
+    "retrieval_latency_ms": 2373.4,
+    "n_retrieved": 8,
+    "n_candidates": 46,
+    "context_tokens": 86,
+    "active_components": [
+     "semantic",
+     "structural",
+     "radial",
+     "graph",
+     "importance",
+     "confidence",
+     "recency",
+     "path",
+     "activation"
+    ],
+    "candidate_policy": "shared",
+    "answer_metrics": {
+     "latency_ms": 2373.4,
+     "retrieval_ms": 63.0,
+     "n_candidates": 46,
+     "n_retrieved": 8,
+     "n_memories": 2,
+     "n_selected_evidence": 2,
+     "n_excluded_candidates": 6,
+     "context_tokens": 86,
+     "raw_tokens": 106,
+     "compression_ratio": 0.811,
+     "citation_error": 0,
+     "context_budget": 2048,
+     "completion_budget": 512,
+     "llm_mode": "llm",
+     "candidate_ids": [
+      "mem_163b021fdbea",
+      "mem_39773fa5f9d1",
+      "mem_c361b4e2bdc5",
+      "mem_acfc969148f8",
+      "mem_0130d59c5da0",
+      "mem_aa890ac96951",
+      "mem_b99da56ef37d",
+      "mem_f801c05c56b5"
+     ]
+    },
+    "selected_evidence_ids": [
+     "mem_c361b4e2bdc5",
+     "mem_acfc969148f8"
+    ],
+    "candidate_ids": [
+     "mem_163b021fdbea",
+     "mem_39773fa5f9d1",
+     "mem_c361b4e2bdc5",
+     "mem_acfc969148f8",
+     "mem_0130d59c5da0",
+     "mem_aa890ac96951",
+     "mem_b99da56ef37d",
+     "mem_f801c05c56b5"
+    ],
+    "retrieval_recall": 0.25,
+    "mrr": 0.5,
+    "answer_token_f1": 0.125
+   },
+   {
+    "question": "What place does the administrative territorial entity that Juba is located in share a border with?",
+    "reference_answer": "Eastern Equatoria",
+    "answer_text": "",
+    "evidence_text": "",
+    "latency_ms": 62.1,
+    "retrieval_latency_ms": 62.1,
+    "n_retrieved": 8,
+    "n_candidates": 32,
+    "context_tokens": 0,
+    "active_components": [
+     "semantic",
+     "structural",
+     "radial",
+     "graph",
+     "importance",
+     "confidence",
+     "recency",
+     "path",
+     "activation"
+    ],
+    "candidate_policy": "shared",
+    "answer_metrics": {
+     "latency_ms": 62.1,
+     "retrieval_ms": 61.93,
+     "n_candidates": 32,
+     "n_retrieved": 8,
+     "n_memories": 0,
+     "n_selected_evidence": 0,
+     "n_excluded_candidates": 8,
+     "context_tokens": 0,
+     "raw_tokens": 8,
+     "compression_ratio": 0.0,
+     "citation_error": 0,
+     "context_budget": 2048,
+     "completion_budget": 0,
+     "llm_mode": "no_evidence",
+     "candidate_ids": [
+      "mem_4f0dd960e891",
+      "mem_cb21a32828da",
+      "mem_ac5bfc90145e",
+      "mem_90badbea5a16",
+      "mem_8318530646b7",
+      "mem_212e4a2df645",
+      "mem_51ce27d9bc00",
+      "mem_c54412b84bb1"
+     ]
+    },
+    "selected_evidence_ids": [],
+    "candidate_ids": [
+     "mem_4f0dd960e891",
+     "mem_cb21a32828da",
+     "mem_ac5bfc90145e",
+     "mem_90badbea5a16",
+     "mem_8318530646b7",
+     "mem_212e4a2df645",
+     "mem_51ce27d9bc00",
+     "mem_c54412b84bb1"
+    ],
+    "retrieval_recall": 0.0,
+    "mrr": 0.0
+   },
+   {
+    "question": "Who is the sibling of the actress who played Susan Walker in Miracle on 34th street?",
+    "reference_answer": "Lana Wood",
+    "answer_text": "",
+    "evidence_text": "",
+    "latency_ms": 39.6,
+    "retrieval_latency_ms": 39.6,
+    "n_retrieved": 8,
+    "n_candidates": 31,
+    "context_tokens": 0,
+    "active_components": [
+     "semantic",
+     "structural",
+     "radial",
+     "graph",
+     "importance",
+     "confidence",
+     "recency",
+     "path",
+     "activation"
+    ],
+    "candidate_policy": "shared",
+    "answer_metrics": {
+     "latency_ms": 39.6,
+     "retrieval_ms": 39.44,
+     "n_candidates": 31,
+     "n_retrieved": 8,
+     "n_memories": 0,
+     "n_selected_evidence": 0,
+     "n_excluded_candidates": 8,
+     "context_tokens": 0,
+     "raw_tokens": 12,
+     "compression_ratio": 0.0,
+     "citation_error": 0,
+     "context_budget": 2048,
+     "completion_budget": 0,
+     "llm_mode": "no_evidence",
+     "candidate_ids": [
+      "mem_793d1cc66161",
+      "mem_8e7afbcffda1",
+      "mem_6b740ba1000e",
+      "mem_c41277f0805b",
+      "mem_71d5fd07934e",
+      "mem_ce5753f8cf77",
+      "mem_b4d165a2777e",
+      "mem_e8b946e532d3"
+     ]
+    },
+    "selected_evidence_ids": [],
+    "candidate_ids": [
+     "mem_793d1cc66161",
+     "mem_8e7afbcffda1",
+     "mem_6b740ba1000e",
+     "mem_c41277f0805b",
+     "mem_71d5fd07934e",
+     "mem_ce5753f8cf77",
+     "mem_b4d165a2777e",
+     "mem_e8b946e532d3"
+    ],
+    "retrieval_recall": 0.0,
+    "mrr": 0.0
+   },
+   {
+    "question": "What season was the performer of Addicted a part of?",
+    "reference_answer": "season five",
+    "answer_text": "",
+    "evidence_text": "",
+    "latency_ms": 62.2,
+    "retrieval_latency_ms": 62.2,
+    "n_retrieved": 8,
+    "n_candidates": 31,
+    "context_tokens": 0,
+    "active_components": [
+     "semantic",
+     "structural",
+     "radial",
+     "graph",
+     "importance",
+     "confidence",
+     "recency",
+     "path",
+     "activation"
+    ],
+    "candidate_policy": "shared",
+    "answer_metrics": {
+     "latency_ms": 62.2,
+     "retrieval_ms": 61.98,
+     "n_candidates": 31,
+     "n_retrieved": 8,
+     "n_memories": 0,
+     "n_selected_evidence": 0,
+     "n_excluded_candidates": 8,
+     "context_tokens": 0,
+     "raw_tokens": 9,
+     "compression_ratio": 0.0,
+     "citation_error": 0,
+     "context_budget": 2048,
+     "completion_budget": 0,
+     "llm_mode": "no_evidence",
+     "candidate_ids": [
+      "mem_54c0937aa7a5",
+      "mem_c811c9902780",
+      "mem_dd28525358a0",
+      "mem_7f36cd37375a",
+      "mem_ba6368a66ac9",
+      "mem_822239bb6c1b",
+      "mem_cc4f611e8ef0",
+      "mem_f7168c952431"
+     ]
+    },
+    "selected_evidence_ids": [],
+    "candidate_ids": [
+     "mem_54c0937aa7a5",
+     "mem_c811c9902780",
+     "mem_dd28525358a0",
+     "mem_7f36cd37375a",
+     "mem_ba6368a66ac9",
+     "mem_822239bb6c1b",
+     "mem_cc4f611e8ef0",
+     "mem_f7168c952431"
+    ],
+    "retrieval_recall": 0.0,
+    "mrr": 0.0
+   },
+   {
+    "question": "Who is the father of the person who came up with the concept of the \"new\" police?",
+    "reference_answer": "Sir Robert Peel, 1st Baronet",
+    "answer_text": "The father of the person who came up with the concept of the \"new\" police is Jackie Chan. [1]",
+    "evidence_text": "[1] (ring3 \u00b7 only) New Police Story is a 2004 Hong Kong action film produced and directed by Benny Chan, and also produced by and starring Jackie Chan. The film was released in the Hong Kong on 24 September 2004.",
+    "latency_ms": 1751.2,
+    "retrieval_latency_ms": 1751.2,
+    "n_retrieved": 8,
+    "n_candidates": 36,
+    "context_tokens": 40,
+    "active_components": [
+     "semantic",
+     "structural",
+     "radial",
+     "graph",
+     "importance",
+     "confidence",
+     "recency",
+     "path",
+     "activation"
+    ],
+    "candidate_policy": "shared",
+    "answer_metrics": {
+     "latency_ms": 1751.2,
+     "retrieval_ms": 57.5,
+     "n_candidates": 36,
+     "n_retrieved": 8,
+     "n_memories": 1,
+     "n_selected_evidence": 1,
+     "n_excluded_candidates": 7,
+     "context_tokens": 40,
+     "raw_tokens": 62,
+     "compression_ratio": 0.645,
+     "citation_error": 0,
+     "context_budget": 2048,
+     "completion_budget": 512,
+     "llm_mode": "llm",
+     "candidate_ids": [
+      "mem_4aff2de987d5",
+      "mem_ee230e70989a",
+      "mem_348b7e9779fc",
+      "mem_64ecbdf7165a",
+      "mem_dae8031c802c",
+      "mem_8c69559a4963",
+      "mem_be3d025361a7",
+      "mem_41a4cdc71d3c"
+     ]
+    },
+    "selected_evidence_ids": [
+     "mem_ee230e70989a"
+    ],
+    "candidate_ids": [
+     "mem_4aff2de987d5",
+     "mem_ee230e70989a",
+     "mem_348b7e9779fc",
+     "mem_64ecbdf7165a",
+     "mem_dae8031c802c",
+     "mem_8c69559a4963",
+     "mem_be3d025361a7",
+     "mem_41a4cdc71d3c"
+    ],
+    "retrieval_recall": 0.0,
+    "mrr": 0.0,
+    "answer_token_f1": 0.0
+   },
+   {
+    "question": "In which year did Taifa of Francisco Giner de los Rios' birthplace cease to exist?",
+    "reference_answer": "1065",
+    "answer_text": "",
+    "evidence_text": "[1] (ring3 \u00b7 spencer) Francisco Giner de los R\u00edos (10 October 1839 in Ronda, Spain \u2013 18 February 1915 in Madrid) was a philosopher, educator and one of the most influential Spanish intellectuals at the end of the 19th and the beginning of the 20th century.",
+    "latency_ms": 1129.5,
+    "retrieval_latency_ms": 1129.5,
+    "n_retrieved": 8,
+    "n_candidates": 66,
+    "context_tokens": 46,
+    "active_components": [
+     "semantic",
+     "structural",
+     "radial",
+     "graph",
+     "importance",
+     "confidence",
+     "recency",
+     "path",
+     "activation"
+    ],
+    "candidate_policy": "shared",
+    "answer_metrics": {
+     "latency_ms": 1129.5,
+     "retrieval_ms": 64.54,
+     "n_candidates": 66,
+     "n_retrieved": 8,
+     "n_memories": 0,
+     "n_selected_evidence": 0,
+     "n_excluded_candidates": 8,
+     "context_tokens": 46,
+     "raw_tokens": 51,
+     "compression_ratio": 0.902,
+     "citation_error": 0,
+     "context_budget": 2048,
+     "completion_budget": 512,
+     "llm_mode": "no_evidence",
+     "candidate_ids": [
+      "mem_43fa258014fb",
+      "mem_66f11d398003",
+      "mem_5145b266cf67",
+      "mem_eae6f62c4deb",
+      "mem_b987cc0b9148",
+      "mem_2a3c347ff968",
+      "mem_7e66f6a1175c",
+      "mem_a4bb29be7ed6"
+     ]
+    },
+    "selected_evidence_ids": [],
+    "candidate_ids": [
+     "mem_43fa258014fb",
+     "mem_66f11d398003",
+     "mem_5145b266cf67",
+     "mem_eae6f62c4deb",
+     "mem_b987cc0b9148",
+     "mem_2a3c347ff968",
+     "mem_7e66f6a1175c",
+     "mem_a4bb29be7ed6"
+    ],
+    "retrieval_recall": 0.0,
+    "mrr": 0.0
+   },
+   {
+    "question": "Who is the child of the person who followed Tihomir of Serbia?",
+    "reference_answer": "Saint Sava",
+    "answer_text": "",
+    "evidence_text": "",
+    "latency_ms": 48.7,
+    "retrieval_latency_ms": 48.7,
+    "n_retrieved": 8,
+    "n_candidates": 33,
+    "context_tokens": 0,
+    "active_components": [
+     "semantic",
+     "structural",
+     "radial",
+     "graph",
+     "importance",
+     "confidence",
+     "recency",
+     "path",
+     "activation"
+    ],
+    "candidate_policy": "shared",
+    "answer_metrics": {
+     "latency_ms": 48.7,
+     "retrieval_ms": 48.59,
+     "n_candidates": 33,
+     "n_retrieved": 8,
+     "n_memories": 0,
+     "n_selected_evidence": 0,
+     "n_excluded_candidates": 8,
+     "context_tokens": 0,
+     "raw_tokens": 9,
+     "compression_ratio": 0.0,
+     "citation_error": 0,
+     "context_budget": 2048,
+     "completion_budget": 0,
+     "llm_mode": "no_evidence",
+     "candidate_ids": [
+      "mem_dd5656ca165c",
+      "mem_fd738faae825",
+      "mem_eceb405fa0f9",
+      "mem_0291533ab252",
+      "mem_56f34455f474",
+      "mem_9513a046248d",
+      "mem_d74043b40917",
+      "mem_8ded06d43705"
+     ]
+    },
+    "selected_evidence_ids": [],
+    "candidate_ids": [
+     "mem_dd5656ca165c",
+     "mem_fd738faae825",
+     "mem_eceb405fa0f9",
+     "mem_0291533ab252",
+     "mem_56f34455f474",
+     "mem_9513a046248d",
+     "mem_d74043b40917",
+     "mem_8ded06d43705"
+    ],
+    "retrieval_recall": 0.0,
+    "mrr": 0.0
+   },
+   {
+    "question": "Where are the headquarters for the publisher of In the Shadow of Greatness?",
+    "reference_answer": "Annapolis",
+    "answer_text": "",
+    "evidence_text": "",
+    "latency_ms": 81.7,
+    "retrieval_latency_ms": 81.7,
+    "n_retrieved": 8,
+    "n_candidates": 46,
+    "context_tokens": 0,
+    "active_components": [
+     "semantic",
+     "structural",
+     "radial",
+     "graph",
+     "importance",
+     "confidence",
+     "recency",
+     "path",
+     "activation"
+    ],
+    "candidate_policy": "shared",
+    "answer_metrics": {
+     "latency_ms": 81.7,
+     "retrieval_ms": 81.41,
+     "n_candidates": 46,
+     "n_retrieved": 8,
+     "n_memories": 0,
+     "n_selected_evidence": 0,
+     "n_excluded_candidates": 8,
+     "context_tokens": 0,
+     "raw_tokens": 10,
+     "compression_ratio": 0.0,
+     "citation_error": 0,
+     "context_budget": 2048,
+     "completion_budget": 0,
+     "llm_mode": "no_evidence",
+     "candidate_ids": [
+      "mem_3714d790f048",
+      "mem_e84e5da10c3a",
+      "mem_684b82f54e49",
+      "mem_a00ac3f6422d",
+      "mem_5f684867fd8e",
+      "mem_5c410dcc9a22",
+      "mem_1dcb49a454dc",
+      "mem_2e4b61bc88c0"
+     ]
+    },
+    "selected_evidence_ids": [],
+    "candidate_ids": [
+     "mem_3714d790f048",
+     "mem_e84e5da10c3a",
+     "mem_684b82f54e49",
+     "mem_a00ac3f6422d",
+     "mem_5f684867fd8e",
+     "mem_5c410dcc9a22",
+     "mem_1dcb49a454dc",
+     "mem_2e4b61bc88c0"
+    ],
+    "retrieval_recall": 0.0,
+    "mrr": 0.0
+   },
+   {
+    "question": "What body of water includes the terrain feature where Coffee Swamp is located?",
+    "reference_answer": "Lake Superior",
+    "answer_text": "The body of water that includes the terrain feature where Coffee Swamp is located is a freshwater swamp. [1]",
+    "evidence_text": "[1] (ring3 \u00b7 starbucks) Coffee Swamp is a two acre freshwater swamp located on the northern edge of Washington Island, in Door County Wisconsin and is a designated state natural area since 1994. The swamp represents a boreal forest, and hosts a number of plant species including various sedges, ferns and other rare plants.",
+    "latency_ms": 1656.4,
+    "retrieval_latency_ms": 1656.4,
+    "n_retrieved": 8,
+    "n_candidates": 40,
+    "context_tokens": 54,
+    "active_components": [
+     "semantic",
+     "structural",
+     "radial",
+     "graph",
+     "importance",
+     "confidence",
+     "recency",
+     "path",
+     "activation"
+    ],
+    "candidate_policy": "shared",
+    "answer_metrics": {
+     "latency_ms": 1656.4,
+     "retrieval_ms": 70.65,
+     "n_candidates": 40,
+     "n_retrieved": 8,
+     "n_memories": 1,
+     "n_selected_evidence": 1,
+     "n_excluded_candidates": 7,
+     "context_tokens": 54,
+     "raw_tokens": 65,
+     "compression_ratio": 0.831,
+     "citation_error": 0,
+     "context_budget": 2048,
+     "completion_budget": 512,
+     "llm_mode": "llm",
+     "candidate_ids": [
+      "mem_b254a1016478",
+      "mem_31b4b0996641",
+      "mem_eea947a59559",
+      "mem_28e03051344d",
+      "mem_0195571f1d81",
+      "mem_798a6fbcb755",
+      "mem_06a5995f6389",
+      "mem_0ebf84b29db5"
+     ]
+    },
+    "selected_evidence_ids": [
+     "mem_eea947a59559"
+    ],
+    "candidate_ids": [
+     "mem_b254a1016478",
+     "mem_31b4b0996641",
+     "mem_eea947a59559",
+     "mem_28e03051344d",
+     "mem_0195571f1d81",
+     "mem_798a6fbcb755",
+     "mem_06a5995f6389",
+     "mem_0ebf84b29db5"
+    ],
+    "retrieval_recall": 0.25,
+    "mrr": 1.0,
+    "answer_token_f1": 0.0
+   },
+   {
+    "question": "What happened to the Curonians who lived in the area where Erich Zakowski was born?",
+    "reference_answer": "expelled by the Soviet Union",
+    "answer_text": "",
+    "evidence_text": "",
+    "latency_ms": 87.7,
+    "retrieval_latency_ms": 87.7,
+    "n_retrieved": 8,
+    "n_candidates": 56,
+    "context_tokens": 0,
+    "active_components": [
+     "semantic",
+     "structural",
+     "radial",
+     "graph",
+     "importance",
+     "confidence",
+     "recency",
+     "path",
+     "activation"
+    ],
+    "candidate_policy": "shared",
+    "answer_metrics": {
+     "latency_ms": 87.7,
+     "retrieval_ms": 87.4,
+     "n_candidates": 56,
+     "n_retrieved": 8,
+     "n_memories": 0,
+     "n_selected_evidence": 0,
+     "n_excluded_candidates": 8,
+     "context_tokens": 0,
+     "raw_tokens": 9,
+     "compression_ratio": 0.0,
+     "citation_error": 0,
+     "context_budget": 2048,
+     "completion_budget": 0,
+     "llm_mode": "no_evidence",
+     "candidate_ids": [
+      "mem_7c43b07cd0c6",
+      "mem_05fc6d6c547f",
+      "mem_62a54a45ae57",
+      "mem_d5f4a4f9dc7c",
+      "mem_0cebcf8029ce",
+      "mem_49f23c2c56c6",
+      "mem_604b0ca1da00",
+      "mem_8ba5c84f3d5c"
+     ]
+    },
+    "selected_evidence_ids": [],
+    "candidate_ids": [
+     "mem_7c43b07cd0c6",
+     "mem_05fc6d6c547f",
+     "mem_62a54a45ae57",
+     "mem_d5f4a4f9dc7c",
+     "mem_0cebcf8029ce",
+     "mem_49f23c2c56c6",
+     "mem_604b0ca1da00",
+     "mem_8ba5c84f3d5c"
+    ],
+    "retrieval_recall": 0.0,
+    "mrr": 0.0
+   },
+   {
+    "question": "What league does the team that occupies the Rabat Ajax Football Ground belong to?",
+    "reference_answer": "Maltese Premier League",
+    "answer_text": "The team that occupies the Rabat Ajax Football Ground belongs to the Rabat Ajax F.C. [1]",
+    "evidence_text": "[1] (ring3 \u00b7 starbucks) The Rabat Ajax Football Ground is the training ground of Maltese football team Rabat Ajax F.C. and is located in the town of Mtarfa.",
+    "latency_ms": 1390.1,
+    "retrieval_latency_ms": 1390.1,
+    "n_retrieved": 8,
+    "n_candidates": 40,
+    "context_tokens": 28,
+    "active_components": [
+     "semantic",
+     "structural",
+     "radial",
+     "graph",
+     "importance",
+     "confidence",
+     "recency",
+     "path",
+     "activation"
+    ],
+    "candidate_policy": "shared",
+    "answer_metrics": {
+     "latency_ms": 1390.1,
+     "retrieval_ms": 64.53,
+     "n_candidates": 40,
+     "n_retrieved": 8,
+     "n_memories": 1,
+     "n_selected_evidence": 1,
+     "n_excluded_candidates": 7,
+     "context_tokens": 28,
+     "raw_tokens": 67,
+     "compression_ratio": 0.418,
+     "citation_error": 0,
+     "context_budget": 2048,
+     "completion_budget": 512,
+     "llm_mode": "llm",
+     "candidate_ids": [
+      "mem_8ade49dfd25c",
+      "mem_354a8b578ad2",
+      "mem_a4b4b817f178",
+      "mem_3bb26026c692",
+      "mem_4a0c64a6a6f9",
+      "mem_4e429ccb0a4c",
+      "mem_8f6aa918a309",
+      "mem_5f1b8a0a0ac8"
+     ]
+    },
+    "selected_evidence_ids": [
+     "mem_354a8b578ad2"
+    ],
+    "candidate_ids": [
+     "mem_8ade49dfd25c",
+     "mem_354a8b578ad2",
+     "mem_a4b4b817f178",
+     "mem_3bb26026c692",
+     "mem_4a0c64a6a6f9",
+     "mem_4e429ccb0a4c",
+     "mem_8f6aa918a309",
+     "mem_5f1b8a0a0ac8"
+    ],
+    "retrieval_recall": 0.25,
+    "mrr": 1.0,
+    "answer_token_f1": 0.0
+   },
+   {
+    "question": "Who is the wife of the actor of Grace's boyfriend in Frankie and Grace?",
+    "reference_answer": "Katharine Ross",
+    "answer_text": "The wife of the actor of Grace's boyfriend in Frankie and Grace is Martin Sheen. [1]",
+    "evidence_text": "[1] (ring3 \u00b7 only) Casting announcements began in June 2014, with Martin Sheen cast in the role of Robert, Grace's husband. The following month, Sam Waterston was cast in the role of Sol, Frankie's husband.",
+    "latency_ms": 2642.3,
+    "retrieval_latency_ms": 2642.3,
+    "n_retrieved": 8,
+    "n_candidates": 54,
+    "context_tokens": 35,
+    "active_components": [
+     "semantic",
+     "structural",
+     "radial",
+     "graph",
+     "importance",
+     "confidence",
+     "recency",
+     "path",
+     "activation"
+    ],
+    "candidate_policy": "shared",
+    "answer_metrics": {
+     "latency_ms": 2642.3,
+     "retrieval_ms": 62.33,
+     "n_candidates": 54,
+     "n_retrieved": 8,
+     "n_memories": 1,
+     "n_selected_evidence": 1,
+     "n_excluded_candidates": 7,
+     "context_tokens": 35,
+     "raw_tokens": 68,
+     "compression_ratio": 0.515,
+     "citation_error": 0,
+     "context_budget": 2048,
+     "completion_budget": 512,
+     "llm_mode": "llm",
+     "candidate_ids": [
+      "mem_50d74c76b33e",
+      "mem_c8e0f812c3e3",
+      "mem_bb2883ced886",
+      "mem_c3343ac24881",
+      "mem_0e16a71a03f6",
+      "mem_f214eef8ef3a",
+      "mem_778c0ca77796",
+      "mem_9fd9726a8815"
+     ]
+    },
+    "selected_evidence_ids": [
+     "mem_50d74c76b33e"
+    ],
+    "candidate_ids": [
+     "mem_50d74c76b33e",
+     "mem_c8e0f812c3e3",
+     "mem_bb2883ced886",
+     "mem_c3343ac24881",
+     "mem_0e16a71a03f6",
+     "mem_f214eef8ef3a",
+     "mem_778c0ca77796",
+     "mem_9fd9726a8815"
+    ],
+    "retrieval_recall": 0.16666666666666666,
+    "mrr": 1.0,
+    "answer_token_f1": 0.0
+   },
+   {
+    "question": "Who did the original voice of the character that Mila Kunis plays in Family Guy?",
+    "reference_answer": "Lacey Chabert",
+    "answer_text": "",
+    "evidence_text": "",
+    "latency_ms": 52.6,
+    "retrieval_latency_ms": 52.6,
+    "n_retrieved": 8,
+    "n_candidates": 31,
+    "context_tokens": 0,
+    "active_components": [
+     "semantic",
+     "structural",
+     "radial",
+     "graph",
+     "importance",
+     "confidence",
+     "recency",
+     "path",
+     "activation"
+    ],
+    "candidate_policy": "shared",
+    "answer_metrics": {
+     "latency_ms": 52.6,
+     "retrieval_ms": 52.49,
+     "n_candidates": 31,
+     "n_retrieved": 8,
+     "n_memories": 0,
+     "n_selected_evidence": 0,
+     "n_excluded_candidates": 8,
+     "context_tokens": 0,
+     "raw_tokens": 22,
+     "compression_ratio": 0.0,
+     "citation_error": 0,
+     "context_budget": 2048,
+     "completion_budget": 0,
+     "llm_mode": "no_evidence",
+     "candidate_ids": [
+      "mem_434f9073e936",
+      "mem_7b945718d6d2",
+      "mem_0af85e74b8cf",
+      "mem_4116eaf63865",
+      "mem_a3c004209cbf",
+      "mem_986920849b47",
+      "mem_178926326cfb",
+      "mem_8a13df31a2cf"
+     ]
+    },
+    "selected_evidence_ids": [],
+    "candidate_ids": [
+     "mem_434f9073e936",
+     "mem_7b945718d6d2",
+     "mem_0af85e74b8cf",
+     "mem_4116eaf63865",
+     "mem_a3c004209cbf",
+     "mem_986920849b47",
+     "mem_178926326cfb",
+     "mem_8a13df31a2cf"
+    ],
+    "retrieval_recall": 0.0,
+    "mrr": 0.0
+   },
+   {
+    "question": "What team was Anna Benson's husband on?",
+    "reference_answer": "Pittsburgh Pirates",
+    "answer_text": "",
+    "evidence_text": "[1] (ring3 \u00b7 only) Anna Benson (born February 12, 1976) is an American model, former stripper, and ex-wife of former Major League Baseball pitcher Kris Benson.",
+    "latency_ms": 1656.4,
+    "retrieval_latency_ms": 1656.4,
+    "n_retrieved": 8,
+    "n_candidates": 43,
+    "context_tokens": 26,
+    "active_components": [
+     "semantic",
+     "structural",
+     "radial",
+     "graph",
+     "importance",
+     "confidence",
+     "recency",
+     "path",
+     "activation"
+    ],
+    "candidate_policy": "shared",
+    "answer_metrics": {
+     "latency_ms": 1656.4,
+     "retrieval_ms": 88.13,
+     "n_candidates": 43,
+     "n_retrieved": 8,
+     "n_memories": 0,
+     "n_selected_evidence": 0,
+     "n_excluded_candidates": 8,
+     "context_tokens": 26,
+     "raw_tokens": 56,
+     "compression_ratio": 0.464,
+     "citation_error": 0,
+     "context_budget": 2048,
+     "completion_budget": 512,
+     "llm_mode": "no_evidence",
+     "candidate_ids": [
+      "mem_84786243c844",
+      "mem_67258846b826",
+      "mem_66eb731a3cf4",
+      "mem_125eb718151c",
+      "mem_27c123cdbe8e",
+      "mem_d18f75201404",
+      "mem_d13e8d4753a5",
+      "mem_177da6a4bf7b"
+     ]
+    },
+    "selected_evidence_ids": [],
+    "candidate_ids": [
+     "mem_84786243c844",
+     "mem_67258846b826",
+     "mem_66eb731a3cf4",
+     "mem_125eb718151c",
+     "mem_27c123cdbe8e",
+     "mem_d18f75201404",
+     "mem_d13e8d4753a5",
+     "mem_177da6a4bf7b"
+    ],
+    "retrieval_recall": 0.0,
+    "mrr": 0.0
+   },
+   {
+    "question": "In which county did Snappy Tomato Pizza form?",
+    "reference_answer": "Kenton County",
+    "answer_text": "Snappy Tomato Pizza formed in Fort Mitchell, Kentucky. [1]",
+    "evidence_text": "[1] (ring3 \u00b7 starbucks) Snappy Tomato Pizza is a pizza chain that started in Fort Mitchell, Kentucky, and has over 60 locations nationwide. Its headquarters are in Burlington, Kentucky.",
+    "latency_ms": 2161.5,
+    "retrieval_latency_ms": 2161.5,
+    "n_retrieved": 8,
+    "n_candidates": 36,
+    "context_tokens": 29,
+    "active_components": [
+     "semantic",
+     "structural",
+     "radial",
+     "graph",
+     "importance",
+     "confidence",
+     "recency",
+     "path",
+     "activation"
+    ],
+    "candidate_policy": "shared",
+    "answer_metrics": {
+     "latency_ms": 2161.5,
+     "retrieval_ms": 57.05,
+     "n_candidates": 36,
+     "n_retrieved": 8,
+     "n_memories": 1,
+     "n_selected_evidence": 1,
+     "n_excluded_candidates": 7,
+     "context_tokens": 29,
+     "raw_tokens": 64,
+     "compression_ratio": 0.453,
+     "citation_error": 0,
+     "context_budget": 2048,
+     "completion_budget": 512,
+     "llm_mode": "llm",
+     "candidate_ids": [
+      "mem_240eb3b1d932",
+      "mem_f1c89fa1e1bd",
+      "mem_04f2711c9da3",
+      "mem_8cd0841e0114",
+      "mem_17571cc7d100",
+      "mem_2821b7f5edbf",
+      "mem_14d952ab7409",
+      "mem_dba65960f5d7"
+     ]
+    },
+    "selected_evidence_ids": [
+     "mem_f1c89fa1e1bd"
+    ],
+    "candidate_ids": [
+     "mem_240eb3b1d932",
+     "mem_f1c89fa1e1bd",
+     "mem_04f2711c9da3",
+     "mem_8cd0841e0114",
+     "mem_17571cc7d100",
+     "mem_2821b7f5edbf",
+     "mem_14d952ab7409",
+     "mem_dba65960f5d7"
+    ],
+    "retrieval_recall": 0.25,
+    "mrr": 1.0,
+    "answer_token_f1": 0.0
+   },
+   {
+    "question": "Who married the publisher of abolitionist newspaper The North Star?",
+    "reference_answer": "Helen Pitts Douglass",
+    "answer_text": "",
+    "evidence_text": "",
+    "latency_ms": 61.7,
+    "retrieval_latency_ms": 61.7,
+    "n_retrieved": 8,
+    "n_candidates": 46,
+    "context_tokens": 0,
+    "active_components": [
+     "semantic",
+     "structural",
+     "radial",
+     "graph",
+     "importance",
+     "confidence",
+     "recency",
+     "path",
+     "activation"
+    ],
+    "candidate_policy": "shared",
+    "answer_metrics": {
+     "latency_ms": 61.7,
+     "retrieval_ms": 61.63,
+     "n_candidates": 46,
+     "n_retrieved": 8,
+     "n_memories": 0,
+     "n_selected_evidence": 0,
+     "n_excluded_candidates": 8,
+     "context_tokens": 0,
+     "raw_tokens": 8,
+     "compression_ratio": 0.0,
+     "citation_error": 0,
+     "context_budget": 2048,
+     "completion_budget": 0,
+     "llm_mode": "no_evidence",
+     "candidate_ids": [
+      "mem_4efe732d8ecb",
+      "mem_bee716d1ee67",
+      "mem_a8f85df3cae4",
+      "mem_f1ac0fbfc5ba",
+      "mem_5abf57f095c3",
+      "mem_02ec0f7c076b",
+      "mem_06e7eb57cb4b",
+      "mem_f3b651f22d8c"
+     ]
+    },
+    "selected_evidence_ids": [],
+    "candidate_ids": [
+     "mem_4efe732d8ecb",
+     "mem_bee716d1ee67",
+     "mem_a8f85df3cae4",
+     "mem_f1ac0fbfc5ba",
+     "mem_5abf57f095c3",
+     "mem_02ec0f7c076b",
+     "mem_06e7eb57cb4b",
+     "mem_f3b651f22d8c"
+    ],
+    "retrieval_recall": 0.0,
+    "mrr": 0.0
+   },
+   {
+    "question": "Who were the leaders of the opposition of the political group that has a large number of Protestants?",
+    "reference_answer": "anti-slavery activists, modernizers, ex Whigs and ex Free Soilers",
+    "answer_text": "",
+    "evidence_text": "",
+    "latency_ms": 71.5,
+    "retrieval_latency_ms": 71.5,
+    "n_retrieved": 8,
+    "n_candidates": 38,
+    "context_tokens": 0,
+    "active_components": [
+     "semantic",
+     "structural",
+     "radial",
+     "graph",
+     "importance",
+     "confidence",
+     "recency",
+     "path",
+     "activation"
+    ],
+    "candidate_policy": "shared",
+    "answer_metrics": {
+     "latency_ms": 71.5,
+     "retrieval_ms": 71.19,
+     "n_candidates": 38,
+     "n_retrieved": 8,
+     "n_memories": 0,
+     "n_selected_evidence": 0,
+     "n_excluded_candidates": 8,
+     "context_tokens": 0,
+     "raw_tokens": 9,
+     "compression_ratio": 0.0,
+     "citation_error": 0,
+     "context_budget": 2048,
+     "completion_budget": 0,
+     "llm_mode": "no_evidence",
+     "candidate_ids": [
+      "mem_8caf6f3f3670",
+      "mem_e33843216e7d",
+      "mem_3184d0b11703",
+      "mem_7933dfb83c81",
+      "mem_1d3e538946ed",
+      "mem_4d6560b70e90",
+      "mem_860854936da2",
+      "mem_192741cfc499"
+     ]
+    },
+    "selected_evidence_ids": [],
+    "candidate_ids": [
+     "mem_8caf6f3f3670",
+     "mem_e33843216e7d",
+     "mem_3184d0b11703",
+     "mem_7933dfb83c81",
+     "mem_1d3e538946ed",
+     "mem_4d6560b70e90",
+     "mem_860854936da2",
+     "mem_192741cfc499"
+    ],
+    "retrieval_recall": 0.0,
+    "mrr": 0.0
+   },
+   {
+    "question": "What was the average per capita GVA in 2013 of the country which created Burma's academic system?",
+    "reference_answer": "\u00a323,755",
+    "answer_text": "",
+    "evidence_text": "",
+    "latency_ms": 66.9,
+    "retrieval_latency_ms": 66.9,
+    "n_retrieved": 8,
+    "n_candidates": 44,
+    "context_tokens": 0,
+    "active_components": [
+     "semantic",
+     "structural",
+     "radial",
+     "graph",
+     "importance",
+     "confidence",
+     "recency",
+     "path",
+     "activation"
+    ],
+    "candidate_policy": "shared",
+    "answer_metrics": {
+     "latency_ms": 66.9,
+     "retrieval_ms": 66.65,
+     "n_candidates": 44,
+     "n_retrieved": 8,
+     "n_memories": 0,
+     "n_selected_evidence": 0,
+     "n_excluded_candidates": 8,
+     "context_tokens": 0,
+     "raw_tokens": 11,
+     "compression_ratio": 0.0,
+     "citation_error": 0,
+     "context_budget": 2048,
+     "completion_budget": 0,
+     "llm_mode": "no_evidence",
+     "candidate_ids": [
+      "mem_226a8cce9dfd",
+      "mem_33912182c7e5",
+      "mem_3694347ad61b",
+      "mem_9f34dc86c9e9",
+      "mem_9bec592e78ac",
+      "mem_b57df63a7365",
+      "mem_cb9c3246f22b",
+      "mem_02c215182ef7"
+     ]
+    },
+    "selected_evidence_ids": [],
+    "candidate_ids": [
+     "mem_226a8cce9dfd",
+     "mem_33912182c7e5",
+     "mem_3694347ad61b",
+     "mem_9f34dc86c9e9",
+     "mem_9bec592e78ac",
+     "mem_b57df63a7365",
+     "mem_cb9c3246f22b",
+     "mem_02c215182ef7"
+    ],
+    "retrieval_recall": 0.0,
+    "mrr": 0.0
+   }
+  ],
+  "flat_vector": [
+   {
+    "question": "What is the record label for the band which performed Pythons?",
+    "reference_answer": "Kanine Records",
+    "answer_text": "The record label for the band which performed Pythons is Sire Records. [1]",
+    "evidence_text": "[1] (ring4 \u00b7 number) Pythons is the second studio album by indie rock band Surfer Blood. It was released in June 2013 under Sire Records and produced by Gil Norton.\n[2] (ring4 \u00b7 musique) \"Pixies\" guitarist Joey Santiago lent the band equipment such as amplifiers and guitars during the album's production, as Norton is a close friend of his because he produced most of the Pixies discography.",
+    "latency_ms": 61.75,
+    "retrieval_latency_ms": 61.75,
+    "n_retrieved": 8,
+    "n_candidates": 49,
+    "context_tokens": 67,
+    "active_components": [
+     "semantic"
+    ],
+    "candidate_policy": "shared",
+    "answer_metrics": {},
+    "selected_evidence_ids": [
+     "mem_15582b240f3e",
+     "mem_6b515d4e45b5"
+    ],
+    "candidate_ids": [
+     "mem_15582b240f3e",
+     "mem_6b515d4e45b5"
+    ],
+    "retrieval_recall": 0.3333333333333333,
+    "mrr": 1.0,
+    "answer_token_f1": 0.13333333333333336
+   },
+   {
+    "question": "According to the agency that published U.S. and World Population Clock, what is the total area in square miles?",
+    "reference_answer": "17.037 square miles",
+    "answer_text": "According to the United States Census Bureau, the city had a total area of 17.037 square miles (44.125 km2).",
+    "evidence_text": "[1] (ring3 \u00b7 starbucks) According to the United States Census Bureau, the city had a total area of 17.037 square miles (44.125 km2), including 10.747 square miles (27.835 km2) of land and 6.290 square miles (16.290 km2) of water (36.92%).\n[2] (ring3 \u00b7 million) The U.S. and World Population Clock presents the United States Census Bureau's continuously active approximations of both the population of the United States and the world's total population.\n[3] (ring3 \u00b7 million) The United States of America (USA), commonly known as the United States (U.S.) or America, is a federal republic composed of 50 states, a federal district, five major self - governing territories, and various possessions. At 3.8 million square miles (9.8 million km) and with over 325 million people, the United States is the world's third - or fourth - largest country by total area and the third-most populous.",
+    "latency_ms": 62.81,
+    "retrieval_latency_ms": 62.81,
+    "n_retrieved": 8,
+    "n_candidates": 55,
+    "context_tokens": 145,
+    "active_components": [
+     "semantic"
+    ],
+    "candidate_policy": "shared",
+    "answer_metrics": {},
+    "selected_evidence_ids": [
+     "mem_77d432d441d4",
+     "mem_dccfae4c36fa",
+     "mem_6c12180f73f5"
+    ],
+    "candidate_ids": [
+     "mem_77d432d441d4",
+     "mem_dccfae4c36fa",
+     "mem_6c12180f73f5"
+    ],
+    "retrieval_recall": 0.5,
+    "mrr": 1.0,
+    "answer_token_f1": 0.32
+   },
+   {
+    "question": "Who is the child of the cast member of Green Ice?",
+    "reference_answer": "Tatum O'Neal",
+    "answer_text": "The question \"Who is the child of the cast member of Green Ice?\" cannot be directly answered using the provided memory excerpts. The excerpts do not contain information about the cast members of the film \"Green Ice.\"",
+    "evidence_text": "[1] (ring3 \u00b7 number) Green Ice is the soundtrack to the 1981 United Kingdom science fiction film \"Green Ice\" starring Ryan O'Neal. The soundtrack was recorded by Bill Wyman and contains 18 original songs.",
+    "latency_ms": 54.05,
+    "retrieval_latency_ms": 54.05,
+    "n_retrieved": 8,
+    "n_candidates": 48,
+    "context_tokens": 34,
+    "active_components": [
+     "semantic"
+    ],
+    "candidate_policy": "shared",
+    "answer_metrics": {},
+    "selected_evidence_ids": [
+     "mem_376bda168eeb"
+    ],
+    "candidate_ids": [
+     "mem_376bda168eeb"
+    ],
+    "retrieval_recall": 0.25,
+    "mrr": 1.0,
+    "answer_token_f1": 0.0
+   },
+   {
+    "question": "Who is the other child of Chian Hsiao-chang's father?",
+    "reference_answer": "Chiang Hsiao-wu",
+    "answer_text": "[1]",
+    "evidence_text": "[1] (ring3 \u00b7 spencer) Chiang Hsiao-chang (; born 1938) is the only daughter of Chiang Ching-kuo, the President of the Republic of China in Taiwan from 1978 to 1988. Her mother is Faina Ipatyevna Vakhreva, also known as Chiang Fang-liang.\n[2] (ring3 \u00b7 spencer) Chiang Hsiao-wu (; also known as Alex Chiang; April 25, 1945 - July 1, 1991) was the second son of Chiang Ching-kuo, the President of the Republic of China in Taiwan from 1978 to 1988. His mother is Faina Ipatyevna Vakhreva, also known as Chiang Fang-liang.\n[3] (ring3 \u00b7 spencer) The son of President Chiang Kai-shek and his first wife, Mao Fumei, Chiang Ching-kuo was born in Fenghua, Zhejiang, with the courtesy name of Ji\u00e0nf\u0113ng (). He had an adopted brother, Chiang Wei-kuo.",
+    "latency_ms": 56.75,
+    "retrieval_latency_ms": 56.75,
+    "n_retrieved": 8,
+    "n_candidates": 75,
+    "context_tokens": 127,
+    "active_components": [
+     "semantic"
+    ],
+    "candidate_policy": "shared",
+    "answer_metrics": {},
+    "selected_evidence_ids": [
+     "mem_6ed6fa6c4ca8",
+     "mem_0d6c3352df1b",
+     "mem_9e919c4d47da"
+    ],
+    "candidate_ids": [
+     "mem_6ed6fa6c4ca8",
+     "mem_0d6c3352df1b",
+     "mem_9e919c4d47da"
+    ],
+    "retrieval_recall": 0.5,
+    "mrr": 1.0,
+    "answer_token_f1": 0.0
+   },
+   {
+    "question": "Who is the father of the performer of Je dis aime?",
+    "reference_answer": "Louis Chedid",
+    "answer_text": "The father of the performer of Je dis aime is Andr\u00e9 Antoine. [1]",
+    "evidence_text": "[1] (ring4 \u00b7 notable) Andr\u00e9 Antoine (31 January 185823 October 1943) was a French actor, theatre manager, film director, author, and critic who is considered the father of modern mise en sc\u00e8ne in France.\n[2] (ring4 \u00b7 number) Je dis aime (1999) is the second studio album by French singer-songwriter Matthieu Chedid, in his persona as -M-, described by reviewers as a \"conceptual icon to rival Bowie's Ziggy Stardust and Aladdin Sane\". The album manages to take a remarkable variety of musical directions and pull them together into a consistent whole.",
+    "latency_ms": 65.74,
+    "retrieval_latency_ms": 65.74,
+    "n_retrieved": 8,
+    "n_candidates": 43,
+    "context_tokens": 91,
+    "active_components": [
+     "semantic"
+    ],
+    "candidate_policy": "shared",
+    "answer_metrics": {},
+    "selected_evidence_ids": [
+     "mem_58e469259e95",
+     "mem_389e2a81e026"
+    ],
+    "candidate_ids": [
+     "mem_58e469259e95",
+     "mem_389e2a81e026"
+    ],
+    "retrieval_recall": 0.25,
+    "mrr": 0.5,
+    "answer_token_f1": 0.0
+   },
+   {
+    "question": "Who is the spouse of the screenwriter of The Actress?",
+    "reference_answer": "Garson Kanin",
+    "answer_text": "",
+    "evidence_text": "",
+    "latency_ms": 63.22,
+    "retrieval_latency_ms": 63.22,
+    "n_retrieved": 8,
+    "n_candidates": 31,
+    "context_tokens": 0,
+    "active_components": [
+     "semantic"
+    ],
+    "candidate_policy": "shared",
+    "answer_metrics": {},
+    "selected_evidence_ids": [],
+    "retrieval_recall": 0.0,
+    "mrr": 0.0
+   },
+   {
+    "question": "What university did the author of The Secret World of Og go to?",
+    "reference_answer": "University of British Columbia",
+    "answer_text": "The question \"What university did the author of The Secret World of Og go to?\" cannot be answered using the provided memory excerpts. The excerpts do not contain any information about the university attended by the author Pierre Berton.",
+    "evidence_text": "[1] (ring3 \u00b7 only) The Secret World of Og is a children's novel written by Pierre Berton and illustrated by his daughter Patsy. It was first published in 1961 by McClelland and Stewart.\n[2] (ring3 \u00b7 only) School for Secrets (also known as Secret Flight) is a 1946 British black and white film written and directed by Peter Ustinov and starring Ralph Richardson. In leading supporting roles were David Tomlinson, Raymond Huntley, Finlay Currie, Richard Attenborough, John Laurie and Michael Hordern.",
+    "latency_ms": 60.83,
+    "retrieval_latency_ms": 60.83,
+    "n_retrieved": 8,
+    "n_candidates": 42,
+    "context_tokens": 81,
+    "active_components": [
+     "semantic"
+    ],
+    "candidate_policy": "shared",
+    "answer_metrics": {},
+    "selected_evidence_ids": [
+     "mem_d0a82bd69b4d",
+     "mem_8edce709af4f"
+    ],
+    "candidate_ids": [
+     "mem_d0a82bd69b4d",
+     "mem_8edce709af4f"
+    ],
+    "retrieval_recall": 0.25,
+    "mrr": 1.0,
+    "answer_token_f1": 0.09302325581395347
+   },
+   {
+    "question": "Who did Hayek work for upon being hired by the author of Bureaucracy?",
+    "reference_answer": "the Austrian government",
+    "answer_text": "The question \"Who did Hayek work for upon being hired by the author of Bureaucracy?\" cannot be directly answered from the provided excerpts. The excerpts do not mention Hayek's employer or the author of Bureaucracy.",
+    "evidence_text": "[1] (ring3 \u00b7 million) Bureaucracy is a political book written by Austrian School economist and libertarian thinker Ludwig von Mises. The author's motivation in writing the book is his concern with the spread of socialist ideals and the increasing bureaucratization of economic life.\n[2] (ring3 \u00b7 million) His opponents have attacked Hayek as a leading promoter of \"neoliberalism\". A British scholar, Samuel Brittan, concluded in 2010, \"Hayek's book [The Constitution of Liberty] is still probably the most comprehensive statement of the underlying ideas of the moderate free market philosophy espoused by neoliberals.\" Brittan adds that although Raymond Plant (2009) comes out in the end against Hayek's doctrines, Plant gives The Constitution of Liberty a \"more thorough and fair-minded analysis than it has received even from its professed adherents\".",
+    "latency_ms": 49.16,
+    "retrieval_latency_ms": 49.16,
+    "n_retrieved": 8,
+    "n_candidates": 52,
+    "context_tokens": 128,
+    "active_components": [
+     "semantic"
+    ],
+    "candidate_policy": "shared",
+    "answer_metrics": {},
+    "selected_evidence_ids": [
+     "mem_6044d09fc960",
+     "mem_ee9ceacd886f"
+    ],
+    "candidate_ids": [
+     "mem_6044d09fc960",
+     "mem_ee9ceacd886f"
+    ],
+    "retrieval_recall": 0.3333333333333333,
+    "mrr": 1.0,
+    "answer_token_f1": 0.05128205128205128
+   },
+   {
+    "question": "What former contestant did the performer of Addicted ask to marry him?",
+    "reference_answer": "Diana DeGarmo",
+    "answer_text": "The performer of Addicted, Martin Sheen, asked Grace to marry him. [1]",
+    "evidence_text": "[1] (ring3 \u00b7 only) Casting announcements began in June 2014, with Martin Sheen cast in the role of Robert, Grace's husband. The following month, Sam Waterston was cast in the role of Sol, Frankie's husband.",
+    "latency_ms": 44.93,
+    "retrieval_latency_ms": 44.93,
+    "n_retrieved": 8,
+    "n_candidates": 55,
+    "context_tokens": 35,
+    "active_components": [
+     "semantic"
+    ],
+    "candidate_policy": "shared",
+    "answer_metrics": {},
+    "selected_evidence_ids": [
+     "mem_50d74c76b33e"
+    ],
+    "candidate_ids": [
+     "mem_50d74c76b33e"
+    ],
+    "retrieval_recall": 0.0,
+    "mrr": 0.0,
+    "answer_token_f1": 0.0
+   },
+   {
+    "question": "Who is the father of Empress Wang's husband?",
+    "reference_answer": "Yang Xingmi",
+    "answer_text": "[3]",
+    "evidence_text": "[1] (ring3 \u00b7 spencer) Empress Dowager Wang (\u738b\u592a\u540e, personal name unknown) (died 928) was a concubine of the late-Tang Dynasty warlord Yang Xingmi and the mother of his son Yang Pu, the final ruler and the only emperor of the Wu state founded upon the territory that Yang Xingmi took. During Yang Pu's reign as emperor, she was honored as empress dowager.\n[2] (ring3 \u00b7 spencer) Empress Wang (\u738b\u7687\u540e, personal name unknown), known as Empress Rang (\u8b93\u7687\u540e, \"empress of the emperor who yielded\") during Southern Tang, was the wife and empress of Yang Pu (Emperor Rui), the final ruler of the Chinese Five Dynasties and Ten Kingdoms period state Wu. As he was the only ruler who claimed the title of emperor, she was the only person to carry the title of empress during Wu.\n[3] (ring3 \u00b7 spencer) Wang Shen'ai was the daughter of the official Wang Xianzhi, the son of the famed official and calligrapher Wang Xizhi. Her mother Princess Xin'an was the daughter of Emperor Jianwen, making her and her husband cousins.\n[4] (ring3 \u00b7 spencer) Empress Dowager Xu (\u5f90\u592a\u540e, personal name unknown) (died 926), honored as Empress Dowager Shunsheng (\u9806\u8056\u592a\u540e) during the reign of her son Wang Yan (n\u00e9 Wang Zongyan), known as Consort Xu with the imperial consort rank \"Xianfei\" (\u5f90\u8ce2\u5983) during the reign of her husband Wang Jian, was an empress dowager of the Chinese Five Dynasties and Ten Kingdoms period state Former Shu. She was one of the favorite concubines of Wang Jian, the founder of Former Shu, and through her palace machinations was able to have her son Wang Yan (who was then named Wang Zongyan) made Wang Jian's heir.",
+    "latency_ms": 82.36,
+    "retrieval_latency_ms": 82.36,
+    "n_retrieved": 8,
+    "n_candidates": 61,
+    "context_tokens": 278,
+    "active_components": [
+     "semantic"
+    ],
+    "candidate_policy": "shared",
+    "answer_metrics": {},
+    "selected_evidence_ids": [
+     "mem_0daea4a5a618",
+     "mem_360a71dccff6",
+     "mem_e5ce6ac74e71",
+     "mem_c20b18051301"
+    ],
+    "candidate_ids": [
+     "mem_0daea4a5a618",
+     "mem_360a71dccff6",
+     "mem_e5ce6ac74e71",
+     "mem_c20b18051301"
+    ],
+    "retrieval_recall": 0.5,
+    "mrr": 1.0,
+    "answer_token_f1": 0.0
+   },
+   {
+    "question": "What is the place of birth of the person who submitted the first version of the equal rights amendment to congress in 1923?",
+    "reference_answer": "Mount Laurel Township",
+    "answer_text": "The question \"What is the place of birth of the person who submitted the first version of the equal rights amendment to congress in 1923?\" cannot be answered using the provided memory excerpts.",
+    "evidence_text": "[1] (ring4 \u00b7 musique) Alice Paul, the head of the National Women's Party, believed that the Nineteenth Amendment would not be enough to ensure that men and women were treated equally regardless of sex. In 1923, she revised the proposed amendment to read:\n[2] (ring3 \u00b7 million) The First Amendment (Amendment I) to the United States Constitution prevents Congress from making any law respecting an establishment of religion, prohibiting the free exercise of religion, or abridging the freedom of speech, the freedom of the press, the right to peaceably assemble, or to petition for a governmental redress of grievances. It was adopted on December 15, 1791, as one of the ten amendments that constitute the Bill of Rights.",
+    "latency_ms": 43.85,
+    "retrieval_latency_ms": 43.85,
+    "n_retrieved": 8,
+    "n_candidates": 47,
+    "context_tokens": 118,
+    "active_components": [
+     "semantic"
+    ],
+    "candidate_policy": "shared",
+    "answer_metrics": {},
+    "selected_evidence_ids": [
+     "mem_8b2fa3fe6e13",
+     "mem_6b053a17f39f"
+    ],
+    "candidate_ids": [
+     "mem_8b2fa3fe6e13",
+     "mem_6b053a17f39f"
+    ],
+    "retrieval_recall": 0.25,
+    "mrr": 1.0,
+    "answer_token_f1": 0.0
+   },
+   {
+    "question": "Who played the character in the Santa Clause 3 that has a series named after it that includes Frost at Christmas?",
+    "reference_answer": "Martin Short",
+    "answer_text": "[1]",
+    "evidence_text": "[1] (ring3 \u00b7 only) The Santa Clause is a 1994 American Christmas fantasy family comedy film directed by John Pasquin. The first film in the Santa Clause film series, it stars Tim Allen as Scott Calvin, an ordinary man who accidentally causes Santa Claus to fall from his roof on Christmas Eve.\n[2] (ring4 \u00b7 only) The film stars Tim Allen returning as Scott Calvin / Santa Claus and Martin Short as Jack Frost. Allen and Short had previously worked together in the 1997 Disney comedy feature film, Jungle 2 Jungle.",
+    "latency_ms": 65.15,
+    "retrieval_latency_ms": 65.15,
+    "n_retrieved": 8,
+    "n_candidates": 46,
+    "context_tokens": 91,
+    "active_components": [
+     "semantic"
+    ],
+    "candidate_policy": "shared",
+    "answer_metrics": {},
+    "selected_evidence_ids": [
+     "mem_061c8acdf7bf",
+     "mem_808231786018"
+    ],
+    "candidate_ids": [
+     "mem_061c8acdf7bf",
+     "mem_808231786018"
+    ],
+    "retrieval_recall": 0.0,
+    "mrr": 0.0,
+    "answer_token_f1": 0.0
+   },
+   {
+    "question": "This cast member in \"Search for the Gods\" also plays a character in which film?",
+    "reference_answer": "The Hateful Eight",
+    "answer_text": "[1]",
+    "evidence_text": "[1] (ring3 \u00b7 only) Search for the Gods is a 1975 television film directed by Jud Taylor, and stars Kurt Russell and Stephen McHattie. It was intended to be the pilot episode of a TV series that never made it into production.\n[2] (ring3 \u00b7 only) A Daughter of the Gods was a 1916 American silent fantasy drama film written and directed by Herbert Brenon. The film was controversial because of the sequences of what was regarded as superfluous nudity by the character Anitia, played by Australian swimming star Annette Kellermann.",
+    "latency_ms": 53.17,
+    "retrieval_latency_ms": 53.17,
+    "n_retrieved": 8,
+    "n_candidates": 62,
+    "context_tokens": 91,
+    "active_components": [
+     "semantic"
+    ],
+    "candidate_policy": "shared",
+    "answer_metrics": {},
+    "selected_evidence_ids": [
+     "mem_b27863220b0b",
+     "mem_98019826afc7"
+    ],
+    "candidate_ids": [
+     "mem_b27863220b0b",
+     "mem_98019826afc7"
+    ],
+    "retrieval_recall": 0.25,
+    "mrr": 1.0,
+    "answer_token_f1": 0.0
+   },
+   {
+    "question": "Who founded the company that distributed the film UHF?",
+    "reference_answer": "Mike Medavoy",
+    "answer_text": "The company that distributed the film UHF was Amblin Entertainment, which was founded by Steven Spielberg, Kathleen Kennedy, and Frank Marshall in 1981.",
+    "evidence_text": "[1] (ring4 \u00b7 musique) Yankovic and Levey wrote the film after Yankovic's second studio album, looking to apply the musician's parody and comedy to film, and chose the approach of George being a straight man with a vivid imagination to support the inclusion of parodies within the film. They struggled with finding a film production company for financing the film, but were eventually able to get Orion Pictures' support after stating they could keep the film costs under $5 million.\n[2] (ring4 \u00b7 musique) Amblin Entertainment is an American film production company founded by director and producer Steven Spielberg, and film producers Kathleen Kennedy and Frank Marshall in 1981. The company's headquarters are located on the backlot of Universal Studios in Universal City, California.",
+    "latency_ms": 50.02,
+    "retrieval_latency_ms": 50.02,
+    "n_retrieved": 8,
+    "n_candidates": 31,
+    "context_tokens": 124,
+    "active_components": [
+     "semantic"
+    ],
+    "candidate_policy": "shared",
+    "answer_metrics": {},
+    "selected_evidence_ids": [
+     "mem_dea813ab7641",
+     "mem_a5ee28b0f363"
+    ],
+    "candidate_ids": [
+     "mem_dea813ab7641",
+     "mem_a5ee28b0f363"
+    ],
+    "retrieval_recall": 0.25,
+    "mrr": 1.0,
+    "answer_token_f1": 0.0
+   },
+   {
+    "question": "Who is the city that AvtoVAZ's headquarters is located in named after?",
+    "reference_answer": "Palmiro Togliatti",
+    "answer_text": "",
+    "evidence_text": "",
+    "latency_ms": 47.42,
+    "retrieval_latency_ms": 47.42,
+    "n_retrieved": 8,
+    "n_candidates": 33,
+    "context_tokens": 0,
+    "active_components": [
+     "semantic"
+    ],
+    "candidate_policy": "shared",
+    "answer_metrics": {},
+    "selected_evidence_ids": [],
+    "retrieval_recall": 0.0,
+    "mrr": 0.0
+   },
+   {
+    "question": "In what county is William W. Blair's birthplace located?",
+    "reference_answer": "Orleans County",
+    "answer_text": "[1]",
+    "evidence_text": "[1] (ring4 \u00b7 notable) Blair was born in Holley, New York. In 1839, his family moved to LaSalle County, Illinois.",
+    "latency_ms": 64.44,
+    "retrieval_latency_ms": 64.44,
+    "n_retrieved": 8,
+    "n_candidates": 41,
+    "context_tokens": 20,
+    "active_components": [
+     "semantic"
+    ],
+    "candidate_policy": "shared",
+    "answer_metrics": {},
+    "selected_evidence_ids": [
+     "mem_f17cf1b4cf8b"
+    ],
+    "candidate_ids": [
+     "mem_f17cf1b4cf8b"
+    ],
+    "retrieval_recall": 0.25,
+    "mrr": 1.0,
+    "answer_token_f1": 0.0
+   },
+   {
+    "question": "In what league did Jose Miranda's team compete?",
+    "reference_answer": "United Soccer League",
+    "answer_text": "[1]",
+    "evidence_text": "[1] (ring4 \u00b7 notable) In 1989, Miranda joined the Tucson Amigos for the 1989\u201390 Southwest Independent Soccer League. He earned Rookie of the Year honors with the Amigos.\n[2] (ring4 \u00b7 notable) He broke his leg during the season. This led to his taking the boy\u2019s head coaching position at Sunnyside High School.",
+    "latency_ms": 50.66,
+    "retrieval_latency_ms": 50.66,
+    "n_retrieved": 8,
+    "n_candidates": 52,
+    "context_tokens": 53,
+    "active_components": [
+     "semantic"
+    ],
+    "candidate_policy": "shared",
+    "answer_metrics": {},
+    "selected_evidence_ids": [
+     "mem_b60370a7cced",
+     "mem_2d4fed65945e"
+    ],
+    "candidate_ids": [
+     "mem_b60370a7cced",
+     "mem_2d4fed65945e"
+    ],
+    "retrieval_recall": 0.3333333333333333,
+    "mrr": 1.0,
+    "answer_token_f1": 0.0
+   },
+   {
+    "question": "Where is the country with ISO code ISO 3166-2:CV located?",
+    "reference_answer": "central Atlantic Ocean",
+    "answer_text": "Cabo Verde [1]",
+    "evidence_text": "[1] (ring3 \u00b7 million) ISO 3166-2:CV is the entry for Cabo Verde in ISO 3166-2, part of the ISO 3166 standard published by the International Organization for Standardization (ISO), which defines codes for the names of the principal subdivisions (e.g., provinces or states) of all countries coded in ISO 3166-1.\n[2] (ring3 \u00b7 million) ISO 3166-2:IN is the entry for India in ISO 3166-2, part of the ISO 3166 standard published by the International Organization for Standardization (ISO), which defines codes for the names of the principal subdivisions (e.g., provinces or states) of all countries coded in ISO 3166-1.\n[3] (ring3 \u00b7 million) ISO 3166-2:KM is the entry for the Comoros in ISO 3166-2, part of the ISO 3166 standard published by the International Organization for Standardization (ISO), which defines codes for the names of the principal subdivisions (e.g., provinces or states) of all countries coded in ISO 3166-1.\n[4] (ring3 \u00b7 million) ISO 3166-2:CH is the entry for Switzerland in ISO 3166-2, part of the ISO 3166 standard published by the International Organization for Standardization (ISO), which defines codes for the names of the principal subdivisions (e.g., provinces or states) of all countries coded in ISO 3166-1.\n[5] (ring3 \u00b7 million) ISO 3166-2:AL is the entry for Albania in ISO 3166-2, part of the ISO 3166 standard published by the International Organization for Standardization (ISO), which defines codes for the names of the principal subdivisions (e.g., provinces or states) of all countries coded in ISO 3166-1.\n[6] (ring3 \u00b7 million) ISO 3166-2:GN is the entry for Guinea in ISO 3166-2, part of the ISO 3166 standard published by the International Organization for Standardization (ISO), which defines codes for the names of the principal subdivisions (e.g., provinces or states) of all countries coded in ISO 3166-1.\n[7] (ring3 \u00b7 million) ISO 3166-2:AD is the entry for Andorra in ISO 3166-2, part of the ISO 3166 standard published by the International Organization for Standardization (ISO), which defines codes for the names of the principal subdivisions (e.g., provinces or states) of all countries coded in ISO 3166-1.",
+    "latency_ms": 55.57,
+    "retrieval_latency_ms": 55.57,
+    "n_retrieved": 8,
+    "n_candidates": 86,
+    "context_tokens": 345,
+    "active_components": [
+     "semantic"
+    ],
+    "candidate_policy": "shared",
+    "answer_metrics": {},
+    "selected_evidence_ids": [
+     "mem_9f26a06f30a0",
+     "mem_db3ccc698e48",
+     "mem_545ae319f2b8",
+     "mem_e5c8cba650b0",
+     "mem_b3a735b14db3",
+     "mem_f97a6ba9c4c5",
+     "mem_4faa8239cea3"
+    ],
+    "candidate_ids": [
+     "mem_9f26a06f30a0",
+     "mem_db3ccc698e48",
+     "mem_545ae319f2b8",
+     "mem_e5c8cba650b0",
+     "mem_b3a735b14db3",
+     "mem_f97a6ba9c4c5",
+     "mem_4faa8239cea3"
+    ],
+    "retrieval_recall": 0.25,
+    "mrr": 1.0,
+    "answer_token_f1": 0.0
+   },
+   {
+    "question": "What is the capital of the county which contains Hickory Grove Estates, Mississippi?",
+    "reference_answer": "Starkville",
+    "answer_text": "The capital of the county which contains Hickory Grove Estates, Mississippi, is Clayton Village. [1]",
+    "evidence_text": "[1] (ring3 \u00b7 starbucks) Hickory Grove Estates is an unincorporated community located in Oktibbeha County, Mississippi. Hickory Grove Estates is approximately south-southwest of Clayton Village.\n[2] (ring3 \u00b7 starbucks) Hickory Grove is a town in Grant County, Wisconsin, United States. The population was 443 at the 2000 census.",
+    "latency_ms": 61.3,
+    "retrieval_latency_ms": 61.3,
+    "n_retrieved": 8,
+    "n_candidates": 54,
+    "context_tokens": 48,
+    "active_components": [
+     "semantic"
+    ],
+    "candidate_policy": "shared",
+    "answer_metrics": {},
+    "selected_evidence_ids": [
+     "mem_e5920aff0c70",
+     "mem_94d976f2197e"
+    ],
+    "candidate_ids": [
+     "mem_e5920aff0c70",
+     "mem_94d976f2197e"
+    ],
+    "retrieval_recall": 0.16666666666666666,
+    "mrr": 1.0,
+    "answer_token_f1": 0.0
+   },
+   {
+    "question": "How many games does the team play that had the most champion league wins between 1992 and 2013?",
+    "reference_answer": "38",
+    "answer_text": "The question \"How many games does the team play that had the most champion league wins between 1992 and 2013?\" cannot be directly answered using the provided excerpts. The excerpts do not contain specific information about the number of games played by teams with the most champion league wins between 1992 and 2013.",
+    "evidence_text": "[1] (ring3 \u00b7 million) In the season of 2012\u20132013 the team won the matches against both Galatasaray and Fenerbah\u00e7e in the Turkish Cup. Both matches were away games.\n[2] (ring3 \u00b7 million) With each team winning a game in the championship series to force a winner - take - all Game 3, the tournament reached the maximum of 17 games for the first time since 2003 when the finals expanded to best - of - three format (as opposed to a single, winner - take - all championship game). Coastal Carolina won the deciding game, 4 - 3, becoming the first team since 1956 to win the title in its first CWS appearance.",
+    "latency_ms": 70.14,
+    "retrieval_latency_ms": 70.14,
+    "n_retrieved": 8,
+    "n_candidates": 48,
+    "context_tokens": 113,
+    "active_components": [
+     "semantic"
+    ],
+    "candidate_policy": "shared",
+    "answer_metrics": {},
+    "selected_evidence_ids": [
+     "mem_244092881f97",
+     "mem_4954f149ec5e"
+    ],
+    "candidate_ids": [
+     "mem_244092881f97",
+     "mem_4954f149ec5e"
+    ],
+    "retrieval_recall": 0.0,
+    "mrr": 0.0,
+    "answer_token_f1": 0.0
+   },
+   {
+    "question": "What is the record label of the co-writer and recording artist of Permission to Fly?",
+    "reference_answer": "Hollywood Records",
+    "answer_text": "",
+    "evidence_text": "[1] (ring3 \u00b7 number) Permission to Fly is the second and final studio album by American singer-songwriter Jordan Pruitt. On July 22, 2008, the album was released to all Limited Too stores only and in September the album was released on iTunes.",
+    "latency_ms": 63.25,
+    "retrieval_latency_ms": 63.25,
+    "n_retrieved": 8,
+    "n_candidates": 47,
+    "context_tokens": 42,
+    "active_components": [
+     "semantic"
+    ],
+    "candidate_policy": "shared",
+    "answer_metrics": {},
+    "selected_evidence_ids": [
+     "mem_e5c8f5525be4"
+    ],
+    "candidate_ids": [
+     "mem_e5c8f5525be4"
+    ],
+    "retrieval_recall": 0.25,
+    "mrr": 1.0
+   },
+   {
+    "question": "Where was the creator of the Lap Engine educated?",
+    "reference_answer": "University of Glasgow",
+    "answer_text": "[1]",
+    "evidence_text": "[1] (ring3 \u00b7 million) The Lap Engine is a beam engine designed by James Watt, built by Boulton and Watt in 1788. It is now preserved at the Science Museum, London.\n[2] (ring4 \u00b7 notable) Richard Henry Rice (1863\u20131922) was an American mechanical engineer and inventor who is known for many patents related to improvements to the Corliss steam engine, and his partnership in founding the Rice & Sargent Engine Company of Providence, Rhode Island.\n[3] (ring3 \u00b7 notable) While working as an instrument maker at the University of Glasgow, Watt became interested in the technology of steam engines. He realised that contemporary engine designs wasted a great deal of energy by repeatedly cooling and reheating the cylinder.\n[4] (ring4 \u00b7 notable) The same year, the Swiss engineer Fran\u00e7ois Isaac de Rivaz built an internal combustion engine ignited by electric spark. In 1823, Samuel Brown patented the first internal combustion engine to be applied industrially.\n[5] (ring4 \u00b7 notable) Various scientists and engineers contributed to the development of internal combustion engines. In 1791 2, John Barber developed a turbine.",
+    "latency_ms": 74.22,
+    "retrieval_latency_ms": 74.22,
+    "n_retrieved": 8,
+    "n_candidates": 51,
+    "context_tokens": 179,
+    "active_components": [
+     "semantic"
+    ],
+    "candidate_policy": "shared",
+    "answer_metrics": {},
+    "selected_evidence_ids": [
+     "mem_947a5a75898c",
+     "mem_ee11e02533f9",
+     "mem_06565c506fd1",
+     "mem_cdcd8f664bfa",
+     "mem_52ce3eb3002c"
+    ],
+    "candidate_ids": [
+     "mem_947a5a75898c",
+     "mem_ee11e02533f9",
+     "mem_06565c506fd1",
+     "mem_cdcd8f664bfa",
+     "mem_52ce3eb3002c"
+    ],
+    "retrieval_recall": 0.5,
+    "mrr": 1.0,
+    "answer_token_f1": 0.0
+   },
+   {
+    "question": "Where did the producer of Julius Caesar study or work?",
+    "reference_answer": "Clifton College",
+    "answer_text": "",
+    "evidence_text": "",
+    "latency_ms": 53.22,
+    "retrieval_latency_ms": 53.22,
+    "n_retrieved": 8,
+    "n_candidates": 32,
+    "context_tokens": 0,
+    "active_components": [
+     "semantic"
+    ],
+    "candidate_policy": "shared",
+    "answer_metrics": {},
+    "selected_evidence_ids": [],
+    "retrieval_recall": 0.0,
+    "mrr": 0.0
+   },
+   {
+    "question": "What was the old show that was named after a character that Walt Disney created in 1928 called?",
+    "reference_answer": "The Mickey Mouse Club",
+    "answer_text": "",
+    "evidence_text": "",
+    "latency_ms": 50.29,
+    "retrieval_latency_ms": 50.29,
+    "n_retrieved": 8,
+    "n_candidates": 33,
+    "context_tokens": 0,
+    "active_components": [
+     "semantic"
+    ],
+    "candidate_policy": "shared",
+    "answer_metrics": {},
+    "selected_evidence_ids": [],
+    "retrieval_recall": 0.0,
+    "mrr": 0.0
+   },
+   {
+    "question": "What event caused the founder of Australia's liberal party to become Prime Minister?",
+    "reference_answer": "Lyons' death in 1939",
+    "answer_text": "[1]",
+    "evidence_text": "[1] (ring3 \u00b7 spencer) Politically, Robert Menzies and the Liberal Party of Australia dominated much of the immediate post war era, defeating the Labor government of Ben Chifley in 1949, in part over a Labor proposal to nationalise banks and following a crippling coal strike led by the Australian Communist Party. Menzies became the country's longest-serving Prime Minister and the Liberal party, in coalition with the rural based Country Party, won every federal election until 1972.\n[2] (ring4 \u00b7 spencer) Francis Michael Forde (18 July 1890 -- 28 January 1983) was an Australian politician who served as Prime Minister of Australia from 6 to 13 July 1945. He held office after the death of John Curtin, and is the shortest - serving prime minister in Australia's history.",
+    "latency_ms": 44.9,
+    "retrieval_latency_ms": 44.9,
+    "n_retrieved": 8,
+    "n_candidates": 46,
+    "context_tokens": 127,
+    "active_components": [
+     "semantic"
+    ],
+    "candidate_policy": "shared",
+    "answer_metrics": {},
+    "selected_evidence_ids": [
+     "mem_b35c0c3ff10e",
+     "mem_2c6f7d4a7b63"
+    ],
+    "candidate_ids": [
+     "mem_b35c0c3ff10e",
+     "mem_2c6f7d4a7b63"
+    ],
+    "retrieval_recall": 0.0,
+    "mrr": 0.0,
+    "answer_token_f1": 0.0
+   },
+   {
+    "question": "Bancroft's county borders what county?",
+    "reference_answer": "Haliburton County",
+    "answer_text": "",
+    "evidence_text": "",
+    "latency_ms": 42.3,
+    "retrieval_latency_ms": 42.3,
+    "n_retrieved": 8,
+    "n_candidates": 29,
+    "context_tokens": 0,
+    "active_components": [
+     "semantic"
+    ],
+    "candidate_policy": "shared",
+    "answer_metrics": {},
+    "selected_evidence_ids": [],
+    "retrieval_recall": 0.0,
+    "mrr": 0.0
+   },
+   {
+    "question": "Who is the mother of the founder of Mormonism?",
+    "reference_answer": "Lucy Mack Smith",
+    "answer_text": "",
+    "evidence_text": "",
+    "latency_ms": 45.58,
+    "retrieval_latency_ms": 45.58,
+    "n_retrieved": 8,
+    "n_candidates": 31,
+    "context_tokens": 0,
+    "active_components": [
+     "semantic"
+    ],
+    "candidate_policy": "shared",
+    "answer_metrics": {},
+    "selected_evidence_ids": [],
+    "retrieval_recall": 0.0,
+    "mrr": 0.0
+   },
+   {
+    "question": "What political party does the person that Adversary in the House is based on a member of?",
+    "reference_answer": "Socialist Party of America",
+    "answer_text": "",
+    "evidence_text": "",
+    "latency_ms": 61.93,
+    "retrieval_latency_ms": 61.93,
+    "n_retrieved": 8,
+    "n_candidates": 34,
+    "context_tokens": 0,
+    "active_components": [
+     "semantic"
+    ],
+    "candidate_policy": "shared",
+    "answer_metrics": {},
+    "selected_evidence_ids": [],
+    "retrieval_recall": 0.0,
+    "mrr": 0.0
+   },
+   {
+    "question": "The singer, who starred in Shake It Up, signed to which record label?",
+    "reference_answer": "Hollywood Records",
+    "answer_text": "Zendaya signed to Hollywood Records. [1]",
+    "evidence_text": "[1] (ring4 \u00b7 number) Zendaya is the eponymous debut studio album by American singer and actress Zendaya, released on September 17, 2013 by Hollywood Records. After acting in the Disney Channel series \"Shake It Up\", Zendaya signed a recording contract with Hollywood Records, in which she began recording her debut in late 2012.\n[2] (ring4 \u00b7 number) \"Swag It Out\" is the official debut single by American singer Zendaya, known for starring in the series \"Shake It Up\". The song was composed by Bobby Brackins and was released on May 30, 2011 as the first single of Zendaya's career on an independent label, not being included on any album or soundtrack of Walt Disney Records, just their record label.\n[3] (ring3 \u00b7 number) \"Shake\" is a song written and recorded by Sam Cooke. It was recorded at the last recording session Cooke had before his death on December 11, 1964.",
+    "latency_ms": 65.11,
+    "retrieval_latency_ms": 65.11,
+    "n_retrieved": 8,
+    "n_candidates": 40,
+    "context_tokens": 150,
+    "active_components": [
+     "semantic"
+    ],
+    "candidate_policy": "shared",
+    "answer_metrics": {},
+    "selected_evidence_ids": [
+     "mem_d3cc382b4e10",
+     "mem_5f71bb64824b",
+     "mem_12e063599f85"
+    ],
+    "candidate_ids": [
+     "mem_d3cc382b4e10",
+     "mem_5f71bb64824b",
+     "mem_12e063599f85"
+    ],
+    "retrieval_recall": 0.5,
+    "mrr": 1.0,
+    "answer_token_f1": 0.5
+   },
+   {
+    "question": "Who did Hay work for after being hired by his other notable influence regarding resource distribution other than Max Weber?",
+    "reference_answer": "the Austrian government",
+    "answer_text": "",
+    "evidence_text": "",
+    "latency_ms": 47.46,
+    "retrieval_latency_ms": 47.46,
+    "n_retrieved": 8,
+    "n_candidates": 32,
+    "context_tokens": 0,
+    "active_components": [
+     "semantic"
+    ],
+    "candidate_policy": "shared",
+    "answer_metrics": {},
+    "selected_evidence_ids": [],
+    "retrieval_recall": 0.0,
+    "mrr": 0.0
+   },
+   {
+    "question": "Whose sister played Susie in miracle on 34th street?",
+    "reference_answer": "Lana Wood",
+    "answer_text": "",
+    "evidence_text": "[1] (ring4 \u00b7 only) Kris Kringle (Edmund Gwenn) is indignant to find that the man assigned to play Santa in the annual Macy's Thanksgiving Day Parade (Percy Helton) is intoxicated. When he complains to event director Doris Walker (Maureen O'Hara), she persuades Kris to take his place.",
+    "latency_ms": 64.64,
+    "retrieval_latency_ms": 64.64,
+    "n_retrieved": 8,
+    "n_candidates": 31,
+    "context_tokens": 47,
+    "active_components": [
+     "semantic"
+    ],
+    "candidate_policy": "shared",
+    "answer_metrics": {},
+    "selected_evidence_ids": [
+     "mem_610f3ae4532f"
+    ],
+    "candidate_ids": [
+     "mem_610f3ae4532f"
+    ],
+    "retrieval_recall": 0.25,
+    "mrr": 1.0
+   },
+   {
+    "question": "Who is the spouse of a cast member from King of the Mountain?",
+    "reference_answer": "Lisa Rinna",
+    "answer_text": "",
+    "evidence_text": "",
+    "latency_ms": 47.69,
+    "retrieval_latency_ms": 47.69,
+    "n_retrieved": 8,
+    "n_candidates": 31,
+    "context_tokens": 0,
+    "active_components": [
+     "semantic"
+    ],
+    "candidate_policy": "shared",
+    "answer_metrics": {},
+    "selected_evidence_ids": [],
+    "retrieval_recall": 0.0,
+    "mrr": 0.0
+   },
+   {
+    "question": "What district is the headquarter of Julia's House located?",
+    "reference_answer": "East Dorset",
+    "answer_text": "[1] Julia's House is located in Corfe Mullen, Dorset, England.",
+    "evidence_text": "[1] (ring3 \u00b7 starbucks) Julia's House is a children's hospice located in Corfe Mullen, Dorset, England. It is a hospice in Dorset for children with life-limiting conditions.",
+    "latency_ms": 38.73,
+    "retrieval_latency_ms": 38.73,
+    "n_retrieved": 8,
+    "n_candidates": 41,
+    "context_tokens": 27,
+    "active_components": [
+     "semantic"
+    ],
+    "candidate_policy": "shared",
+    "answer_metrics": {},
+    "selected_evidence_ids": [
+     "mem_acfc969148f8"
+    ],
+    "candidate_ids": [
+     "mem_acfc969148f8"
+    ],
+    "retrieval_recall": 0.25,
+    "mrr": 1.0,
+    "answer_token_f1": 0.15384615384615385
+   },
+   {
+    "question": "What place does the administrative territorial entity that Juba is located in share a border with?",
+    "reference_answer": "Eastern Equatoria",
+    "answer_text": "",
+    "evidence_text": "",
+    "latency_ms": 46.25,
+    "retrieval_latency_ms": 46.25,
+    "n_retrieved": 8,
+    "n_candidates": 32,
+    "context_tokens": 0,
+    "active_components": [
+     "semantic"
+    ],
+    "candidate_policy": "shared",
+    "answer_metrics": {},
+    "selected_evidence_ids": [],
+    "retrieval_recall": 0.0,
+    "mrr": 0.0
+   },
+   {
+    "question": "Who is the sibling of the actress who played Susan Walker in Miracle on 34th street?",
+    "reference_answer": "Lana Wood",
+    "answer_text": "The memory does not contain enough information.",
+    "evidence_text": "[1] (ring4 \u00b7 only) Kris Kringle (Edmund Gwenn) is indignant to find that the man assigned to play Santa in the annual Macy's Thanksgiving Day Parade (Percy Helton) is intoxicated. When he complains to event director Doris Walker (Maureen O'Hara), she persuades Kris to take his place.",
+    "latency_ms": 41.87,
+    "retrieval_latency_ms": 41.87,
+    "n_retrieved": 8,
+    "n_candidates": 31,
+    "context_tokens": 47,
+    "active_components": [
+     "semantic"
+    ],
+    "candidate_policy": "shared",
+    "answer_metrics": {},
+    "selected_evidence_ids": [
+     "mem_610f3ae4532f"
+    ],
+    "candidate_ids": [
+     "mem_610f3ae4532f"
+    ],
+    "retrieval_recall": 0.25,
+    "mrr": 1.0,
+    "answer_token_f1": 0.0
+   },
+   {
+    "question": "What season was the performer of Addicted a part of?",
+    "reference_answer": "season five",
+    "answer_text": "",
+    "evidence_text": "",
+    "latency_ms": 83.17,
+    "retrieval_latency_ms": 83.17,
+    "n_retrieved": 8,
+    "n_candidates": 31,
+    "context_tokens": 0,
+    "active_components": [
+     "semantic"
+    ],
+    "candidate_policy": "shared",
+    "answer_metrics": {},
+    "selected_evidence_ids": [],
+    "retrieval_recall": 0.0,
+    "mrr": 0.0
+   },
+   {
+    "question": "Who is the father of the person who came up with the concept of the \"new\" police?",
+    "reference_answer": "Sir Robert Peel, 1st Baronet",
+    "answer_text": "The father of the person who came up with the concept of the \"new\" police is Johann Heinrich Gottlob Justi. [1]",
+    "evidence_text": "[1] (ring3 \u00b7 spencer) Michel Foucault claims that the contemporary concept of police as a paid and funded functionary of the state was developed by German and French legal scholars and practitioners in Public administration and Statistics in the 17th and early 18th centuries, most notably with Nicolas Delamare's Trait\u00e9 de la Police (\"Treatise on the Police\"), first published in 1705. The German Polizeiwissenschaft (Science of Police) first theorized by Philipp von H\u00f6rnigk a 17th-century Austrian Political economist and civil servant and much more famously by Johann Heinrich Gottlob Justi who produced an important theoretical work known as Cameral science on the formulation of police.",
+    "latency_ms": 62.0,
+    "retrieval_latency_ms": 62.0,
+    "n_retrieved": 8,
+    "n_candidates": 32,
+    "context_tokens": 105,
+    "active_components": [
+     "semantic"
+    ],
+    "candidate_policy": "shared",
+    "answer_metrics": {},
+    "selected_evidence_ids": [
+     "mem_63a8fce7c73e"
+    ],
+    "candidate_ids": [
+     "mem_63a8fce7c73e"
+    ],
+    "retrieval_recall": 0.16666666666666666,
+    "mrr": 1.0,
+    "answer_token_f1": 0.0
+   },
+   {
+    "question": "In which year did Taifa of Francisco Giner de los Rios' birthplace cease to exist?",
+    "reference_answer": "1065",
+    "answer_text": "The Taifa of Alpuente ceased to exist in 1106.",
+    "evidence_text": "[1] (ring3 \u00b7 spencer) Francisco Giner de los R\u00edos (10 October 1839 in Ronda, Spain \u2013 18 February 1915 in Madrid) was a philosopher, educator and one of the most influential Spanish intellectuals at the end of the 19th and the beginning of the 20th century.\n[2] (ring3 \u00b7 spencer) Gonzalo G\u00fcell y Morales de los R\u00edos (16 February 1895 in Havana, Cuba \u2013 2 September 1985 in Coral Gables, Miami-Dade County, Florida USA) was a Cuban lawyer and a career diplomat (1919\u20131959).\n[3] (ring3 \u00b7 spencer) Vicente Manansala, a National Artist of the Philippines in Visual Arts, was a direct influence to his fellow Filipino neo-realists: Malang, Angelito Antonio, Norma Belleza and Manuel Baldemor. The Honolulu Museum of Art, the Lopez Memorial Museum (Manila), the Philippine Center (New York City), the Singapore Art Museum and Holy Angel University (Angeles City, Philippines) are among the public collections holding work by Vicente Manansala.\n[4] (ring3 \u00b7 starbucks) The Taifa of Alpuente was a medieval Berber taifa kingdom that existed from around 1009 to 1106 created following the end of the Caliphate of C\u00f3rdoba in the Iberian Peninsula in 1010. It was ruled by the Kutama Berber family of the Ban\u016b Q\u0101sim.",
+    "latency_ms": 60.34,
+    "retrieval_latency_ms": 60.34,
+    "n_retrieved": 8,
+    "n_candidates": 66,
+    "context_tokens": 200,
+    "active_components": [
+     "semantic"
+    ],
+    "candidate_policy": "shared",
+    "answer_metrics": {},
+    "selected_evidence_ids": [
+     "mem_43fa258014fb",
+     "mem_eb10d7312b45",
+     "mem_87220273e53f",
+     "mem_b97754d87827"
+    ],
+    "candidate_ids": [
+     "mem_43fa258014fb",
+     "mem_eb10d7312b45",
+     "mem_87220273e53f",
+     "mem_b97754d87827"
+    ],
+    "retrieval_recall": 0.25,
+    "mrr": 1.0,
+    "answer_token_f1": 0.0
+   },
+   {
+    "question": "Who is the child of the person who followed Tihomir of Serbia?",
+    "reference_answer": "Saint Sava",
+    "answer_text": "",
+    "evidence_text": "",
+    "latency_ms": 54.89,
+    "retrieval_latency_ms": 54.89,
+    "n_retrieved": 8,
+    "n_candidates": 33,
+    "context_tokens": 0,
+    "active_components": [
+     "semantic"
+    ],
+    "candidate_policy": "shared",
+    "answer_metrics": {},
+    "selected_evidence_ids": [],
+    "retrieval_recall": 0.0,
+    "mrr": 0.0
+   },
+   {
+    "question": "Where are the headquarters for the publisher of In the Shadow of Greatness?",
+    "reference_answer": "Annapolis",
+    "answer_text": "The headquarters for the publisher of In the Shadow of Greatness is the United States Naval Institute.",
+    "evidence_text": "[1] (ring3 \u00b7 million) In the Shadow of Greatness is a 2012 book written by 33 members of the United States Naval Academy Class of 2002 and published by the United States Naval Institute. The authors describe how their lives were shaped by their experiences at the Academy, the September 11 attacks, and events following graduation.",
+    "latency_ms": 67.08,
+    "retrieval_latency_ms": 67.08,
+    "n_retrieved": 8,
+    "n_candidates": 46,
+    "context_tokens": 56,
+    "active_components": [
+     "semantic"
+    ],
+    "candidate_policy": "shared",
+    "answer_metrics": {},
+    "selected_evidence_ids": [
+     "mem_3d185adaf03e"
+    ],
+    "candidate_ids": [
+     "mem_3d185adaf03e"
+    ],
+    "retrieval_recall": 0.25,
+    "mrr": 1.0,
+    "answer_token_f1": 0.0
+   },
+   {
+    "question": "What body of water includes the terrain feature where Coffee Swamp is located?",
+    "reference_answer": "Lake Superior",
+    "answer_text": "The body of water that includes the terrain feature where Coffee Swamp is located is a freshwater swamp. [1]",
+    "evidence_text": "[1] (ring3 \u00b7 starbucks) Coffee Swamp is a two acre freshwater swamp located on the northern edge of Washington Island, in Door County Wisconsin and is a designated state natural area since 1994. The swamp represents a boreal forest, and hosts a number of plant species including various sedges, ferns and other rare plants.",
+    "latency_ms": 64.98,
+    "retrieval_latency_ms": 64.98,
+    "n_retrieved": 8,
+    "n_candidates": 40,
+    "context_tokens": 54,
+    "active_components": [
+     "semantic"
+    ],
+    "candidate_policy": "shared",
+    "answer_metrics": {},
+    "selected_evidence_ids": [
+     "mem_eea947a59559"
+    ],
+    "candidate_ids": [
+     "mem_eea947a59559"
+    ],
+    "retrieval_recall": 0.25,
+    "mrr": 1.0,
+    "answer_token_f1": 0.0
+   },
+   {
+    "question": "What happened to the Curonians who lived in the area where Erich Zakowski was born?",
+    "reference_answer": "expelled by the Soviet Union",
+    "answer_text": "",
+    "evidence_text": "[1] (ring3 \u00b7 spencer) Erich Zakowski (born 25 November 1934 in East Prussia) is a German master mechanic, and the founder and longtime head of the Zakspeed racing team.\n[2] (ring3 \u00b7 spencer) Born Arutjun Wartanian in Nakhichevan in of the Russian Empire, he was of Armenian heritage. He graduated from high school in 1898 in Tbilisi, Georgia, and then briefly studied medicine in Kharkov (now in Ukraine).\n[3] (ring3 \u00b7 spencer) Gerd Ludwig (birth name Gerhard Erich Ludwig, born March 17, 1947 in Alsfeld, Hesse, Germany) is a German-American documentary photographer and photojournalist.",
+    "latency_ms": 58.76,
+    "retrieval_latency_ms": 58.76,
+    "n_retrieved": 8,
+    "n_candidates": 56,
+    "context_tokens": 94,
+    "active_components": [
+     "semantic"
+    ],
+    "candidate_policy": "shared",
+    "answer_metrics": {},
+    "selected_evidence_ids": [
+     "mem_ba3de6de93fc",
+     "mem_6490808a8791",
+     "mem_8e91ea37e1a0"
+    ],
+    "candidate_ids": [
+     "mem_ba3de6de93fc",
+     "mem_6490808a8791",
+     "mem_8e91ea37e1a0"
+    ],
+    "retrieval_recall": 0.25,
+    "mrr": 1.0
+   },
+   {
+    "question": "What league does the team that occupies the Rabat Ajax Football Ground belong to?",
+    "reference_answer": "Maltese Premier League",
+    "answer_text": "The team that occupies the Rabat Ajax Football Ground belongs to the Rabat Ajax F.C. [1]",
+    "evidence_text": "[1] (ring3 \u00b7 starbucks) The Rabat Ajax Football Ground is the training ground of Maltese football team Rabat Ajax F.C. and is located in the town of Mtarfa.",
+    "latency_ms": 58.37,
+    "retrieval_latency_ms": 58.37,
+    "n_retrieved": 8,
+    "n_candidates": 40,
+    "context_tokens": 28,
+    "active_components": [
+     "semantic"
+    ],
+    "candidate_policy": "shared",
+    "answer_metrics": {},
+    "selected_evidence_ids": [
+     "mem_354a8b578ad2"
+    ],
+    "candidate_ids": [
+     "mem_354a8b578ad2"
+    ],
+    "retrieval_recall": 0.25,
+    "mrr": 1.0,
+    "answer_token_f1": 0.0
+   },
+   {
+    "question": "Who is the wife of the actor of Grace's boyfriend in Frankie and Grace?",
+    "reference_answer": "Katharine Ross",
+    "answer_text": "[1]",
+    "evidence_text": "[1] (ring4 \u00b7 notable) Casting announcements began in June 2014, with Martin Sheen cast in the role of Robert, Grace's husband. The following month, Sam Waterston was cast in the role of Sol, Frankie's husband.\n[2] (ring4 \u00b7 only) In October 2015, it was announced Sam Elliott would appear in the second season as Grace's love interest. In April 2017, it was reported that Lisa Kudrow will appear in the fourth season as Sheree, Grace's manicurist.",
+    "latency_ms": 74.02,
+    "retrieval_latency_ms": 74.02,
+    "n_retrieved": 8,
+    "n_candidates": 54,
+    "context_tokens": 76,
+    "active_components": [
+     "semantic"
+    ],
+    "candidate_policy": "shared",
+    "answer_metrics": {},
+    "selected_evidence_ids": [
+     "mem_c8e0f812c3e3",
+     "mem_3d8d2a98aaf1"
+    ],
+    "candidate_ids": [
+     "mem_c8e0f812c3e3",
+     "mem_3d8d2a98aaf1"
+    ],
+    "retrieval_recall": 0.3333333333333333,
+    "mrr": 1.0,
+    "answer_token_f1": 0.0
+   },
+   {
+    "question": "Who did the original voice of the character that Mila Kunis plays in Family Guy?",
+    "reference_answer": "Lacey Chabert",
+    "answer_text": "Mila Kunis voiced the character in Family Guy. [2]",
+    "evidence_text": "[1] (ring4 \u00b7 only) Lacey Chabert voiced Meg for the first production season (14 episodes), but, because of a contractual agreement, was never credited. Chabert left the series due to time constraints with her acting role in Party of Five, as well as schoolwork.\n[2] (ring4 \u00b7 only) Meg Griffin Family Guy character First appearance 1998 Pilot Pitch of Family Guy (Early version) ``Death Has a Shadow ''(Official version) Created by Seth MacFarlane Voiced by Lacey Chabert (1999 -- 2000, 2011, 2012) Mila Kunis (1999 -- present) Tara Strong (singing voice) Information Occupation High school student Family Peter Griffin (father) Lois Griffin (mother) Chris Griffin (brother) Stewie Griffin (brother) Brian Griffin (dog) Spouse (s) Dr. Michael Milano (ex-fianc\u00e9) Nationality American",
+    "latency_ms": 56.53,
+    "retrieval_latency_ms": 56.53,
+    "n_retrieved": 8,
+    "n_candidates": 31,
+    "context_tokens": 120,
+    "active_components": [
+     "semantic"
+    ],
+    "candidate_policy": "shared",
+    "answer_metrics": {},
+    "selected_evidence_ids": [
+     "mem_7d712e2f3ac5",
+     "mem_141cf22d4798"
+    ],
+    "candidate_ids": [
+     "mem_7d712e2f3ac5",
+     "mem_141cf22d4798"
+    ],
+    "retrieval_recall": 0.5,
+    "mrr": 1.0,
+    "answer_token_f1": 0.0
+   },
+   {
+    "question": "What team was Anna Benson's husband on?",
+    "reference_answer": "Pittsburgh Pirates",
+    "answer_text": "",
+    "evidence_text": "[1] (ring3 \u00b7 only) Anna Benson (born February 12, 1976) is an American model, former stripper, and ex-wife of former Major League Baseball pitcher Kris Benson.",
+    "latency_ms": 63.98,
+    "retrieval_latency_ms": 63.98,
+    "n_retrieved": 8,
+    "n_candidates": 36,
+    "context_tokens": 26,
+    "active_components": [
+     "semantic"
+    ],
+    "candidate_policy": "shared",
+    "answer_metrics": {},
+    "selected_evidence_ids": [
+     "mem_66eb731a3cf4"
+    ],
+    "candidate_ids": [
+     "mem_66eb731a3cf4"
+    ],
+    "retrieval_recall": 0.25,
+    "mrr": 1.0
+   },
+   {
+    "question": "In which county did Snappy Tomato Pizza form?",
+    "reference_answer": "Kenton County",
+    "answer_text": "[1]",
+    "evidence_text": "[1] (ring3 \u00b7 starbucks) Snappy Tomato Pizza is a pizza chain that started in Fort Mitchell, Kentucky, and has over 60 locations nationwide. Its headquarters are in Burlington, Kentucky.",
+    "latency_ms": 56.71,
+    "retrieval_latency_ms": 56.71,
+    "n_retrieved": 8,
+    "n_candidates": 36,
+    "context_tokens": 29,
+    "active_components": [
+     "semantic"
+    ],
+    "candidate_policy": "shared",
+    "answer_metrics": {},
+    "selected_evidence_ids": [
+     "mem_f1c89fa1e1bd"
+    ],
+    "candidate_ids": [
+     "mem_f1c89fa1e1bd"
+    ],
+    "retrieval_recall": 0.25,
+    "mrr": 1.0,
+    "answer_token_f1": 0.0
+   },
+   {
+    "question": "Who married the publisher of abolitionist newspaper The North Star?",
+    "reference_answer": "Helen Pitts Douglass",
+    "answer_text": "The North Star was published by Frederick Douglass, an abolitionist. The question asks who married the publisher of The North Star, but since Frederick Douglass was the publisher, there was no marriage. Therefore, the answer is: The North Star does not have a publisher.",
+    "evidence_text": "[1] (ring3 \u00b7 million) The North Star was a nineteenth - century anti-slavery newspaper published from the Talman Building in Rochester, New York by abolitionist Frederick Douglass. The paper commenced publication on December 3, 1847 and ceased as The North Star in June 1851 when it merged with Gerrit Smith's Liberty Party Paper (based in Syracuse, New York) to form Frederick Douglass' Paper.\n[2] (ring3 \u00b7 spencer) William Cooper Nell (December 16, 1816 \u2013 May 25, 1874) was an African-American abolitionist, journalist, publisher, author, and civil servant of Boston, Massachusetts, who worked for integration of schools and public facilities in the state. Writing for abolitionist newspapers \"The Liberator\" and \"The North Star\", he helped publicize the anti-slavery cause.",
+    "latency_ms": 71.44,
+    "retrieval_latency_ms": 71.44,
+    "n_retrieved": 8,
+    "n_candidates": 46,
+    "context_tokens": 118,
+    "active_components": [
+     "semantic"
+    ],
+    "candidate_policy": "shared",
+    "answer_metrics": {},
+    "selected_evidence_ids": [
+     "mem_6630fe4d68f4",
+     "mem_a0c9454d6384"
+    ],
+    "candidate_ids": [
+     "mem_6630fe4d68f4",
+     "mem_a0c9454d6384"
+    ],
+    "retrieval_recall": 0.25,
+    "mrr": 1.0,
+    "answer_token_f1": 0.04255319148936171
+   },
+   {
+    "question": "Who were the leaders of the opposition of the political group that has a large number of Protestants?",
+    "reference_answer": "anti-slavery activists, modernizers, ex Whigs and ex Free Soilers",
+    "answer_text": "",
+    "evidence_text": "",
+    "latency_ms": 52.19,
+    "retrieval_latency_ms": 52.19,
+    "n_retrieved": 8,
+    "n_candidates": 30,
+    "context_tokens": 0,
+    "active_components": [
+     "semantic"
+    ],
+    "candidate_policy": "shared",
+    "answer_metrics": {},
+    "selected_evidence_ids": [],
+    "retrieval_recall": 0.0,
+    "mrr": 0.0
+   },
+   {
+    "question": "What was the average per capita GVA in 2013 of the country which created Burma's academic system?",
+    "reference_answer": "\u00a323,755",
+    "answer_text": "The average per capita GVA in 2013 of the country which created Burma's academic system was 140 USD (inflation-adjusted 2011 dollars) according to the World Health Organization.",
+    "evidence_text": "[1] (ring3 \u00b7 million) The educational system of Myanmar is operated by the government agency, the Ministry of Education. The education system is based on the United Kingdom's system due to nearly a century of British and Christian presences in Myanmar.\n[2] (ring3 \u00b7 million) 2 million diagnosed adult diabetics, live in India) Cigarette consumption 7 / 185 tobaccoatlas.org 2014 Cigarette consumption per capita 159 / 185 tobaccoatlas.org 2014 Alcohol consumption per capita 119 / 191 World Health Organization 2014 Global Hunger Index 100 / 119 International Food Policy Research Institute 2015 Suicide rate 41 / 106 World Health Organization Health Expenditure per capita (PPP) 140 / 190 World Health Organization 2014 - $267 (inflation - adjusted 2011 dollars) Height Average Height - male 90 / 101 averageheight.co 2016 - 1.647 m Average Height - female 45 / 103 averageheight.co 2016 - 1.612 m Education Literacy rate 168 / 234 UNESCO Institute for Statistics 2015 - 72.1% Education Index 145 / 191 United Nations 2013 Programme for International Student Assessment 72 t\n[3] (ring3 \u00b7 million) As of 2014, 58% of the total population were living on less than $3.10 per day. According to the Modified Mixed Reference Period (MMRP) concept proposed by World Bank in 2015, India's poverty rate for period 2011 - 12 stood at 12.4% of the total population, or about 172 million people; taking the revised poverty line as $1.90.",
+    "latency_ms": 63.05,
+    "retrieval_latency_ms": 63.05,
+    "n_retrieved": 8,
+    "n_candidates": 44,
+    "context_tokens": 234,
+    "active_components": [
+     "semantic"
+    ],
+    "candidate_policy": "shared",
+    "answer_metrics": {},
+    "selected_evidence_ids": [
+     "mem_68f78858aac3",
+     "mem_d8aa4dad713f",
+     "mem_6cdddcef19d8"
+    ],
+    "candidate_ids": [
+     "mem_68f78858aac3",
+     "mem_d8aa4dad713f",
+     "mem_6cdddcef19d8"
+    ],
+    "retrieval_recall": 0.25,
+    "mrr": 1.0,
+    "answer_token_f1": 0.0
+   }
+  ]
+ },
+ "significance_token_f1": {
+  "bootstrap": {
+   "n_pairs": 16,
+   "mean_diff": 0.06575,
+   "ci_low": 0.01338,
+   "ci_high": 0.12295,
+   "p_value": 0.0086
+  },
+  "wilcoxon": {
+   "n_pairs": 16,
+   "statistic": 3.0,
+   "p_value": 0.03569190011680441
+  }
+ }
+}

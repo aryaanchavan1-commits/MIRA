@@ -1,0 +1,107 @@
+{
+ "note": "Retrieval-only; MiniLM-L6 is English-centric, so absolute numbers are low for all systems. The comparison is between systems under the same embedder.",
+ "languages": {
+  "hi": {
+   "lang": "hi",
+   "n_questions": 120,
+   "n_nodes": 1513,
+   "n_gold": 117,
+   "summary": {
+    "mira_full": {
+     "mrr": 0.0198,
+     "retrieval_recall": 0.01,
+     "latency_ms": 27.785
+    },
+    "flat_vector": {
+     "mrr": 0.0285,
+     "retrieval_recall": 0.0085,
+     "latency_ms": 6.5993
+    },
+    "bm25": {
+     "mrr": 0.3925,
+     "retrieval_recall": 0.2329,
+     "latency_ms": 25.0863
+    }
+   },
+   "sig_mira_vs_flat_mrr": {
+    "bootstrap": {
+     "n_pairs": 117,
+     "mean_diff": -0.00869,
+     "ci_low": -0.03262,
+     "ci_high": 0.01225,
+     "p_value": 0.4632
+    },
+    "wilcoxon": {
+     "n_pairs": 117,
+     "statistic": 16.5,
+     "p_value": 0.47289397966983804
+    }
+   },
+   "sig_mira_vs_flat_retrieval_recall": {
+    "bootstrap": {
+     "n_pairs": 117,
+     "mean_diff": 0.00142,
+     "ci_low": -0.00712,
+     "ci_high": 0.00997,
+     "p_value": 0.6244
+    },
+    "wilcoxon": {
+     "n_pairs": 117,
+     "statistic": 9.0,
+     "p_value": 0.7388826803635273
+    }
+   }
+  },
+  "mr": {
+   "lang": "mr",
+   "n_questions": 120,
+   "n_nodes": 1187,
+   "n_gold": 119,
+   "summary": {
+    "mira_full": {
+     "mrr": 0.0438,
+     "retrieval_recall": 0.0196,
+     "latency_ms": 21.2957
+    },
+    "flat_vector": {
+     "mrr": 0.0441,
+     "retrieval_recall": 0.0329,
+     "latency_ms": 6.7734
+    },
+    "bm25": {
+     "mrr": 0.4518,
+     "retrieval_recall": 0.3613,
+     "latency_ms": 19.6226
+    }
+   },
+   "sig_mira_vs_flat_mrr": {
+    "bootstrap": {
+     "n_pairs": 119,
+     "mean_diff": -0.00037,
+     "ci_low": -0.01788,
+     "ci_high": 0.01787,
+     "p_value": 0.9468
+    },
+    "wilcoxon": {
+     "n_pairs": 119,
+     "statistic": 57.5,
+     "p_value": 0.8869516250859614
+    }
+   },
+   "sig_mira_vs_flat_retrieval_recall": {
+    "bootstrap": {
+     "n_pairs": 119,
+     "mean_diff": -0.01331,
+     "ci_low": -0.02521,
+     "ci_high": -0.0028,
+     "p_value": 0.0158
+    },
+    "wilcoxon": {
+     "n_pairs": 119,
+     "statistic": 6.0,
+     "p_value": 0.039351836861343546
+    }
+   }
+  }
+ }
+}

@@ -395,12 +395,27 @@ significance (`scripts/eval_significance.py`). Latest measured outcome
 
 MRR difference significant (Δ +0.267, 95% CI [0.224, 0.311], p<0.001); recall@8
 tied (p≈0.52) — MIRA ranks supporting evidence higher without surfacing more of it.
-Retrieval is deterministic given the seed (all 3 seeds identical). Answer-stage
-runs need an LLM co-resident with the 82k-node workspace and are pending on 16 GB RAM.
-Companions: `scripts/eval_ablation_real.py` (leave-one-out over all 9 components),
-`scripts/eval_scale_strategies.py` (aware-vs-blind placement across a size ladder),
-`scripts/eval_neural_validated.py` (doc-grouped holdout for the learned scorer;
-config never auto-flips).
+Retrieval is deterministic given the seed (all 3 seeds identical). Additional measured
+evidence, all exported to `paper/results_real.md`:
+
+- **HotpotQA replication** (`--dataset hotpotqa`, 17,962-node `data_hotpot/`
+  workspace, 300 bridge questions): MRR 0.9175 vs 0.6774 flat (Δ+0.240, p<0.001);
+  recall@8 slightly favors flat (p=0.007) — the MuSiQue shape replicates.
+- **BM25 control** (`scripts/add_bm25_baseline.py`, pure-Python Okapi): MRR 0.3066 —
+  below flat-vector, so MIRA's lead over it is Δ+0.395 (p<0.001).
+- **Answer stage** (`scripts/eval_answers_standalone.py`, Qwen2.5-1.5B forced,
+  identical compression + prompt): MIRA token-F1 0.076 vs flat 0.039
+  (Δ+0.066, CI [0.013, 0.123], p≈0.009) — the retrieval advantage survives
+  into end answers under a fixed local LLM.
+- **IndicQA hi/mr** (`scripts/build_indic_bench.py` + `scripts/eval_indic_retrieval.py`):
+  constructive negative result — the English-centric MiniLM embedder collapses on
+  Devanagari (dense MRR 0.02-0.04) while unicode-aware BM25 stays robust (0.39-0.45).
+  Local-first Indic RAG needs a multilingual embedding backend; BM25 is the default
+  there today.
+- **Ablation, scale sweep, neural validation**: `scripts/eval_ablation_real.py`
+  (leave-one-out over all 9 components), `scripts/eval_scale_strategies.py`
+  (aware-vs-blind placement across a size ladder), `scripts/eval_neural_validated.py`
+  (doc-grouped holdout for the learned scorer; config never auto-flips).
 
 ## 14. Reproducibility
 

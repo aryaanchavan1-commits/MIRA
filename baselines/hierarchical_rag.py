@@ -22,12 +22,16 @@ class HierarchicalRAG:
 
     def retrieve(self, query: str, k: int = 8) -> BaselineResult:
         t0 = time.perf_counter()
-        qtokens = set(re.findall(r"[a-z0-9]{3,}", (query or "").lower()))
+        # unicode word tokens; min length 3 applies to latin scripts, 2 to
+        # others (Devanagari words are short and dense)
+        qtokens = set(t for t in re.findall(r"\w+", (query or "").casefold())
+                      if len(t) >= (3 if t.isascii() else 2))
         scored = []
         for n in self.frame.nodes.values():
             if n.ring in (0, 1):
-                toks = set(re.findall(r"[a-z0-9]{3,}",
-                                      (n.concept + " " + n.summary).lower()))
+                toks = set(t for t in re.findall(
+                    r"\w+", (n.concept + " " + n.summary).casefold())
+                    if len(t) >= (3 if t.isascii() else 2))
                 overlap = qtokens & toks
                 if overlap:
                     scored.append((n.id, len(overlap)))

@@ -41,9 +41,20 @@ from scripts.eval_significance import paired_bootstrap, wilcoxon  # noqa: E402
 
 BENCH_JSON = os.path.join(BENCH_DIR, "benchmarks", "musique_bench.json")
 OUT_DIR = BENCH_DIR
+# every bench JSON lives in data_bench/benchmarks; only the WORKSPACE dir varies
+DATASET_BENCH_JSON = {
+    "musique": os.path.join(BENCH_DIR, "benchmarks", "musique_bench.json"),
+    "hotpotqa": os.path.join(BENCH_DIR, "benchmarks", "hotpotqa_bench.json"),
+}
+DATASET_WS_DIR = {
+    "musique": BENCH_DIR,
+    "hotpotqa": os.path.normpath(os.path.join(BENCH_DIR, "..", "data_hotpot")),
+}
 
 
-def load_records() -> list:
+def load_records(dataset: str = "musique") -> list:
+    global BENCH_JSON
+    BENCH_JSON = DATASET_BENCH_JSON[dataset]
     with open(BENCH_JSON, "r", encoding="utf-8") as fh:
         bench = json.load(fh)
     titles = bench["paragraphs"]
@@ -58,21 +69,35 @@ def load_records() -> list:
 
 
 def main() -> int:
+    global BENCH_DIR
     ap = argparse.ArgumentParser()
     ap.add_argument("--n", type=int, default=300)
     ap.add_argument("--seeds", type=int, default=3)
+    ap.add_argument("--dataset", choices=["musique", "hotpotqa"], default="musique",
+                    help="which isolated bench workspace + dataset to evaluate")
     ap.add_argument("--answers", action="store_true",
                     help="also run the LLM answer-level comparison subsample")
     ap.add_argument("--n-answers", type=int, default=50)
     ap.add_argument("--k", type=int, default=8)
     args = ap.parse_args()
 
-    records, titles = load_records()
+    # workspace dir switches; results still write to data_bench/ so the
+    # server and paper exporter find every artifact in one place
+    hot_dir = DATASET_WS_DIR[args.dataset]
+    cw.DATA_DIR = hot_dir
+    ac.DATA_DIR = hot_dir
+    BENCH_DIR = hot_dir
+
+    records, titles = load_records(args.dataset)
     print(f"{len(records)} questions available, corpus {len(titles)} paragraphs")
 
     ctx = build_context()
     ws = Workspace(embeddings=ctx.embeddings, llm=ctx.llm, config=ctx.cfg)
-    print(f"bench workspace: {len(ws.frame.nodes)} nodes, vs={ws.vs is not None}")
+    print(f"bench workspace [{args.dataset}]: {len(ws.frame.nodes)} nodes, "
+          f"vs={ws.vs is not None}")
+    if not ws.frame.nodes or ws.vs is None or ws.vs.size() == 0:
+        print(f"FATAL: workspace '{cw.DATA_DIR}' is empty — build it first")
+        return 1
 
     # resolve gold node ids once via title->doc->chunk->node
     from evaluation.datasets import resolve_titles_to_ids  # noqa: E402
@@ -81,6 +106,10 @@ def main() -> int:
         r["supporting_ids"] = resolve_titles_to_ids(ws, r["supporting_titles"])
     n_gold = sum(1 for r in records if r["supporting_ids"])
     print(f"gold node ids resolved for {n_gold}/{len(records)} questions")
+    if n_gold == 0:
+        print("FATAL: zero gold resolution — title mismatch between bench JSON "
+              "and workspace; refusing to write an all-zero artifact")
+        return 1
 
     # --- systems ---
     systems = {}
@@ -108,7 +137,7 @@ def main() -> int:
                   f"({time.time() - t0:.0f}s)")
             seed_summaries.append({"seed": seed, "system": name, **agg})
             # incremental checkpoint after each system×seed (this box has form)
-            with open(os.path.join(OUT_DIR, "bench_real_checkpoint.json"), "w",
+            with open(os.path.join(BENCH_DIR, f"{args.dataset}_checkpoint.json"), "w",
                       encoding="utf-8") as fh:
                 json.dump({"config": {"n": args.n, "seeds": args.seeds, "k": args.k},
                            "seed_summaries": seed_summaries,
@@ -142,11 +171,14 @@ def main() -> int:
         print(f"  wilcoxon: {wx}")
 
     out = {"config": {"n": args.n, "seeds": args.seeds, "k": args.k,
+                      "dataset": args.dataset,
                       "corpus_paragraphs": len(titles), "n_nodes": len(ws.frame.nodes),
                       "n_gold_resolved": n_gold},
            "seed_summaries": seed_summaries,
            "summary": summary, "significance": sig}
-    outp = os.path.join(OUT_DIR, "bench_real_results.json")
+    outp = os.path.join(OUT_DIR,
+                        "musique_bench_real_results.json" if args.dataset == "musique"
+                        else f"{args.dataset}_bench_real_results.json")
     with open(outp, "w", encoding="utf-8") as fh:
         json.dump(out, fh, indent=1)
     print(f"\nwrote {outp}")
@@ -174,7 +206,8 @@ def main() -> int:
         bt = paired_bootstrap(arows["mira_full"], arows["flat_vector"], "answer_token_f1")
         wx = wilcoxon(arows["mira_full"], arows["flat_vector"], "answer_token_f1")
         print(f"\nsignificance (token_f1): bootstrap {bt}\n wilcoxon {wx}")
-        with open(os.path.join(OUT_DIR, "bench_real_answers.json"), "w", encoding="utf-8") as fh:
+        with open(os.path.join(OUT_DIR, f"{args.dataset}_bench_real_answers.json"), "w",
+                  encoding="utf-8") as fh:
             json.dump({"n": len(sub), "rows": {k: v for k, v in arows.items()},
                        "significance_token_f1": {"bootstrap": bt, "wilcoxon": wx}}, fh, indent=1)
         print("wrote bench_real_answers.json")
