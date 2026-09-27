@@ -108,3 +108,8 @@ data_indic/**
 !data_indic/benchmarks/
 !data_indic/benchmarks/indicqa_hi_bench.json
 !data_indic/benchmarks/indicqa_mr_bench.json
+!data_bench/hotpotqa_bench_real_results.json
+!data_indic_ml/**
+!data_indic_ml/indicqa_ml_results.json
+data_indic_ml/hi/**
+data_indic_ml/mr/**
