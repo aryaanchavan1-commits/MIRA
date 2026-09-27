@@ -108,12 +108,17 @@
       : amode === "web" ? "fetched live from the web"
       : amode === "identity" ? "project identity"
       : "model knowledge — ungrounded";
+    const remembered = d.remembered;
+    const savedChip = remembered && remembered.document_id
+      ? `<span class="chat-saved" title="Question and answer stored as mandala memory nodes">✦ saved to memory</span>`
+      : "";
     return `<div class="chat-meta">
       <span class="chat-mode ${amode === "memory" ? "grounded" : ""}">${esc(amodeTag)}</span>
       <span>${Number.isFinite(m.latency_ms) ? Math.round(m.latency_ms) : "—"} ms</span>
       <span>${esc(m.n_memories ?? "—")} memories</span>
       <span>${esc(m.context_tokens ?? "—")} ctx</span>
       ${Number.isFinite(compression) && compression !== 0 ? `<span>${compression}× compressed</span>` : ""}
+      ${savedChip}
     </div>`;
   }
 
@@ -201,6 +206,8 @@
     }
   }
 
+  let rememberToggle;
+
   async function send() {
     const text = (inputEl.value || "").trim();
     if (!text) return;
@@ -227,6 +234,7 @@
       question: text,
       components: setSelect ? setSelect.value : "all",
       allow_web: webToggle ? webToggle.checked : false,
+      remember: rememberToggle ? rememberToggle.checked : true,
     };
     try {
       const resp = await fetch("/api/chat", {
@@ -269,6 +277,7 @@
     sendBtn = $("chat-send");
     webToggle = $("chat-web");
     setSelect = $("chat-set");
+    rememberToggle = $("chat-remember");
     micBtn = $("chat-mic");
     voicebar = $("chat-voicebar");
     speakBtn = $("chat-speak");

@@ -412,6 +412,11 @@ input::placeholder { color: var(--ink-dim); opacity: 1; }
   border: 1px solid var(--line-2); border-radius: 999px; padding: 0.04rem 0.6rem;
 }
 .chat-mode.grounded { border-color: var(--gold-dim); color: var(--gold); }
+.chat-saved {
+  border: 1px solid var(--gold-dim); border-radius: 999px; padding: 0.04rem 0.6rem;
+  color: var(--gold); background: rgba(212,162,78,0.08);
+}
+.chat-remember span { color: var(--gold); }
 
 .chat-typing { display: inline-flex; gap: 5px; align-items: center; }
 .chat-typing i {

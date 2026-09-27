@@ -130,11 +130,15 @@ def chat(payload: Dict[str, Any]) -> Dict[str, Any]:
             raise HTTPException(400, f"unknown ablation set {comp!r}")
         comp = ablation_configs()[comp]
     allow_web = _payload_bool(payload, "allow_web")
+    remember = _payload_bool(payload, "remember", default=True)
     try:
         w = ws()
         with w.lock:
             ans = w.ask(q, active_components=comp, system_name="web",
                         allow_web=allow_web)
+            saved = None
+            if remember and ans.text and ans.mode != "no_evidence":
+                saved = _remember_exchange(w, q, ans)
     except ValueError as exc:  # bad component names from API callers
         raise HTTPException(400, str(exc))
     return {
@@ -147,7 +151,35 @@ def chat(payload: Dict[str, Any]) -> Dict[str, Any]:
         "metrics": ans.metrics, "note": ans.confidence_note,
         "affect_snapshot": dict(getattr(ans, "affect_snapshot", {})),
         "affect": dict(getattr(ans, "affect_snapshot", {})),
+        "remembered": saved,
     }
+
+
+def _remember_exchange(w, question: str, ans) -> Dict[str, Any]:
+    """Persist a Q&A exchange into mandala memory for long-term recall.
+
+    Stores a short provenance-rich document (question, answer, grounding
+    mode, sources) via the normal ingestion pipeline, so the exchange becomes
+    retrievable nodes like any other memory. Dedup: identical questions map
+    to the same title, so re-asking replaces rather than duplicates.
+    """
+    import datetime
+    mode_label = getattr(ans, "agent_mode", "memory") or "memory"
+    sources = list(getattr(ans, "sources", []) or [])[:6]
+    src_block = "\n".join(f"- {s}" for s in sources) if sources else "- (model knowledge / no external source)"
+    day = datetime.datetime.now().strftime("%Y-%m-%d %H:%M")
+    title = f"Conversation: {question[:110]}"
+    text = (
+        f"Recorded conversation ({day}).\n"
+        f"Question: {question}\n\n"
+        f"Answer ({mode_label}):\n{ans.text}\n\n"
+        f"Grounding sources:\n{src_block}"
+    )
+    if len(text) > 16000:
+        text = text[:16000]
+    stats = w.ingest_text(text, title=title, source_path="(conversation)")
+    return {"document_id": stats.get("document_id"),
+            "n_nodes": stats.get("n_nodes"), "n_edges": stats.get("n_edges")}
 
 
 # ---- simulated affect (algorithmic bookkeeping only) ----
