@@ -105,5 +105,6 @@ data_hotpot/**
 data_hotpotqa/**
 data_indic/**
 !data_indic/indicqa_results.json
+!data_indic/benchmarks/
 !data_indic/benchmarks/indicqa_hi_bench.json
 !data_indic/benchmarks/indicqa_mr_bench.json
