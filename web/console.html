@@ -9,11 +9,12 @@
 </head>
 <body class="console-body">
 <canvas id="bg-texture-console" class="bg-texture bg-texture-dim" aria-hidden="true"></canvas>
-<aside class="side">
+<aside class="side" id="console-side">
   <a class="brand" href="/"><span class="brand-mark">◎</span> MIRA</a>
+  <button type="button" class="chat-new-btn" id="chat-new">＋ New chat</button>
   <nav class="side-nav" aria-label="Console sections">
-    <button type="button" data-view="overview" class="active" aria-controls="view-overview" aria-current="page">Overview</button>
-    <button type="button" data-view="chat" aria-controls="view-chat">Chat</button>
+    <button type="button" data-view="chat" class="active" aria-controls="view-chat" aria-current="page">Chat</button>
+    <button type="button" data-view="overview" aria-controls="view-overview">Overview</button>
     <button type="button" data-view="mandala" aria-controls="view-mandala">Mandala</button>
     <button type="button" data-view="documents" aria-controls="view-documents">Documents</button>
     <button type="button" data-view="websearch" aria-controls="view-websearch">Web Search</button>
@@ -21,15 +22,20 @@
     <button type="button" data-view="benchmarks" aria-controls="view-benchmarks">Benchmarks</button>
     <button type="button" data-view="research" aria-controls="view-research">Research</button>
   </nav>
+  <div class="chat-sessions-wrap">
+    <p class="side-label">Conversations</p>
+    <div class="chat-sessions" id="chat-sessions" aria-label="Saved conversations"></div>
+  </div>
   <div class="side-extra">
     <span class="lang-mount"></span>
+    <button type="button" class="side-collapse" id="side-toggle" aria-label="Collapse sidebar" aria-expanded="true">«</button>
   </div>
   <div class="side-status" id="side-status" role="status" aria-live="polite" aria-atomic="true">Loading system…</div>
 </aside>
 
 <main class="main" aria-label="MIRA console">
   <!-- OVERVIEW -->
-  <section class="view active" id="view-overview">
+  <section class="view" id="view-overview">
     <h1>System overview</h1>
     <div class="stat-grid" id="stats"></div>
     <section class="card affect-panel" id="affect-panel" aria-labelledby="affect-panel-title" aria-busy="true">
@@ -47,36 +53,38 @@
     </div>
   </section>
 
-  <!-- CHAT -->
-  <section class="view" id="view-chat">
-    <h1>Chat with your memory</h1>
-    <form id="chat-form" class="chat-form" novalidate aria-busy="false">
-      <div class="form-field">
-        <label for="chat-q">Question</label>
-        <input id="chat-q" placeholder="Ask a multi-hop question…" autocomplete="off" required aria-describedby="chat-q-error">
-        <small class="field-error" id="chat-q-error" aria-live="polite"></small>
+  <!-- CHAT (default view) -->
+  <section class="view active chat-view" id="view-chat">
+    <header class="chat-header">
+      <button type="button" class="side-collapse chat-side-open" id="side-toggle-open" aria-label="Open sidebar" hidden>☰</button>
+      <div class="chat-header-controls">
+        <label class="chat-control"><span class="visually-hidden">Retrieval set</span>
+          <select id="chat-set" required>
+            <option value="all">full MIRA</option>
+            <option value="vector_only">vector only</option>
+            <option value="graph_only">graph only</option>
+            <option value="hierarchy_only">hierarchy only</option>
+            <option value="radial_only">radial only</option>
+          </select>
+        </label>
+        <label class="chat-control chat-control-check"><input id="chat-web" type="checkbox"> <span>Allow live web</span></label>
       </div>
-      <div class="form-field">
-        <label for="chat-set">Retrieval set</label>
-        <select id="chat-set" required>
-          <option value="all">full MIRA</option>
-          <option value="vector_only">vector only</option>
-          <option value="graph_only">graph only</option>
-          <option value="hierarchy_only">hierarchy only</option>
-          <option value="radial_only">radial only</option>
-        </select>
+    </header>
+    <div class="chat-thread" id="chat-thread" role="log" aria-live="polite" aria-relevant="additions text" aria-busy="false"></div>
+    <div class="chat-composer-wrap">
+      <div class="chat-voicebar" id="chat-voicebar" hidden>
+        <button class="btn btn-ghost btn-small" id="chat-speak" type="button" data-i18n="chat.speak">Read the answer aloud</button>
+        <button class="btn btn-ghost btn-small" id="chat-voice-stop" type="button" data-i18n="chat.stop">Stop</button>
+        <span class="small muted" id="chat-voice-status" role="status" aria-live="polite"></span>
       </div>
-      <label class="check"><input id="chat-web" type="checkbox"> Allow live web</label>
-      <div class="chat-actions">
-        <button class="btn btn-primary" id="chat-submit" type="submit">Ask</button>
-        <button class="btn btn-icon" id="chat-mic" type="button" data-i18n-title="chat.listen" aria-label="Speak your question" hidden>🎙</button>
+      <div id="chat-composer" class="chat-composer" aria-busy="false">
+        <button class="btn-icon" id="chat-mic" type="button" data-i18n-title="chat.listen" aria-label="Speak your question" hidden>🎙</button>
+        <textarea id="chat-input" rows="1" placeholder="Ask a multi-hop question…" data-i18n-placeholder="chat.placeholder" aria-label="Your question"></textarea>
+        <button class="chat-send" id="chat-send" type="button" aria-label="Send question">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 19V5M5 12l7-7 7 7" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
       </div>
-    </form>
-    <div id="chat-out" class="chat-out" role="log" aria-live="polite" aria-relevant="additions text" aria-busy="false"><p class="small muted">Agent answers from memory first; weak memory + web consent → live search; otherwise model knowledge (labeled).</p></div>
-    <div class="chat-voicebar" id="chat-voicebar" hidden>
-      <button class="btn btn-ghost btn-small" id="chat-speak" type="button" data-i18n="chat.speak">Read the answer aloud</button>
-      <button class="btn btn-ghost btn-small" id="chat-voice-stop" type="button" data-i18n="chat.stop">Stop</button>
-      <span class="small muted" id="chat-voice-status" role="status" aria-live="polite"></span>
+      <p class="chat-disclaimer small muted">Answers are grounded in your mandala memory with provenance. Ungrounded model-knowledge answers are labeled as such.</p>
     </div>
   </section>
 
@@ -263,6 +271,7 @@
 <script src="js/i18n.js"></script>
 <script src="js/voice.js"></script>
 <script src="js/console.js"></script>
+<script src="js/chat.js"></script>
 <script src="js/mandala.js"></script>
 <script>initConsoleMandala && initConsoleMandala();</script>
 </body>

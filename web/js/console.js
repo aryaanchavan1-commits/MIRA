@@ -151,132 +151,30 @@ async function loadOverview() {
   }
 }
 
-/* ---------- chat ---------- */
-const chatForm = $("chat-form");
-const chatOutput = $("chat-out");
-const chatSubmit = $("chat-submit");
-revalidateWhenFixed($("chat-q"), $("chat-q-error"), "Enter a question.");
-chatForm.addEventListener("submit", async (e) => {
-  e.preventDefault();
-  if (chatSubmit.disabled) return;
-  const input = $("chat-q");
-  if (!validateRequired(input, $("chat-q-error"), "Enter a question.")) {
-    input.focus();
-    return;
-  }
-  const q = input.value.trim();
-  const set = $("chat-set").value;
-  chatOutput.insertAdjacentHTML("beforeend",
-    `<div class="bubble"><strong>You</strong><p>${esc(q)}</p></div>`);
-  input.value = "";
-  const pending = document.createElement("div");
-  pending.className = "bubble"; pending.textContent = "Retrieving and composing…";
-  chatOutput.appendChild(pending);
-  setBusy(chatForm, true); setBusy(chatOutput, true); setPending(chatSubmit, true, "Asking…");
-  try {
-    const d = await api("/api/chat", {
-      method: "POST", headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ question: q, components: set, allow_web: $("chat-web").checked }),
-    });
-    const m = d.metrics || {};
-    const rows = (d.memories || []).slice(0, 6).map((x, i) =>
-      `<tr><td>${i + 1}</td><th scope="row">${esc(x.concept)}</th><td>${esc(x.type)}</td>` +
-      `<td>${esc(x.ring ?? "—")}</td><td>${fmt(x.score)}</td></tr>`).join("");
-    const src = (d.sources || []).map(s => `<li>${esc(s)}</li>`).join("");
-    const amode = d.agent_mode || "memory";
-    const amodeTag = amode === "memory" ? "from memory"
-      : amode === "web" ? "fetched live from the web"
-      : amode === "identity" ? "project identity"
-      : "model knowledge — ungrounded";
-    const compression = Number(m.compression_ratio);
-    const affect = affectMarkup(d.affect_snapshot);
-    pending.innerHTML = `
-      <strong>Answer <span class="muted small">(${esc(d.mode)} · ${esc(amodeTag)})</span></strong>
-      <p>${esc(d.answer)}</p>
-      <div class="meta"><span>${fmt(m.latency_ms, 0)} ms</span>
-        <span>${esc(m.n_memories ?? "—")} memories</span>
-        <span>${esc(m.context_tokens ?? "—")} ctx tokens</span>
-        <span>compression ${Number.isFinite(compression) && compression !== 0 ? compression : "—"}×</span></div>
-      ${affect}
-      ${rows ? `<details><summary>Retrieved memories</summary><div class="table-wrap" role="region" aria-label="Retrieved memories" tabindex="0"><table><thead><tr><th scope="col">#</th><th scope="col">concept</th><th scope="col">type</th><th scope="col">ring</th><th scope="col">score</th></tr></thead><tbody>${rows}</tbody></table></div></details>` : ""}
-      ${src ? `<details><summary>Sources</summary><ul class="ticks small">${src}</ul></details>` : ""}`;
-  } catch (err) {
-    pending.innerHTML = `<p class="small status-error" role="alert">Error: ${esc(err.message)}</p>`;
-  } finally {
-    setBusy(chatForm, false); setBusy(chatOutput, false); setPending(chatSubmit, false);
-  }
-});
+/* ---------- chat ----------
+   The conversation UI lives in chat.js (ChatGPT-style sessions, composer,
+   typing indicator). console.js keeps only shared helpers: affectMarkup is
+   exposed for chat.js to render the same affect snapshot inline. */
+window.__affectMarkup = affectMarkup;
 
-/* ---------- live voice: speak the question, hear the answer ---------- */
-(function initVoice() {
-  const mic = $("chat-mic");
-  const voicebar = $("chat-voicebar");
-  const speakBtn = $("chat-speak");
-  const stopBtn = $("chat-voice-stop");
-  const voiceStatus = $("chat-voice-status");
-  if (!mic || !window.MIRAVoice) return;
+/* ---------- live voice ----------
+   Fully owned by chat.js (it wires the mic, speak and stop buttons to the
+   conversation thread). No console.js code needed here anymore. */
 
-  const V = window.MIRAVoice;
-  if (V.supported.stt) {
-    mic.hidden = false;
-    let finalText = "";
-    mic.addEventListener("click", () => {
-      if (V.isListening()) {
-        V.stopListening();
-        return;
-      }
-      finalText = "";
-      mic.setAttribute("aria-pressed", "true");
-      voicebar.hidden = false;
-      voiceStatus.textContent = (window.MIRAI18N && MIRAI18N.t("chat.listening")) || "Listening…";
-      const started = V.startListening({
-        onResult: (text, isFinal) => {
-          $("chat-q").value = text;
-          if (isFinal) finalText = text;
-        },
-        onEnd: (err) => {
-          mic.setAttribute("aria-pressed", "false");
-          voiceStatus.textContent = err ? `mic: ${err}` : "";
-          if (!err && finalText.trim()) chatForm.requestSubmit();
-        },
-      });
-      if (!started) {
-        mic.setAttribute("aria-pressed", "false");
-        voiceStatus.textContent = (window.MIRAI18N && MIRAI18N.t("chat.mic.unsupported")) || "Voice input needs Chrome or Edge";
-      }
-    });
-  }
-
-  /* manual replay + stop; auto-speak stays off until the user opts in once */
-  speakBtn.addEventListener("click", () => {
-    const last = [...chatOutput.querySelectorAll(".bubble p")].reverse()
-      .find(p => p.textContent.length > 40);
-    if (last) V.speak(last.textContent);
-  });
-  stopBtn.addEventListener("click", () => {
-    V.stopSpeaking();
-    V.stopListening();
-    voiceStatus.textContent = "";
-  });
-})();
-
-/* ---------- reveal-on-scroll for landing sections ---------- */
-(function initReveal() {
-  const targets = document.querySelectorAll(".section, .honesty, .hero-inner");
-  if (!targets.length || !("IntersectionObserver" in window) ||
-      window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-    return;
-  }
-  targets.forEach(el => el.classList.add("reveal"));
-  const io = new IntersectionObserver(entries => {
-    entries.forEach(en => {
-      if (en.isIntersecting) {
-        en.target.classList.add("in");
-        io.unobserve(en.target);
-      }
-    });
-  }, { threshold: 0.08 });
-  targets.forEach(el => io.observe(el));
+/* ---------- sidebar collapse (ChatGPT-style) ---------- */
+(function initSidebar() {
+  const side = $("console-side");
+  const collapseBtn = $("side-toggle");
+  const openBtn = $("side-toggle-open");
+  if (!side || !collapseBtn) return;
+  const apply = (collapsed) => {
+    side.classList.toggle("collapsed", collapsed);
+    if (openBtn) openBtn.hidden = !collapsed;
+    try { localStorage.setItem("mira_side_collapsed", collapsed ? "1" : ""); } catch (e) {}
+  };
+  collapseBtn.addEventListener("click", () => apply(true));
+  if (openBtn) openBtn.addEventListener("click", () => apply(false));
+  try { if (localStorage.getItem("mira_side_collapsed")) apply(true); } catch (e) {}
 })();
 
 /* ---------- documents ---------- */
