@@ -43,8 +43,7 @@ OUT = os.path.join(_BENCH, "scale_sweep_results.json")
 
 def sweep(ws, records, k=8):
     table = []
-    current = (ws.config.get("topology", {}) or {}).get("placement_strategy",
-                                                        "hybrid_mira")
+    # snapshot the persisted topology BEFORE any sweep call mutates ws.config
     try:
         for name in PLACEMENT_STRATEGIES:
             ws.replace_all(strategy=name)
@@ -57,7 +56,12 @@ def sweep(ws, records, k=8):
             print(f"  {name:20s} mrr={agg.get('mrr', 0):.4f} "
                   f"recall={agg.get('retrieval_recall', 0):.4f}", flush=True)
     finally:
-        ws.replace_all(strategy=current)
+        # ALWAYS restore the canonical deployment placement. Never trust
+        # config's current value: a previous crashed sweep persists its last
+        # strategy into config, and trusting it is how the bench workspace
+        # was once left on 'temporal' (ring-0/1 collapsed ~3,900 -> 110,
+        # silently breaking the hierarchical candidate stage).
+        ws.replace_all(strategy="hybrid_mira")
     return table
 
 

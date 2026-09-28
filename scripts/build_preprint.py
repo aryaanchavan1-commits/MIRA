@@ -75,15 +75,32 @@ zero cloud calls. Artifacts and builders:
         fh.write(preprint)
     print(f"wrote {out_md} ({len(preprint)} chars)")
 
-    pandoc = shutil.which("pandoc")
-    if pandoc:
+    pandoc = shutil.which("pandoc") or os.path.expandvars(
+        r"%LOCALAPPDATA%\\Pandoc\\pandoc.exe")
+    pdf_path = os.path.join(PAPER, "preprint.pdf")
+    if os.path.exists(pandoc):
         try:
-            subprocess.run([pandoc, out_md, "-o", os.path.join(PAPER, "preprint.pdf"),
-                            "--pdf-engine=xelatex", "-V", "mainfont=Noto Serif Devanagari"],
-                           check=True, cwd=PAPER, timeout=600)
-            print("wrote paper/preprint.pdf")
+            subprocess.run([pandoc, out_md, "-o", os.path.join(PAPER, "preprint.html"),
+                            "--standalone"], check=True, cwd=PAPER, timeout=600)
+            print("wrote paper/preprint.html")
+            chrome = None
+            for cand in (r"C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe",
+                         r"C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe"):
+                if os.path.exists(cand):
+                    chrome = cand
+                    break
+            if chrome:
+                subprocess.run([chrome, "--headless", "--disable-gpu",
+                                "--no-pdf-header-footer",
+                                "--print-to-pdf=" + pdf_path,
+                                "file:///" + out_md.replace("\\", "/")],
+                               check=True, timeout=300,
+                               capture_output=True)
+                print("wrote paper/preprint.pdf (chrome headless)")
+            else:
+                print("chrome not found; preprint.html is the print-ready form")
         except Exception as exc:
-            print(f"pandoc PDF skipped ({exc}); markdown preprint is the deliverable")
+            print(f"PDF skipped ({exc}); markdown preprint is the deliverable")
     else:
         print("pandoc not installed; markdown preprint is the deliverable")
     return 0

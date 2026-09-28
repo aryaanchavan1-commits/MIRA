@@ -244,6 +244,20 @@ disabled by default; enable it only after a held-out, document-grouped validatio
 run records the split, scorer hash, and effective weights. The learned-vs-hand
 setting is itself ablatable.
 
+**Sleep consolidation (offline, `scripts/consolidate.py`).** Three
+biologically-motivated dynamics applied as an explicit, measurable pass —
+never hidden magic: Ebbinghaus-style soft forgetting (importance fades with
+time-since-use, slower for well-wired memories; never deletes), replay-based
+reinforcement (recent retrievals re-fire through the Hebbian rule; used nodes
+get an importance lift and a decay-clock reset), and gist abstraction
+(clustered summaries stored one ring under the core, wired to member facts
+with `gist_of` edges). Dry-run by default with a pre-write SQLite snapshot;
+a ring-rate guard aborts if the workspace's ring-0/1 fraction is collapsed
+(a real failure mode this repo hit and fixed). Measured on the 82,783-node
+bench workspace: retention 0.9789, 507 gists → 1,521 member edges, retrieval
+preserved (MRR 0.7003 → 0.6986, p=0.257) — harmless on a fresh corpus by
+design; the decay/replay benefit targets aged, repeatedly-used workspaces.
+
 Pipeline: query analysis → embedding → semantic (FAISS) → seed selection →
 graph expansion with available path provenance → **spreading activation** →
 hierarchical candidates → merge → score → rerank → path selection → evidence

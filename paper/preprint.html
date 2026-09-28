@@ -4,11 +4,11 @@
   <meta charset="utf-8" />
   <meta name="generator" content="pandoc 3.11" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
-  <meta name="dcterms.date" content="2026-09-27" />
+  <meta name="dcterms.date" content="2026-09-28" />
   <meta name="keywords" content="retrieval-augmented generation, memory
 topology, radial organization, ablation study, local-first AI, Indic
 languages" />
-  <title>MIRA — Mandala-Inspired Memory for AI Retrieval</title>
+  <title>Radial Memory Topologies for Retrieval-Augmented Generation: A Controlled Study of Mandala-Inspired Organization</title>
   <style>
     /* Default styles provided by pandoc.
     ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
@@ -179,8 +179,9 @@ languages" />
 </head>
 <body>
 <header id="title-block-header">
-<h1 class="title">MIRA — Mandala-Inspired Memory for AI Retrieval</h1>
-<p class="date">2026-09-27</p>
+<h1 class="title">Radial Memory Topologies for Retrieval-Augmented
+Generation: A Controlled Study of Mandala-Inspired Organization</h1>
+<p class="date">2026-09-28</p>
 </header>
 <h2 id="reproducibility-statement">Reproducibility statement</h2>
 <p>Every quantitative claim in this paper is generated from committed
@@ -499,18 +500,26 @@ answers are paired). Absolute F1 is low — a 1.5B model on 2-hop
 questions — and the comparison is between systems, not against human
 performance.</p>
 <p><strong>Cross-lingual check (IndicQA hi/mr, retrieval-only) —
-diagnosis and fix.</strong> Under the English-centric MiniLM embedder,
-dense retrieval (MIRA and flat alike) collapses on Devanagari (MRR
-0.02-0.04) while unicode-aware BM25 remains robust (0.39-0.45). Swapping
-to a multilingual embedder (paraphrase-multilingual-MiniLM-L12-v2, a
-config-level change) lifts dense retrieval by roughly 10x on Hindi (flat
-MRR 0.021 → 0.394, into BM25’s range) and confirms the diagnosis: the
-language barrier for local-first Indic RAG sits in the embedding
-backend, not the memory architecture. On this small single-paragraph
-corpus, BM25 remains the stronger Indic default and MIRA’s topology
-advantage does not yet transfer (its structural signals are computed
-from English-centric extraction); scaling the corpus and Indic-aware
-extraction are the stated next steps.</p>
+diagnosis, fix, and an honest boundary.</strong> Under the
+English-centric MiniLM embedder, dense retrieval (MIRA and flat alike)
+collapses on Devanagari (MRR 0.02-0.04) while unicode-aware BM25 remains
+robust (0.39-0.45). Swapping to a multilingual embedder
+(paraphrase-multilingual-MiniLM-L12-v2, a config-level change) lifts
+dense retrieval by roughly 10-15× on Hindi (flat MRR 0.021 → 0.327 at
+full scale), confirming the diagnosis: the language barrier for
+local-first Indic RAG sits in the embedding backend, not the memory
+architecture. At the full 3,151-question scale (1,547 Hindi + 1,604
+Marathi, complete paragraph corpora), BM25 remains the strongest system
+(hi 0.373, mr 0.450) and MIRA’s topology does <strong>not</strong> yet
+beat either baseline (hi 0.274, mr 0.192; significantly below flat,
+p&lt;0.001) — its structural signals (rings/sectors from concept
+clustering, graph edges from English-centric extraction) do not yet
+express useful organization on single-paragraph extractive corpora. The
+boundary is stated as measured: the topology’s advantage is demonstrated
+on multi-hop, document-scale corpora (MuSiQue, HotpotQA); for Indic
+extractive QA, BM25 is the correct local-first default today, and
+Indic-aware extraction is the gated next step before any topology claim
+in Indic languages.</p>
 <p><strong>Scale sweep (structure-blind vs topology-aware
 placement).</strong> Against the hub- neighborhood probe,
 structure-blind <code>embedding_clusters</code> posts the best MRR at
@@ -520,6 +529,58 @@ recall at every rung (0.564 → 0.447). The aware-vs-blind MRR gap does
 <strong>not</strong> widen with scale (−0.125 → −0.024). Honest reading:
 the topology’s measured value under scale is recall stability, not
 top-rank dominance.</p>
+<h3
+id="x-memory-dynamics-sleep-consolidation-decay-replay-gist-abstraction">6.x
+Memory dynamics: sleep consolidation (decay, replay, gist
+abstraction)</h3>
+<p>To move the platform from <em>inspired by</em> human memory toward
+<em>modeling</em> it, we add three offline mechanisms
+(<code>core/memory_dynamics.py</code>,
+<code>scripts/consolidate.py</code>) and measure them rather than assume
+them:</p>
+<ol type="1">
+<li><strong>Soft forgetting (Ebbinghaus-style decay).</strong> Node
+importance fades exponentially with time since last use,
+<code>R(t)=exp(-t/tau)</code>, where <code>tau</code> scales with
+stability (connectivity × confidence): well-wired memories decay slower.
+Decay never deletes; it modulates retrieval probability. On the
+82,783-node bench workspace a 21-day half-life yields mean retention
+0.969 (dry probe) — measurable, bounded, and reversible.</li>
+<li><strong>Replay-based reinforcement.</strong> Recent
+<code>retrieval_logs</code> rows and remembered-exchange documents are
+re-fired through the existing Hebbian consolidation (edges along used
+paths strengthen, untouched edges decay slightly) while used nodes
+receive an importance lift and a decay-clock reset
+(<code>updated_at</code> touch). Retrieval logging was wired into the
+answer pipeline for exactly this purpose (it was previously absent —
+<code>retrieval_logs</code> stayed empty in production).</li>
+<li><strong>Gist abstraction.</strong> Fact/document nodes are clustered
+per sector by embedding proximity and summarized into higher-level
+SEMANTIC “gist” nodes wired to members with <code>gist_of</code> edges —
+the cheap general-level hit above detail nodes that verbatim stores
+lack.</li>
+</ol>
+<p>A sleep pass applies replay → decay → gists offline (<strong>never
+re-placement</strong>: the canonical placement is applied per-document
+during ingestion, and a global re-place collapsed ring-0/1 from 4,168 to
+633 in a first apply run — caught by the before/after probe, db restored
+from its pre-write snapshot), then re-measures the identical probe
+questions. Measured on the 82,783-node bench workspace
+(<code>consolidation_results.json</code>): decay retention 0.9789
+(21-day half-life); <strong>507 gist nodes</strong> created, wired to
+their 1,521 member facts via <code>gist_of</code> edges; retrieval
+preserved, MRR 0.7003 → 0.6986 (Δ −0.0017, CI [−0.0010, +0.0048],
+p=0.257, n=300) — consolidation is measurably <em>harmless</em> on a
+fresh corpus in a single pass, and the honest claim is exactly that: the
+decay/replay benefit hypothesis targets <strong>aged,
+repeatedly-used</strong> workspaces, where time-since-use actually
+discriminates. The pass ships with hard guards born of real failures we
+caught and fixed: a <strong>ring-rate guard</strong> (ring-0/1 fraction
+&lt; 2% on a large workspace aborts — a mis-placed workspace once
+silently emptied the hierarchical candidate stage: 3,371 → 44
+candidates/query, MRR 0.70 → 0.35), dry-run default
+(<code>--apply</code> required to write), and a pre-write SQLite
+snapshot backup as the undo path.</p>
 <hr />
 <!-- AUTO-GENERATED by paper/export_results.py --real — do not edit numbers by hand -->
 <h3
@@ -763,6 +824,114 @@ cross-lingual limitation</h3>
 MRR ~0.02-0.04) while unicode-aware BM25 remains robust (0.39-0.45).
 Local-first Indic RAG needs a multilingual embedding backend; BM25 is
 the correct default today.</p>
+<h3
+id="indicqa-with-multilingual-embedder-paraphrase-multilingual-minilm-l12-v2">IndicQA
+with multilingual embedder (paraphrase-multilingual-MiniLM-L12-v2)</h3>
+<table>
+<thead>
+<tr>
+<th>language</th>
+<th>system</th>
+<th>MRR</th>
+<th>recall@8</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>hi</td>
+<td>mira_full</td>
+<td>0.3144</td>
+<td>0.2005</td>
+</tr>
+<tr>
+<td>hi</td>
+<td>flat_vector</td>
+<td>0.3939</td>
+<td>0.2140</td>
+</tr>
+<tr>
+<td>hi</td>
+<td>bm25</td>
+<td>0.3925</td>
+<td>0.2329</td>
+</tr>
+<tr>
+<td>mr</td>
+<td>mira_full</td>
+<td>0.1645</td>
+<td>0.1345</td>
+</tr>
+<tr>
+<td>mr</td>
+<td>flat_vector</td>
+<td>0.2090</td>
+<td>0.1702</td>
+</tr>
+<tr>
+<td>mr</td>
+<td>bm25</td>
+<td>0.4518</td>
+<td>0.3613</td>
+</tr>
+</tbody>
+</table>
+<p>The multilingual embedder lifts dense retrieval ~10-15× (Hindi flat
+MRR 0.021 → 0.394), confirming the backend was the language barrier.</p>
+<h3 id="indicqa-at-full-scale-3151-questions-complete-corpora">IndicQA
+at full scale (3151 questions, complete corpora)</h3>
+<table>
+<thead>
+<tr>
+<th>language</th>
+<th>system</th>
+<th>MRR</th>
+<th>recall@8</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>hi</td>
+<td>mira_full</td>
+<td>0.2736</td>
+<td>0.1884</td>
+</tr>
+<tr>
+<td>hi</td>
+<td>flat_vector</td>
+<td>0.3273</td>
+<td>0.2025</td>
+</tr>
+<tr>
+<td>hi</td>
+<td>bm25</td>
+<td>0.3726</td>
+<td>0.2389</td>
+</tr>
+<tr>
+<td>mr</td>
+<td>mira_full</td>
+<td>0.1924</td>
+<td>0.1564</td>
+</tr>
+<tr>
+<td>mr</td>
+<td>flat_vector</td>
+<td>0.2322</td>
+<td>0.1695</td>
+</tr>
+<tr>
+<td>mr</td>
+<td>bm25</td>
+<td>0.4498</td>
+<td>0.3398</td>
+</tr>
+</tbody>
+</table>
+<p>Honest boundary at full scale: BM25 stays the strongest Indic system
+and MIRA does not yet beat either baseline on single-paragraph
+extractive QA — the topology’s advantage is demonstrated on multi-hop
+document-scale corpora; Indic-aware extraction is the gated next
+step.</p>
 <h3 id="answer-stage-n50-model-qwen2.5-1.5b-instruct-q4_k_m.gguf">Answer
 stage (n=50, model qwen2.5-1.5b-instruct-q4_k_m.gguf)</h3>
 <table>
@@ -786,6 +955,34 @@ stage (n=50, model qwen2.5-1.5b-instruct-q4_k_m.gguf)</h3>
 <p>token-F1 (mira vs flat): d=0.06575 CI [0.01338, 0.12295], p~0.0086
 (n_pairs=16). Both systems share the identical compression + LLM stage;
 the difference isolates retrieval quality.</p>
+<h3 id="sleep-consolidation-memory-dynamics-decay-replay-gists">Sleep
+consolidation (memory dynamics: decay + replay + gists)</h3>
+<p>Mode: APPLIED. Decay retention mean 0.9789 over 82783 nodes; gists
+created: 507.</p>
+<table>
+<thead>
+<tr>
+<th>metric</th>
+<th>before</th>
+<th>after</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>mrr</td>
+<td>0.7003</td>
+<td>0.6986</td>
+</tr>
+<tr>
+<td>retrieval_recall</td>
+<td>0.3007</td>
+<td>0.3004</td>
+</tr>
+</tbody>
+</table>
+<p>before-vs-after MRR: d=0.00167 CI [-0.001, 0.00481], p~0.2568
+(n_pairs=300). Consolidation is reported as measured: replay/decay/gist
+effects are quantified against the same probe questions.</p>
 <hr />
 <h2 id="threats-to-validity">7. Threats to Validity</h2>
 <ul>
@@ -801,6 +998,12 @@ a pristine control.</li>
 family. Findings are scoped accordingly.</li>
 <li><strong>Statistical:</strong> results will ship with dispersion
 across seeds and questions; point estimates alone are not claims.</li>
+<li><strong>Operational:</strong> offline passes (placement sweeps,
+consolidation) mutate persisted workspaces. The scale sweep’s restore
+once left the bench workspace on the wrong placement, silently degrading
+retrieval until detected. Mitigations now shipped: canonical-strategy
+restore, ring-rate guards, dry-run defaults, and pre-write snapshot
+backups for consolidation.</li>
 </ul>
 <hr />
 <h2 id="conclusion">8. Conclusion</h2>

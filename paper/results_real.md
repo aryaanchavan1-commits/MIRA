@@ -93,3 +93,14 @@ Honest boundary at full scale: BM25 stays the strongest Indic system and MIRA do
 | flat_vector | 0.0259 |
 
 token-F1 (mira vs flat): d=0.06575 CI [0.01338, 0.12295], p~0.0086 (n_pairs=16). Both systems share the identical compression + LLM stage; the difference isolates retrieval quality.
+
+### Sleep consolidation (memory dynamics: decay + replay + gists)
+
+Mode: APPLIED. Decay retention mean 0.9789 over 82783 nodes; gists created: 507.
+
+| metric | before | after |
+|---|---|---|
+| mrr | 0.7003 | 0.6986 |
+| retrieval_recall | 0.3007 | 0.3004 |
+
+before-vs-after MRR: d=0.00167 CI [-0.001, 0.00481], p~0.2568 (n_pairs=300). Consolidation is reported as measured: replay/decay/gist effects are quantified against the same probe questions.

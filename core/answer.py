@@ -23,6 +23,7 @@ from core.affect import AffectSnapshot, coerce_snapshot, neutral_snapshot
 from core.compression import compress, est_tokens
 from core.memory import MemoryFrame, MemoryNode
 from core.retrieval import MIRARetriever
+from core.types import stable_hash
 from models.embeddings import EmbeddingBackend
 from storage.graph_store import GraphStore
 from storage.vector_store import VectorStore
@@ -622,6 +623,7 @@ class AnswerPipeline:
 
             ),
         )
+        self._log_retrieval(result, ans, ctx.n_tokens, question)
         if explicit_no_evidence:
             ans.confidence_note = "the model reported that the supplied evidence was insufficient"
         elif citation_error:
@@ -631,6 +633,30 @@ class AnswerPipeline:
         elif selected_nodes and all(not n.source_ids for n in selected_nodes):
             ans.confidence_note = "retrieved memories carry no chunk provenance"
         return ans
+
+
+    def _log_retrieval(self, result, ans, context_tokens: int,
+                       question: str) -> None:
+        """Persist a retrieval_logs row (replay fuel for sleep consolidation).
+
+        Failure here must never break answering — logging is best-effort.
+        """
+        if self.store is None:
+            return
+        try:
+            self.store.log_retrieval(
+                stable_hash(question), ans.mode or "mira",
+                result.n_candidates, len(ans.memories or result.items),
+                result.latency_ms, context_tokens,
+                {
+                    "query": question,
+                    "node_ids": [item.node.id for item in result.items][:24],
+                    "selected_ids": list(ans.selected_evidence_ids or []),
+                    "mode": ans.mode,
+                },
+            )
+        except Exception:
+            logger.debug("retrieval log write failed", exc_info=True)
 
 
 def _is_no_evidence_text(text: str) -> bool:
