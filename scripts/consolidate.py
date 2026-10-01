@@ -97,9 +97,11 @@ def stability_records(ws, n: int) -> list:
     rows = []
     try:
         with ws.store.tx() as c:
-            c.execute("SELECT query_hash, meta FROM retrieval_logs "
-                      "ORDER BY at DESC LIMIT 400")
-            rows = c.fetchall()
+            # tx() yields the raw sqlite3.Connection — chain .fetchall() on the
+            # cursor that execute() returns; Connection has no fetchall() and
+            # the except-swallow made a failed read look like "no logs"
+            rows = c.execute("SELECT query_hash, meta FROM retrieval_logs "
+                             "ORDER BY at DESC LIMIT 400").fetchall()
     except Exception:
         return []
     seen, records = set(), []
@@ -131,9 +133,9 @@ def replay_paths(ws, days: int, apply: bool = False) -> dict:
     rows = []
     try:
         with ws.store.tx() as c:
-            c.execute("SELECT at, query_hash, meta FROM retrieval_logs "
-                      "WHERE at >= ? ORDER BY at DESC LIMIT 5000", (since,))
-            rows = c.fetchall()
+            rows = c.execute("SELECT at, query_hash, meta FROM retrieval_logs "
+                             "WHERE at >= ? ORDER BY at DESC LIMIT 5000",
+                             (since,)).fetchall()
     except Exception:
         rows = []
     seed_ids: list[str] = []

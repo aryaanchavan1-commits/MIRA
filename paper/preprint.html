@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="generator" content="pandoc 3.11" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
-  <meta name="dcterms.date" content="2026-09-28" />
+  <meta name="dcterms.date" content="2026-10-01" />
   <meta name="keywords" content="retrieval-augmented generation, memory
 topology, radial organization, ablation study, local-first AI, Indic
 languages" />
@@ -181,7 +181,7 @@ languages" />
 <header id="title-block-header">
 <h1 class="title">Radial Memory Topologies for Retrieval-Augmented
 Generation: A Controlled Study of Mandala-Inspired Organization</h1>
-<p class="date">2026-09-28</p>
+<p class="date">2026-10-01</p>
 </header>
 <h2 id="reproducibility-statement">Reproducibility statement</h2>
 <p>Every quantitative claim in this paper is generated from committed
@@ -194,6 +194,8 @@ is hand-edited. All experiments run on a single consumer laptop (RTX
 <li><code>data_bench/ablation_real_results.json</code></li>
 <li><code>data_bench/scale_sweep_results.json</code></li>
 <li><code>data_bench/hotpotqa_bench_real_results.json</code></li>
+<li><code>data_bench/consolidation_results.json</code></li>
+<li><code>data_bench/aging_results.json</code></li>
 <li><code>data_indic/indicqa_results.json</code></li>
 <li><code>data_indic_ml/indicqa_ml_results.json</code></li>
 <li><code>experiments/neural_validation.json</code></li>
@@ -574,13 +576,74 @@ p=0.257, n=300) — consolidation is measurably <em>harmless</em> on a
 fresh corpus in a single pass, and the honest claim is exactly that: the
 decay/replay benefit hypothesis targets <strong>aged,
 repeatedly-used</strong> workspaces, where time-since-use actually
-discriminates. The pass ships with hard guards born of real failures we
-caught and fixed: a <strong>ring-rate guard</strong> (ring-0/1 fraction
-&lt; 2% on a large workspace aborts — a mis-placed workspace once
-silently emptied the hierarchical candidate stage: 3,371 → 44
-candidates/query, MRR 0.70 → 0.35), dry-run default
+discriminates. One more real failure surfaced while building the aging
+experiment: the log-replay read had silently no-op’d —
+<code>store.tx()</code> yields the raw sqlite3 <code>Connection</code>,
+and <code>replay_paths</code>/<code>stability_records</code> called
+<code>fetchall()</code> on it (only cursors have that method), so the
+swallowed exception made every replay read look like “no logs”. The
+applied bench numbers above are therefore <strong>decay + gist
+only</strong> (<code>consolidation_results.json</code> honestly records
+<code>seed_nodes: 0</code>); replay from logs is exercised properly by
+the aging experiment below. The pass ships with hard guards born of real
+failures we caught and fixed: a <strong>ring-rate guard</strong>
+(ring-0/1 fraction &lt; 2% on a large workspace aborts — a mis-placed
+workspace once silently emptied the hierarchical candidate stage: 3,371
+→ 44 candidates/query, MRR 0.70 → 0.35), dry-run default
 (<code>--apply</code> required to write), and a pre-write SQLite
 snapshot backup as the undo path.</p>
+<h3
+id="y-simulated-aging-replay-discriminates-used-from-unused-memories">6.y
+Simulated aging: replay discriminates used from unused memories</h3>
+<p>The fresh-corpus result above cannot show a benefit — nothing had
+decayed yet. To test the benefit hypothesis directly,
+<code>scripts/eval_aging.py</code> simulates 60 days of disuse on the
+same bench workspace (<code>aging_results.json</code>): 80% of nodes
+(66,527) get their decay clock backdated (seeded, in-memory — the
+persisted db is untouched apart from clearly marked
+<code>aging_sim</code> log rows); synthetic retrieval logs re-fire
+<strong>half</strong> the aged gold ids; then the real replay + decay
+pass runs. Measuring the identical 300 questions and splitting them by
+gold treatment:</p>
+<table>
+<thead>
+<tr>
+<th>cohort</th>
+<th>n</th>
+<th>MRR before → after</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>aged, replayed</td>
+<td>90</td>
+<td>0.7014 → <strong>0.7321</strong> (+0.0307)</td>
+</tr>
+<tr>
+<td>aged, unreplayed</td>
+<td>210</td>
+<td>0.6972 → 0.6319 (−0.0653)</td>
+</tr>
+</tbody>
+</table>
+<p>Replayed memories end measurably <em>above</em> their pre-sleep rank;
+unreplayed ones fade 0.065 MRR below it — a 0.096 between-cohort swing
+attributable to the replay treatment alone. The aggregate moves 0.6985 →
+0.6619 (drop of 0.0365, bootstrap CI [0.0060, 0.0663], p=0.019, n=300)
+because replay covered only half the aged golds: the honest reading is
+that sleep consolidation is a <em>selection</em> mechanism — it protects
+what was used and lets the rest fade, exactly the
+Ebbinghaus-plus-rehearsal profile the memory-dynamics model claims. Gist
+abstraction shows the same profile structurally: 40 sampled gist nodes
+remain retrievable for their own summary at hit@8 0.975 after the decay
+pass (from 1.0 before), staying available above their fading member
+details.</p>
+<p>Limitations: a single aging configuration (60 days, 80% of nodes);
+replay seeds restricted to gold ids (synthetic logs by construction);
+cohort assignment by any-gold membership (n=90/210); the recent cohort
+is empty at 80% aging — every probe question has at least one aged gold,
+which is itself informative about how much of a long-lived workspace
+ages together.</p>
 <hr />
 <!-- AUTO-GENERATED by paper/export_results.py --real — do not edit numbers by hand -->
 <h3
@@ -983,6 +1046,44 @@ created: 507.</p>
 <p>before-vs-after MRR: d=0.00167 CI [-0.001, 0.00481], p~0.2568
 (n_pairs=300). Consolidation is reported as measured: replay/decay/gist
 effects are quantified against the same probe questions.</p>
+<h3
+id="simulated-aging-sleep-does-consolidation-recover-used-memories">Simulated
+aging + sleep (does consolidation recover used memories?)</h3>
+<p>Aged 66527/83290 nodes by 60 days (80%, in-memory); replay logs
+covered 413 aged gold ids; then the real replay + decay pass (half-life
+21.0d). MRR by cohort:</p>
+<table>
+<thead>
+<tr>
+<th>cohort</th>
+<th>n</th>
+<th>before</th>
+<th>after</th>
+<th>delta</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>aged_replayed</td>
+<td>90</td>
+<td>0.7014</td>
+<td>0.7321</td>
+<td>0.0307</td>
+</tr>
+<tr>
+<td>aged_faded</td>
+<td>210</td>
+<td>0.6972</td>
+<td>0.6319</td>
+<td>-0.0653</td>
+</tr>
+</tbody>
+</table>
+<p>Gist probe (40 gists, query = the gist’s own summary): gist hit@8 1.0
+→ 0.975, best-member hit@8 1.0 → 0.975 (gist abstraction vs its decaying
+members).</p>
+<p>overall MRR 0.6985 → 0.6619: d=0.03652 CI [0.00599, 0.06633],
+p~0.0188 (n_pairs=300).</p>
 <hr />
 <h2 id="threats-to-validity">7. Threats to Validity</h2>
 <ul>
@@ -1003,7 +1104,12 @@ consolidation) mutate persisted workspaces. The scale sweep’s restore
 once left the bench workspace on the wrong placement, silently degrading
 retrieval until detected. Mitigations now shipped: canonical-strategy
 restore, ring-rate guards, dry-run defaults, and pre-write snapshot
-backups for consolidation.</li>
+backups for consolidation. A related failure class: a silently swallowed
+exception in the consolidation script’s log read
+(<code>Connection.fetchall</code>) made replay report “no logs” for a
+full pass — offline tooling now treats silent excepts in measurement
+paths as bugs, and the aging experiment re-verifies replay end to
+end.</li>
 </ul>
 <hr />
 <h2 id="conclusion">8. Conclusion</h2>

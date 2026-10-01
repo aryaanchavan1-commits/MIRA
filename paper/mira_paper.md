@@ -332,11 +332,50 @@ decay retention 0.9789 (21-day half-life); **507 gist nodes** created, wired to 
 (Δ −0.0017, CI [−0.0010, +0.0048], p=0.257, n=300) — consolidation is measurably
 *harmless* on a fresh corpus in a single pass, and the honest claim is exactly that:
 the decay/replay benefit hypothesis targets **aged, repeatedly-used** workspaces,
-where time-since-use actually discriminates. The pass ships with hard guards born of
+where time-since-use actually discriminates. One more real failure surfaced while
+building the aging experiment: the log-replay read had silently no-op'd — `store.tx()`
+yields the raw sqlite3 `Connection`, and `replay_paths`/`stability_records` called
+`fetchall()` on it (only cursors have that method), so the swallowed exception made
+every replay read look like "no logs". The applied bench numbers above are therefore
+**decay + gist only** (`consolidation_results.json` honestly records
+`seed_nodes: 0`); replay from logs is exercised properly by the aging experiment
+below. The pass ships with hard guards born of
 real failures we caught and fixed: a **ring-rate guard** (ring-0/1 fraction < 2% on a
 large workspace aborts — a mis-placed workspace once silently emptied the hierarchical
 candidate stage: 3,371 → 44 candidates/query, MRR 0.70 → 0.35), dry-run default
 (`--apply` required to write), and a pre-write SQLite snapshot backup as the undo path.
+
+### 6.y Simulated aging: replay discriminates used from unused memories
+
+The fresh-corpus result above cannot show a benefit — nothing had decayed yet. To test
+the benefit hypothesis directly, `scripts/eval_aging.py` simulates 60 days of disuse on
+the same bench workspace (`aging_results.json`): 80% of nodes (66,527) get their decay
+clock backdated (seeded, in-memory — the persisted db is untouched apart from clearly
+marked `aging_sim` log rows); synthetic retrieval logs re-fire **half** the aged gold
+ids; then the real replay + decay pass runs. Measuring the identical 300 questions and
+splitting them by gold treatment:
+
+| cohort | n | MRR before → after |
+|---|---|---|
+| aged, replayed | 90 | 0.7014 → **0.7321** (+0.0307) |
+| aged, unreplayed | 210 | 0.6972 → 0.6319 (−0.0653) |
+
+Replayed memories end measurably *above* their pre-sleep rank; unreplayed ones fade
+0.065 MRR below it — a 0.096 between-cohort swing attributable to the replay
+treatment alone. The aggregate moves 0.6985 → 0.6619 (drop of 0.0365, bootstrap CI
+[0.0060, 0.0663], p=0.019, n=300) because replay covered only half the aged golds:
+the honest reading is that sleep consolidation is a *selection* mechanism — it
+protects what was used and lets the rest fade, exactly the Ebbinghaus-plus-rehearsal
+profile the memory-dynamics model claims. Gist abstraction shows the same profile
+structurally: 40 sampled gist nodes remain retrievable for their own summary at
+hit@8 0.975 after the decay pass (from 1.0 before), staying available above their
+fading member details.
+
+Limitations: a single aging configuration (60 days, 80% of nodes); replay seeds
+restricted to gold ids (synthetic logs by construction); cohort assignment by
+any-gold membership (n=90/210); the recent cohort is empty at 80% aging — every
+probe question has at least one aged gold, which is itself informative about how
+much of a long-lived workspace ages together.
 
 ---
 
@@ -356,7 +395,10 @@ candidate stage: 3,371 → 44 candidates/query, MRR 0.70 → 0.35), dry-run defa
   workspaces. The scale sweep's restore once left the bench workspace on the wrong
   placement, silently degrading retrieval until detected. Mitigations now shipped:
   canonical-strategy restore, ring-rate guards, dry-run defaults, and pre-write
-  snapshot backups for consolidation.
+  snapshot backups for consolidation. A related failure class: a silently swallowed
+  exception in the consolidation script's log read (`Connection.fetchall`) made replay
+  report "no logs" for a full pass — offline tooling now treats silent excepts in
+  measurement paths as bugs, and the aging experiment re-verifies replay end to end.
 
 ---
 

@@ -233,6 +233,45 @@ def export_real() -> None:
                       "Consolidation is reported as measured: replay/decay/gist "
                       "effects are quantified against the same probe questions.", ""]
 
+    # simulated aging + sleep (eval_aging.py): cohort discrimination
+    aging_path = ROOT / "data_bench" / "aging_results.json"
+    if aging_path.exists():
+        a = json.loads(aging_path.read_text(encoding="utf-8"))
+        d = a.get("design", {})
+        coh_b, coh_a = a.get("cohorts", {}).get("before", {}), \
+            a.get("cohorts", {}).get("after", {})
+        gp_b, gp_a = a.get("gist_probe", {}).get("before", {}), \
+            a.get("gist_probe", {}).get("after", {})
+        lines += ["### Simulated aging + sleep (does consolidation recover used memories?)",
+                  "",
+                  f"Aged {d.get('aged_nodes')}/{d.get('nodes')} nodes by "
+                  f"{d.get('age_days')} days ({d.get('age_fraction', 0):.0%}, "
+                  f"in-memory); replay logs covered {d.get('injected_logs', {}).get('replay_golds')} "
+                  f"aged gold ids; then the real replay + decay pass "
+                  f"(half-life {d.get('half_life_days')}d). MRR by cohort:",
+                  "",
+                  "| cohort | n | before | after | delta |", "|---|---|---|---|---|"]
+        for name in ("aged_replayed", "aged_faded", "recent"):
+            b, af = coh_b.get(name, {}), coh_a.get(name, {})
+            if not af or not af.get("n_records"):
+                continue  # empty cohort (e.g. every question has an aged gold)
+            lines.append(f"| {name} | {af.get('n_records')} | {b.get('mrr')} | "
+                         f"{af.get('mrr')} | "
+                         f"{round((af.get('mrr') or 0) - (b.get('mrr') or 0), 4)} |")
+        if gp_b:
+            lines += ["",
+                      f"Gist probe ({gp_b.get('n_probes')} gists, query = the gist's own "
+                      f"summary): gist hit@8 {gp_b.get('gist_hit')} → {gp_a.get('gist_hit')}, "
+                      f"best-member hit@8 {gp_b.get('member_hit')} → {gp_a.get('member_hit')} "
+                      "(gist abstraction vs its decaying members).", ""]
+        sig = a.get("significance_before_vs_after", {})
+        if sig.get("mrr"):
+            lines += [f"overall MRR {a.get('before', {}).get('mrr')} → "
+                      f"{a.get('after', {}).get('mrr')}: "
+                      f"d={sig['mrr'].get('mean_diff')} "
+                      f"CI [{sig['mrr'].get('ci_low')}, {sig['mrr'].get('ci_high')}], "
+                      f"p~{sig['mrr'].get('p_value')} (n_pairs={sig['mrr'].get('n_pairs')}).", ""]
+
     (PAPER / "results_real.md").write_text("\n".join(lines), encoding="utf-8")
     print("[paper] wrote paper/results_real.md")
 

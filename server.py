@@ -182,6 +182,112 @@ def _remember_exchange(w, question: str, ans) -> Dict[str, Any]:
             "n_nodes": stats.get("n_nodes"), "n_edges": stats.get("n_edges")}
 
 
+# ---- sleep consolidation (memory maintenance) ----
+def _consolidate(w: Workspace, apply: bool, half_life: float,
+                 replay_days: int, max_gists: int) -> Dict[str, Any]:
+    """One sleep pass over the live workspace — scripts/consolidate.py's
+    flow (replay → decay → gists) without the bench measurement.
+
+    A dry run executes the REAL mechanisms against the in-memory frame, then
+    restores every scalar they touch (importance, updated_at, edge weights),
+    so "dry" actually means nothing changed. apply=True writes to the store
+    after a VACUUM-INTO backup and never re-places nodes (the canonical
+    per-document placement must not be reshaped — see consolidate.py)."""
+    from core.memory_dynamics import apply_decay, build_gists
+    from scripts.consolidate import replay_paths
+
+    n_nodes, n_edges = len(w.frame.nodes), len(w.frame.edges)
+    ring01 = sum(1 for n in w.frame.nodes.values() if n.ring in (0, 1))
+    if n_nodes > 2000 and ring01 / max(n_nodes, 1) < 0.02:
+        raise HTTPException(409, "ring-0/1 rate < 2% — placement is not the "
+                                 "canonical hybrid_mira shape; re-place before sleeping")
+
+    backup = None
+    if apply:
+        backup = os.path.join(PROJECT_ROOT, ".tmp", "consolidate_backup_server.db")
+        os.makedirs(os.path.dirname(backup), exist_ok=True)
+        try:
+            with w.store.tx() as c:
+                c.execute("VACUUM INTO ?", (backup,))
+        except Exception:
+            import shutil
+            shutil.copy2(os.path.join(DATA_DIR, "mira.db"), backup)
+
+    snapshot = None
+    if not apply:  # scalars the sleep pass mutates; restored after the probe
+        snapshot = ({n.id: (n.importance, n.updated_at)
+                     for n in w.frame.nodes.values()},
+                    [e.weight for e in w.frame.edges])
+
+    def _restore() -> None:
+        if snapshot is None:
+            return
+        nodes_snap, edge_weights = snapshot
+        for n in w.frame.nodes.values():
+            if n.id in nodes_snap:
+                n.importance, n.updated_at = nodes_snap[n.id]
+        for e, weight in zip(w.frame.edges, edge_weights):
+            e.weight = weight
+
+    try:
+        replay = replay_paths(w, replay_days, apply=apply)
+        decay = apply_decay(w.frame, half_life_days=half_life, dry_run=not apply)
+        gists = {"gists": 0, "members_linked": 0, "sectors": 0}
+        if apply:
+            def _persist_any(row: dict) -> None:
+                # build_gists emits BOTH node rows and {'edge': True, ...} rows;
+                # route each to the right store call (same dispatcher as the script)
+                if row.get("edge"):
+                    w.store.add_edge(row["source_id"], row["target_id"],
+                                     row.get("relation_type", "gist_of"),
+                                     row.get("weight", 0.8),
+                                     row.get("confidence", 0.5))
+                else:
+                    w.store.upsert_node(row)
+
+            for node in w.frame.nodes.values():
+                w.store.upsert_node({**node.to_row(), "_action": "update"})
+            gists = build_gists(w.frame, w.embeddings, max_gists=max_gists,
+                                persist=_persist_any)
+            fresh_gists = [n for n in w.frame.nodes.values()
+                           if n.metadata.get("gist") and n.embedding is None]
+            if fresh_gists:
+                vecs = w.embeddings.encode(
+                    [f"{n.concept}. {n.summary}" for n in fresh_gists])
+                for node, vec in zip(fresh_gists, vecs):
+                    node.embedding = vec
+            w.reload()  # rebuild frame/graph/FAISS so gist vectors are searchable
+        else:
+            _restore()
+    except Exception:
+        _restore()  # never leave a dry run half-applied
+        raise
+
+    return {"apply": apply, "backup": backup, "replay": replay,
+            "decay": decay, "gists": gists,
+            "workspace": {"nodes_before": n_nodes, "edges_before": n_edges,
+                          "nodes_after": len(w.frame.nodes),
+                          "edges_after": len(w.frame.edges)},
+            "note": None if apply else
+            "dry run: nothing written — POST {\"apply\": true} to persist a backup first"}
+
+
+@app.post("/api/memory/consolidate")
+def memory_consolidate(payload: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
+    """Sleep consolidation: replay recent retrievals, decay stale memories,
+    abstract gists. Dry run by default; apply=true writes (backup first)."""
+    payload = payload or {}
+    apply = _payload_bool(payload, "apply", default=False)
+    half_life = payload.get("half_life", 21.0)
+    if type(half_life) not in (int, float) or not 1.0 <= half_life <= 365.0:
+        raise HTTPException(400, "half_life must be a number between 1 and 365 (days)")
+    replay_days = _payload_int(payload, "replay_days", 30, 1, 365)
+    max_gists = _payload_int(payload, "max_gists", 24, 0, 96)
+    w = ws()
+    with w.lock:
+        return _consolidate(w, apply, float(half_life), replay_days, max_gists)
+
+
 # ---- simulated affect (algorithmic bookkeeping only) ----
 def _affect_response() -> Dict[str, Any]:
     w = ws()
@@ -540,6 +646,8 @@ def research_artifacts() -> Dict[str, Any]:
         "bench_answers": os.path.join("data_bench", "bench_real_answers.json"),
         "ablation_real": os.path.join("data_bench", "ablation_real_results.json"),
         "scale_sweep": os.path.join("data_bench", "scale_sweep_results.json"),
+        "consolidation": os.path.join("data_bench", "consolidation_results.json"),
+        "aging": os.path.join("data_bench", "aging_results.json"),
         "neural_validation": os.path.join("experiments", "neural_validation.json"),
     }
     for key, rel in sources.items():

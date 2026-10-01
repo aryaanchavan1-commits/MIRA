@@ -1,0 +1,84 @@
+{
+  "workspace": {
+    "nodes_before": 82783,
+    "edges_before": 80896,
+    "nodes_after": 83290,
+    "edges_after": 82417
+  },
+  "apply": true,
+  "replay": {
+    "log_entries": 0,
+    "queries_with_ids": 0,
+    "remembered_docs": 0,
+    "seed_nodes": 0,
+    "paths_fired": 0
+  },
+  "decay": {
+    "nodes": 82783,
+    "decayed": 82783,
+    "retention_mean": 0.9789,
+    "retention_min": 0.978,
+    "retention_max": 0.9833,
+    "half_life_days": 21.0,
+    "dry_run": false
+  },
+  "gists": {
+    "gists": 507,
+    "members_linked": 1521,
+    "sectors": 3173
+  },
+  "before": {
+    "context_tokens": 0.0,
+    "n_scored_context_tokens": 300,
+    "latency_ms": 763.924,
+    "n_scored_latency_ms": 300,
+    "mrr": 0.7003,
+    "n_scored_mrr": 300,
+    "n_candidates": 3370.9933,
+    "n_scored_n_candidates": 300,
+    "n_retrieved": 8.0,
+    "n_scored_n_retrieved": 300,
+    "retrieval_latency_ms": 763.924,
+    "n_scored_retrieval_latency_ms": 300,
+    "retrieval_recall": 0.3007,
+    "n_scored_retrieval_recall": 300,
+    "n_questions": 300,
+    "wall_time_s": 242.93,
+    "questions_per_s": 1.23
+  },
+  "after": {
+    "context_tokens": 0.0,
+    "n_scored_context_tokens": 300,
+    "latency_ms": 794.9428,
+    "n_scored_latency_ms": 300,
+    "mrr": 0.6986,
+    "n_scored_mrr": 300,
+    "n_candidates": 3772.4667,
+    "n_scored_n_candidates": 300,
+    "n_retrieved": 8.0,
+    "n_scored_n_retrieved": 300,
+    "retrieval_latency_ms": 794.9428,
+    "n_scored_retrieval_latency_ms": 300,
+    "retrieval_recall": 0.3004,
+    "n_scored_retrieval_recall": 300,
+    "n_questions": 300,
+    "wall_time_s": 252.78,
+    "questions_per_s": 1.19
+  },
+  "significance_before_vs_after": {
+    "mrr": {
+      "n_pairs": 300,
+      "mean_diff": 0.00167,
+      "ci_low": -0.001,
+      "ci_high": 0.00481,
+      "p_value": 0.2568
+    },
+    "retrieval_recall": {
+      "n_pairs": 300,
+      "mean_diff": 0.00028,
+      "ci_low": -0.00278,
+      "ci_high": 0.00361,
+      "p_value": 0.856
+    }
+  }
+}

@@ -39,6 +39,8 @@ def main() -> int:
             "data_bench/ablation_real_results.json",
             "data_bench/scale_sweep_results.json",
             "data_bench/hotpotqa_bench_real_results.json",
+            "data_bench/consolidation_results.json",
+            "data_bench/aging_results.json",
             "data_indic/indicqa_results.json",
             "data_indic_ml/indicqa_ml_results.json",
             "experiments/neural_validation.json",

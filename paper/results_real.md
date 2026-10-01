@@ -104,3 +104,16 @@ Mode: APPLIED. Decay retention mean 0.9789 over 82783 nodes; gists created: 507.
 | retrieval_recall | 0.3007 | 0.3004 |
 
 before-vs-after MRR: d=0.00167 CI [-0.001, 0.00481], p~0.2568 (n_pairs=300). Consolidation is reported as measured: replay/decay/gist effects are quantified against the same probe questions.
+
+### Simulated aging + sleep (does consolidation recover used memories?)
+
+Aged 66527/83290 nodes by 60 days (80%, in-memory); replay logs covered 413 aged gold ids; then the real replay + decay pass (half-life 21.0d). MRR by cohort:
+
+| cohort | n | before | after | delta |
+|---|---|---|---|---|
+| aged_replayed | 90 | 0.7014 | 0.7321 | 0.0307 |
+| aged_faded | 210 | 0.6972 | 0.6319 | -0.0653 |
+
+Gist probe (40 gists, query = the gist's own summary): gist hit@8 1.0 → 0.975, best-member hit@8 1.0 → 0.975 (gist abstraction vs its decaying members).
+
+overall MRR 0.6985 → 0.6619: d=0.03652 CI [0.00599, 0.06633], p~0.0188 (n_pairs=300).

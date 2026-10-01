@@ -1,0 +1,143 @@
+{
+  "design": {
+    "nodes": 83290,
+    "edges": 82417,
+    "records": 300,
+    "age_days": 60,
+    "age_fraction": 0.8,
+    "aged_nodes": 66527,
+    "half_life_days": 21.0,
+    "injected_logs": {
+      "rows": 60,
+      "aged_golds": 826,
+      "replay_golds": 413
+    },
+    "persisted": "synthetic retrieval_logs only; aging/replay/decay are in-memory (system='aging_sim' rows)"
+  },
+  "before": {
+    "context_tokens": 0.0,
+    "n_scored_context_tokens": 300,
+    "latency_ms": 874.3596,
+    "n_scored_latency_ms": 300,
+    "mrr": 0.6985,
+    "n_scored_mrr": 300,
+    "n_candidates": 3772.4633,
+    "n_scored_n_candidates": 300,
+    "n_retrieved": 8.0,
+    "n_scored_n_retrieved": 300,
+    "retrieval_latency_ms": 874.3596,
+    "n_scored_retrieval_latency_ms": 300,
+    "retrieval_recall": 0.2816,
+    "n_scored_retrieval_recall": 300,
+    "n_questions": 300,
+    "wall_time_s": 277.06,
+    "questions_per_s": 1.08
+  },
+  "after": {
+    "context_tokens": 0.0,
+    "n_scored_context_tokens": 300,
+    "latency_ms": 918.0693,
+    "n_scored_latency_ms": 300,
+    "mrr": 0.6619,
+    "n_scored_mrr": 300,
+    "n_candidates": 3771.0367,
+    "n_scored_n_candidates": 300,
+    "n_retrieved": 8.0,
+    "n_scored_n_retrieved": 300,
+    "retrieval_latency_ms": 918.0693,
+    "n_scored_retrieval_latency_ms": 300,
+    "retrieval_recall": 0.246,
+    "n_scored_retrieval_recall": 300,
+    "n_questions": 300,
+    "wall_time_s": 289.45,
+    "questions_per_s": 1.04
+  },
+  "significance_before_vs_after": {
+    "mrr": {
+      "n_pairs": 300,
+      "mean_diff": 0.03652,
+      "ci_low": 0.00599,
+      "ci_high": 0.06633,
+      "p_value": 0.0188
+    },
+    "retrieval_recall": {
+      "n_pairs": 300,
+      "mean_diff": 0.03562,
+      "ci_low": 0.02161,
+      "ci_high": 0.04947,
+      "p_value": 0.0001
+    }
+  },
+  "cohorts": {
+    "before": {
+      "aged_replayed": {
+        "n_records": 90,
+        "mrr": 0.7014,
+        "retrieval_recall": 0.2733
+      },
+      "aged_faded": {
+        "n_records": 210,
+        "mrr": 0.6972,
+        "retrieval_recall": 0.2851
+      },
+      "recent": {
+        "n_records": 0,
+        "mrr": 0.0,
+        "retrieval_recall": 0.0
+      }
+    },
+    "after": {
+      "aged_replayed": {
+        "n_records": 90,
+        "mrr": 0.7321,
+        "retrieval_recall": 0.2661
+      },
+      "aged_faded": {
+        "n_records": 210,
+        "mrr": 0.6319,
+        "retrieval_recall": 0.2373
+      },
+      "recent": {
+        "n_records": 0,
+        "mrr": 0.0,
+        "retrieval_recall": 0.0
+      }
+    }
+  },
+  "replay": {
+    "log_entries": 60,
+    "queries_with_ids": 60,
+    "remembered_docs": 0,
+    "seed_nodes": 65,
+    "paths_fired": 180,
+    "edges_changed": 0,
+    "reinforced": 65,
+    "lift": 0.06
+  },
+  "decay": {
+    "nodes": 83290,
+    "decayed": 83225,
+    "retention_mean": 0.3049,
+    "retention_min": 0.1465,
+    "retention_max": 1.0,
+    "half_life_days": 21.0,
+    "dry_run": false
+  },
+  "gist_probe": {
+    "n_gists_total": 507,
+    "before": {
+      "n_probes": 40,
+      "gist_hit": 1.0,
+      "gist_mrr": 0.5833,
+      "member_hit": 1.0,
+      "member_mrr": 0.9042
+    },
+    "after": {
+      "n_probes": 40,
+      "gist_hit": 0.975,
+      "gist_mrr": 0.5583,
+      "member_hit": 0.975,
+      "member_mrr": 0.8792
+    }
+  }
+}

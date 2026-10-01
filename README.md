@@ -256,7 +256,13 @@ a ring-rate guard aborts if the workspace's ring-0/1 fraction is collapsed
 (a real failure mode this repo hit and fixed). Measured on the 82,783-node
 bench workspace: retention 0.9789, 507 gists → 1,521 member edges, retrieval
 preserved (MRR 0.7003 → 0.6986, p=0.257) — harmless on a fresh corpus by
-design; the decay/replay benefit targets aged, repeatedly-used workspaces.
+design; the benefit targets aged, repeatedly-used workspaces, which
+`scripts/eval_aging.py` demonstrates directly: after simulating 60 days of
+disuse on 80% of nodes, replayed memories *rise* (MRR 0.7014 → 0.7321) while
+unreplayed ones fade (0.6972 → 0.6319) — sleep consolidation protects what
+was used and lets the rest decay. The same pass is exposed as
+`POST /api/memory/consolidate` (dry-run default; `{"apply": true}` persists
+after a snapshot backup).
 
 Pipeline: query analysis → embedding → semantic (FAISS) → seed selection →
 graph expansion with available path provenance → **spreading activation** →
