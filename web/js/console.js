@@ -89,18 +89,26 @@ async function api(url, opts = {}) {
 
 /* ---------- view switching ---------- */
 const navButtons = document.querySelectorAll(".side-nav button");
-navButtons.forEach(btn => {
-  btn.addEventListener("click", () => {
-    navButtons.forEach(b => {
-      const active = b === btn;
-      b.classList.toggle("active", active);
-      if (active) b.setAttribute("aria-current", "page");
-      else b.removeAttribute("aria-current");
-      $("view-" + b.dataset.view).classList.toggle("active", active);
-    });
-    if (btn.dataset.view === "mandala" && window.__miraMandalaRefresh) window.__miraMandalaRefresh();
+function activateView(name, pushHash) {
+  const btn = Array.from(navButtons).find(b => b.dataset.view === name) || navButtons[0];
+  navButtons.forEach(b => {
+    const active = b === btn;
+    b.classList.toggle("active", active);
+    if (active) b.setAttribute("aria-current", "page");
+    else b.removeAttribute("aria-current");
+    $("view-" + b.dataset.view).classList.toggle("active", active);
   });
+  if (btn.dataset.view === "mandala" && window.__miraMandalaRefresh) window.__miraMandalaRefresh();
+  // deep-linkable views: a refresh or a shared URL lands on the same screen
+  if (pushHash && location.hash.slice(1) !== btn.dataset.view) {
+    history.replaceState(null, "", "#" + btn.dataset.view);
+  }
+}
+navButtons.forEach(btn => {
+  btn.addEventListener("click", () => activateView(btn.dataset.view, true));
 });
+window.addEventListener("hashchange", () => activateView(location.hash.slice(1), false));
+if (location.hash.slice(1)) activateView(location.hash.slice(1), false);
 
 /* ---------- overview ---------- */
 let __bootTries = 0;

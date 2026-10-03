@@ -117,3 +117,22 @@ Aged 66527/83290 nodes by 60 days (80%, in-memory); replay logs covered 413 aged
 Gist probe (40 gists, query = the gist's own summary): gist hit@8 1.0 → 0.975, best-member hit@8 1.0 → 0.975 (gist abstraction vs its decaying members).
 
 overall MRR 0.6985 → 0.6619: d=0.03652 CI [0.00599, 0.06633], p~0.0188 (n_pairs=300).
+
+### Catastrophic Forgetting Lab — sequential A→B→C→D
+
+4 sequential corpora ingested from real MuSiQue paragraphs; after every arrival all tasks learned so far are re-tested (40 questions per task, k=8, paired bootstrap on per-question reciprocal rank).
+
+| variant | MRR | recall | avg forgetting | retention | d vs MIRA | CI | p |
+|---|---|---|---|---|---|---|---|
+| A_vector_rag | 0.492054 | 0.375 | 0.040915 | 0.92454 | -0.2940 | [-0.3504, -0.2366] | 0.0001 |
+| B_mira | 0.786064 | 0.36276 | 0.035617 | 0.957535 | baseline |
+| C_mira_radial | 0.806949 | 0.318489 | 0.039985 | 0.953094 | +0.0209 | [+0.0038, +0.0406] | 0.015 |
+| D_mira_graph | 0.497054 | 0.379166 | 0.041235 | 0.92607 | -0.2890 | [-0.3450, -0.2323] | 0.0001 |
+| E_mira_hierarchy | 0.801272 | 0.316667 | 0.033207 | 0.960323 | +0.0152 | [-0.0039, +0.0363] | 0.1288 |
+| F_mira_decay | 0.786064 | 0.36276 | 0.035617 | 0.957535 | +0.0000 | [+0.0000, +0.0000] | 1.0 |
+| G_mira_consolidation | 0.786064 | 0.36276 | 0.035617 | 0.957535 | +0.0000 | [+0.0000, +0.0000] | 1.0 |
+| H_mira_replay | 0.787627 | 0.361198 | 0.035097 | 0.958177 | +0.0016 | [-0.0016, +0.0063] | 0.4658 |
+| I_bio_dynamics | 0.773914 | 0.345052 | 0.012604 | 0.984085 | -0.0121 | [-0.0346, +0.0102] | 0.2776 |
+| J_full_biomira | 0.763401 | 0.346094 | 0.023117 | 0.971248 | -0.0227 | [-0.0464, -0.0026] | 0.0284 |
+
+Honest reading: on this corpus the adaptive layer **reduces forgetting but costs final retrieval accuracy**, and the full stack is significantly *worse* than plain MIRA. See the paper section for what that does and does not license.

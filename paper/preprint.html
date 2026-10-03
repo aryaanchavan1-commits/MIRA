@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="generator" content="pandoc 3.11" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
-  <meta name="dcterms.date" content="2026-10-01" />
+  <meta name="dcterms.date" content="2026-10-04" />
   <meta name="keywords" content="retrieval-augmented generation, memory
 topology, radial organization, ablation study, local-first AI, Indic
 languages" />
@@ -181,7 +181,7 @@ languages" />
 <header id="title-block-header">
 <h1 class="title">Radial Memory Topologies for Retrieval-Augmented
 Generation: A Controlled Study of Mandala-Inspired Organization</h1>
-<p class="date">2026-10-01</p>
+<p class="date">2026-10-04</p>
 </header>
 <h2 id="reproducibility-statement">Reproducibility statement</h2>
 <p>Every quantitative claim in this paper is generated from committed
@@ -644,6 +644,157 @@ cohort assignment by any-gold membership (n=90/210); the recent cohort
 is empty at 80% aging — every probe question has at least one aged gold,
 which is itself informative about how much of a long-lived workspace
 ages together.</p>
+<h3
+id="z-biomira-adaptive-dynamics-under-sequential-learning-a-negative-result">6.z
+BioMIRA: adaptive dynamics under sequential learning (a negative
+result)</h3>
+<p><code>core/biomira.py</code> adds an optional layer behind
+<code>BIOMIRA_ENABLED</code>: adaptive stability, LIF-inspired sparse
+activation, Hebbian and STDP-inspired association on existing edges,
+homeostatic normalization, adaptive decay, consolidation states, a
+bounded replay buffer and activation-driven ring migration. With the
+flag off the layer writes nothing and the retrieval weights are
+bit-identical, so MIRA-vs-BioMIRA is a fair A/B rather than a
+rewrite.</p>
+<p>The Catastrophic Forgetting Lab
+(<code>scripts/build_forgetting_lab.py</code>,
+<code>scripts/eval_forgetting.py</code>) ingests four sequential corpora
+built from real MuSiQue paragraphs (899 documents, 18,632 nodes, 300
+questions, 40 per task) and re-tests <strong>every</strong> task after
+every arrival. A paired bootstrap over the final step’s per-question
+reciprocal ranks (160 pairs) gives, against plain MIRA:</p>
+<table style="width:100%;">
+<colgroup>
+<col style="width: 16%" />
+<col style="width: 16%" />
+<col style="width: 16%" />
+<col style="width: 16%" />
+<col style="width: 16%" />
+<col style="width: 16%" />
+</colgroup>
+<thead>
+<tr>
+<th>variant</th>
+<th>final MRR</th>
+<th>avg forgetting</th>
+<th>Δ MRR vs MIRA</th>
+<th>95% CI</th>
+<th>p</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>A vector RAG</td>
+<td>0.4921</td>
+<td>0.0409</td>
+<td>−0.2940</td>
+<td>[−0.350, −0.237]</td>
+<td>0.0001</td>
+</tr>
+<tr>
+<td><strong>B MIRA</strong></td>
+<td><strong>0.7861</strong></td>
+<td><strong>0.0356</strong></td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+</tr>
+<tr>
+<td>C MIRA + radial</td>
+<td>0.8069</td>
+<td>0.0400</td>
+<td>+0.0209</td>
+<td>[+0.004, +0.041]</td>
+<td>0.015</td>
+</tr>
+<tr>
+<td>D MIRA + graph</td>
+<td>0.4971</td>
+<td>0.0412</td>
+<td>−0.2890</td>
+<td>[−0.345, −0.232]</td>
+<td>0.0001</td>
+</tr>
+<tr>
+<td>E MIRA + hierarchy</td>
+<td>0.8013</td>
+<td>0.0332</td>
+<td>+0.0152</td>
+<td>[−0.004, +0.036]</td>
+<td>0.129</td>
+</tr>
+<tr>
+<td>F MIRA + decay</td>
+<td>0.7861</td>
+<td>0.0356</td>
+<td>+0.0000</td>
+<td>[0, 0]</td>
+<td>1.0</td>
+</tr>
+<tr>
+<td>G MIRA + consolidation</td>
+<td>0.7861</td>
+<td>0.0356</td>
+<td>+0.0000</td>
+<td>[0, 0]</td>
+<td>1.0</td>
+</tr>
+<tr>
+<td>H MIRA + replay</td>
+<td>0.7876</td>
+<td>0.0351</td>
+<td>+0.0016</td>
+<td>[−0.002, +0.006]</td>
+<td>0.466</td>
+</tr>
+<tr>
+<td>I MIRA + bio dynamics</td>
+<td>0.7739</td>
+<td>0.0126</td>
+<td>−0.0121</td>
+<td>[−0.035, +0.010]</td>
+<td>0.278</td>
+</tr>
+<tr>
+<td>J full BioMIRA</td>
+<td>0.7634</td>
+<td>0.0231</td>
+<td>−0.0227</td>
+<td>[−0.046, −0.003]</td>
+<td>0.028</td>
+</tr>
+</tbody>
+</table>
+<p><strong>What this shows.</strong> The hypothesis is not confirmed.
+The full adaptive stack is <em>significantly worse</em> than plain MIRA
+on final retrieval (p=0.028), and no single mechanism moves retrieval at
+all: decay and consolidation produce byte-identical rankings, replay
+moves MRR by +0.0016 (p=0.47). The one component that does help is the
+<strong>radial</strong> term from MIRA itself (+0.0209, p=0.015) — not a
+BioMIRA contribution.</p>
+<p><strong>What it does show.</strong> Retention improves where accuracy
+does not: average forgetting falls from 0.0356 to 0.0126 (−65%) for the
+dynamics variant and 0.0231 for the full stack, with mean retention
+0.958 → 0.984. The layer trades peak retrieval precision for resistance
+to interference. That trade is only worth taking under a staleness
+objective, and stating it as a general win would misreport the
+experiment.</p>
+<p><strong>Why the mechanism rows are exactly zero.</strong> All 18,632
+lab nodes were ingested inside one build, so they share an age;
+retention is therefore nearly uniform and adaptive decay multiplies
+every importance by a near-constant factor, which cannot reorder a
+ranking. The same decay does discriminate in §6.y, where ages are
+heterogeneous — so the zero is a property of this corpus, not evidence
+that decay is inert. Likewise consolidation state alone has no effect
+unless <code>kappa_stability</code> weights it into the score, and
+homeostasis plus ring migration (J only) account for the gap between I’s
+−0.0121 and J’s −0.0227.</p>
+<p>Limitations: retrieval-level measurement with the LLM frozen, so this
+is memory interference and not parametric forgetting; four tasks on one
+corpus; no answer-quality metric; ring migration promoted only 53 of
+18,632 nodes, so J’s extra damage is real but small in absolute terms.
+The honest next experiment is a longer sequence with heterogeneous
+ingest times, which is where adaptive decay can be expected to bite.</p>
 <hr />
 <!-- AUTO-GENERATED by paper/export_results.py --real — do not edit numbers by hand -->
 <h3
@@ -1084,6 +1235,141 @@ covered 413 aged gold ids; then the real replay + decay pass (half-life
 members).</p>
 <p>overall MRR 0.6985 → 0.6619: d=0.03652 CI [0.00599, 0.06633],
 p~0.0188 (n_pairs=300).</p>
+<h3 id="catastrophic-forgetting-lab-sequential-abcd">Catastrophic
+Forgetting Lab — sequential A→B→C→D</h3>
+<p>4 sequential corpora ingested from real MuSiQue paragraphs; after
+every arrival all tasks learned so far are re-tested (40 questions per
+task, k=8, paired bootstrap on per-question reciprocal rank).</p>
+<table>
+<colgroup>
+<col style="width: 12%" />
+<col style="width: 12%" />
+<col style="width: 12%" />
+<col style="width: 12%" />
+<col style="width: 12%" />
+<col style="width: 12%" />
+<col style="width: 12%" />
+<col style="width: 12%" />
+</colgroup>
+<thead>
+<tr>
+<th>variant</th>
+<th>MRR</th>
+<th>recall</th>
+<th>avg forgetting</th>
+<th>retention</th>
+<th>d vs MIRA</th>
+<th>CI</th>
+<th>p</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>A_vector_rag</td>
+<td>0.492054</td>
+<td>0.375</td>
+<td>0.040915</td>
+<td>0.92454</td>
+<td>-0.2940</td>
+<td>[-0.3504, -0.2366]</td>
+<td>0.0001</td>
+</tr>
+<tr>
+<td>B_mira</td>
+<td>0.786064</td>
+<td>0.36276</td>
+<td>0.035617</td>
+<td>0.957535</td>
+<td>baseline</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>C_mira_radial</td>
+<td>0.806949</td>
+<td>0.318489</td>
+<td>0.039985</td>
+<td>0.953094</td>
+<td>+0.0209</td>
+<td>[+0.0038, +0.0406]</td>
+<td>0.015</td>
+</tr>
+<tr>
+<td>D_mira_graph</td>
+<td>0.497054</td>
+<td>0.379166</td>
+<td>0.041235</td>
+<td>0.92607</td>
+<td>-0.2890</td>
+<td>[-0.3450, -0.2323]</td>
+<td>0.0001</td>
+</tr>
+<tr>
+<td>E_mira_hierarchy</td>
+<td>0.801272</td>
+<td>0.316667</td>
+<td>0.033207</td>
+<td>0.960323</td>
+<td>+0.0152</td>
+<td>[-0.0039, +0.0363]</td>
+<td>0.1288</td>
+</tr>
+<tr>
+<td>F_mira_decay</td>
+<td>0.786064</td>
+<td>0.36276</td>
+<td>0.035617</td>
+<td>0.957535</td>
+<td>+0.0000</td>
+<td>[+0.0000, +0.0000]</td>
+<td>1.0</td>
+</tr>
+<tr>
+<td>G_mira_consolidation</td>
+<td>0.786064</td>
+<td>0.36276</td>
+<td>0.035617</td>
+<td>0.957535</td>
+<td>+0.0000</td>
+<td>[+0.0000, +0.0000]</td>
+<td>1.0</td>
+</tr>
+<tr>
+<td>H_mira_replay</td>
+<td>0.787627</td>
+<td>0.361198</td>
+<td>0.035097</td>
+<td>0.958177</td>
+<td>+0.0016</td>
+<td>[-0.0016, +0.0063]</td>
+<td>0.4658</td>
+</tr>
+<tr>
+<td>I_bio_dynamics</td>
+<td>0.773914</td>
+<td>0.345052</td>
+<td>0.012604</td>
+<td>0.984085</td>
+<td>-0.0121</td>
+<td>[-0.0346, +0.0102]</td>
+<td>0.2776</td>
+</tr>
+<tr>
+<td>J_full_biomira</td>
+<td>0.763401</td>
+<td>0.346094</td>
+<td>0.023117</td>
+<td>0.971248</td>
+<td>-0.0227</td>
+<td>[-0.0464, -0.0026]</td>
+<td>0.0284</td>
+</tr>
+</tbody>
+</table>
+<p>Honest reading: on this corpus the adaptive layer <strong>reduces
+forgetting but costs final retrieval accuracy</strong>, and the full
+stack is significantly <em>worse</em> than plain MIRA. See the paper
+section for what that does and does not license.</p>
 <hr />
 <h2 id="threats-to-validity">7. Threats to Validity</h2>
 <ul>
@@ -1099,6 +1385,11 @@ a pristine control.</li>
 family. Findings are scoped accordingly.</li>
 <li><strong>Statistical:</strong> results will ship with dispersion
 across seeds and questions; point estimates alone are not claims.</li>
+<li><strong>Construct (BioMIRA):</strong> the forgetting lab measures
+retrieval interference with the LLM frozen, so it cannot speak to
+parametric catastrophic forgetting at all. Average forgetting and
+retention are ratios of noisy per-task means; the paired bootstrap
+covers final-step ranking only.</li>
 <li><strong>Operational:</strong> offline passes (placement sweeps,
 consolidation) mutate persisted workspaces. The scale sweep’s restore
 once left the bench workspace on the wrong placement, silently degrading

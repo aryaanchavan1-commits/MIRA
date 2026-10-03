@@ -5,7 +5,11 @@ switched off via `active_components`. The full system = all 9 components on.
 
 score = α·semantic + β·structural + γ·radial + δ·graph
       + ε·importance + ζ·confidence + η·recency + θ·path + ι·activation
-                                                                 (§21, experimental)
+      + κ·stability                                          (§21, experimental)
+
+κ·stability is the BioMIRA component (§14): it reads the adaptive stability
+written by core/biomira.py and is weighted 0 by default, so plain MIRA scores
+are bit-identical with BioMIRA off (§1 fair baseline).
 """
 from __future__ import annotations
 
@@ -18,6 +22,7 @@ from typing import Any, Dict, List, Optional, Tuple
 
 import numpy as np
 
+from core import biomira
 from core.activation import SpreadingActivation
 from core.memory import MemoryFrame, MemoryNode
 from core.types import parse_float, stable_hash, utcnow, datetime
@@ -27,7 +32,8 @@ from storage.vector_store import VectorStore
 logger = logging.getLogger("mira.retrieval")
 
 ALL_COMPONENTS = ("semantic", "structural", "radial", "graph",
-                  "importance", "confidence", "recency", "path", "activation")
+                  "importance", "confidence", "recency", "path", "activation",
+                  "stability")
 
 
 @dataclass
@@ -65,6 +71,8 @@ class MIRARetriever:
         self.final_k = int(rc.get("final_k", 8))
         self.max_hops = int(rc.get("max_hops", 3))
         w = config.get("retrieval_score", {})
+        self.bio = biomira.bio_config(config)          # §1 gate
+        self.bio_enabled = bool(self.bio["enabled"])
         self.weights = {
             "semantic": parse_float(w.get("alpha_semantic", 0.35), 0.35),
             "structural": parse_float(w.get("beta_structural", 0.15), 0.15),
@@ -75,6 +83,10 @@ class MIRARetriever:
             "recency": parse_float(w.get("eta_recency", 0.03), 0.03),
             "path": parse_float(w.get("theta_path", 0.02), 0.02),
             "activation": parse_float(w.get("iota_activation", 0.12), 0.12),
+            # BioMIRA adaptive stability: weighted 0 unless the layer is on,
+            # so the baseline is unchanged (§1).
+            "stability": parse_float(w.get("kappa_stability", 0.0), 0.0)
+            if self.bio_enabled else 0.0,
         }
         self.activation = SpreadingActivation(frame, config)
         # optional learned weights (§new neural unit) — off by default; run
@@ -118,6 +130,12 @@ class MIRARetriever:
         if node.radial_distance is None:
             return 0.5
         return float(np.clip(1.0 - node.radial_distance, 0.0, 1.0))
+
+    def _stability(self, node: MemoryNode) -> float:
+        """BioMIRA adaptive stability in [0,1] (0 when the layer is off)."""
+        if not self.bio_enabled:
+            return 0.0
+        return float(np.clip(biomira.state(node)["stability"], 0.0, 1.0))
 
     def _graph(self, node: MemoryNode) -> float:
         return float(np.clip(self.centrality.get(node.id, 0.0) * 5.0, 0.0, 1.0))
@@ -187,6 +205,10 @@ class MIRARetriever:
                            for nid in seeds}
             act_map = dict(self.activation.activate(
                 seed_scores, trace=activation_trace)[:16])
+            if self.bio_enabled and act_map:
+                # §3 -> §14: the spiking set becomes the BioMIRA activation
+                # state (in-memory; persisted by the sleep/consolidation pass).
+                biomira.set_activation(self.frame, act_map)
             for nid in sorted(act_map):
                 if nid not in cands and nid in self._node_index:
                     cands[nid] = RetrievedItem(node=self._node_index[nid], path=[nid])
@@ -220,6 +242,7 @@ class MIRARetriever:
                 "recency": self._recency(n),
                 "path": self._path_score(n, item.path) if "path" in active_names else 0.0,
                 "activation": float(np.clip(act_map.get(n.id, 0.0), 0.0, 1.0)),
+                "stability": self._stability(n),
             }
             item.components = comp_scores
             item.score = sum(

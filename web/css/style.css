@@ -202,7 +202,7 @@ a { color: var(--gold); text-decoration: none; }
 .formula {
   background: var(--bg); border: 1px solid var(--line-2); border-radius: 8px;
   color: var(--gold); padding: 0.9rem 1rem; margin-bottom: 0.8rem;
-  font-size: 0.85rem; line-height: 1.5; overflow-x: auto;
+  font-size: 0.7rem; line-height: 1.6; overflow-x: auto;
 }
 .ticks { list-style: none; }
 .ticks li { padding: 0.28rem 0 0.28rem 1.3rem; position: relative; color: var(--ink-dim); font-size: 0.95rem; }
@@ -620,4 +620,47 @@ input::placeholder { color: var(--ink-dim); opacity: 1; }
     flex-direction: row; align-items: center; gap: 1rem; padding: 0.8rem 1rem; }
   .side.collapsed .side-collapse { display: none; }
   .side.collapsed .chat-new-btn { display: block; width: auto; margin: 0; }
+}
+
+/* ---------- BioMIRA: consolidation state + forgetting lab ---------- */
+.badge {
+  display: inline-block; padding: 0.12rem 0.5rem; border-radius: 999px;
+  border: 1px solid var(--line-2); color: var(--ink-dim);
+  font-size: 0.72rem; letter-spacing: 0.06em; text-transform: uppercase; white-space: nowrap;
+}
+/* state ladder reads left→right as it firms up; colour carries that meaning */
+.badge-bio-new { color: var(--ink-dim); }
+.badge-bio-candidate { color: var(--gold); border-color: var(--gold-dim); }
+.badge-bio-stable { color: var(--ink); border-color: var(--line-2); background: var(--bg-2); }
+.badge-bio-consolidated { color: var(--bg); background: var(--gold); border-color: var(--gold); }
+
+.bio-hist-row { display: flex; align-items: center; gap: 0.7rem; padding: 0.28rem 0; }
+.bio-hist-row > .small:last-child { min-width: 3.2rem; text-align: right; font-family: var(--mono); }
+.bio-hist-bar {
+  flex: 1 1 auto; min-width: 0; height: 0.5rem; border-radius: 999px;
+  background: var(--bg); border: 1px solid var(--line); overflow: hidden;
+}
+.bio-hist-bar > span {
+  display: block; height: 100%; border-radius: 999px;
+  background: linear-gradient(90deg, var(--gold-dim), var(--gold));
+}
+
+.linkish {
+  background: none; border: 0; padding: 0; font: inherit; color: var(--ink);
+  cursor: pointer; text-align: left; text-decoration: underline;
+  text-decoration-color: var(--line-2); text-underline-offset: 3px;
+}
+.linkish:hover, .linkish:focus-visible { color: var(--gold); text-decoration-color: var(--gold-dim); }
+
+.chart { width: 100%; height: auto; display: block; }
+.chart-grid { stroke: var(--line); stroke-width: 1; }
+.chart-label { fill: var(--ink-dim); font-family: var(--mono); font-size: 11px; }
+.chart + .legend { margin-top: 0.7rem; }
+.legend { display: flex; flex-wrap: wrap; gap: 0.35rem 1rem; font-size: 0.82rem; color: var(--ink-dim); }
+.legend > span { display: inline-flex; align-items: center; gap: 0.4rem; }
+.legend .dot { width: 0.55rem; height: 0.55rem; border-radius: 999px; }
+
+@media (max-width: 520px) {
+  .bio-hist-row { gap: 0.45rem; }
+  .chart-label { font-size: 13px; }
 }

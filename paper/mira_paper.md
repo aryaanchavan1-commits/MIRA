@@ -377,6 +377,60 @@ any-gold membership (n=90/210); the recent cohort is empty at 80% aging — ever
 probe question has at least one aged gold, which is itself informative about how
 much of a long-lived workspace ages together.
 
+### 6.z BioMIRA: adaptive dynamics under sequential learning (a negative result)
+
+`core/biomira.py` adds an optional layer behind `BIOMIRA_ENABLED`: adaptive stability,
+LIF-inspired sparse activation, Hebbian and STDP-inspired association on existing edges,
+homeostatic normalization, adaptive decay, consolidation states, a bounded replay buffer
+and activation-driven ring migration. With the flag off the layer writes nothing and the
+retrieval weights are bit-identical, so MIRA-vs-BioMIRA is a fair A/B rather than a
+rewrite.
+
+The Catastrophic Forgetting Lab (`scripts/build_forgetting_lab.py`,
+`scripts/eval_forgetting.py`) ingests four sequential corpora built from real MuSiQue
+paragraphs (899 documents, 18,632 nodes, 300 questions, 40 per task) and re-tests
+**every** task after every arrival. A paired bootstrap over the final step's per-question
+reciprocal ranks (160 pairs) gives, against plain MIRA:
+
+| variant | final MRR | avg forgetting | Δ MRR vs MIRA | 95% CI | p |
+|---|---|---|---|---|---|
+| A vector RAG | 0.4921 | 0.0409 | −0.2940 | [−0.350, −0.237] | 0.0001 |
+| **B MIRA** | **0.7861** | **0.0356** | — | — | — |
+| C MIRA + radial | 0.8069 | 0.0400 | +0.0209 | [+0.004, +0.041] | 0.015 |
+| D MIRA + graph | 0.4971 | 0.0412 | −0.2890 | [−0.345, −0.232] | 0.0001 |
+| E MIRA + hierarchy | 0.8013 | 0.0332 | +0.0152 | [−0.004, +0.036] | 0.129 |
+| F MIRA + decay | 0.7861 | 0.0356 | +0.0000 | [0, 0] | 1.0 |
+| G MIRA + consolidation | 0.7861 | 0.0356 | +0.0000 | [0, 0] | 1.0 |
+| H MIRA + replay | 0.7876 | 0.0351 | +0.0016 | [−0.002, +0.006] | 0.466 |
+| I MIRA + bio dynamics | 0.7739 | 0.0126 | −0.0121 | [−0.035, +0.010] | 0.278 |
+| J full BioMIRA | 0.7634 | 0.0231 | −0.0227 | [−0.046, −0.003] | 0.028 |
+
+**What this shows.** The hypothesis is not confirmed. The full adaptive stack is
+*significantly worse* than plain MIRA on final retrieval (p=0.028), and no single
+mechanism moves retrieval at all: decay and consolidation produce byte-identical
+rankings, replay moves MRR by +0.0016 (p=0.47). The one component that does help is
+the **radial** term from MIRA itself (+0.0209, p=0.015) — not a BioMIRA contribution.
+
+**What it does show.** Retention improves where accuracy does not: average forgetting
+falls from 0.0356 to 0.0126 (−65%) for the dynamics variant and 0.0231 for the full
+stack, with mean retention 0.958 → 0.984. The layer trades peak retrieval precision for
+resistance to interference. That trade is only worth taking under a staleness objective,
+and stating it as a general win would misreport the experiment.
+
+**Why the mechanism rows are exactly zero.** All 18,632 lab nodes were ingested inside one
+build, so they share an age; retention is therefore nearly uniform and adaptive decay
+multiplies every importance by a near-constant factor, which cannot reorder a ranking.
+The same decay does discriminate in §6.y, where ages are heterogeneous — so the zero is a
+property of this corpus, not evidence that decay is inert. Likewise consolidation state
+alone has no effect unless `kappa_stability` weights it into the score, and homeostasis
+plus ring migration (J only) account for the gap between I's −0.0121 and J's −0.0227.
+
+Limitations: retrieval-level measurement with the LLM frozen, so this is memory
+interference and not parametric forgetting; four tasks on one corpus; no answer-quality
+metric; ring migration promoted only 53 of 18,632 nodes, so J's extra damage is real but
+small in absolute terms. The honest next experiment is a longer sequence with
+heterogeneous ingest times, which is where adaptive decay can be expected to bite.
+
 ---
 
 ## 7. Threats to Validity
@@ -391,6 +445,10 @@ much of a long-lived workspace ages together.
   accordingly.
 - **Statistical:** results will ship with dispersion across seeds and questions;
   point estimates alone are not claims.
+- **Construct (BioMIRA):** the forgetting lab measures retrieval interference with the
+  LLM frozen, so it cannot speak to parametric catastrophic forgetting at all. Average
+  forgetting and retention are ratios of noisy per-task means; the paired bootstrap
+  covers final-step ranking only.
 - **Operational:** offline passes (placement sweeps, consolidation) mutate persisted
   workspaces. The scale sweep's restore once left the bench workspace on the wrong
   placement, silently degrading retrieval until detected. Mitigations now shipped:

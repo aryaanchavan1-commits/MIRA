@@ -9,8 +9,9 @@ from __future__ import annotations
 import logging
 from typing import Any, Dict, List, Optional
 
-from core.conflicts import detect_conflict
+from core.conflicts import detect_conflict, resolution_score
 from core.memory import MemoryNode, apply_update
+from core.types import iso_now
 from storage.sqlite_store import SQLiteStore
 
 logger = logging.getLogger("mira.updater")
@@ -45,6 +46,19 @@ class MemoryUpdater:
             logger.info("merge blocked: conflicting fact kept separate",
                         extra={"target": node_id, "incoming": incoming.id})
             self.create(incoming)
+            # §11 temporal versioning: the old fact gets a validity window and
+            # is marked superseded rather than overwritten, so historical
+            # questions still resolve to it. Only when the incoming correction
+            # actually outranks the stored value — a genuine tie stays a plain
+            # conflict, not a silent succession.
+            if resolution_score(incoming) > resolution_score(existing):
+                now = iso_now()
+                existing.valid_until = now
+                existing.metadata["superseded_by"] = incoming.id
+                existing.updated_at = now
+                self.store.upsert_node({**existing.to_row(), "_action": "update"})
+                incoming.valid_from = now
+                self.store.upsert_node({**incoming.to_row(), "_action": "update"})
             self.store.add_edge(node_id, incoming.id, "contradicts",
                                 weight=0.9, confidence=incoming.confidence)
             return incoming.id

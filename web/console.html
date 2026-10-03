@@ -23,6 +23,8 @@
     <button type="button" data-view="documents" aria-controls="view-documents">Documents</button>
     <button type="button" data-view="websearch" aria-controls="view-websearch">Web Search</button>
     <button type="button" data-view="lab" aria-controls="view-lab">Research Lab</button>
+    <button type="button" data-view="biomira" aria-controls="view-biomira">BioMIRA</button>
+    <button type="button" data-view="forgetting" aria-controls="view-forgetting">Forgetting Lab</button>
     <button type="button" data-view="benchmarks" aria-controls="view-benchmarks">Benchmarks</button>
     <button type="button" data-view="research" aria-controls="view-research">Research</button>
   </nav>
@@ -163,6 +165,95 @@
     <div id="lab-out" role="status" aria-live="polite" aria-atomic="false" aria-busy="false"></div>
   </section>
 
+  <!-- BIOMIRA -->
+  <section class="view" id="view-biomira">
+    <h1>Biological Memory</h1>
+    <p class="small muted">BioMIRA is a <strong>computational abstraction</strong> of adaptive memory
+      dynamics — LIF-inspired activation, Hebbian and STDP-inspired association, adaptive decay,
+      consolidation, replay and homeostatic normalization. It is not a claim of biological
+      equivalence, and the layer is switchable so MIRA can be compared against it honestly.</p>
+
+    <div class="card">
+      <h2>Layer switch</h2>
+      <p class="small muted">Session-scoped: this never rewrites <code>config/config.yaml</code>.
+        With the layer off, retrieval weights are identical to plain MIRA.</p>
+      <div class="bench-form" id="bio-form" novalidate>
+        <label class="check"><input id="bio-enabled" type="checkbox"> BioMIRA enabled</label>
+        <label>Stability weight κ <input id="bio-kappa" type="number" min="0" max="1" step="0.01" value="0"></label>
+        <button class="btn btn-primary" id="bio-apply-toggle" type="button">Apply</button>
+      </div>
+      <div id="bio-toggle-out" class="small" role="status" aria-live="polite"></div>
+    </div>
+
+    <div class="stat-grid" id="bio-stats" aria-live="polite"></div>
+
+    <div class="card">
+      <h2>Dynamics pass</h2>
+      <p class="small muted">Decay never deletes a memory: it lowers retrieval probability.
+        Replay reactivates a bounded buffer of at-risk-but-valuable memories.</p>
+      <div class="bench-form" id="bio-step-form">
+        <label class="check"><input type="checkbox" class="bio-action" value="decay" checked> Adaptive decay</label>
+        <label class="check"><input type="checkbox" class="bio-action" value="replay" checked> Replay buffer</label>
+        <label class="check"><input type="checkbox" class="bio-action" value="homeostasis" checked> Homeostasis</label>
+        <label class="check"><input type="checkbox" class="bio-action" value="rings"> Radial migration</label>
+        <label class="check"><input type="checkbox" class="bio-action" value="merge"> Merge report</label>
+        <label class="check"><input id="bio-step-apply" type="checkbox"> Apply (write to disk)</label>
+        <button class="btn btn-secondary" id="bio-step-run" type="submit">Run pass</button>
+      </div>
+      <div id="bio-step-out" class="small" role="status" aria-live="polite"></div>
+    </div>
+
+    <div class="card">
+      <h2>Memory population</h2>
+      <div class="bench-form">
+        <label>Consolidation state
+          <select id="bio-filter">
+            <option value="">all</option>
+            <option value="new">new</option>
+            <option value="candidate">candidate</option>
+            <option value="stable">stable</option>
+            <option value="consolidated">consolidated</option>
+          </select>
+        </label>
+        <label>Sort by
+          <select id="bio-sort">
+            <option value="activation">activation</option>
+            <option value="stability">stability</option>
+            <option value="retention">retention (at risk)</option>
+            <option value="importance">importance</option>
+            <option value="access_count">uses</option>
+          </select>
+        </label>
+        <button class="btn btn-secondary" id="bio-refresh" type="button">Refresh</button>
+      </div>
+      <div id="bio-table-out" role="status" aria-live="polite" aria-busy="false"></div>
+      <div id="bio-explain-out" aria-live="polite"></div>
+    </div>
+  </section>
+
+  <!-- FORGETTING LAB -->
+  <section class="view" id="view-forgetting">
+    <h1>Catastrophic Forgetting Lab</h1>
+    <p class="small muted">Sequential tasks A → B → C → D. After every task, <strong>all</strong> tasks
+      learned so far are re-tested, and forgetting is measured as the drop from each task's own best
+      earlier score. Scope: retrieval-level (MRR / recall) with the LLM frozen — this measures
+      <strong>memory interference</strong>, not parametric forgetting.</p>
+    <div id="lab-tasks-out" aria-live="polite"></div>
+    <div class="card">
+      <h2>Ablation ladder</h2>
+      <p class="small muted">A–J isolate one signal or one adaptive mechanism at a time.
+        Improvement is only attributed to a component that shows its own isolated effect
+        — a negative or null row is a result, not a failure.</p>
+      <div id="lab-variants-out" role="status" aria-live="polite" aria-busy="false"></div>
+    </div>
+    <div class="card">
+      <h2>Retention &amp; forgetting curves</h2>
+      <label class="small muted" for="lab-variant-select">Variant</label>
+      <select id="lab-variant-select"></select>
+      <div id="lab-chart-out" aria-live="polite"></div>
+    </div>
+  </section>
+
   <!-- BENCHMARKS -->
   <section class="view" id="view-benchmarks">
     <h1>Benchmarks</h1>
@@ -278,6 +369,7 @@
 <script src="js/i18n.js"></script>
 <script src="js/voice.js"></script>
 <script src="js/console.js"></script>
+<script src="js/biomira.js"></script>
 <script src="js/chat.js"></script>
 <script src="js/mandala.js"></script>
 <script>initConsoleMandala && initConsoleMandala();</script>

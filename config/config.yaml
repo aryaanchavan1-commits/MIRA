@@ -47,8 +47,40 @@ retrieval_score:             # §21: MIRA retrieval score — experimental
   eta_recency: 0.03
   theta_path: 0.02
   iota_activation: 0.12      # Bio-NN-inspired activation component
+  kappa_stability: 0.0       # BioMIRA adaptive stability — 0 keeps the MIRA
+                             # baseline bit-identical; ablations set it > 0
   learned: false             # enable only after a held-out, document-grouped
                              # validation run records the scorer and split.
+
+biomira:                     # biologically inspired adaptive memory layer
+  enabled: false             # §1 master switch: false = plain MIRA baseline
+  # stability (§2)
+  stability_gain: 0.12
+  stability_decay_per_day: 0.01
+  # adaptive decay (§7)
+  half_life_days: 21.0
+  decay_floor: 0.15
+  decay_min_importance: 0.05
+  # homeostatic normalization (§6)
+  homeostasis: true
+  homeostasis_percentile: 95.0
+  homeostasis_squeeze: 0.25
+  homeostasis_importance_cap: 0.98
+  # consolidation states (§8)
+  consolidate_candidate_access: 2
+  consolidate_stable_access: 5
+  consolidate_consolidated_access: 10
+  # replay buffer (§9) — bounded, never the whole database
+  replay_buffer_size: 500
+  replay_cooldown_days: 7.0
+  replay_batch: 64
+  # radial integration (§13) — experimental variable, off by default
+  ring_migration: false
+  migrate_min_accesses: 3
+  migrate_min_stability: 0.55
+  migrate_max_per_pass: 64
+  # merging (§12)
+  merge_similarity: 0.92
 
 activation:                  # Bio-NN-inspired retrieval dynamics (core/activation.py)
   mode: lif_like             # configured production mode; continuous remains compatible

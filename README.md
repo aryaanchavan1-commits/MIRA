@@ -264,6 +264,48 @@ was used and lets the rest decay. The same pass is exposed as
 `POST /api/memory/consolidate` (dry-run default; `{"apply": true}` persists
 after a snapshot backup).
 
+**BioMIRA — the optional adaptive layer (`core/biomira.py`).** Behind
+`BIOMIRA_ENABLED` (config `biomira.enabled`): adaptive stability, LIF-inspired
+sparse activation, Hebbian and STDP-inspired association on *existing* graph
+edges, homeostatic normalization, adaptive decay, the
+`NEW → CANDIDATE → STABLE → CONSOLIDATED` state ladder, a bounded replay
+buffer (at-risk, important and representative memories only), and
+activation-driven ring migration. Off means off — no writes, and
+`kappa_stability` defaults to 0 so the baseline ranking is unchanged, which
+is asserted in `tests/test_biomira.py`.
+
+The Catastrophic Forgetting Lab (`scripts/build_forgetting_lab.py` +
+`scripts/eval_forgetting.py`) ingests four sequential corpora built from real
+MuSiQue paragraphs (899 docs, 18,632 nodes, 300 questions) and re-tests every
+task after every arrival. Result on that corpus — stated plainly because it is
+not the flattering one:
+
+| variant | final MRR | avg forgetting | Δ MRR vs MIRA (95% CI, p) |
+|---|---|---|---|
+| A vector RAG | 0.4921 | 0.0409 | −0.2940 [−0.350, −0.237], p<0.001 |
+| **B MIRA** | **0.7861** | **0.0356** | baseline |
+| C MIRA + radial | 0.8069 | 0.0400 | +0.0209 [+0.004, +0.041], p=0.015 |
+| D MIRA + graph | 0.4971 | 0.0412 | −0.2890 [−0.345, −0.232], p<0.001 |
+| E MIRA + hierarchy | 0.8013 | 0.0332 | +0.0152 [−0.004, +0.036], p=0.129 |
+| F MIRA + decay | 0.7861 | 0.0356 | +0.0000, p=1.0 |
+| G MIRA + consolidation | 0.7861 | 0.0356 | +0.0000, p=1.0 |
+| H MIRA + replay | 0.7876 | 0.0351 | +0.0016 [−0.002, +0.006], p=0.466 |
+| I MIRA + bio dynamics | 0.7739 | 0.0126 | −0.0121 [−0.035, +0.010], p=0.278 |
+| J full BioMIRA | 0.7634 | 0.0231 | **−0.0227 [−0.046, −0.003], p=0.028** |
+
+So: **the full adaptive layer is significantly worse than plain MIRA on
+retrieval**, and no individual mechanism helps at all. What it does buy is
+retention — average forgetting drops 0.0356 → 0.0126 (−65%) with the dynamics
+variant, mean retention 0.958 → 0.984. The layer trades peak retrieval
+precision for resistance to interference; that trade only pays under a
+staleness objective. The zero rows for decay and consolidation are a property
+of this corpus (every node shares one ingest time, so decay rescales
+importance almost uniformly and cannot reorder anything) — the same decay
+clearly discriminates in the aged-workspace experiment above. Exposed in the
+console as **Biological Memory** and **Catastrophic Forgetting Lab**, with
+per-memory "why was this retrieved / why did it decay / why is it
+consolidated" readouts on every node.
+
 Pipeline: query analysis → embedding → semantic (FAISS) → seed selection →
 graph expansion with available path provenance → **spreading activation** →
 hierarchical candidates → merge → score → rerank → path selection → evidence
@@ -537,6 +579,12 @@ A full related-work discussion and formal mechanism definitions are in
 - Simulated affect is a fixed, inspectable state machine. It is workspace-scoped and
   resets on restart; it is not evidence of emotion, sentience, or human-like feeling.
 - llama-cpp-python PyPI wheels are CPU-only; GPU offload needs a CUDA wheel.
+- The forgetting lab measures *retrieval interference* with the LLM frozen, not
+  parametric catastrophic forgetting. Four sequential tasks on one corpus is a
+  small sample for a retention claim.
+- BioMIRA did not beat plain MIRA on this corpus (§7). It is shipped because a
+  documented negative result with an ablation ladder is worth more than an
+  unmeasured feature — not because the layer works.
 
 ## 20. Project structure
 
@@ -546,20 +594,25 @@ MIRA/
 ├── config/          config.yaml, auto_config.py
 ├── core/            hardware, memory, mandala, placement, retrieval,
 │                    ranking, compression, conflicts, updater, answer,
-│                    workspace, affect
+│                    workspace, affect, memory_dynamics, biomira
 ├── ingestion/       loaders, chunker, extractors, pipeline
 ├── models/          model_manager, llm, embeddings (+ models/*.gguf)
 ├── storage/         sqlite_store, vector_store, graph_store
 ├── baselines/       vector_rag, graph_rag, hierarchical_rag
-├── evaluation/      benchmark, metrics, ablation, report, rotation
+├── evaluation/      benchmark, metrics, ablation, report, rotation,
+│                    forgetting (retention / forgetting definitions)
 ├── training/        dataset_builder, lora, evaluator
 ├── visualization/   mandala_view (plotly polar)
 ├── ui/pages/        Dashboard, Chat, Mandala, Memory Explorer, Documents,
 │                    Research Lab, Benchmarks, Experiments, Models,
 │                    Hardware, Settings, Logs
-├── scripts/         reproducible runners, including rotational benchmark
+├── web/             console (landing page + operator console) + js/css
+├── scripts/         reproducible runners: benchmark, ablation, significance,
+│                    aging, consolidate, build_forgetting_lab, eval_forgetting
 ├── tests/           phase test suites (assert-based, no frameworks)
 ├── data/            mira.db, indexes/, uploads/, datasets/
+├── data_bench/      isolated MuSiQue bench corpus (4,043 paragraphs)
+├── data_lab/        sequential forgetting-lab corpus + results
 ├── experiments/     EXP-0001/ ... · README.md · geometry wrappers
 └── logs/            mira.log
 ```

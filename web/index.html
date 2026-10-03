@@ -47,6 +47,7 @@
     <div class="nav-links">
       <a href="#research" data-i18n="nav.research">Research</a>
       <a href="#architecture" data-i18n="nav.architecture">Architecture</a>
+      <a href="#forgetting" data-i18n="nav.forgetting">Forgetting</a>
       <a href="#science" data-i18n="nav.science">Science</a>
       <span class="lang-mount"></span>
       <a class="nav-cta" href="/console.html" data-i18n="nav.console">Open Console →</a>
@@ -72,6 +73,7 @@
       <div><dt data-i18n="hero.stats.components">Retrieval components</dt><dd>9</dd></div>
       <div><dt data-i18n="hero.stats.ablations">Ablation sets</dt><dd>12</dd></div>
       <div><dt data-i18n="hero.stats.baselines">Baselines</dt><dd>3</dd></div>
+      <div><dt>Forgetting tasks</dt><dd>4</dd></div>
       <div><dt data-i18n="hero.stats.cloud">Cloud calls (default)</dt><dd>0</dd></div>
     </dl>
   </div>
@@ -95,10 +97,11 @@
   <div class="grid-3">
     <article class="card">
       <h3>The formula under test</h3>
-      <pre class="formula">score = α·semantic + β·structural
-      + γ·radial   + δ·graph
-      + ε·importance + ζ·confidence
-      + η·recency  + θ·path + ι·activation</pre>
+      <pre class="formula">score = α·semantic + β·radial + γ·graph
++ δ·hierarchy + ε·temporal
++ ζ·importance + η·confidence
++ θ·recency + ι·path
++ κ·activation + λ·stability</pre>
       <p class="small">Every coefficient is configurable and every component can be switched
       off, which makes the contribution testable rather than decorative.</p>
     </article>
@@ -183,6 +186,46 @@
   </div>
 </section>
 
+<!-- ============ BIOMIRA ============ -->
+<section class="section section-alt" id="forgetting">
+  <h2 data-i18n="forgetting.h2">Memory that is allowed to forget</h2>
+  <p class="lede">A second, optional layer asks whether <strong>biologically inspired adaptive
+    dynamics</strong> reduce catastrophic forgetting when knowledge keeps arriving. It is a
+    hypothesis, not a feature set: <code>BIOMIRA_ENABLED = false</code> restores plain MIRA exactly,
+    so the two can be compared on identical data.</p>
+  <div class="grid-2">
+    <div class="card">
+      <h3>Forgetting is the baseline problem</h3>
+      <p>Ingest four sequential corpora — A, then B, then C, then D — and re-test
+      <strong>every task learned so far</strong> after each arrival. A memory system that never
+      forgets is not necessarily one that remembers well; it is one that stores more.</p>
+    </div>
+    <div class="card">
+      <h3>Adaptation, in eight mechanisms</h3>
+      <p class="small">Sparse LIF-inspired activation · Hebbian association on existing edges ·
+      STDP-inspired temporal association · homeostatic normalization · adaptive decay ·
+      consolidation states · a bounded replay buffer · memory protection.</p>
+      <p class="small muted">Computational abstractions only. No claim of biological equivalence.</p>
+    </div>
+    <div class="card">
+      <h3>Nothing is deleted</h3>
+      <p class="small">Decay lowers retrievability; it never removes a node. Conflicts are stored as
+      versions with <code>valid_from</code> / <code>valid_until</code>, so a superseded fact stays
+      answerable to historical questions, and merges keep links to their sources.</p>
+    </div>
+    <div class="card">
+      <h3>Ablated before believed</h3>
+      <p class="small">Ten configurations — vector RAG, MIRA, each mechanism alone, and the full
+      stack — run the same sequential protocol. A component is credited only where its own row
+      moves the number. <code>BioMIRA &lt; MIRA</code> is a publishable outcome.</p>
+    </div>
+  </div>
+  <p class="small muted" style="margin-top:1.6rem">Scope, stated plainly: with the LLM frozen this
+    measures <strong>memory interference in retrieval</strong>, not parametric forgetting in weights.
+    Results are written to <code>data_lab/forgetting_results.json</code> and rendered in the
+    <a href="/console.html">console</a>.</p>
+</section>
+
 <!-- ============ SCIENCE ============ -->
 <section class="section" id="science">
   <h2 data-i18n="science.h2">Built to be refuted</h2>
@@ -190,7 +233,7 @@
     <div class="card">
       <h3>Radial distance is formal, not visual</h3>
       <pre class="formula">radial = α·semantic + β·hierarchy
-       + γ·graph    + δ·temporal</pre>
++ γ·graph + δ·temporal</pre>
       <p class="small">Rings are computed, sectors are clustered, and the weights are
       experimental defaults, the starting point of a sweep rather than a claim.</p>
     </div>

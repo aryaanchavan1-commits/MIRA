@@ -116,3 +116,8 @@ data_indic_ml/mr/**
 data_indic_ml/full/**
 data_indic_ml/benchmarks/indicqa_hi_full_bench.json
 data_indic_ml/benchmarks/indicqa_mr_full_bench.json
+
+# forgetting-lab workspace: 56 MB of built corpus stays local; the measured
+# result is whitelisted so the paper's numbers stay reproducible from the repo
+data_lab/**
+!data_lab/forgetting_results.json

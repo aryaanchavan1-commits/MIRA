@@ -279,6 +279,7 @@ class AnswerPipeline:
         # the web without a circular import
         self.workspace_ingest = None
         self._last_result_paths: List[List[str]] = []
+        self._last_selected_ids: List[str] = []
         self._last_activation_trace: List[Dict[str, Any]] = []
         # Workspace installs this callback so cache refresh also keeps the
         # workspace-owned GraphStore and retriever in sync.
@@ -398,6 +399,18 @@ class AnswerPipeline:
                 self._refresh_plasticity_caches()
         except Exception as exc:
             logger.warning("hebbian consolidation failed: %s", exc)
+        # BioMIRA §2/§8: an accepted grounded retrieval is a *successful use* —
+        # it raises stability and drives the consolidation lifecycle.
+        try:
+            from core import biomira
+            if biomira.enabled(self.config) and self._last_selected_ids:
+                biomira.touch(
+                    self.frame, self._last_selected_ids, self.config,
+                    persist=(lambda row: self.store.upsert_node(row))
+                    if self.store is not None else None,
+                )
+        except Exception as exc:
+            logger.warning("biomira touch failed: %s", exc)
 
     @_synchronized
     def ask(self, question: str, active_components=None,
@@ -569,6 +582,18 @@ class AnswerPipeline:
             list(item.path) for item in result.items
             if item.node.id in selected_id_set and len(item.path) > 1
         ]
+        self._last_selected_ids = list(selected_ids)
+        if explicit_no_evidence:
+            # BioMIRA: a retrieval that surfaced nothing usable is a failure
+            # signal for the candidates it did consider (§9 replay priority).
+            try:
+                from core import biomira
+                if biomira.enabled(self.config):
+                    biomira.touch(self.frame,
+                                  [i.node.id for i in result.items[:3]],
+                                  self.config, failed=True)
+            except Exception as exc:
+                logger.warning("biomira failure bookkeeping failed: %s", exc)
 
         selected_nodes: List[MemoryNode] = []
         sources: List[str] = []

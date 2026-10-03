@@ -272,6 +272,34 @@ def export_real() -> None:
                       f"CI [{sig['mrr'].get('ci_low')}, {sig['mrr'].get('ci_high')}], "
                       f"p~{sig['mrr'].get('p_value')} (n_pairs={sig['mrr'].get('n_pairs')}).", ""]
 
+    forgetting_path = ROOT / "data_lab" / "forgetting_results.json"
+    if forgetting_path.exists():
+        f = json.loads(forgetting_path.read_text(encoding="utf-8"))
+        sig = (f.get("significance") or {}).get("vs_baseline") or {}
+        lines += ["### Catastrophic Forgetting Lab — sequential A→B→C→D",
+                  "",
+                  f"{f.get('n_tasks')} sequential corpora ingested from real MuSiQue "
+                  f"paragraphs; after every arrival all tasks learned so far are "
+                  f"re-tested ({f.get('per_task')} questions per task, k={f.get('k')}, "
+                  "paired bootstrap on per-question reciprocal rank).", "",
+                  "| variant | MRR | recall | avg forgetting | retention | d vs MIRA | CI | p |",
+                  "|---|---|---|---|---|---|---|---|"]
+        for name, v in (f.get("variants") or {}).items():
+            agg = (v.get("metrics") or {}).get("average_forgetting", {}).get("mrr")
+            ret = (v.get("metrics") or {}).get("mean_retention", {}).get("mrr")
+            last = (v.get("step_summary") or [{}])[-1]
+            s = sig.get(name)
+            stat = ("baseline" if name == "B_mira" else
+                    f"{s['mean_diff']:+.4f} | [{s['ci_low']:+.4f}, {s['ci_high']:+.4f}] "
+                    f"| {s['p_value']}" if s else "— | — | —")
+            lines.append(f"| {name} | {last.get('mrr')} | {last.get('recall')} | "
+                         f"{agg} | {ret} | {stat} |")
+        lines += ["",
+                  "Honest reading: on this corpus the adaptive layer **reduces "
+                  "forgetting but costs final retrieval accuracy**, and the full "
+                  "stack is significantly *worse* than plain MIRA. See the paper "
+                  "section for what that does and does not license.", ""]
+
     (PAPER / "results_real.md").write_text("\n".join(lines), encoding="utf-8")
     print("[paper] wrote paper/results_real.md")
 

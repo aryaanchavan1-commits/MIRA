@@ -400,7 +400,220 @@ def _node_detail(node_id: str) -> Dict[str, Any]:
         "parent": n.parent_id, "children": n.children,
         "neighbors": neighbors, "provenance": provenance,
         "created_at": n.created_at, "updated_at": n.updated_at,
+        "biomira": _biomira_explain(w, n),
     }
+
+
+# ---- BioMIRA: biologically inspired adaptive memory layer ----
+def _bio_config(w: Workspace) -> Dict[str, Any]:
+    from core import biomira
+    return biomira.bio_config(w.config)
+
+
+def _biomira_explain(w: Workspace, node) -> Dict[str, Any]:
+    """Per-memory 'why' block: retrieved / decayed / consolidated (§19)."""
+    from core import biomira
+    if not biomira.enabled(w.config):
+        return {"enabled": False}
+    return {**biomira.explain_node(node, _bio_config(w)), "enabled": True}
+
+
+@app.get("/api/biomira/state")
+def biomira_state() -> Dict[str, Any]:
+    """Live dynamics snapshot for the Biological Memory view."""
+    from core import biomira
+    w = ws()
+    cfg = _bio_config(w)
+    with w.lock:
+        summary = biomira.summary(w.frame, cfg)
+    summary["config"] = {k: cfg[k] for k in sorted(cfg)}
+    return summary
+
+
+@app.get("/api/biomira/memories")
+def biomira_memories(state: str = "", sort: str = "activation",
+                     limit: int = 40) -> Dict[str, Any]:
+    """Sorted slice of the memory population with its dynamics fields."""
+    from core import biomira
+    w = ws()
+    cfg = _bio_config(w)
+    with w.lock:
+        rows = []
+        for node in w.frame.nodes.values():
+            st = biomira.state(node)
+            if state and st["consolidation_state"] != state:
+                continue
+            rows.append({
+                "id": node.id, "concept": node.concept[:120],
+                "type": node.memory_type.value, "ring": node.ring,
+                "sector": node.sector,
+                "importance": round(float(node.importance), 4),
+                "confidence": round(float(node.confidence), 4),
+                "activation": round(float(st["activation"]), 4),
+                "stability": round(float(st["stability"]), 4),
+                "state": st["consolidation_state"],
+                "consolidation_score": round(float(st["consolidation_score"]), 4),
+                "access_count": int(st["access_count"]),
+                "decay_rate": round(float(st["decay_rate"]), 4),
+                "retention": round(biomira.retention(node, cfg), 4),
+                "version": int(st["memory_version"]),
+            })
+        keys = ("activation", "stability", "importance", "retention",
+                "access_count", "consolidation_score")
+        key = sort if sort in keys else "activation"
+        rows.sort(key=lambda r: (-r.get(key, 0.0), r["id"]))
+        return {"enabled": biomira.enabled(w.config), "sort": key,
+                "count": len(rows), "memories": rows[:max(1, min(limit, 200))]}
+
+
+@app.post("/api/biomira/step")
+def biomira_step(payload: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
+    """Run the adaptive dynamics pass: decay, replay, homeostasis, rings.
+
+    Dry run by default (report only, nothing written); apply=true persists
+    decayed importance, replay stamps and any ring migration to SQLite.
+    """
+    from core import biomira
+    payload = payload or {}
+    apply = _payload_bool(payload, "apply", default=False)
+    actions = payload.get("actions") or ["decay", "replay", "homeostasis"]
+    if not isinstance(actions, list) or not all(isinstance(a, str) for a in actions):
+        raise HTTPException(400, "actions must be a list of strings")
+    unknown = set(actions) - {"decay", "replay", "homeostasis", "rings", "merge"}
+    if unknown:
+        raise HTTPException(400, f"unknown actions: {sorted(unknown)}")
+    w = ws()
+    with w.lock:
+        if not biomira_enabled(w):
+            raise HTTPException(409, "BioMIRA is disabled — enable it first")
+        cfg = _bio_config(w)
+        report: Dict[str, Any] = {"actions": actions, "applied": apply,
+                                  "config": {k: cfg[k] for k in sorted(cfg)}}
+        if "decay" in actions:
+            report["decay"] = biomira_apply_decay(w, cfg, apply)
+        if "replay" in actions:
+            rep = biomira.replay(w.frame, cfg,
+                                 persist=_node_persist(w) if apply else None)
+            report["replay"] = rep
+        if "homeostasis" in actions:
+            if apply:
+                for node in w.frame.nodes.values():
+                    w.store.upsert_node({**node.to_row(), "_action": "update"})
+            report["homeostasis"] = biomira.homeostatize(w.frame, cfg)
+        if "rings" in actions:
+            report["rings"] = biomira.migrate_rings(
+                w.frame, cfg, persist=_node_persist(w) if apply else None)
+        if "merge" in actions:
+            report["merge"] = biomira.detect_merge_candidates(
+                w.frame, cfg, embeddings=w.embeddings)
+        return report
+
+
+def biomira_enabled(w: Workspace) -> bool:
+    from core import biomira
+    return biomira.enabled(w.config)
+
+
+def biomira_apply_decay(w: Workspace, cfg: Dict[str, Any],
+                        apply: bool) -> Dict[str, Any]:
+    from core import biomira
+    return biomira.apply_adaptive_decay(
+        w.frame, cfg, dry_run=not apply,
+        persist=_node_persist(w) if apply else None)
+
+
+def _node_persist(w: Workspace):
+    def persist(row: Dict[str, Any]) -> None:
+        w.store.upsert_node(row)
+    return persist
+
+
+@app.post("/api/biomira/enabled")
+def biomira_set_enabled(payload: Dict[str, Any]) -> Dict[str, Any]:
+    """Runtime A/B switch so the UI can compare MIRA vs BioMIRA live (§1).
+
+    Session-scoped: it mutates the in-process config only, never the YAML on
+    disk, so restarting the server restores the committed configuration.
+    """
+    from core import biomira
+    enabled = _payload_bool(payload, "enabled")
+    if enabled is None:
+        raise HTTPException(400, "enabled must be boolean")
+    kappa = payload.get("kappa_stability")
+    if kappa is not None and (type(kappa) not in (int, float) or not 0.0 <= kappa <= 1.0):
+        raise HTTPException(400, "kappa_stability must be between 0 and 1")
+    w = ws()
+    with w.lock:
+        block = dict(w.config.get("biomira") or {})
+        block["enabled"] = bool(enabled)
+        score = dict(w.config.get("retrieval_score") or {})
+        current_kappa = float(score.get("kappa_stability", 0.0))
+        if kappa is not None:
+            block["kappa_stability"] = float(kappa)
+            score["kappa_stability"] = float(kappa)
+        w.config["biomira"] = block
+        w.config["retrieval_score"] = score
+        pipeline = getattr(w, "answer_pipeline", None)
+        if pipeline is not None and getattr(pipeline, "retriever", None) is not None:
+            # weights and the §1 gate are resolved in __init__, so a live A/B
+            # switch has to rebuild the retriever rather than poke its cache
+            from core.retrieval import MIRARetriever
+            pipeline.retriever = MIRARetriever(w.frame, w.vs, w.gs, w.config)
+            if w.embeddings is not None:
+                pipeline.retriever.embeddings = w.embeddings
+    return {"enabled": bool(enabled),
+            "kappa_stability": float(score.get("kappa_stability", current_kappa)),
+            "note": "session-scoped; config/config.yaml is unchanged"}
+
+
+@app.get("/api/lab/forgetting")
+def lab_forgetting() -> Dict[str, Any]:
+    """Catastrophic Forgetting Lab results (scripts/eval_forgetting.py)."""
+    path = os.path.join(PROJECT_ROOT, "data_lab", "forgetting_results.json")
+    plan_path = os.path.join(PROJECT_ROOT, "data_lab", "lab_manifest.json")
+    if not os.path.isfile(path):
+        return {"available": False,
+                "reason": "run scripts/build_forgetting_lab.py then "
+                          "scripts/eval_forgetting.py",
+                "tasks": _lab_plan(plan_path)}
+    with open(path, "r", encoding="utf-8") as fh:
+        data = json.load(fh)
+    variants = {}
+    for name, v in (data.get("variants") or {}).items():
+        agg = v["metrics"].get("average_forgetting", {}).get("mrr")
+        ret = v["metrics"].get("mean_retention", {}).get("mrr")
+        final = (v.get("step_summary") or [{}])[-1]
+        variants[name] = {
+            "spec": v.get("spec"), "dynamics": v.get("dynamics"),
+            "steps": v.get("step_summary"), "rows": v.get("rows"),
+            "final_mrr": final.get("mrr"), "final_recall": final.get("recall"),
+            "average_forgetting": agg, "mean_retention": ret,
+            "curves": v["metrics"].get("metrics", {}),
+        }
+    return {"available": True, "meta": {k: data.get(k) for k in
+                                        ("generated_at", "n_tasks", "k",
+                                         "per_task", "scope",
+                                         "variant_interpretation")},
+            "questions_per_task": data.get("questions_per_task"),
+            "significance": data.get("significance"),
+            "variants": variants, "tasks": _lab_plan(plan_path)}
+
+
+def _lab_plan(plan_path: str) -> Any:
+    if not os.path.isfile(plan_path):
+        return None
+    try:
+        with open(plan_path, "r", encoding="utf-8") as fh:
+            plan = json.load(fh).get("plan", {})
+        return {"tasks": [{"index": t["index"], "name": t["name"],
+                           "documents": len(t["titles"]),
+                           "distractors": len(t["distractors"]),
+                           "questions": len(t["questions"])}
+                          for t in plan.get("tasks", [])],
+                "dropped_questions": plan.get("dropped_questions"),
+                "seed": plan.get("seed")}
+    except (OSError, ValueError):
+        return None
 
 
 # ---- documents ----

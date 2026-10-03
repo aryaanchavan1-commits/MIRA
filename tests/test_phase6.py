@@ -82,7 +82,7 @@ def test_retrieval_and_ablations():
         for it in r.items:
             assert set(it.components) == set(
                 ["semantic", "structural", "radial", "graph", "importance",
-                 "confidence", "recency", "path", "activation"])
+                 "confidence", "recency", "path", "activation", "stability"])
     # vector_only must rank the python facts top-2
     r = ret.retrieve(q, qvec, active_components=("semantic",))
     assert {it.node.id for it in r.items[:2]} == py_ids
@@ -191,6 +191,27 @@ def test_updater_history_and_merge_block():
         assert store.get_node(a.id)["valid_until"] is not None
         upd.restore(a.id)
         assert store.get_node(a.id)["valid_until"] is None
+        # §11 a correction that actually outranks the stored fact versions the
+        # old one (valid_until + superseded_by) instead of overwriting it, and
+        # a losing candidate leaves the stored fact untouched.
+        stored = MemoryNode(concept="rust", memory_type=MemoryType.FACT,
+                            raw_text="rust version is 1.70", confidence=0.9)
+        upd.create(stored)
+        weaker = MemoryNode(concept="rust", memory_type=MemoryType.FACT,
+                            raw_text="rust version is 1.60", confidence=0.1)
+        upd.merge(stored.id, weaker)
+        assert store.get_node(stored.id)["valid_until"] is None, \
+            "a losing candidate is a conflict, not a succession"
+        stronger = MemoryNode(concept="rust", memory_type=MemoryType.FACT,
+                              raw_text="rust version is 1.80", confidence=0.95)
+        upd.merge(stored.id, stronger)
+        old_row = store.get_node(stored.id)
+        new_row = store.get_node(stronger.id)
+        assert old_row["valid_until"] is not None, "superseded fact keeps a validity window"
+        assert new_row["valid_from"] == old_row["valid_until"]
+        assert old_row["metadata"]["superseded_by"] == stronger.id
+        assert "1.70" in MemoryNode.from_row(old_row).raw_text, "history is not overwritten"
+        assert new_row["valid_until"] is None
     finally:
         shutil.rmtree(tmp, ignore_errors=True)
     print("  updater history + merge-block OK")
