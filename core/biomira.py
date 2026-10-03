@@ -281,11 +281,25 @@ def strength(node: MemoryNode, cfg: Dict[str, Any],
 
 def retention(node: MemoryNode, cfg: Dict[str, Any],
               now: Optional[datetime.datetime] = None,
-              degree: int = 0) -> float:
-    """Retention factor in [0,1] — probability mass the memory keeps."""
+              degree: int = 0,
+              min_age_ts: Optional[datetime.datetime] = None) -> float:
+    """Retention factor in [0,1] — probability mass the memory keeps.
+
+    ``min_age_ts`` (the newest of last-use / last-decay) overrides the age
+    anchor so a repeat pass charges only the interval since it last ran.
+    """
     now = now or datetime.datetime.utcnow()
     half_life = max(1e-6, _f(cfg["half_life_days"], 21.0)) * strength(node, cfg, degree)
-    r = decay_factor(node, now, half_life_days=half_life, stability_boost=0.0)
+    if min_age_ts is not None:
+        if (min_age_ts.tzinfo is None) != (now.tzinfo is None):
+            now = now.replace(tzinfo=None) if min_age_ts.tzinfo is None \
+                else now.replace(tzinfo=min_age_ts.tzinfo)
+        node.metadata["_decay_age_days"] = max(
+            0.0, (now - min_age_ts).total_seconds() / 86400.0)
+    try:
+        r = decay_factor(node, now, half_life_days=half_life, stability_boost=0.0)
+    finally:
+        node.metadata.pop("_decay_age_days", None)
     return float(np.clip(r, 0.0, 1.0))
 
 
@@ -390,20 +404,34 @@ def apply_adaptive_decay(frame: MemoryFrame, cfg: Optional[Dict[str, Any]] = Non
     total_r = 0.0
     min_seen, max_seen = 1.0, 0.0
     buckets: Dict[str, int] = defaultdict(int)
+    stamp = iso_now()
     for node in frame.nodes.values():
-        r = retention(node, cfg, now, deg.get(node.id, 0))
+        st = state(node)
+        # charge only the interval since the last decay pass: a repeated sleep
+        # must not re-charge the full age, or a month of nightly passes erases
+        # everything (the same root fix as memory_dynamics.apply_decay).
+        # All stamps are UTC in this system, so compare tz-stripped (naive vs
+        # aware ISO strings would otherwise be incomparable).
+        stamps = [t.replace(tzinfo=None) if t.tzinfo is not None else t
+                  for t in (_parse_ts(node.updated_at),
+                            _parse_ts(st.get("last_decay_at"))) if t]
+        now_cmp = now.replace(tzinfo=None) if now.tzinfo is not None else now
+        last = max(stamps) if stamps else None
+        r = retention(node, cfg, now_cmp, deg.get(node.id, 0),
+                      min_age_ts=last) if last is not None else 1.0
         total_r += r
         min_seen, max_seen = min(min_seen, r), max(max_seen, r)
-        st = state(node)
-        rank = STATE_RANK.get(st["consolidation_state"], 0)
         buckets[st["consolidation_state"]] += 1
         if r >= 0.999:
+            if not dry_run:
+                st["last_decay_at"] = stamp
+                _write(node, st)
             continue
         # consolidated memories decay, but slower (§8: protected, not immutable)
         st["decay_rate"] = round(1.0 - r, 4)
-        st["last_decay_at"] = iso_now()
-        _write(node, st)
         if not dry_run:
+            st["last_decay_at"] = stamp
+            _write(node, st)
             node.importance = round(max(node.importance * r, node.importance * floor,
                                         min_importance), 4)
             if persist is not None:

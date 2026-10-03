@@ -277,31 +277,37 @@ is asserted in `tests/test_biomira.py`.
 The Catastrophic Forgetting Lab (`scripts/build_forgetting_lab.py` +
 `scripts/eval_forgetting.py`) ingests four sequential corpora built from real
 MuSiQue paragraphs (899 docs, 18,632 nodes, 300 questions) and re-tests every
-task after every arrival. Result on that corpus — stated plainly because it is
-not the flattering one:
+task after every arrival, with **30 simulated days of disuse between
+arrivals** — so task A is 90 days stale when task D lands. Result on that
+corpus:
 
-| variant | final MRR | avg forgetting | Δ MRR vs MIRA (95% CI, p) |
-|---|---|---|---|
-| A vector RAG | 0.4921 | 0.0409 | −0.2940 [−0.350, −0.237], p<0.001 |
-| **B MIRA** | **0.7861** | **0.0356** | baseline |
-| C MIRA + radial | 0.8069 | 0.0400 | +0.0209 [+0.004, +0.041], p=0.015 |
-| D MIRA + graph | 0.4971 | 0.0412 | −0.2890 [−0.345, −0.232], p<0.001 |
-| E MIRA + hierarchy | 0.8013 | 0.0332 | +0.0152 [−0.004, +0.036], p=0.129 |
-| F MIRA + decay | 0.7861 | 0.0356 | +0.0000, p=1.0 |
-| G MIRA + consolidation | 0.7861 | 0.0356 | +0.0000, p=1.0 |
-| H MIRA + replay | 0.7876 | 0.0351 | +0.0016 [−0.002, +0.006], p=0.466 |
-| I MIRA + bio dynamics | 0.7739 | 0.0126 | −0.0121 [−0.035, +0.010], p=0.278 |
-| J full BioMIRA | 0.7634 | 0.0231 | **−0.0227 [−0.046, −0.003], p=0.028** |
+| variant | final MRR | avg forgetting | retention | Δ MRR vs MIRA (95% CI, p) |
+|---|---|---|---|---|
+| A vector RAG | 0.4921 | 0.0409 | 0.9245 | −0.2658 [−0.324, −0.207], p<0.001 |
+| **B MIRA** | **0.7578** | **0.0916** | **0.8946** | baseline |
+| C MIRA + radial | 0.8069 | 0.0400 | 0.9531 | +0.0491 [+0.022, +0.078], p=0.0002 |
+| D MIRA + graph | 0.4971 | 0.0412 | 0.9261 | −0.2608 [−0.318, −0.202], p<0.001 |
+| E MIRA + hierarchy | 0.8013 | 0.0332 | 0.9603 | +0.0434 [+0.015, +0.074], p=0.002 |
+| F MIRA + decay | 0.7573 | 0.0928 | 0.8933 | −0.0005, p=0.733 |
+| G MIRA + consolidation | 0.7578 | 0.0916 | 0.8946 | +0.0000, p=1.0 |
+| H MIRA + replay | 0.7629 | 0.0762 | 0.9120 | +0.0050 [−0.018, +0.030], p=0.686 |
+| I MIRA + bio dynamics | 0.7542 | **0.0381** | 0.9538 | −0.0037 [−0.030, +0.021], p=0.784 |
+| J full BioMIRA | 0.7480 | 0.0440 | 0.9466 | −0.0098 [−0.037, +0.017], p=0.464 |
 
-So: **the full adaptive layer is significantly worse than plain MIRA on
-retrieval**, and no individual mechanism helps at all. What it does buy is
-retention — average forgetting drops 0.0356 → 0.0126 (−65%) with the dynamics
-variant, mean retention 0.958 → 0.984. The layer trades peak retrieval
-precision for resistance to interference; that trade only pays under a
-staleness objective. The zero rows for decay and consolidation are a property
-of this corpus (every node shares one ingest time, so decay rescales
-importance almost uniformly and cannot reorder anything) — the same decay
-clearly discriminates in the aged-workspace experiment above. Exposed in the
+Reading it honestly: **the adaptive dynamics cut average forgetting by 58%
+(0.0916 → 0.0381) at a retrieval cost that is not statistically
+distinguishable from zero** — that is the retention mechanism working. But
+replay alone already buys 17% of it (H), decay alone buys nothing (F),
+consolidation alone is inert until usage gives it weight (G), and the best
+*retrieval* variants are still MIRA's own radial and hierarchy terms. The
+full stack (J) is slightly worse than I: homeostasis + ring migration cost a
+little ranking and forget a bit more, which is exactly the kind of thing the
+ablation ladder exists to catch. A first version of this lab gave every node
+one ingest time and every mechanism row was exactly zero — the degenerate
+corpus is documented in the paper, along with the compounding decay bug its
+diagnosis uncovered (a nightly consolidate used to re-charge the full age
+every night; now each pass charges only the interval since it last ran, and
+a test pins that). Exposed in the
 console as **Biological Memory** and **Catastrophic Forgetting Lab**, with
 per-memory "why was this retrieved / why did it decay / why is it
 consolidated" readouts on every node.
@@ -580,11 +586,11 @@ A full related-work discussion and formal mechanism definitions are in
   resets on restart; it is not evidence of emotion, sentience, or human-like feeling.
 - llama-cpp-python PyPI wheels are CPU-only; GPU offload needs a CUDA wheel.
 - The forgetting lab measures *retrieval interference* with the LLM frozen, not
-  parametric catastrophic forgetting. Four sequential tasks on one corpus is a
-  small sample for a retention claim.
-- BioMIRA did not beat plain MIRA on this corpus (§7). It is shipped because a
-  documented negative result with an ablation ladder is worth more than an
-  unmeasured feature — not because the layer works.
+  parametric catastrophic forgetting. Four sequential tasks on one corpus with a
+  simulated inter-task interval is a small sample for a retention claim.
+- BioMIRA's measured effect is retention (−58% forgetting), not retrieval —
+  and even that rests on one corpus and one interval length. It ships as an
+  experimental, ablated layer, not a recommended default.
 
 ## 20. Project structure
 

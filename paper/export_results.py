@@ -281,7 +281,8 @@ def export_real() -> None:
                   f"{f.get('n_tasks')} sequential corpora ingested from real MuSiQue "
                   f"paragraphs; after every arrival all tasks learned so far are "
                   f"re-tested ({f.get('per_task')} questions per task, k={f.get('k')}, "
-                  "paired bootstrap on per-question reciprocal rank).", "",
+                  "paired bootstrap on per-question reciprocal rank).",
+                  f"{f.get('time_model')}", "",
                   "| variant | MRR | recall | avg forgetting | retention | d vs MIRA | CI | p |",
                   "|---|---|---|---|---|---|---|---|"]
         for name, v in (f.get("variants") or {}).items():
@@ -295,10 +296,12 @@ def export_real() -> None:
             lines.append(f"| {name} | {last.get('mrr')} | {last.get('recall')} | "
                          f"{agg} | {ret} | {stat} |")
         lines += ["",
-                  "Honest reading: on this corpus the adaptive layer **reduces "
-                  "forgetting but costs final retrieval accuracy**, and the full "
-                  "stack is significantly *worse* than plain MIRA. See the paper "
-                  "section for what that does and does not license.", ""]
+                  "Honest reading: under the simulated time model the adaptive "
+                  "dynamics **cut average forgetting by more than half at a "
+                  "retrieval cost that is not statistically distinguishable "
+                  "from zero** — but the best *retrieval* variants remain "
+                  "MIRA's own radial and hierarchy terms. See the paper section "
+                  "for what that does and does not license.", ""]
 
     (PAPER / "results_real.md").write_text("\n".join(lines), encoding="utf-8")
     print("[paper] wrote paper/results_real.md")

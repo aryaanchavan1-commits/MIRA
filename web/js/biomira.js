@@ -306,6 +306,9 @@ async function loadForgettingLab() {
         <th scope="col">Verdict vs MIRA</th></tr></thead>
       <tbody>${rows}</tbody></table></div>
       <p class="small muted">${esc(data.meta?.scope || "")}
+        ${data.meta?.time_model ? `Time model: ${esc(data.meta.time_model)}.` : ""}
+        ${data.meta?.ram_rss_gb?.end ? `Runner RSS ${esc(String(data.meta.ram_rss_gb.end))} GB ·
+          lab store ${esc(String(Math.round((data.meta.lab_store_bytes || 0) / 1e6)))} MB.` : ""}
         ${data.significance ? `Significance: ${esc(data.significance.test)} —
           ${esc(String(data.significance.vs_baseline?.[Object.keys(data.significance.vs_baseline || {})[0]]?.n_pairs ?? "?"))} paired questions against
           ${esc(data.significance.baseline)}.` : ""}</p>`;

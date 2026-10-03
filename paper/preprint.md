@@ -393,7 +393,7 @@ any-gold membership (n=90/210); the recent cohort is empty at 80% aging — ever
 probe question has at least one aged gold, which is itself informative about how
 much of a long-lived workspace ages together.
 
-### 6.z BioMIRA: adaptive dynamics under sequential learning (a negative result)
+### 6.z BioMIRA: adaptive dynamics under sequential learning
 
 `core/biomira.py` adds an optional layer behind `BIOMIRA_ENABLED`: adaptive stability,
 LIF-inspired sparse activation, Hebbian and STDP-inspired association on existing edges,
@@ -405,47 +405,54 @@ rewrite.
 The Catastrophic Forgetting Lab (`scripts/build_forgetting_lab.py`,
 `scripts/eval_forgetting.py`) ingests four sequential corpora built from real MuSiQue
 paragraphs (899 documents, 18,632 nodes, 300 questions, 40 per task) and re-tests
-**every** task after every arrival. A paired bootstrap over the final step's per-question
-reciprocal ranks (160 pairs) gives, against plain MIRA:
+**every** task after every arrival. Time is simulated: 30 days of disuse pass over all
+learned memories between two arrivals, so task A is 90 days stale by the time D lands.
+That time model matters — the first version of this experiment had every node sharing one
+ingest time, retention was near-uniform, and adaptive decay was a constant factor that
+could not reorder anything (all mechanism rows were exactly zero). While diagnosing that
+degenerate result we also found and fixed a compounding bug shared by both decay passes:
+a repeated sleep charged the *full* age again instead of the interval since the last pass,
+so a nightly consolidate would multiply a month of aging into every night
+(`tests/test_memory_dynamics.py` now pins the per-interval semantics).
 
-| variant | final MRR | avg forgetting | Δ MRR vs MIRA | 95% CI | p |
-|---|---|---|---|---|---|
-| A vector RAG | 0.4921 | 0.0409 | −0.2940 | [−0.350, −0.237] | 0.0001 |
-| **B MIRA** | **0.7861** | **0.0356** | — | — | — |
-| C MIRA + radial | 0.8069 | 0.0400 | +0.0209 | [+0.004, +0.041] | 0.015 |
-| D MIRA + graph | 0.4971 | 0.0412 | −0.2890 | [−0.345, −0.232] | 0.0001 |
-| E MIRA + hierarchy | 0.8013 | 0.0332 | +0.0152 | [−0.004, +0.036] | 0.129 |
-| F MIRA + decay | 0.7861 | 0.0356 | +0.0000 | [0, 0] | 1.0 |
-| G MIRA + consolidation | 0.7861 | 0.0356 | +0.0000 | [0, 0] | 1.0 |
-| H MIRA + replay | 0.7876 | 0.0351 | +0.0016 | [−0.002, +0.006] | 0.466 |
-| I MIRA + bio dynamics | 0.7739 | 0.0126 | −0.0121 | [−0.035, +0.010] | 0.278 |
-| J full BioMIRA | 0.7634 | 0.0231 | −0.0227 | [−0.046, −0.003] | 0.028 |
+A paired bootstrap over the final step's per-question reciprocal ranks (160 pairs),
+against plain MIRA:
 
-**What this shows.** The hypothesis is not confirmed. The full adaptive stack is
-*significantly worse* than plain MIRA on final retrieval (p=0.028), and no single
-mechanism moves retrieval at all: decay and consolidation produce byte-identical
-rankings, replay moves MRR by +0.0016 (p=0.47). The one component that does help is
-the **radial** term from MIRA itself (+0.0209, p=0.015) — not a BioMIRA contribution.
+| variant | final MRR | avg forgetting | retention | Δ MRR vs MIRA | 95% CI | p |
+|---|---|---|---|---|---|---|
+| A vector RAG | 0.4921 | 0.0409 | 0.9245 | −0.2658 | [−0.324, −0.207] | 0.0001 |
+| **B MIRA** | **0.7578** | **0.0916** | **0.8946** | — | — | — |
+| C MIRA + radial | 0.8069 | 0.0400 | 0.9531 | +0.0491 | [+0.022, +0.078] | 0.0002 |
+| D MIRA + graph | 0.4971 | 0.0412 | 0.9261 | −0.2608 | [−0.318, −0.202] | 0.0001 |
+| E MIRA + hierarchy | 0.8013 | 0.0332 | 0.9603 | +0.0434 | [+0.015, +0.074] | 0.002 |
+| F MIRA + decay | 0.7573 | 0.0928 | 0.8933 | −0.0005 | [−0.0016, 0] | 0.733 |
+| G MIRA + consolidation | 0.7578 | 0.0916 | 0.8946 | +0.0000 | [0, 0] | 1.0 |
+| H MIRA + replay | 0.7629 | 0.0762 | 0.9120 | +0.0050 | [−0.018, +0.030] | 0.686 |
+| I MIRA + bio dynamics | 0.7542 | 0.0381 | 0.9538 | −0.0037 | [−0.030, +0.021] | 0.784 |
+| J full BioMIRA | 0.7480 | 0.0440 | 0.9466 | −0.0098 | [−0.037, +0.017] | 0.464 |
 
-**What it does show.** Retention improves where accuracy does not: average forgetting
-falls from 0.0356 to 0.0126 (−65%) for the dynamics variant and 0.0231 for the full
-stack, with mean retention 0.958 → 0.984. The layer trades peak retrieval precision for
-resistance to interference. That trade is only worth taking under a staleness objective,
-and stating it as a general win would misreport the experiment.
+**What this shows.** Under a realistic time model, the adaptive dynamics **cut average
+forgetting from 0.0916 to 0.0381 (−58%) and lift mean retention from 0.895 to 0.954 at a
+retrieval cost of −0.0037 MRR that is not statistically distinguishable from zero**
+(p=0.784). Mechanism attribution stays honest: replay alone already reduces forgetting by
+17% (H), decay alone is neutral (F) — it protects nothing without rehearsal — and
+consolidation alone is inert until usage and `kappa_stability` give it weight (G).
+I's −58% comes from decay + replay *together*: decay lowers the stale background while
+replay re-lifts the memories that were actually used, which is the standard
+spacing-plus-rehearsal profile, observed rather than assumed.
 
-**Why the mechanism rows are exactly zero.** All 18,632 lab nodes were ingested inside one
-build, so they share an age; retention is therefore nearly uniform and adaptive decay
-multiplies every importance by a near-constant factor, which cannot reorder a ranking.
-The same decay does discriminate in §6.y, where ages are heterogeneous — so the zero is a
-property of this corpus, not evidence that decay is inert. Likewise consolidation state
-alone has no effect unless `kappa_stability` weights it into the score, and homeostasis
-plus ring migration (J only) account for the gap between I's −0.0121 and J's −0.0227.
+**What it does not show.** The best *retrieval* variants are still MIRA's own structural
+terms — radial (+0.049, p=0.0002) and hierarchy (+0.043, p=0.002), which also happen to
+forget least. The adaptive layer is a retention mechanism, not a ranking improvement, and
+nothing here licenses claiming BioMIRA beats MIRA at retrieval. Homeostasis and ring
+migration (J only) cost a little MRR and forget slightly more than I, so J is not the
+recommended configuration; the ablation exists precisely to catch that.
 
 Limitations: retrieval-level measurement with the LLM frozen, so this is memory
-interference and not parametric forgetting; four tasks on one corpus; no answer-quality
-metric; ring migration promoted only 53 of 18,632 nodes, so J's extra damage is real but
-small in absolute terms. The honest next experiment is a longer sequence with
-heterogeneous ingest times, which is where adaptive decay can be expected to bite.
+interference and not parametric forgetting; four tasks on one corpus with a simulated —
+not measured — inter-task interval; no answer-quality metric; replay re-fires recent
+retrievals, which biases protection toward already-retrievable memories. The runner's
+resource cost is part of the record: RSS 0.73 → 0.81 GB, lab store 24 MB.
 
 ---
 
@@ -572,21 +579,22 @@ overall MRR 0.6985 → 0.6619: d=0.03652 CI [0.00599, 0.06633], p~0.0188 (n_pair
 ### Catastrophic Forgetting Lab — sequential A→B→C→D
 
 4 sequential corpora ingested from real MuSiQue paragraphs; after every arrival all tasks learned so far are re-tested (40 questions per task, k=8, paired bootstrap on per-question reciprocal rank).
+30 simulated days of disuse pass over all learned memories between two task arrivals (in-memory, restored after the run)
 
 | variant | MRR | recall | avg forgetting | retention | d vs MIRA | CI | p |
 |---|---|---|---|---|---|---|---|
-| A_vector_rag | 0.492054 | 0.375 | 0.040915 | 0.92454 | -0.2940 | [-0.3504, -0.2366] | 0.0001 |
-| B_mira | 0.786064 | 0.36276 | 0.035617 | 0.957535 | baseline |
-| C_mira_radial | 0.806949 | 0.318489 | 0.039985 | 0.953094 | +0.0209 | [+0.0038, +0.0406] | 0.015 |
-| D_mira_graph | 0.497054 | 0.379166 | 0.041235 | 0.92607 | -0.2890 | [-0.3450, -0.2323] | 0.0001 |
-| E_mira_hierarchy | 0.801272 | 0.316667 | 0.033207 | 0.960323 | +0.0152 | [-0.0039, +0.0363] | 0.1288 |
-| F_mira_decay | 0.786064 | 0.36276 | 0.035617 | 0.957535 | +0.0000 | [+0.0000, +0.0000] | 1.0 |
-| G_mira_consolidation | 0.786064 | 0.36276 | 0.035617 | 0.957535 | +0.0000 | [+0.0000, +0.0000] | 1.0 |
-| H_mira_replay | 0.787627 | 0.361198 | 0.035097 | 0.958177 | +0.0016 | [-0.0016, +0.0063] | 0.4658 |
-| I_bio_dynamics | 0.773914 | 0.345052 | 0.012604 | 0.984085 | -0.0121 | [-0.0346, +0.0102] | 0.2776 |
-| J_full_biomira | 0.763401 | 0.346094 | 0.023117 | 0.971248 | -0.0227 | [-0.0464, -0.0026] | 0.0284 |
+| A_vector_rag | 0.492054 | 0.375 | 0.040915 | 0.92454 | -0.2658 | [-0.3241, -0.2071] | 0.0001 |
+| B_mira | 0.757828 | 0.347917 | 0.091562 | 0.89464 | baseline |
+| C_mira_radial | 0.806949 | 0.318489 | 0.039985 | 0.953094 | +0.0491 | [+0.0222, +0.0778] | 0.0002 |
+| D_mira_graph | 0.497054 | 0.379166 | 0.041235 | 0.92607 | -0.2608 | [-0.3183, -0.2020] | 0.0001 |
+| E_mira_hierarchy | 0.801272 | 0.316667 | 0.033207 | 0.960323 | +0.0434 | [+0.0148, +0.0737] | 0.002 |
+| F_mira_decay | 0.757307 | 0.347917 | 0.092753 | 0.893269 | -0.0005 | [-0.0016, +0.0000] | 0.7326 |
+| G_mira_consolidation | 0.757828 | 0.347917 | 0.091562 | 0.89464 | +0.0000 | [+0.0000, +0.0000] | 1.0 |
+| H_mira_replay | 0.762865 | 0.347656 | 0.07616 | 0.912017 | +0.0050 | [-0.0176, +0.0296] | 0.6862 |
+| I_bio_dynamics | 0.754182 | 0.342969 | 0.03814 | 0.953812 | -0.0037 | [-0.0305, +0.0213] | 0.784 |
+| J_full_biomira | 0.748036 | 0.34401 | 0.043966 | 0.946639 | -0.0098 | [-0.0374, +0.0166] | 0.4644 |
 
-Honest reading: on this corpus the adaptive layer **reduces forgetting but costs final retrieval accuracy**, and the full stack is significantly *worse* than plain MIRA. See the paper section for what that does and does not license.
+Honest reading: under the simulated time model the adaptive dynamics **cut average forgetting by more than half at a retrieval cost that is not statistically distinguishable from zero** — but the best *retrieval* variants remain MIRA's own radial and hierarchy terms. See the paper section for what that does and does not license.
 
 ---
 

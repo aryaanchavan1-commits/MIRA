@@ -593,6 +593,8 @@ def lab_forgetting() -> Dict[str, Any]:
     return {"available": True, "meta": {k: data.get(k) for k in
                                         ("generated_at", "n_tasks", "k",
                                          "per_task", "scope",
+                                         "interval_days", "time_model",
+                                         "ram_rss_gb", "lab_store_bytes",
                                          "variant_interpretation")},
             "questions_per_task": data.get("questions_per_task"),
             "significance": data.get("significance"),

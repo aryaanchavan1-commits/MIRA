@@ -1,8 +1,15 @@
 {
- "generated_at": "2026-10-03T23:45:24",
+ "generated_at": "2026-10-04T01:57:25",
  "n_tasks": 4,
  "k": 8,
  "per_task": 40,
+ "interval_days": 30.0,
+ "ram_rss_gb": {
+  "start": 0.727,
+  "end": 0.808
+ },
+ "lab_store_bytes": 24088576,
+ "time_model": "30 simulated days of disuse pass over all learned memories between two task arrivals (in-memory, restored after the run)",
  "questions_per_task": {
   "0": 40,
   "1": 40,
@@ -15,38 +22,38 @@
   "vs_baseline": {
    "A_vector_rag": {
     "n_pairs": 160,
-    "mean_diff": -0.29401,
-    "ci_low": -0.35045,
-    "ci_high": -0.2366,
+    "mean_diff": -0.26577,
+    "ci_low": -0.32406,
+    "ci_high": -0.20705,
     "p_value": 0.0001
    },
    "C_mira_radial": {
     "n_pairs": 160,
-    "mean_diff": 0.02089,
-    "ci_low": 0.00379,
-    "ci_high": 0.04058,
-    "p_value": 0.015
+    "mean_diff": 0.04912,
+    "ci_low": 0.02225,
+    "ci_high": 0.07783,
+    "p_value": 0.0002
    },
    "D_mira_graph": {
     "n_pairs": 160,
-    "mean_diff": -0.28901,
-    "ci_low": -0.34504,
-    "ci_high": -0.23228,
+    "mean_diff": -0.26077,
+    "ci_low": -0.31832,
+    "ci_high": -0.20198,
     "p_value": 0.0001
    },
    "E_mira_hierarchy": {
     "n_pairs": 160,
-    "mean_diff": 0.01521,
-    "ci_low": -0.00386,
-    "ci_high": 0.0363,
-    "p_value": 0.1288
+    "mean_diff": 0.04344,
+    "ci_low": 0.01478,
+    "ci_high": 0.07371,
+    "p_value": 0.002
    },
    "F_mira_decay": {
     "n_pairs": 160,
-    "mean_diff": 0.0,
-    "ci_low": 0.0,
+    "mean_diff": -0.00052,
+    "ci_low": -0.00156,
     "ci_high": 0.0,
-    "p_value": 1.0
+    "p_value": 0.7326
    },
    "G_mira_consolidation": {
     "n_pairs": 160,
@@ -57,24 +64,24 @@
    },
    "H_mira_replay": {
     "n_pairs": 160,
-    "mean_diff": 0.00156,
-    "ci_low": -0.00156,
-    "ci_high": 0.00625,
-    "p_value": 0.4658
+    "mean_diff": 0.00504,
+    "ci_low": -0.01762,
+    "ci_high": 0.02958,
+    "p_value": 0.6862
    },
    "I_bio_dynamics": {
     "n_pairs": 160,
-    "mean_diff": -0.01215,
-    "ci_low": -0.03456,
-    "ci_high": 0.01017,
-    "p_value": 0.2776
+    "mean_diff": -0.00365,
+    "ci_low": -0.03045,
+    "ci_high": 0.02127,
+    "p_value": 0.784
    },
    "J_full_biomira": {
     "n_pairs": 160,
-    "mean_diff": -0.02266,
-    "ci_low": -0.04643,
-    "ci_high": -0.00257,
-    "p_value": 0.0284
+    "mean_diff": -0.00979,
+    "ci_low": -0.03738,
+    "ci_high": 0.01661,
+    "p_value": 0.4644
    }
   }
  },
@@ -93,64 +100,78 @@
      "step": 0,
      "task": 0,
      "n": 40,
+     "memory_count": 5229,
      "mrr": 0.538542,
      "recall": 0.51875,
+     "precision": 0.278125,
      "hit_at_k": 0.85,
-     "latency_ms": 50.58
+     "latency_ms": 48.23
     },
     {
      "step": 1,
      "task": 0,
      "n": 40,
+     "memory_count": 9919,
      "mrr": 0.44256,
      "recall": 0.445833,
+     "precision": 0.24375,
      "hit_at_k": 0.775,
-     "latency_ms": 84.53
+     "latency_ms": 83.18
     },
     {
      "step": 1,
      "task": 1,
      "n": 40,
+     "memory_count": 9919,
      "mrr": 0.540625,
      "recall": 0.363542,
+     "precision": 0.190625,
      "hit_at_k": 0.75,
-     "latency_ms": 83.41
+     "latency_ms": 81.39
     },
     {
      "step": 2,
      "task": 0,
      "n": 40,
+     "memory_count": 14382,
      "mrr": 0.42381,
      "recall": 0.416667,
+     "precision": 0.228125,
      "hit_at_k": 0.75,
-     "latency_ms": 116.07
+     "latency_ms": 114.78
     },
     {
      "step": 2,
      "task": 1,
      "n": 40,
+     "memory_count": 14382,
      "mrr": 0.528125,
      "recall": 0.363542,
+     "precision": 0.190625,
      "hit_at_k": 0.75,
-     "latency_ms": 115.07
+     "latency_ms": 113.0
     },
     {
      "step": 2,
      "task": 2,
      "n": 40,
+     "memory_count": 14382,
      "mrr": 0.604167,
      "recall": 0.408333,
+     "precision": 0.2125,
      "hit_at_k": 0.825,
-     "latency_ms": 111.64
+     "latency_ms": 108.62
     },
     {
      "step": 3,
      "task": 0,
      "n": 40,
+     "memory_count": 18632,
      "mrr": 0.419435,
      "recall": 0.404167,
+     "precision": 0.221875,
      "hit_at_k": 0.725,
-     "latency_ms": 149.2,
+     "latency_ms": 143.79,
      "questions": [
       "Who led the military expedition in the province that borders Zhejiang to the south?",
       "The singer, who starred in Shake It Up, signed to which record label?",
@@ -282,10 +303,12 @@
      "step": 3,
      "task": 1,
      "n": 40,
+     "memory_count": 18632,
      "mrr": 0.505,
      "recall": 0.335417,
+     "precision": 0.178125,
      "hit_at_k": 0.7,
-     "latency_ms": 145.18,
+     "latency_ms": 142.76,
      "questions": [
       "Who was given India's highest civilian honor before he became President of India?",
       "Who played king whose regal Name did Albert Adopt in the king's speech?",
@@ -417,10 +440,12 @@
      "step": 3,
      "task": 2,
      "n": 40,
+     "memory_count": 18632,
      "mrr": 0.595238,
      "recall": 0.395833,
+     "precision": 0.20625,
      "hit_at_k": 0.825,
-     "latency_ms": 137.12,
+     "latency_ms": 138.19,
      "questions": [
       "In which county is Kimbrough Memorial Stadium located?",
       "What instrument is played by the person from The Blackout All-Stars?",
@@ -552,10 +577,12 @@
      "step": 3,
      "task": 3,
      "n": 40,
+     "memory_count": 18632,
      "mrr": 0.448542,
      "recall": 0.364583,
+     "precision": 0.190625,
      "hit_at_k": 0.725,
-     "latency_ms": 143.51,
+     "latency_ms": 143.33,
      "questions": [
       "What is the competition the 1972 Federation Cup is part of named after?",
       "What political party was the candidate who garnered a million votes during the 1920 election despite being in prison, a member of?",
@@ -877,6 +904,96 @@
         "n": 40
        }
       ]
+     },
+     "precision": {
+      "0": [
+       {
+        "step": 0,
+        "value": 0.278125,
+        "best_previous": null,
+        "forgetting": 0.0,
+        "retention": 1.0,
+        "n": 40
+       },
+       {
+        "step": 1,
+        "value": 0.24375,
+        "best_previous": 0.278125,
+        "forgetting": 0.034375,
+        "retention": 0.876404,
+        "n": 40
+       },
+       {
+        "step": 2,
+        "value": 0.228125,
+        "best_previous": 0.278125,
+        "forgetting": 0.05,
+        "retention": 0.820225,
+        "n": 40
+       },
+       {
+        "step": 3,
+        "value": 0.221875,
+        "best_previous": 0.278125,
+        "forgetting": 0.05625,
+        "retention": 0.797753,
+        "n": 40
+       }
+      ],
+      "1": [
+       {
+        "step": 1,
+        "value": 0.190625,
+        "best_previous": null,
+        "forgetting": 0.0,
+        "retention": 1.0,
+        "n": 40
+       },
+       {
+        "step": 2,
+        "value": 0.190625,
+        "best_previous": 0.190625,
+        "forgetting": 0.0,
+        "retention": 1.0,
+        "n": 40
+       },
+       {
+        "step": 3,
+        "value": 0.178125,
+        "best_previous": 0.190625,
+        "forgetting": 0.0125,
+        "retention": 0.934426,
+        "n": 40
+       }
+      ],
+      "2": [
+       {
+        "step": 2,
+        "value": 0.2125,
+        "best_previous": null,
+        "forgetting": 0.0,
+        "retention": 1.0,
+        "n": 40
+       },
+       {
+        "step": 3,
+        "value": 0.20625,
+        "best_previous": 0.2125,
+        "forgetting": 0.00625,
+        "retention": 0.970588,
+        "n": 40
+       }
+      ],
+      "3": [
+       {
+        "step": 3,
+        "value": 0.190625,
+        "best_previous": null,
+        "forgetting": 0.0,
+        "retention": 1.0,
+        "n": 40
+       }
+      ]
      }
     },
     "per_task": {
@@ -1059,15 +1176,107 @@
         "n": 40
        }
       ]
+     },
+     "precision": {
+      "0": [
+       {
+        "step": 0,
+        "value": 0.278125,
+        "best_previous": null,
+        "forgetting": 0.0,
+        "retention": 1.0,
+        "n": 40
+       },
+       {
+        "step": 1,
+        "value": 0.24375,
+        "best_previous": 0.278125,
+        "forgetting": 0.034375,
+        "retention": 0.876404,
+        "n": 40
+       },
+       {
+        "step": 2,
+        "value": 0.228125,
+        "best_previous": 0.278125,
+        "forgetting": 0.05,
+        "retention": 0.820225,
+        "n": 40
+       },
+       {
+        "step": 3,
+        "value": 0.221875,
+        "best_previous": 0.278125,
+        "forgetting": 0.05625,
+        "retention": 0.797753,
+        "n": 40
+       }
+      ],
+      "1": [
+       {
+        "step": 1,
+        "value": 0.190625,
+        "best_previous": null,
+        "forgetting": 0.0,
+        "retention": 1.0,
+        "n": 40
+       },
+       {
+        "step": 2,
+        "value": 0.190625,
+        "best_previous": 0.190625,
+        "forgetting": 0.0,
+        "retention": 1.0,
+        "n": 40
+       },
+       {
+        "step": 3,
+        "value": 0.178125,
+        "best_previous": 0.190625,
+        "forgetting": 0.0125,
+        "retention": 0.934426,
+        "n": 40
+       }
+      ],
+      "2": [
+       {
+        "step": 2,
+        "value": 0.2125,
+        "best_previous": null,
+        "forgetting": 0.0,
+        "retention": 1.0,
+        "n": 40
+       },
+       {
+        "step": 3,
+        "value": 0.20625,
+        "best_previous": 0.2125,
+        "forgetting": 0.00625,
+        "retention": 0.970588,
+        "n": 40
+       }
+      ],
+      "3": [
+       {
+        "step": 3,
+        "value": 0.190625,
+        "best_previous": null,
+        "forgetting": 0.0,
+        "retention": 1.0,
+        "n": 40
+       }
+      ]
      }
     },
     "average_forgetting": {
      "mrr": 0.040915,
-     "recall": 0.038802
+     "recall": 0.038802,
+     "precision": 0.01875
     },
     "mean_retention": {
      "mrr": 0.92454,
-     "recall": 0.917785
+     "recall": 0.917785,
+     "precision": 0.925692
     },
     "final_performance": {
      "mrr": {
@@ -1081,6 +1290,12 @@
       "1": 0.335417,
       "2": 0.395833,
       "3": 0.364583
+     },
+     "precision": {
+      "0": 0.221875,
+      "1": 0.178125,
+      "2": 0.20625,
+      "3": 0.190625
      }
     }
    },
@@ -1091,7 +1306,8 @@
      "mrr": 0.538542,
      "recall": 0.51875,
      "hit_at_k": 0.85,
-     "latency_ms": 50.58
+     "precision": 0.278125,
+     "latency_ms": 48.23
     },
     {
      "step": 1,
@@ -1099,7 +1315,8 @@
      "mrr": 0.491592,
      "recall": 0.404687,
      "hit_at_k": 0.7625,
-     "latency_ms": 83.97
+     "precision": 0.217187,
+     "latency_ms": 82.285
     },
     {
      "step": 2,
@@ -1107,7 +1324,8 @@
      "mrr": 0.518701,
      "recall": 0.396181,
      "hit_at_k": 0.775,
-     "latency_ms": 114.26
+     "precision": 0.210417,
+     "latency_ms": 112.133333
     },
     {
      "step": 3,
@@ -1115,13 +1333,15 @@
      "mrr": 0.492054,
      "recall": 0.375,
      "hit_at_k": 0.74375,
-     "latency_ms": 143.7525
+     "precision": 0.199219,
+     "latency_ms": 142.0175
     }
    ],
    "dynamics": {
     "decays": 0,
     "replays": 0,
-    "promotions": 0
+    "promotions": 0,
+    "interval_days": 30.0
    }
   },
   "B_mira": {
@@ -1134,64 +1354,78 @@
      "step": 0,
      "task": 0,
      "n": 40,
+     "memory_count": 5229,
      "mrr": 0.797321,
      "recall": 0.422917,
+     "precision": 0.225,
      "hit_at_k": 0.95,
-     "latency_ms": 58.8
+     "latency_ms": 55.33
     },
     {
      "step": 1,
      "task": 0,
      "n": 40,
-     "mrr": 0.776042,
-     "recall": 0.395833,
-     "hit_at_k": 0.95,
-     "latency_ms": 94.45
+     "memory_count": 9919,
+     "mrr": 0.725238,
+     "recall": 0.372917,
+     "precision": 0.196875,
+     "hit_at_k": 0.9,
+     "latency_ms": 92.79
     },
     {
      "step": 1,
      "task": 1,
      "n": 40,
-     "mrr": 0.87375,
-     "recall": 0.375,
+     "memory_count": 9919,
+     "mrr": 0.9,
+     "recall": 0.39375,
+     "precision": 0.2,
      "hit_at_k": 1.0,
-     "latency_ms": 88.86
+     "latency_ms": 89.21
     },
     {
      "step": 2,
      "task": 0,
      "n": 40,
-     "mrr": 0.765268,
-     "recall": 0.395833,
-     "hit_at_k": 0.95,
-     "latency_ms": 136.3
+     "memory_count": 14382,
+     "mrr": 0.730446,
+     "recall": 0.379167,
+     "precision": 0.2,
+     "hit_at_k": 0.9,
+     "latency_ms": 140.01
     },
     {
      "step": 2,
      "task": 1,
      "n": 40,
-     "mrr": 0.845833,
-     "recall": 0.3625,
-     "hit_at_k": 0.975,
-     "latency_ms": 130.15
+     "memory_count": 14382,
+     "mrr": 0.750833,
+     "recall": 0.31875,
+     "precision": 0.16875,
+     "hit_at_k": 0.925,
+     "latency_ms": 123.17
     },
     {
      "step": 2,
      "task": 2,
      "n": 40,
-     "mrr": 0.83125,
-     "recall": 0.3875,
-     "hit_at_k": 0.925,
-     "latency_ms": 126.01
+     "memory_count": 14382,
+     "mrr": 0.86875,
+     "recall": 0.402083,
+     "precision": 0.20625,
+     "hit_at_k": 0.95,
+     "latency_ms": 118.77
     },
     {
      "step": 3,
      "task": 0,
      "n": 40,
-     "mrr": 0.758185,
-     "recall": 0.389583,
-     "hit_at_k": 0.925,
-     "latency_ms": 76.12,
+     "memory_count": 18632,
+     "mrr": 0.734405,
+     "recall": 0.347917,
+     "precision": 0.184375,
+     "hit_at_k": 0.825,
+     "latency_ms": 172.71,
      "questions": [
       "Who led the military expedition in the province that borders Zhejiang to the south?",
       "The singer, who starred in Shake It Up, signed to which record label?",
@@ -1238,17 +1472,17 @@
       1.0,
       1.0,
       0.5,
-      0.33333,
+      0.2,
       1.0,
       1.0,
       1.0,
       1.0,
       1.0,
       1.0,
+      1.0,
+      0.0,
       1.0,
       0.14286,
-      1.0,
-      0.25,
       0.0,
       1.0,
       1.0,
@@ -1257,9 +1491,9 @@
       0.0,
       0.33333,
       1.0,
-      0.16667,
-      0.33333,
-      0.14286,
+      0.0,
+      0.2,
+      0.0,
       1.0,
       1.0,
       1.0,
@@ -1269,7 +1503,7 @@
       0.0,
       1.0,
       1.0,
-      0.125,
+      0.0,
       1.0,
       1.0,
       1.0,
@@ -1288,7 +1522,7 @@
       1,
       1,
       1,
-      1,
+      0,
       1,
       1,
       0,
@@ -1299,9 +1533,9 @@
       0,
       1,
       1,
+      0,
       1,
-      1,
-      1,
+      0,
       1,
       1,
       1,
@@ -1311,7 +1545,7 @@
       0,
       1,
       1,
-      1,
+      0,
       1,
       1,
       1,
@@ -1323,10 +1557,12 @@
      "step": 3,
      "task": 1,
      "n": 40,
-     "mrr": 0.813333,
-     "recall": 0.34375,
-     "hit_at_k": 0.95,
-     "latency_ms": 71.11,
+     "memory_count": 18632,
+     "mrr": 0.734167,
+     "recall": 0.31875,
+     "precision": 0.16875,
+     "hit_at_k": 0.9,
+     "latency_ms": 157.31,
      "questions": [
       "Who was given India's highest civilian honor before he became President of India?",
       "Who played king whose regal Name did Albert Adopt in the king's speech?",
@@ -1371,44 +1607,44 @@
      ],
      "rr": [
       0.5,
+      0.5,
+      1.0,
+      1.0,
+      0.0,
+      0.5,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      0.16667,
+      0.16667,
+      1.0,
+      1.0,
+      0.25,
+      0.5,
+      1.0,
+      1.0,
+      0.0,
+      0.33333,
       1.0,
       1.0,
       1.0,
       0.0,
-      1.0,
-      1.0,
-      1.0,
-      1.0,
-      1.0,
       1.0,
       1.0,
       1.0,
       1.0,
       1.0,
       0.2,
+      1.0,
+      1.0,
       0.25,
-      1.0,
-      1.0,
-      0.33333,
-      1.0,
-      1.0,
-      1.0,
       0.0,
-      1.0,
-      1.0,
-      1.0,
-      1.0,
-      0.16667,
-      1.0,
-      1.0,
-      1.0,
-      1.0,
-      1.0,
-      0.33333,
-      1.0,
-      1.0,
-      0.5,
-      0.25,
       1.0
      ],
      "hit": [
@@ -1440,6 +1676,7 @@
       1,
       1,
       1,
+      0,
       1,
       1,
       1,
@@ -1449,8 +1686,7 @@
       1,
       1,
       1,
-      1,
-      1,
+      0,
       1
      ]
     },
@@ -1458,10 +1694,12 @@
      "step": 3,
      "task": 2,
      "n": 40,
-     "mrr": 0.788333,
-     "recall": 0.36875,
-     "hit_at_k": 0.925,
-     "latency_ms": 80.9,
+     "memory_count": 18632,
+     "mrr": 0.73125,
+     "recall": 0.352083,
+     "precision": 0.178125,
+     "hit_at_k": 0.875,
+     "latency_ms": 150.26,
      "questions": [
       "In which county is Kimbrough Memorial Stadium located?",
       "What instrument is played by the person from The Blackout All-Stars?",
@@ -1510,21 +1748,21 @@
       1.0,
       1.0,
       1.0,
-      0.33333,
+      0.16667,
       1.0,
       1.0,
       1.0,
       1.0,
-      0.25,
       0.0,
-      1.0,
-      0.2,
-      1.0,
+      0.0,
       1.0,
       0.16667,
-      0.5,
       1.0,
       1.0,
+      0.0,
+      0.25,
+      1.0,
+      0.25,
       1.0,
       1.0,
       1.0,
@@ -1537,8 +1775,8 @@
       1.0,
       0.33333,
       1.0,
-      1.0,
       0.5,
+      0.33333,
       1.0,
       0.25,
       1.0,
@@ -1557,13 +1795,13 @@
       1,
       1,
       1,
-      1,
+      0,
       0,
       1,
       1,
       1,
       1,
-      1,
+      0,
       1,
       1,
       1,
@@ -1593,10 +1831,12 @@
      "step": 3,
      "task": 3,
      "n": 40,
-     "mrr": 0.784405,
-     "recall": 0.348958,
-     "hit_at_k": 0.925,
-     "latency_ms": 136.08,
+     "memory_count": 18632,
+     "mrr": 0.831488,
+     "recall": 0.372917,
+     "precision": 0.196875,
+     "hit_at_k": 0.975,
+     "latency_ms": 158.52,
      "questions": [
       "What is the competition the 1972 Federation Cup is part of named after?",
       "What political party was the candidate who garnered a million votes during the 1920 election despite being in prison, a member of?",
@@ -1644,10 +1884,10 @@
       1.0,
       1.0,
       1.0,
-      0.25,
+      0.5,
       1.0,
       1.0,
-      0.14286,
+      0.2,
       1.0,
       1.0,
       1.0,
@@ -1659,25 +1899,25 @@
       1.0,
       1.0,
       1.0,
-      0.5,
+      1.0,
       1.0,
       0.0,
+      0.5,
+      1.0,
+      1.0,
       0.25,
       1.0,
       1.0,
-      0.0,
       1.0,
       1.0,
-      1.0,
-      1.0,
-      0.2,
-      0.2,
+      0.5,
+      0.33333,
       1.0,
       0.33333,
       1.0,
       1.0,
       1.0,
-      0.0,
+      0.14286,
       1.0,
       1.0
      ],
@@ -1707,7 +1947,6 @@
       1,
       1,
       1,
-      0,
       1,
       1,
       1,
@@ -1719,7 +1958,8 @@
       1,
       1,
       1,
-      0,
+      1,
+      1,
       1,
       1
      ]
@@ -1751,33 +1991,33 @@
        },
        {
         "step": 1,
-        "value": 0.776042,
+        "value": 0.725238,
         "best_previous": 0.797321,
-        "forgetting": 0.021279,
-        "retention": 0.973312,
+        "forgetting": 0.072083,
+        "retention": 0.909594,
         "n": 40
        },
        {
         "step": 2,
-        "value": 0.765268,
+        "value": 0.730446,
         "best_previous": 0.797321,
-        "forgetting": 0.032053,
-        "retention": 0.959799,
+        "forgetting": 0.066875,
+        "retention": 0.916125,
         "n": 40
        },
        {
         "step": 3,
-        "value": 0.758185,
+        "value": 0.734405,
         "best_previous": 0.797321,
-        "forgetting": 0.039136,
-        "retention": 0.950916,
+        "forgetting": 0.062916,
+        "retention": 0.921091,
         "n": 40
        }
       ],
       "1": [
        {
         "step": 1,
-        "value": 0.87375,
+        "value": 0.9,
         "best_previous": null,
         "forgetting": 0.0,
         "retention": 1.0,
@@ -1785,25 +2025,25 @@
        },
        {
         "step": 2,
-        "value": 0.845833,
-        "best_previous": 0.87375,
-        "forgetting": 0.027917,
-        "retention": 0.968049,
+        "value": 0.750833,
+        "best_previous": 0.9,
+        "forgetting": 0.149167,
+        "retention": 0.834259,
         "n": 40
        },
        {
         "step": 3,
-        "value": 0.813333,
-        "best_previous": 0.87375,
-        "forgetting": 0.060417,
-        "retention": 0.930853,
+        "value": 0.734167,
+        "best_previous": 0.9,
+        "forgetting": 0.165833,
+        "retention": 0.815741,
         "n": 40
        }
       ],
       "2": [
        {
         "step": 2,
-        "value": 0.83125,
+        "value": 0.86875,
         "best_previous": null,
         "forgetting": 0.0,
         "retention": 1.0,
@@ -1811,17 +2051,17 @@
        },
        {
         "step": 3,
-        "value": 0.788333,
-        "best_previous": 0.83125,
-        "forgetting": 0.042917,
-        "retention": 0.948371,
+        "value": 0.73125,
+        "best_previous": 0.86875,
+        "forgetting": 0.1375,
+        "retention": 0.841727,
         "n": 40
        }
       ],
       "3": [
        {
         "step": 3,
-        "value": 0.784405,
+        "value": 0.831488,
         "best_previous": null,
         "forgetting": 0.0,
         "retention": 1.0,
@@ -1841,33 +2081,33 @@
        },
        {
         "step": 1,
-        "value": 0.395833,
+        "value": 0.372917,
         "best_previous": 0.422917,
-        "forgetting": 0.027084,
-        "retention": 0.935959,
+        "forgetting": 0.05,
+        "retention": 0.881773,
         "n": 40
        },
        {
         "step": 2,
-        "value": 0.395833,
+        "value": 0.379167,
         "best_previous": 0.422917,
-        "forgetting": 0.027084,
-        "retention": 0.935959,
+        "forgetting": 0.04375,
+        "retention": 0.896552,
         "n": 40
        },
        {
         "step": 3,
-        "value": 0.389583,
+        "value": 0.347917,
         "best_previous": 0.422917,
-        "forgetting": 0.033334,
-        "retention": 0.921181,
+        "forgetting": 0.075,
+        "retention": 0.82266,
         "n": 40
        }
       ],
       "1": [
        {
         "step": 1,
-        "value": 0.375,
+        "value": 0.39375,
         "best_previous": null,
         "forgetting": 0.0,
         "retention": 1.0,
@@ -1875,25 +2115,25 @@
        },
        {
         "step": 2,
-        "value": 0.3625,
-        "best_previous": 0.375,
-        "forgetting": 0.0125,
-        "retention": 0.966667,
+        "value": 0.31875,
+        "best_previous": 0.39375,
+        "forgetting": 0.075,
+        "retention": 0.809524,
         "n": 40
        },
        {
         "step": 3,
-        "value": 0.34375,
-        "best_previous": 0.375,
-        "forgetting": 0.03125,
-        "retention": 0.916667,
+        "value": 0.31875,
+        "best_previous": 0.39375,
+        "forgetting": 0.075,
+        "retention": 0.809524,
         "n": 40
        }
       ],
       "2": [
        {
         "step": 2,
-        "value": 0.3875,
+        "value": 0.402083,
         "best_previous": null,
         "forgetting": 0.0,
         "retention": 1.0,
@@ -1901,17 +2141,107 @@
        },
        {
         "step": 3,
-        "value": 0.36875,
-        "best_previous": 0.3875,
-        "forgetting": 0.01875,
-        "retention": 0.951613,
+        "value": 0.352083,
+        "best_previous": 0.402083,
+        "forgetting": 0.05,
+        "retention": 0.875648,
         "n": 40
        }
       ],
       "3": [
        {
         "step": 3,
-        "value": 0.348958,
+        "value": 0.372917,
+        "best_previous": null,
+        "forgetting": 0.0,
+        "retention": 1.0,
+        "n": 40
+       }
+      ]
+     },
+     "precision": {
+      "0": [
+       {
+        "step": 0,
+        "value": 0.225,
+        "best_previous": null,
+        "forgetting": 0.0,
+        "retention": 1.0,
+        "n": 40
+       },
+       {
+        "step": 1,
+        "value": 0.196875,
+        "best_previous": 0.225,
+        "forgetting": 0.028125,
+        "retention": 0.875,
+        "n": 40
+       },
+       {
+        "step": 2,
+        "value": 0.2,
+        "best_previous": 0.225,
+        "forgetting": 0.025,
+        "retention": 0.888889,
+        "n": 40
+       },
+       {
+        "step": 3,
+        "value": 0.184375,
+        "best_previous": 0.225,
+        "forgetting": 0.040625,
+        "retention": 0.819444,
+        "n": 40
+       }
+      ],
+      "1": [
+       {
+        "step": 1,
+        "value": 0.2,
+        "best_previous": null,
+        "forgetting": 0.0,
+        "retention": 1.0,
+        "n": 40
+       },
+       {
+        "step": 2,
+        "value": 0.16875,
+        "best_previous": 0.2,
+        "forgetting": 0.03125,
+        "retention": 0.84375,
+        "n": 40
+       },
+       {
+        "step": 3,
+        "value": 0.16875,
+        "best_previous": 0.2,
+        "forgetting": 0.03125,
+        "retention": 0.84375,
+        "n": 40
+       }
+      ],
+      "2": [
+       {
+        "step": 2,
+        "value": 0.20625,
+        "best_previous": null,
+        "forgetting": 0.0,
+        "retention": 1.0,
+        "n": 40
+       },
+       {
+        "step": 3,
+        "value": 0.178125,
+        "best_previous": 0.20625,
+        "forgetting": 0.028125,
+        "retention": 0.863636,
+        "n": 40
+       }
+      ],
+      "3": [
+       {
+        "step": 3,
+        "value": 0.196875,
         "best_previous": null,
         "forgetting": 0.0,
         "retention": 1.0,
@@ -1933,33 +2263,33 @@
        },
        {
         "step": 1,
-        "value": 0.776042,
+        "value": 0.725238,
         "best_previous": 0.797321,
-        "forgetting": 0.021279,
-        "retention": 0.973312,
+        "forgetting": 0.072083,
+        "retention": 0.909594,
         "n": 40
        },
        {
         "step": 2,
-        "value": 0.765268,
+        "value": 0.730446,
         "best_previous": 0.797321,
-        "forgetting": 0.032053,
-        "retention": 0.959799,
+        "forgetting": 0.066875,
+        "retention": 0.916125,
         "n": 40
        },
        {
         "step": 3,
-        "value": 0.758185,
+        "value": 0.734405,
         "best_previous": 0.797321,
-        "forgetting": 0.039136,
-        "retention": 0.950916,
+        "forgetting": 0.062916,
+        "retention": 0.921091,
         "n": 40
        }
       ],
       "1": [
        {
         "step": 1,
-        "value": 0.87375,
+        "value": 0.9,
         "best_previous": null,
         "forgetting": 0.0,
         "retention": 1.0,
@@ -1967,25 +2297,25 @@
        },
        {
         "step": 2,
-        "value": 0.845833,
-        "best_previous": 0.87375,
-        "forgetting": 0.027917,
-        "retention": 0.968049,
+        "value": 0.750833,
+        "best_previous": 0.9,
+        "forgetting": 0.149167,
+        "retention": 0.834259,
         "n": 40
        },
        {
         "step": 3,
-        "value": 0.813333,
-        "best_previous": 0.87375,
-        "forgetting": 0.060417,
-        "retention": 0.930853,
+        "value": 0.734167,
+        "best_previous": 0.9,
+        "forgetting": 0.165833,
+        "retention": 0.815741,
         "n": 40
        }
       ],
       "2": [
        {
         "step": 2,
-        "value": 0.83125,
+        "value": 0.86875,
         "best_previous": null,
         "forgetting": 0.0,
         "retention": 1.0,
@@ -1993,17 +2323,17 @@
        },
        {
         "step": 3,
-        "value": 0.788333,
-        "best_previous": 0.83125,
-        "forgetting": 0.042917,
-        "retention": 0.948371,
+        "value": 0.73125,
+        "best_previous": 0.86875,
+        "forgetting": 0.1375,
+        "retention": 0.841727,
         "n": 40
        }
       ],
       "3": [
        {
         "step": 3,
-        "value": 0.784405,
+        "value": 0.831488,
         "best_previous": null,
         "forgetting": 0.0,
         "retention": 1.0,
@@ -2023,33 +2353,33 @@
        },
        {
         "step": 1,
-        "value": 0.395833,
+        "value": 0.372917,
         "best_previous": 0.422917,
-        "forgetting": 0.027084,
-        "retention": 0.935959,
+        "forgetting": 0.05,
+        "retention": 0.881773,
         "n": 40
        },
        {
         "step": 2,
-        "value": 0.395833,
+        "value": 0.379167,
         "best_previous": 0.422917,
-        "forgetting": 0.027084,
-        "retention": 0.935959,
+        "forgetting": 0.04375,
+        "retention": 0.896552,
         "n": 40
        },
        {
         "step": 3,
-        "value": 0.389583,
+        "value": 0.347917,
         "best_previous": 0.422917,
-        "forgetting": 0.033334,
-        "retention": 0.921181,
+        "forgetting": 0.075,
+        "retention": 0.82266,
         "n": 40
        }
       ],
       "1": [
        {
         "step": 1,
-        "value": 0.375,
+        "value": 0.39375,
         "best_previous": null,
         "forgetting": 0.0,
         "retention": 1.0,
@@ -2057,25 +2387,25 @@
        },
        {
         "step": 2,
-        "value": 0.3625,
-        "best_previous": 0.375,
-        "forgetting": 0.0125,
-        "retention": 0.966667,
+        "value": 0.31875,
+        "best_previous": 0.39375,
+        "forgetting": 0.075,
+        "retention": 0.809524,
         "n": 40
        },
        {
         "step": 3,
-        "value": 0.34375,
-        "best_previous": 0.375,
-        "forgetting": 0.03125,
-        "retention": 0.916667,
+        "value": 0.31875,
+        "best_previous": 0.39375,
+        "forgetting": 0.075,
+        "retention": 0.809524,
         "n": 40
        }
       ],
       "2": [
        {
         "step": 2,
-        "value": 0.3875,
+        "value": 0.402083,
         "best_previous": null,
         "forgetting": 0.0,
         "retention": 1.0,
@@ -2083,17 +2413,107 @@
        },
        {
         "step": 3,
-        "value": 0.36875,
-        "best_previous": 0.3875,
-        "forgetting": 0.01875,
-        "retention": 0.951613,
+        "value": 0.352083,
+        "best_previous": 0.402083,
+        "forgetting": 0.05,
+        "retention": 0.875648,
         "n": 40
        }
       ],
       "3": [
        {
         "step": 3,
-        "value": 0.348958,
+        "value": 0.372917,
+        "best_previous": null,
+        "forgetting": 0.0,
+        "retention": 1.0,
+        "n": 40
+       }
+      ]
+     },
+     "precision": {
+      "0": [
+       {
+        "step": 0,
+        "value": 0.225,
+        "best_previous": null,
+        "forgetting": 0.0,
+        "retention": 1.0,
+        "n": 40
+       },
+       {
+        "step": 1,
+        "value": 0.196875,
+        "best_previous": 0.225,
+        "forgetting": 0.028125,
+        "retention": 0.875,
+        "n": 40
+       },
+       {
+        "step": 2,
+        "value": 0.2,
+        "best_previous": 0.225,
+        "forgetting": 0.025,
+        "retention": 0.888889,
+        "n": 40
+       },
+       {
+        "step": 3,
+        "value": 0.184375,
+        "best_previous": 0.225,
+        "forgetting": 0.040625,
+        "retention": 0.819444,
+        "n": 40
+       }
+      ],
+      "1": [
+       {
+        "step": 1,
+        "value": 0.2,
+        "best_previous": null,
+        "forgetting": 0.0,
+        "retention": 1.0,
+        "n": 40
+       },
+       {
+        "step": 2,
+        "value": 0.16875,
+        "best_previous": 0.2,
+        "forgetting": 0.03125,
+        "retention": 0.84375,
+        "n": 40
+       },
+       {
+        "step": 3,
+        "value": 0.16875,
+        "best_previous": 0.2,
+        "forgetting": 0.03125,
+        "retention": 0.84375,
+        "n": 40
+       }
+      ],
+      "2": [
+       {
+        "step": 2,
+        "value": 0.20625,
+        "best_previous": null,
+        "forgetting": 0.0,
+        "retention": 1.0,
+        "n": 40
+       },
+       {
+        "step": 3,
+        "value": 0.178125,
+        "best_previous": 0.20625,
+        "forgetting": 0.028125,
+        "retention": 0.863636,
+        "n": 40
+       }
+      ],
+      "3": [
+       {
+        "step": 3,
+        "value": 0.196875,
         "best_previous": null,
         "forgetting": 0.0,
         "retention": 1.0,
@@ -2103,25 +2523,33 @@
      }
     },
     "average_forgetting": {
-     "mrr": 0.035617,
-     "recall": 0.020834
+     "mrr": 0.091562,
+     "recall": 0.05,
+     "precision": 0.025
     },
     "mean_retention": {
-     "mrr": 0.957535,
-     "recall": 0.947365
+     "mrr": 0.89464,
+     "recall": 0.876958,
+     "precision": 0.881707
     },
     "final_performance": {
      "mrr": {
-      "0": 0.758185,
-      "1": 0.813333,
-      "2": 0.788333,
-      "3": 0.784405
+      "0": 0.734405,
+      "1": 0.734167,
+      "2": 0.73125,
+      "3": 0.831488
      },
      "recall": {
-      "0": 0.389583,
-      "1": 0.34375,
-      "2": 0.36875,
-      "3": 0.348958
+      "0": 0.347917,
+      "1": 0.31875,
+      "2": 0.352083,
+      "3": 0.372917
+     },
+     "precision": {
+      "0": 0.184375,
+      "1": 0.16875,
+      "2": 0.178125,
+      "3": 0.196875
      }
     }
    },
@@ -2132,37 +2560,42 @@
      "mrr": 0.797321,
      "recall": 0.422917,
      "hit_at_k": 0.95,
-     "latency_ms": 58.8
+     "precision": 0.225,
+     "latency_ms": 55.33
     },
     {
      "step": 1,
      "tasks": 2,
-     "mrr": 0.824896,
-     "recall": 0.385416,
-     "hit_at_k": 0.975,
-     "latency_ms": 91.655
+     "mrr": 0.812619,
+     "recall": 0.383333,
+     "hit_at_k": 0.95,
+     "precision": 0.198437,
+     "latency_ms": 91.0
     },
     {
      "step": 2,
      "tasks": 3,
-     "mrr": 0.814117,
-     "recall": 0.381944,
-     "hit_at_k": 0.95,
-     "latency_ms": 130.82
+     "mrr": 0.783343,
+     "recall": 0.366667,
+     "hit_at_k": 0.925,
+     "precision": 0.191667,
+     "latency_ms": 127.316667
     },
     {
      "step": 3,
      "tasks": 4,
-     "mrr": 0.786064,
-     "recall": 0.36276,
-     "hit_at_k": 0.93125,
-     "latency_ms": 91.0525
+     "mrr": 0.757828,
+     "recall": 0.347917,
+     "hit_at_k": 0.89375,
+     "precision": 0.182031,
+     "latency_ms": 159.7
     }
    ],
    "dynamics": {
     "decays": 0,
     "replays": 0,
-    "promotions": 0
+    "promotions": 0,
+    "interval_days": 30.0
    }
   },
   "C_mira_radial": {
@@ -2179,64 +2612,78 @@
      "step": 0,
      "task": 0,
      "n": 40,
+     "memory_count": 5229,
      "mrr": 0.845833,
      "recall": 0.3625,
+     "precision": 0.190625,
      "hit_at_k": 0.95,
-     "latency_ms": 53.53
+     "latency_ms": 49.06
     },
     {
      "step": 1,
      "task": 0,
      "n": 40,
+     "memory_count": 9919,
      "mrr": 0.779167,
      "recall": 0.345833,
+     "precision": 0.18125,
      "hit_at_k": 0.95,
-     "latency_ms": 86.28
+     "latency_ms": 83.15
     },
     {
      "step": 1,
      "task": 1,
      "n": 40,
+     "memory_count": 9919,
      "mrr": 0.883333,
      "recall": 0.3375,
+     "precision": 0.171875,
      "hit_at_k": 1.0,
-     "latency_ms": 82.34
+     "latency_ms": 83.24
     },
     {
      "step": 2,
      "task": 0,
      "n": 40,
+     "memory_count": 14382,
      "mrr": 0.766905,
      "recall": 0.339583,
+     "precision": 0.178125,
      "hit_at_k": 0.95,
-     "latency_ms": 116.51
+     "latency_ms": 120.08
     },
     {
      "step": 2,
      "task": 1,
      "n": 40,
+     "memory_count": 14382,
      "mrr": 0.875238,
      "recall": 0.325,
+     "precision": 0.165625,
      "hit_at_k": 1.0,
-     "latency_ms": 111.5
+     "latency_ms": 113.24
     },
     {
      "step": 2,
      "task": 2,
      "n": 40,
+     "memory_count": 14382,
      "mrr": 0.8375,
      "recall": 0.3125,
+     "precision": 0.159375,
      "hit_at_k": 0.925,
-     "latency_ms": 106.77
+     "latency_ms": 108.37
     },
     {
      "step": 3,
      "task": 0,
      "n": 40,
+     "memory_count": 18632,
      "mrr": 0.75628,
      "recall": 0.339583,
+     "precision": 0.178125,
      "hit_at_k": 0.95,
-     "latency_ms": 147.86,
+     "latency_ms": 145.47,
      "questions": [
       "Who led the military expedition in the province that borders Zhejiang to the south?",
       "The singer, who starred in Shake It Up, signed to which record label?",
@@ -2368,10 +2815,12 @@
      "step": 3,
      "task": 1,
      "n": 40,
+     "memory_count": 18632,
      "mrr": 0.84628,
      "recall": 0.325,
+     "precision": 0.165625,
      "hit_at_k": 1.0,
-     "latency_ms": 91.53,
+     "latency_ms": 144.12,
      "questions": [
       "Who was given India's highest civilian honor before he became President of India?",
       "Who played king whose regal Name did Albert Adopt in the king's speech?",
@@ -2503,10 +2952,12 @@
      "step": 3,
      "task": 2,
      "n": 40,
+     "memory_count": 18632,
      "mrr": 0.804167,
      "recall": 0.3125,
+     "precision": 0.159375,
      "hit_at_k": 0.925,
-     "latency_ms": 63.39,
+     "latency_ms": 137.9,
      "questions": [
       "In which county is Kimbrough Memorial Stadium located?",
       "What instrument is played by the person from The Blackout All-Stars?",
@@ -2638,10 +3089,12 @@
      "step": 3,
      "task": 3,
      "n": 40,
+     "memory_count": 18632,
      "mrr": 0.821071,
      "recall": 0.296875,
+     "precision": 0.153125,
      "hit_at_k": 0.925,
-     "latency_ms": 65.55,
+     "latency_ms": 140.84,
      "questions": [
       "What is the competition the 1972 Federation Cup is part of named after?",
       "What political party was the candidate who garnered a million votes during the 1920 election despite being in prison, a member of?",
@@ -2963,6 +3416,96 @@
         "n": 40
        }
       ]
+     },
+     "precision": {
+      "0": [
+       {
+        "step": 0,
+        "value": 0.190625,
+        "best_previous": null,
+        "forgetting": 0.0,
+        "retention": 1.0,
+        "n": 40
+       },
+       {
+        "step": 1,
+        "value": 0.18125,
+        "best_previous": 0.190625,
+        "forgetting": 0.009375,
+        "retention": 0.95082,
+        "n": 40
+       },
+       {
+        "step": 2,
+        "value": 0.178125,
+        "best_previous": 0.190625,
+        "forgetting": 0.0125,
+        "retention": 0.934426,
+        "n": 40
+       },
+       {
+        "step": 3,
+        "value": 0.178125,
+        "best_previous": 0.190625,
+        "forgetting": 0.0125,
+        "retention": 0.934426,
+        "n": 40
+       }
+      ],
+      "1": [
+       {
+        "step": 1,
+        "value": 0.171875,
+        "best_previous": null,
+        "forgetting": 0.0,
+        "retention": 1.0,
+        "n": 40
+       },
+       {
+        "step": 2,
+        "value": 0.165625,
+        "best_previous": 0.171875,
+        "forgetting": 0.00625,
+        "retention": 0.963636,
+        "n": 40
+       },
+       {
+        "step": 3,
+        "value": 0.165625,
+        "best_previous": 0.171875,
+        "forgetting": 0.00625,
+        "retention": 0.963636,
+        "n": 40
+       }
+      ],
+      "2": [
+       {
+        "step": 2,
+        "value": 0.159375,
+        "best_previous": null,
+        "forgetting": 0.0,
+        "retention": 1.0,
+        "n": 40
+       },
+       {
+        "step": 3,
+        "value": 0.159375,
+        "best_previous": 0.159375,
+        "forgetting": 0.0,
+        "retention": 1.0,
+        "n": 40
+       }
+      ],
+      "3": [
+       {
+        "step": 3,
+        "value": 0.153125,
+        "best_previous": null,
+        "forgetting": 0.0,
+        "retention": 1.0,
+        "n": 40
+       }
+      ]
      }
     },
     "per_task": {
@@ -3145,15 +3688,107 @@
         "n": 40
        }
       ]
+     },
+     "precision": {
+      "0": [
+       {
+        "step": 0,
+        "value": 0.190625,
+        "best_previous": null,
+        "forgetting": 0.0,
+        "retention": 1.0,
+        "n": 40
+       },
+       {
+        "step": 1,
+        "value": 0.18125,
+        "best_previous": 0.190625,
+        "forgetting": 0.009375,
+        "retention": 0.95082,
+        "n": 40
+       },
+       {
+        "step": 2,
+        "value": 0.178125,
+        "best_previous": 0.190625,
+        "forgetting": 0.0125,
+        "retention": 0.934426,
+        "n": 40
+       },
+       {
+        "step": 3,
+        "value": 0.178125,
+        "best_previous": 0.190625,
+        "forgetting": 0.0125,
+        "retention": 0.934426,
+        "n": 40
+       }
+      ],
+      "1": [
+       {
+        "step": 1,
+        "value": 0.171875,
+        "best_previous": null,
+        "forgetting": 0.0,
+        "retention": 1.0,
+        "n": 40
+       },
+       {
+        "step": 2,
+        "value": 0.165625,
+        "best_previous": 0.171875,
+        "forgetting": 0.00625,
+        "retention": 0.963636,
+        "n": 40
+       },
+       {
+        "step": 3,
+        "value": 0.165625,
+        "best_previous": 0.171875,
+        "forgetting": 0.00625,
+        "retention": 0.963636,
+        "n": 40
+       }
+      ],
+      "2": [
+       {
+        "step": 2,
+        "value": 0.159375,
+        "best_previous": null,
+        "forgetting": 0.0,
+        "retention": 1.0,
+        "n": 40
+       },
+       {
+        "step": 3,
+        "value": 0.159375,
+        "best_previous": 0.159375,
+        "forgetting": 0.0,
+        "retention": 1.0,
+        "n": 40
+       }
+      ],
+      "3": [
+       {
+        "step": 3,
+        "value": 0.153125,
+        "best_previous": null,
+        "forgetting": 0.0,
+        "retention": 1.0,
+        "n": 40
+       }
+      ]
      }
     },
     "average_forgetting": {
      "mrr": 0.039985,
-     "recall": 0.008854
+     "recall": 0.008854,
+     "precision": 0.004688
     },
     "mean_retention": {
      "mrr": 0.953094,
-     "recall": 0.974936
+     "recall": 0.974936,
+     "precision": 0.974515
     },
     "final_performance": {
      "mrr": {
@@ -3167,6 +3802,12 @@
       "1": 0.325,
       "2": 0.3125,
       "3": 0.296875
+     },
+     "precision": {
+      "0": 0.178125,
+      "1": 0.165625,
+      "2": 0.159375,
+      "3": 0.153125
      }
     }
    },
@@ -3177,7 +3818,8 @@
      "mrr": 0.845833,
      "recall": 0.3625,
      "hit_at_k": 0.95,
-     "latency_ms": 53.53
+     "precision": 0.190625,
+     "latency_ms": 49.06
     },
     {
      "step": 1,
@@ -3185,7 +3827,8 @@
      "mrr": 0.83125,
      "recall": 0.341666,
      "hit_at_k": 0.975,
-     "latency_ms": 84.31
+     "precision": 0.176563,
+     "latency_ms": 83.195
     },
     {
      "step": 2,
@@ -3193,7 +3836,8 @@
      "mrr": 0.826548,
      "recall": 0.325694,
      "hit_at_k": 0.958333,
-     "latency_ms": 111.593333
+     "precision": 0.167708,
+     "latency_ms": 113.896667
     },
     {
      "step": 3,
@@ -3201,13 +3845,15 @@
      "mrr": 0.806949,
      "recall": 0.318489,
      "hit_at_k": 0.95,
-     "latency_ms": 92.0825
+     "precision": 0.164062,
+     "latency_ms": 142.0825
     }
    ],
    "dynamics": {
     "decays": 0,
     "replays": 0,
-    "promotions": 0
+    "promotions": 0,
+    "interval_days": 30.0
    }
   },
   "D_mira_graph": {
@@ -3224,64 +3870,78 @@
      "step": 0,
      "task": 0,
      "n": 40,
+     "memory_count": 5229,
      "mrr": 0.559821,
      "recall": 0.522917,
+     "precision": 0.28125,
      "hit_at_k": 0.85,
-     "latency_ms": 23.53
+     "latency_ms": 39.13
     },
     {
      "step": 1,
      "task": 0,
      "n": 40,
+     "memory_count": 9919,
      "mrr": 0.459226,
      "recall": 0.45625,
+     "precision": 0.25,
      "hit_at_k": 0.775,
-     "latency_ms": 40.6
+     "latency_ms": 48.0
     },
     {
      "step": 1,
      "task": 1,
      "n": 40,
+     "memory_count": 9919,
      "mrr": 0.540625,
      "recall": 0.376042,
+     "precision": 0.196875,
      "hit_at_k": 0.75,
-     "latency_ms": 41.26
+     "latency_ms": 41.75
     },
     {
      "step": 2,
      "task": 0,
      "n": 40,
+     "memory_count": 14382,
      "mrr": 0.44256,
      "recall": 0.420833,
+     "precision": 0.23125,
      "hit_at_k": 0.75,
-     "latency_ms": 78.19
+     "latency_ms": 68.0
     },
     {
      "step": 2,
      "task": 1,
      "n": 40,
+     "memory_count": 14382,
      "mrr": 0.528125,
      "recall": 0.376042,
+     "precision": 0.196875,
      "hit_at_k": 0.75,
-     "latency_ms": 119.31
+     "latency_ms": 56.0
     },
     {
      "step": 2,
      "task": 2,
      "n": 40,
+     "memory_count": 14382,
      "mrr": 0.604167,
      "recall": 0.408333,
+     "precision": 0.2125,
      "hit_at_k": 0.825,
-     "latency_ms": 114.67
+     "latency_ms": 54.28
     },
     {
      "step": 3,
      "task": 0,
      "n": 40,
+     "memory_count": 18632,
      "mrr": 0.439435,
      "recall": 0.408333,
+     "precision": 0.225,
      "hit_at_k": 0.725,
-     "latency_ms": 161.58,
+     "latency_ms": 74.85,
      "questions": [
       "Who led the military expedition in the province that borders Zhejiang to the south?",
       "The singer, who starred in Shake It Up, signed to which record label?",
@@ -3413,10 +4073,12 @@
      "step": 3,
      "task": 1,
      "n": 40,
+     "memory_count": 18632,
      "mrr": 0.505,
      "recall": 0.341667,
+     "precision": 0.18125,
      "hit_at_k": 0.7,
-     "latency_ms": 162.24,
+     "latency_ms": 73.08,
      "questions": [
       "Who was given India's highest civilian honor before he became President of India?",
       "Who played king whose regal Name did Albert Adopt in the king's speech?",
@@ -3548,10 +4210,12 @@
      "step": 3,
      "task": 2,
      "n": 40,
+     "memory_count": 18632,
      "mrr": 0.595238,
      "recall": 0.402083,
+     "precision": 0.209375,
      "hit_at_k": 0.825,
-     "latency_ms": 147.34,
+     "latency_ms": 80.71,
      "questions": [
       "In which county is Kimbrough Memorial Stadium located?",
       "What instrument is played by the person from The Blackout All-Stars?",
@@ -3683,10 +4347,12 @@
      "step": 3,
      "task": 3,
      "n": 40,
+     "memory_count": 18632,
      "mrr": 0.448542,
      "recall": 0.364583,
+     "precision": 0.190625,
      "hit_at_k": 0.725,
-     "latency_ms": 154.34,
+     "latency_ms": 134.79,
      "questions": [
       "What is the competition the 1972 Federation Cup is part of named after?",
       "What political party was the candidate who garnered a million votes during the 1920 election despite being in prison, a member of?",
@@ -4008,6 +4674,96 @@
         "n": 40
        }
       ]
+     },
+     "precision": {
+      "0": [
+       {
+        "step": 0,
+        "value": 0.28125,
+        "best_previous": null,
+        "forgetting": 0.0,
+        "retention": 1.0,
+        "n": 40
+       },
+       {
+        "step": 1,
+        "value": 0.25,
+        "best_previous": 0.28125,
+        "forgetting": 0.03125,
+        "retention": 0.888889,
+        "n": 40
+       },
+       {
+        "step": 2,
+        "value": 0.23125,
+        "best_previous": 0.28125,
+        "forgetting": 0.05,
+        "retention": 0.822222,
+        "n": 40
+       },
+       {
+        "step": 3,
+        "value": 0.225,
+        "best_previous": 0.28125,
+        "forgetting": 0.05625,
+        "retention": 0.8,
+        "n": 40
+       }
+      ],
+      "1": [
+       {
+        "step": 1,
+        "value": 0.196875,
+        "best_previous": null,
+        "forgetting": 0.0,
+        "retention": 1.0,
+        "n": 40
+       },
+       {
+        "step": 2,
+        "value": 0.196875,
+        "best_previous": 0.196875,
+        "forgetting": 0.0,
+        "retention": 1.0,
+        "n": 40
+       },
+       {
+        "step": 3,
+        "value": 0.18125,
+        "best_previous": 0.196875,
+        "forgetting": 0.015625,
+        "retention": 0.920635,
+        "n": 40
+       }
+      ],
+      "2": [
+       {
+        "step": 2,
+        "value": 0.2125,
+        "best_previous": null,
+        "forgetting": 0.0,
+        "retention": 1.0,
+        "n": 40
+       },
+       {
+        "step": 3,
+        "value": 0.209375,
+        "best_previous": 0.2125,
+        "forgetting": 0.003125,
+        "retention": 0.985294,
+        "n": 40
+       }
+      ],
+      "3": [
+       {
+        "step": 3,
+        "value": 0.190625,
+        "best_previous": null,
+        "forgetting": 0.0,
+        "retention": 1.0,
+        "n": 40
+       }
+      ]
      }
     },
     "per_task": {
@@ -4190,15 +4946,107 @@
         "n": 40
        }
       ]
+     },
+     "precision": {
+      "0": [
+       {
+        "step": 0,
+        "value": 0.28125,
+        "best_previous": null,
+        "forgetting": 0.0,
+        "retention": 1.0,
+        "n": 40
+       },
+       {
+        "step": 1,
+        "value": 0.25,
+        "best_previous": 0.28125,
+        "forgetting": 0.03125,
+        "retention": 0.888889,
+        "n": 40
+       },
+       {
+        "step": 2,
+        "value": 0.23125,
+        "best_previous": 0.28125,
+        "forgetting": 0.05,
+        "retention": 0.822222,
+        "n": 40
+       },
+       {
+        "step": 3,
+        "value": 0.225,
+        "best_previous": 0.28125,
+        "forgetting": 0.05625,
+        "retention": 0.8,
+        "n": 40
+       }
+      ],
+      "1": [
+       {
+        "step": 1,
+        "value": 0.196875,
+        "best_previous": null,
+        "forgetting": 0.0,
+        "retention": 1.0,
+        "n": 40
+       },
+       {
+        "step": 2,
+        "value": 0.196875,
+        "best_previous": 0.196875,
+        "forgetting": 0.0,
+        "retention": 1.0,
+        "n": 40
+       },
+       {
+        "step": 3,
+        "value": 0.18125,
+        "best_previous": 0.196875,
+        "forgetting": 0.015625,
+        "retention": 0.920635,
+        "n": 40
+       }
+      ],
+      "2": [
+       {
+        "step": 2,
+        "value": 0.2125,
+        "best_previous": null,
+        "forgetting": 0.0,
+        "retention": 1.0,
+        "n": 40
+       },
+       {
+        "step": 3,
+        "value": 0.209375,
+        "best_previous": 0.2125,
+        "forgetting": 0.003125,
+        "retention": 0.985294,
+        "n": 40
+       }
+      ],
+      "3": [
+       {
+        "step": 3,
+        "value": 0.190625,
+        "best_previous": null,
+        "forgetting": 0.0,
+        "retention": 1.0,
+        "n": 40
+       }
+      ]
      }
     },
     "average_forgetting": {
      "mrr": 0.041235,
-     "recall": 0.038802
+     "recall": 0.038802,
+     "precision": 0.01875
     },
     "mean_retention": {
      "mrr": 0.92607,
-     "recall": 0.918539
+     "recall": 0.918539,
+     "precision": 0.926482
     },
     "final_performance": {
      "mrr": {
@@ -4212,6 +5060,12 @@
       "1": 0.341667,
       "2": 0.402083,
       "3": 0.364583
+     },
+     "precision": {
+      "0": 0.225,
+      "1": 0.18125,
+      "2": 0.209375,
+      "3": 0.190625
      }
     }
    },
@@ -4222,7 +5076,8 @@
      "mrr": 0.559821,
      "recall": 0.522917,
      "hit_at_k": 0.85,
-     "latency_ms": 23.53
+     "precision": 0.28125,
+     "latency_ms": 39.13
     },
     {
      "step": 1,
@@ -4230,7 +5085,8 @@
      "mrr": 0.499926,
      "recall": 0.416146,
      "hit_at_k": 0.7625,
-     "latency_ms": 40.93
+     "precision": 0.223438,
+     "latency_ms": 44.875
     },
     {
      "step": 2,
@@ -4238,7 +5094,8 @@
      "mrr": 0.524951,
      "recall": 0.401736,
      "hit_at_k": 0.775,
-     "latency_ms": 104.056667
+     "precision": 0.213542,
+     "latency_ms": 59.426667
     },
     {
      "step": 3,
@@ -4246,13 +5103,15 @@
      "mrr": 0.497054,
      "recall": 0.379166,
      "hit_at_k": 0.74375,
-     "latency_ms": 156.375
+     "precision": 0.201562,
+     "latency_ms": 90.8575
     }
    ],
    "dynamics": {
     "decays": 0,
     "replays": 0,
-    "promotions": 0
+    "promotions": 0,
+    "interval_days": 30.0
    }
   },
   "E_mira_hierarchy": {
@@ -4268,64 +5127,78 @@
      "step": 0,
      "task": 0,
      "n": 40,
+     "memory_count": 5229,
      "mrr": 0.83,
      "recall": 0.373958,
+     "precision": 0.196875,
      "hit_at_k": 0.95,
-     "latency_ms": 47.9
+     "latency_ms": 48.76
     },
     {
      "step": 1,
      "task": 0,
      "n": 40,
+     "memory_count": 9919,
      "mrr": 0.776488,
      "recall": 0.332292,
+     "precision": 0.175,
      "hit_at_k": 0.925,
-     "latency_ms": 87.47
+     "latency_ms": 83.41
     },
     {
      "step": 1,
      "task": 1,
      "n": 40,
+     "memory_count": 9919,
      "mrr": 0.854167,
      "recall": 0.34375,
+     "precision": 0.175,
      "hit_at_k": 0.975,
-     "latency_ms": 85.81
+     "latency_ms": 83.12
     },
     {
      "step": 2,
      "task": 0,
      "n": 40,
+     "memory_count": 14382,
      "mrr": 0.7625,
      "recall": 0.319792,
+     "precision": 0.171875,
      "hit_at_k": 0.9,
-     "latency_ms": 117.23
+     "latency_ms": 114.66
     },
     {
      "step": 2,
      "task": 1,
      "n": 40,
+     "memory_count": 14382,
      "mrr": 0.850833,
      "recall": 0.34375,
+     "precision": 0.175,
      "hit_at_k": 0.975,
-     "latency_ms": 114.05
+     "latency_ms": 114.47
     },
     {
      "step": 2,
      "task": 2,
      "n": 40,
+     "memory_count": 14382,
      "mrr": 0.834167,
      "recall": 0.322917,
+     "precision": 0.165625,
      "hit_at_k": 0.95,
-     "latency_ms": 106.43
+     "latency_ms": 110.27
     },
     {
      "step": 3,
      "task": 0,
      "n": 40,
+     "memory_count": 18632,
      "mrr": 0.759018,
      "recall": 0.319792,
+     "precision": 0.171875,
      "hit_at_k": 0.9,
-     "latency_ms": 143.52,
+     "latency_ms": 144.91,
      "questions": [
       "Who led the military expedition in the province that borders Zhejiang to the south?",
       "The singer, who starred in Shake It Up, signed to which record label?",
@@ -4457,10 +5330,12 @@
      "step": 3,
      "task": 1,
      "n": 40,
+     "memory_count": 18632,
      "mrr": 0.820238,
      "recall": 0.325,
+     "precision": 0.16875,
      "hit_at_k": 0.95,
-     "latency_ms": 138.73,
+     "latency_ms": 140.39,
      "questions": [
       "Who was given India's highest civilian honor before he became President of India?",
       "Who played king whose regal Name did Albert Adopt in the king's speech?",
@@ -4592,10 +5467,12 @@
      "step": 3,
      "task": 2,
      "n": 40,
+     "memory_count": 18632,
      "mrr": 0.80625,
      "recall": 0.322917,
+     "precision": 0.165625,
      "hit_at_k": 0.95,
-     "latency_ms": 133.11,
+     "latency_ms": 138.22,
      "questions": [
       "In which county is Kimbrough Memorial Stadium located?",
       "What instrument is played by the person from The Blackout All-Stars?",
@@ -4727,10 +5604,12 @@
      "step": 3,
      "task": 3,
      "n": 40,
+     "memory_count": 18632,
      "mrr": 0.819583,
      "recall": 0.298958,
+     "precision": 0.15625,
      "hit_at_k": 0.925,
-     "latency_ms": 140.68,
+     "latency_ms": 145.85,
      "questions": [
       "What is the competition the 1972 Federation Cup is part of named after?",
       "What political party was the candidate who garnered a million votes during the 1920 election despite being in prison, a member of?",
@@ -5052,6 +5931,96 @@
         "n": 40
        }
       ]
+     },
+     "precision": {
+      "0": [
+       {
+        "step": 0,
+        "value": 0.196875,
+        "best_previous": null,
+        "forgetting": 0.0,
+        "retention": 1.0,
+        "n": 40
+       },
+       {
+        "step": 1,
+        "value": 0.175,
+        "best_previous": 0.196875,
+        "forgetting": 0.021875,
+        "retention": 0.888889,
+        "n": 40
+       },
+       {
+        "step": 2,
+        "value": 0.171875,
+        "best_previous": 0.196875,
+        "forgetting": 0.025,
+        "retention": 0.873016,
+        "n": 40
+       },
+       {
+        "step": 3,
+        "value": 0.171875,
+        "best_previous": 0.196875,
+        "forgetting": 0.025,
+        "retention": 0.873016,
+        "n": 40
+       }
+      ],
+      "1": [
+       {
+        "step": 1,
+        "value": 0.175,
+        "best_previous": null,
+        "forgetting": 0.0,
+        "retention": 1.0,
+        "n": 40
+       },
+       {
+        "step": 2,
+        "value": 0.175,
+        "best_previous": 0.175,
+        "forgetting": 0.0,
+        "retention": 1.0,
+        "n": 40
+       },
+       {
+        "step": 3,
+        "value": 0.16875,
+        "best_previous": 0.175,
+        "forgetting": 0.00625,
+        "retention": 0.964286,
+        "n": 40
+       }
+      ],
+      "2": [
+       {
+        "step": 2,
+        "value": 0.165625,
+        "best_previous": null,
+        "forgetting": 0.0,
+        "retention": 1.0,
+        "n": 40
+       },
+       {
+        "step": 3,
+        "value": 0.165625,
+        "best_previous": 0.165625,
+        "forgetting": 0.0,
+        "retention": 1.0,
+        "n": 40
+       }
+      ],
+      "3": [
+       {
+        "step": 3,
+        "value": 0.15625,
+        "best_previous": null,
+        "forgetting": 0.0,
+        "retention": 1.0,
+        "n": 40
+       }
+      ]
      }
     },
     "per_task": {
@@ -5234,15 +6203,107 @@
         "n": 40
        }
       ]
+     },
+     "precision": {
+      "0": [
+       {
+        "step": 0,
+        "value": 0.196875,
+        "best_previous": null,
+        "forgetting": 0.0,
+        "retention": 1.0,
+        "n": 40
+       },
+       {
+        "step": 1,
+        "value": 0.175,
+        "best_previous": 0.196875,
+        "forgetting": 0.021875,
+        "retention": 0.888889,
+        "n": 40
+       },
+       {
+        "step": 2,
+        "value": 0.171875,
+        "best_previous": 0.196875,
+        "forgetting": 0.025,
+        "retention": 0.873016,
+        "n": 40
+       },
+       {
+        "step": 3,
+        "value": 0.171875,
+        "best_previous": 0.196875,
+        "forgetting": 0.025,
+        "retention": 0.873016,
+        "n": 40
+       }
+      ],
+      "1": [
+       {
+        "step": 1,
+        "value": 0.175,
+        "best_previous": null,
+        "forgetting": 0.0,
+        "retention": 1.0,
+        "n": 40
+       },
+       {
+        "step": 2,
+        "value": 0.175,
+        "best_previous": 0.175,
+        "forgetting": 0.0,
+        "retention": 1.0,
+        "n": 40
+       },
+       {
+        "step": 3,
+        "value": 0.16875,
+        "best_previous": 0.175,
+        "forgetting": 0.00625,
+        "retention": 0.964286,
+        "n": 40
+       }
+      ],
+      "2": [
+       {
+        "step": 2,
+        "value": 0.165625,
+        "best_previous": null,
+        "forgetting": 0.0,
+        "retention": 1.0,
+        "n": 40
+       },
+       {
+        "step": 3,
+        "value": 0.165625,
+        "best_previous": 0.165625,
+        "forgetting": 0.0,
+        "retention": 1.0,
+        "n": 40
+       }
+      ],
+      "3": [
+       {
+        "step": 3,
+        "value": 0.15625,
+        "best_previous": null,
+        "forgetting": 0.0,
+        "retention": 1.0,
+        "n": 40
+       }
+      ]
      }
     },
     "average_forgetting": {
      "mrr": 0.033207,
-     "recall": 0.018229
+     "recall": 0.018229,
+     "precision": 0.007812
     },
     "mean_retention": {
      "mrr": 0.960323,
-     "recall": 0.950152
+     "recall": 0.950152,
+     "precision": 0.959326
     },
     "final_performance": {
      "mrr": {
@@ -5256,6 +6317,12 @@
       "1": 0.325,
       "2": 0.322917,
       "3": 0.298958
+     },
+     "precision": {
+      "0": 0.171875,
+      "1": 0.16875,
+      "2": 0.165625,
+      "3": 0.15625
      }
     }
    },
@@ -5266,7 +6333,8 @@
      "mrr": 0.83,
      "recall": 0.373958,
      "hit_at_k": 0.95,
-     "latency_ms": 47.9
+     "precision": 0.196875,
+     "latency_ms": 48.76
     },
     {
      "step": 1,
@@ -5274,7 +6342,8 @@
      "mrr": 0.815327,
      "recall": 0.338021,
      "hit_at_k": 0.95,
-     "latency_ms": 86.64
+     "precision": 0.175,
+     "latency_ms": 83.265
     },
     {
      "step": 2,
@@ -5282,7 +6351,8 @@
      "mrr": 0.815833,
      "recall": 0.32882,
      "hit_at_k": 0.941667,
-     "latency_ms": 112.57
+     "precision": 0.170833,
+     "latency_ms": 113.133333
     },
     {
      "step": 3,
@@ -5290,13 +6360,15 @@
      "mrr": 0.801272,
      "recall": 0.316667,
      "hit_at_k": 0.93125,
-     "latency_ms": 139.01
+     "precision": 0.165625,
+     "latency_ms": 142.3425
     }
    ],
    "dynamics": {
     "decays": 0,
     "replays": 0,
-    "promotions": 0
+    "promotions": 0,
+    "interval_days": 30.0
    }
   },
   "F_mira_decay": {
@@ -5310,64 +6382,78 @@
      "step": 0,
      "task": 0,
      "n": 40,
-     "mrr": 0.797321,
+     "memory_count": 5229,
+     "mrr": 0.8,
      "recall": 0.422917,
+     "precision": 0.225,
      "hit_at_k": 0.95,
-     "latency_ms": 62.67
+     "latency_ms": 60.44
     },
     {
      "step": 1,
      "task": 0,
      "n": 40,
-     "mrr": 0.776042,
-     "recall": 0.395833,
-     "hit_at_k": 0.95,
-     "latency_ms": 111.33
+     "memory_count": 9919,
+     "mrr": 0.72881,
+     "recall": 0.379167,
+     "precision": 0.2,
+     "hit_at_k": 0.925,
+     "latency_ms": 101.71
     },
     {
      "step": 1,
      "task": 1,
      "n": 40,
-     "mrr": 0.87375,
-     "recall": 0.375,
+     "memory_count": 9919,
+     "mrr": 0.9,
+     "recall": 0.39375,
+     "precision": 0.2,
      "hit_at_k": 1.0,
-     "latency_ms": 95.64
+     "latency_ms": 100.07
     },
     {
      "step": 2,
      "task": 0,
      "n": 40,
-     "mrr": 0.765268,
-     "recall": 0.395833,
-     "hit_at_k": 0.95,
-     "latency_ms": 154.01
+     "memory_count": 14382,
+     "mrr": 0.734018,
+     "recall": 0.385417,
+     "precision": 0.203125,
+     "hit_at_k": 0.925,
+     "latency_ms": 144.81
     },
     {
      "step": 2,
      "task": 1,
      "n": 40,
-     "mrr": 0.845833,
-     "recall": 0.3625,
-     "hit_at_k": 0.975,
-     "latency_ms": 135.96
+     "memory_count": 14382,
+     "mrr": 0.750833,
+     "recall": 0.31875,
+     "precision": 0.16875,
+     "hit_at_k": 0.925,
+     "latency_ms": 134.88
     },
     {
      "step": 2,
      "task": 2,
      "n": 40,
-     "mrr": 0.83125,
-     "recall": 0.3875,
-     "hit_at_k": 0.925,
-     "latency_ms": 127.44
+     "memory_count": 14382,
+     "mrr": 0.86875,
+     "recall": 0.402083,
+     "precision": 0.20625,
+     "hit_at_k": 0.95,
+     "latency_ms": 127.99
     },
     {
      "step": 3,
      "task": 0,
      "n": 40,
-     "mrr": 0.758185,
-     "recall": 0.389583,
-     "hit_at_k": 0.925,
-     "latency_ms": 195.88,
+     "memory_count": 18632,
+     "mrr": 0.734405,
+     "recall": 0.347917,
+     "precision": 0.184375,
+     "hit_at_k": 0.825,
+     "latency_ms": 173.07,
      "questions": [
       "Who led the military expedition in the province that borders Zhejiang to the south?",
       "The singer, who starred in Shake It Up, signed to which record label?",
@@ -5414,17 +6500,17 @@
       1.0,
       1.0,
       0.5,
-      0.33333,
+      0.2,
       1.0,
       1.0,
       1.0,
       1.0,
       1.0,
       1.0,
+      1.0,
+      0.0,
       1.0,
       0.14286,
-      1.0,
-      0.25,
       0.0,
       1.0,
       1.0,
@@ -5433,9 +6519,9 @@
       0.0,
       0.33333,
       1.0,
-      0.16667,
-      0.33333,
-      0.14286,
+      0.0,
+      0.2,
+      0.0,
       1.0,
       1.0,
       1.0,
@@ -5445,7 +6531,7 @@
       0.0,
       1.0,
       1.0,
-      0.125,
+      0.0,
       1.0,
       1.0,
       1.0,
@@ -5464,7 +6550,7 @@
       1,
       1,
       1,
-      1,
+      0,
       1,
       1,
       0,
@@ -5475,9 +6561,9 @@
       0,
       1,
       1,
+      0,
       1,
-      1,
-      1,
+      0,
       1,
       1,
       1,
@@ -5487,7 +6573,7 @@
       0,
       1,
       1,
-      1,
+      0,
       1,
       1,
       1,
@@ -5499,10 +6585,12 @@
      "step": 3,
      "task": 1,
      "n": 40,
-     "mrr": 0.813333,
-     "recall": 0.34375,
-     "hit_at_k": 0.95,
-     "latency_ms": 178.01,
+     "memory_count": 18632,
+     "mrr": 0.734167,
+     "recall": 0.31875,
+     "precision": 0.16875,
+     "hit_at_k": 0.9,
+     "latency_ms": 168.49,
      "questions": [
       "Who was given India's highest civilian honor before he became President of India?",
       "Who played king whose regal Name did Albert Adopt in the king's speech?",
@@ -5547,44 +6635,44 @@
      ],
      "rr": [
       0.5,
+      0.5,
+      1.0,
+      1.0,
+      0.0,
+      0.5,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      0.16667,
+      0.16667,
+      1.0,
+      1.0,
+      0.25,
+      0.5,
+      1.0,
+      1.0,
+      0.0,
+      0.33333,
       1.0,
       1.0,
       1.0,
       0.0,
-      1.0,
-      1.0,
-      1.0,
-      1.0,
-      1.0,
       1.0,
       1.0,
       1.0,
       1.0,
       1.0,
       0.2,
+      1.0,
+      1.0,
       0.25,
-      1.0,
-      1.0,
-      0.33333,
-      1.0,
-      1.0,
-      1.0,
       0.0,
-      1.0,
-      1.0,
-      1.0,
-      1.0,
-      0.16667,
-      1.0,
-      1.0,
-      1.0,
-      1.0,
-      1.0,
-      0.33333,
-      1.0,
-      1.0,
-      0.5,
-      0.25,
       1.0
      ],
      "hit": [
@@ -5616,6 +6704,7 @@
       1,
       1,
       1,
+      0,
       1,
       1,
       1,
@@ -5625,8 +6714,7 @@
       1,
       1,
       1,
-      1,
-      1,
+      0,
       1
      ]
     },
@@ -5634,10 +6722,12 @@
      "step": 3,
      "task": 2,
      "n": 40,
-     "mrr": 0.788333,
-     "recall": 0.36875,
-     "hit_at_k": 0.925,
-     "latency_ms": 169.19,
+     "memory_count": 18632,
+     "mrr": 0.729167,
+     "recall": 0.352083,
+     "precision": 0.178125,
+     "hit_at_k": 0.875,
+     "latency_ms": 161.16,
      "questions": [
       "In which county is Kimbrough Memorial Stadium located?",
       "What instrument is played by the person from The Blackout All-Stars?",
@@ -5686,35 +6776,35 @@
       1.0,
       1.0,
       1.0,
-      0.33333,
+      0.16667,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      0.0,
+      0.0,
+      1.0,
+      0.16667,
+      1.0,
+      1.0,
+      0.0,
+      0.25,
+      1.0,
+      0.25,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      0.0,
       1.0,
       1.0,
       1.0,
       1.0,
       0.25,
-      0.0,
       1.0,
-      0.2,
-      1.0,
-      1.0,
-      0.16667,
       0.5,
-      1.0,
-      1.0,
-      1.0,
-      1.0,
-      1.0,
-      1.0,
-      1.0,
-      0.0,
-      1.0,
-      1.0,
-      1.0,
-      1.0,
       0.33333,
-      1.0,
-      1.0,
-      0.5,
       1.0,
       0.25,
       1.0,
@@ -5733,13 +6823,13 @@
       1,
       1,
       1,
-      1,
+      0,
       0,
       1,
       1,
       1,
       1,
-      1,
+      0,
       1,
       1,
       1,
@@ -5769,10 +6859,12 @@
      "step": 3,
      "task": 3,
      "n": 40,
-     "mrr": 0.784405,
-     "recall": 0.348958,
-     "hit_at_k": 0.925,
-     "latency_ms": 178.14,
+     "memory_count": 18632,
+     "mrr": 0.831488,
+     "recall": 0.372917,
+     "precision": 0.196875,
+     "hit_at_k": 0.975,
+     "latency_ms": 172.28,
      "questions": [
       "What is the competition the 1972 Federation Cup is part of named after?",
       "What political party was the candidate who garnered a million votes during the 1920 election despite being in prison, a member of?",
@@ -5820,10 +6912,10 @@
       1.0,
       1.0,
       1.0,
-      0.25,
+      0.5,
       1.0,
       1.0,
-      0.14286,
+      0.2,
       1.0,
       1.0,
       1.0,
@@ -5835,25 +6927,25 @@
       1.0,
       1.0,
       1.0,
-      0.5,
+      1.0,
       1.0,
       0.0,
+      0.5,
+      1.0,
+      1.0,
       0.25,
       1.0,
       1.0,
-      0.0,
       1.0,
       1.0,
-      1.0,
-      1.0,
-      0.2,
-      0.2,
+      0.5,
+      0.33333,
       1.0,
       0.33333,
       1.0,
       1.0,
       1.0,
-      0.0,
+      0.14286,
       1.0,
       1.0
      ],
@@ -5883,7 +6975,6 @@
       1,
       1,
       1,
-      0,
       1,
       1,
       1,
@@ -5895,7 +6986,8 @@
       1,
       1,
       1,
-      0,
+      1,
+      1,
       1,
       1
      ]
@@ -5919,7 +7011,7 @@
       "0": [
        {
         "step": 0,
-        "value": 0.797321,
+        "value": 0.8,
         "best_previous": null,
         "forgetting": 0.0,
         "retention": 1.0,
@@ -5927,33 +7019,33 @@
        },
        {
         "step": 1,
-        "value": 0.776042,
-        "best_previous": 0.797321,
-        "forgetting": 0.021279,
-        "retention": 0.973312,
+        "value": 0.72881,
+        "best_previous": 0.8,
+        "forgetting": 0.07119,
+        "retention": 0.911012,
         "n": 40
        },
        {
         "step": 2,
-        "value": 0.765268,
-        "best_previous": 0.797321,
-        "forgetting": 0.032053,
-        "retention": 0.959799,
+        "value": 0.734018,
+        "best_previous": 0.8,
+        "forgetting": 0.065982,
+        "retention": 0.917522,
         "n": 40
        },
        {
         "step": 3,
-        "value": 0.758185,
-        "best_previous": 0.797321,
-        "forgetting": 0.039136,
-        "retention": 0.950916,
+        "value": 0.734405,
+        "best_previous": 0.8,
+        "forgetting": 0.065595,
+        "retention": 0.918006,
         "n": 40
        }
       ],
       "1": [
        {
         "step": 1,
-        "value": 0.87375,
+        "value": 0.9,
         "best_previous": null,
         "forgetting": 0.0,
         "retention": 1.0,
@@ -5961,25 +7053,25 @@
        },
        {
         "step": 2,
-        "value": 0.845833,
-        "best_previous": 0.87375,
-        "forgetting": 0.027917,
-        "retention": 0.968049,
+        "value": 0.750833,
+        "best_previous": 0.9,
+        "forgetting": 0.149167,
+        "retention": 0.834259,
         "n": 40
        },
        {
         "step": 3,
-        "value": 0.813333,
-        "best_previous": 0.87375,
-        "forgetting": 0.060417,
-        "retention": 0.930853,
+        "value": 0.734167,
+        "best_previous": 0.9,
+        "forgetting": 0.165833,
+        "retention": 0.815741,
         "n": 40
        }
       ],
       "2": [
        {
         "step": 2,
-        "value": 0.83125,
+        "value": 0.86875,
         "best_previous": null,
         "forgetting": 0.0,
         "retention": 1.0,
@@ -5987,17 +7079,17 @@
        },
        {
         "step": 3,
-        "value": 0.788333,
-        "best_previous": 0.83125,
-        "forgetting": 0.042917,
-        "retention": 0.948371,
+        "value": 0.729167,
+        "best_previous": 0.86875,
+        "forgetting": 0.139583,
+        "retention": 0.839329,
         "n": 40
        }
       ],
       "3": [
        {
         "step": 3,
-        "value": 0.784405,
+        "value": 0.831488,
         "best_previous": null,
         "forgetting": 0.0,
         "retention": 1.0,
@@ -6017,33 +7109,33 @@
        },
        {
         "step": 1,
-        "value": 0.395833,
+        "value": 0.379167,
         "best_previous": 0.422917,
-        "forgetting": 0.027084,
-        "retention": 0.935959,
+        "forgetting": 0.04375,
+        "retention": 0.896552,
         "n": 40
        },
        {
         "step": 2,
-        "value": 0.395833,
+        "value": 0.385417,
         "best_previous": 0.422917,
-        "forgetting": 0.027084,
-        "retention": 0.935959,
+        "forgetting": 0.0375,
+        "retention": 0.91133,
         "n": 40
        },
        {
         "step": 3,
-        "value": 0.389583,
+        "value": 0.347917,
         "best_previous": 0.422917,
-        "forgetting": 0.033334,
-        "retention": 0.921181,
+        "forgetting": 0.075,
+        "retention": 0.82266,
         "n": 40
        }
       ],
       "1": [
        {
         "step": 1,
-        "value": 0.375,
+        "value": 0.39375,
         "best_previous": null,
         "forgetting": 0.0,
         "retention": 1.0,
@@ -6051,25 +7143,25 @@
        },
        {
         "step": 2,
-        "value": 0.3625,
-        "best_previous": 0.375,
-        "forgetting": 0.0125,
-        "retention": 0.966667,
+        "value": 0.31875,
+        "best_previous": 0.39375,
+        "forgetting": 0.075,
+        "retention": 0.809524,
         "n": 40
        },
        {
         "step": 3,
-        "value": 0.34375,
-        "best_previous": 0.375,
-        "forgetting": 0.03125,
-        "retention": 0.916667,
+        "value": 0.31875,
+        "best_previous": 0.39375,
+        "forgetting": 0.075,
+        "retention": 0.809524,
         "n": 40
        }
       ],
       "2": [
        {
         "step": 2,
-        "value": 0.3875,
+        "value": 0.402083,
         "best_previous": null,
         "forgetting": 0.0,
         "retention": 1.0,
@@ -6077,17 +7169,107 @@
        },
        {
         "step": 3,
-        "value": 0.36875,
-        "best_previous": 0.3875,
-        "forgetting": 0.01875,
-        "retention": 0.951613,
+        "value": 0.352083,
+        "best_previous": 0.402083,
+        "forgetting": 0.05,
+        "retention": 0.875648,
         "n": 40
        }
       ],
       "3": [
        {
         "step": 3,
-        "value": 0.348958,
+        "value": 0.372917,
+        "best_previous": null,
+        "forgetting": 0.0,
+        "retention": 1.0,
+        "n": 40
+       }
+      ]
+     },
+     "precision": {
+      "0": [
+       {
+        "step": 0,
+        "value": 0.225,
+        "best_previous": null,
+        "forgetting": 0.0,
+        "retention": 1.0,
+        "n": 40
+       },
+       {
+        "step": 1,
+        "value": 0.2,
+        "best_previous": 0.225,
+        "forgetting": 0.025,
+        "retention": 0.888889,
+        "n": 40
+       },
+       {
+        "step": 2,
+        "value": 0.203125,
+        "best_previous": 0.225,
+        "forgetting": 0.021875,
+        "retention": 0.902778,
+        "n": 40
+       },
+       {
+        "step": 3,
+        "value": 0.184375,
+        "best_previous": 0.225,
+        "forgetting": 0.040625,
+        "retention": 0.819444,
+        "n": 40
+       }
+      ],
+      "1": [
+       {
+        "step": 1,
+        "value": 0.2,
+        "best_previous": null,
+        "forgetting": 0.0,
+        "retention": 1.0,
+        "n": 40
+       },
+       {
+        "step": 2,
+        "value": 0.16875,
+        "best_previous": 0.2,
+        "forgetting": 0.03125,
+        "retention": 0.84375,
+        "n": 40
+       },
+       {
+        "step": 3,
+        "value": 0.16875,
+        "best_previous": 0.2,
+        "forgetting": 0.03125,
+        "retention": 0.84375,
+        "n": 40
+       }
+      ],
+      "2": [
+       {
+        "step": 2,
+        "value": 0.20625,
+        "best_previous": null,
+        "forgetting": 0.0,
+        "retention": 1.0,
+        "n": 40
+       },
+       {
+        "step": 3,
+        "value": 0.178125,
+        "best_previous": 0.20625,
+        "forgetting": 0.028125,
+        "retention": 0.863636,
+        "n": 40
+       }
+      ],
+      "3": [
+       {
+        "step": 3,
+        "value": 0.196875,
         "best_previous": null,
         "forgetting": 0.0,
         "retention": 1.0,
@@ -6101,7 +7283,7 @@
       "0": [
        {
         "step": 0,
-        "value": 0.797321,
+        "value": 0.8,
         "best_previous": null,
         "forgetting": 0.0,
         "retention": 1.0,
@@ -6109,33 +7291,33 @@
        },
        {
         "step": 1,
-        "value": 0.776042,
-        "best_previous": 0.797321,
-        "forgetting": 0.021279,
-        "retention": 0.973312,
+        "value": 0.72881,
+        "best_previous": 0.8,
+        "forgetting": 0.07119,
+        "retention": 0.911012,
         "n": 40
        },
        {
         "step": 2,
-        "value": 0.765268,
-        "best_previous": 0.797321,
-        "forgetting": 0.032053,
-        "retention": 0.959799,
+        "value": 0.734018,
+        "best_previous": 0.8,
+        "forgetting": 0.065982,
+        "retention": 0.917522,
         "n": 40
        },
        {
         "step": 3,
-        "value": 0.758185,
-        "best_previous": 0.797321,
-        "forgetting": 0.039136,
-        "retention": 0.950916,
+        "value": 0.734405,
+        "best_previous": 0.8,
+        "forgetting": 0.065595,
+        "retention": 0.918006,
         "n": 40
        }
       ],
       "1": [
        {
         "step": 1,
-        "value": 0.87375,
+        "value": 0.9,
         "best_previous": null,
         "forgetting": 0.0,
         "retention": 1.0,
@@ -6143,25 +7325,25 @@
        },
        {
         "step": 2,
-        "value": 0.845833,
-        "best_previous": 0.87375,
-        "forgetting": 0.027917,
-        "retention": 0.968049,
+        "value": 0.750833,
+        "best_previous": 0.9,
+        "forgetting": 0.149167,
+        "retention": 0.834259,
         "n": 40
        },
        {
         "step": 3,
-        "value": 0.813333,
-        "best_previous": 0.87375,
-        "forgetting": 0.060417,
-        "retention": 0.930853,
+        "value": 0.734167,
+        "best_previous": 0.9,
+        "forgetting": 0.165833,
+        "retention": 0.815741,
         "n": 40
        }
       ],
       "2": [
        {
         "step": 2,
-        "value": 0.83125,
+        "value": 0.86875,
         "best_previous": null,
         "forgetting": 0.0,
         "retention": 1.0,
@@ -6169,17 +7351,17 @@
        },
        {
         "step": 3,
-        "value": 0.788333,
-        "best_previous": 0.83125,
-        "forgetting": 0.042917,
-        "retention": 0.948371,
+        "value": 0.729167,
+        "best_previous": 0.86875,
+        "forgetting": 0.139583,
+        "retention": 0.839329,
         "n": 40
        }
       ],
       "3": [
        {
         "step": 3,
-        "value": 0.784405,
+        "value": 0.831488,
         "best_previous": null,
         "forgetting": 0.0,
         "retention": 1.0,
@@ -6199,33 +7381,33 @@
        },
        {
         "step": 1,
-        "value": 0.395833,
+        "value": 0.379167,
         "best_previous": 0.422917,
-        "forgetting": 0.027084,
-        "retention": 0.935959,
+        "forgetting": 0.04375,
+        "retention": 0.896552,
         "n": 40
        },
        {
         "step": 2,
-        "value": 0.395833,
+        "value": 0.385417,
         "best_previous": 0.422917,
-        "forgetting": 0.027084,
-        "retention": 0.935959,
+        "forgetting": 0.0375,
+        "retention": 0.91133,
         "n": 40
        },
        {
         "step": 3,
-        "value": 0.389583,
+        "value": 0.347917,
         "best_previous": 0.422917,
-        "forgetting": 0.033334,
-        "retention": 0.921181,
+        "forgetting": 0.075,
+        "retention": 0.82266,
         "n": 40
        }
       ],
       "1": [
        {
         "step": 1,
-        "value": 0.375,
+        "value": 0.39375,
         "best_previous": null,
         "forgetting": 0.0,
         "retention": 1.0,
@@ -6233,25 +7415,25 @@
        },
        {
         "step": 2,
-        "value": 0.3625,
-        "best_previous": 0.375,
-        "forgetting": 0.0125,
-        "retention": 0.966667,
+        "value": 0.31875,
+        "best_previous": 0.39375,
+        "forgetting": 0.075,
+        "retention": 0.809524,
         "n": 40
        },
        {
         "step": 3,
-        "value": 0.34375,
-        "best_previous": 0.375,
-        "forgetting": 0.03125,
-        "retention": 0.916667,
+        "value": 0.31875,
+        "best_previous": 0.39375,
+        "forgetting": 0.075,
+        "retention": 0.809524,
         "n": 40
        }
       ],
       "2": [
        {
         "step": 2,
-        "value": 0.3875,
+        "value": 0.402083,
         "best_previous": null,
         "forgetting": 0.0,
         "retention": 1.0,
@@ -6259,17 +7441,107 @@
        },
        {
         "step": 3,
-        "value": 0.36875,
-        "best_previous": 0.3875,
-        "forgetting": 0.01875,
-        "retention": 0.951613,
+        "value": 0.352083,
+        "best_previous": 0.402083,
+        "forgetting": 0.05,
+        "retention": 0.875648,
         "n": 40
        }
       ],
       "3": [
        {
         "step": 3,
-        "value": 0.348958,
+        "value": 0.372917,
+        "best_previous": null,
+        "forgetting": 0.0,
+        "retention": 1.0,
+        "n": 40
+       }
+      ]
+     },
+     "precision": {
+      "0": [
+       {
+        "step": 0,
+        "value": 0.225,
+        "best_previous": null,
+        "forgetting": 0.0,
+        "retention": 1.0,
+        "n": 40
+       },
+       {
+        "step": 1,
+        "value": 0.2,
+        "best_previous": 0.225,
+        "forgetting": 0.025,
+        "retention": 0.888889,
+        "n": 40
+       },
+       {
+        "step": 2,
+        "value": 0.203125,
+        "best_previous": 0.225,
+        "forgetting": 0.021875,
+        "retention": 0.902778,
+        "n": 40
+       },
+       {
+        "step": 3,
+        "value": 0.184375,
+        "best_previous": 0.225,
+        "forgetting": 0.040625,
+        "retention": 0.819444,
+        "n": 40
+       }
+      ],
+      "1": [
+       {
+        "step": 1,
+        "value": 0.2,
+        "best_previous": null,
+        "forgetting": 0.0,
+        "retention": 1.0,
+        "n": 40
+       },
+       {
+        "step": 2,
+        "value": 0.16875,
+        "best_previous": 0.2,
+        "forgetting": 0.03125,
+        "retention": 0.84375,
+        "n": 40
+       },
+       {
+        "step": 3,
+        "value": 0.16875,
+        "best_previous": 0.2,
+        "forgetting": 0.03125,
+        "retention": 0.84375,
+        "n": 40
+       }
+      ],
+      "2": [
+       {
+        "step": 2,
+        "value": 0.20625,
+        "best_previous": null,
+        "forgetting": 0.0,
+        "retention": 1.0,
+        "n": 40
+       },
+       {
+        "step": 3,
+        "value": 0.178125,
+        "best_previous": 0.20625,
+        "forgetting": 0.028125,
+        "retention": 0.863636,
+        "n": 40
+       }
+      ],
+      "3": [
+       {
+        "step": 3,
+        "value": 0.196875,
         "best_previous": null,
         "forgetting": 0.0,
         "retention": 1.0,
@@ -6279,25 +7551,33 @@
      }
     },
     "average_forgetting": {
-     "mrr": 0.035617,
-     "recall": 0.020834
+     "mrr": 0.092753,
+     "recall": 0.05,
+     "precision": 0.025
     },
     "mean_retention": {
-     "mrr": 0.957535,
-     "recall": 0.947365
+     "mrr": 0.893269,
+     "recall": 0.876958,
+     "precision": 0.881707
     },
     "final_performance": {
      "mrr": {
-      "0": 0.758185,
-      "1": 0.813333,
-      "2": 0.788333,
-      "3": 0.784405
+      "0": 0.734405,
+      "1": 0.734167,
+      "2": 0.729167,
+      "3": 0.831488
      },
      "recall": {
-      "0": 0.389583,
-      "1": 0.34375,
-      "2": 0.36875,
-      "3": 0.348958
+      "0": 0.347917,
+      "1": 0.31875,
+      "2": 0.352083,
+      "3": 0.372917
+     },
+     "precision": {
+      "0": 0.184375,
+      "1": 0.16875,
+      "2": 0.178125,
+      "3": 0.196875
      }
     }
    },
@@ -6305,40 +7585,45 @@
     {
      "step": 0,
      "tasks": 1,
-     "mrr": 0.797321,
+     "mrr": 0.8,
      "recall": 0.422917,
      "hit_at_k": 0.95,
-     "latency_ms": 62.67
+     "precision": 0.225,
+     "latency_ms": 60.44
     },
     {
      "step": 1,
      "tasks": 2,
-     "mrr": 0.824896,
-     "recall": 0.385416,
-     "hit_at_k": 0.975,
-     "latency_ms": 103.485
+     "mrr": 0.814405,
+     "recall": 0.386458,
+     "hit_at_k": 0.9625,
+     "precision": 0.2,
+     "latency_ms": 100.89
     },
     {
      "step": 2,
      "tasks": 3,
-     "mrr": 0.814117,
-     "recall": 0.381944,
-     "hit_at_k": 0.95,
-     "latency_ms": 139.136667
+     "mrr": 0.784534,
+     "recall": 0.36875,
+     "hit_at_k": 0.933333,
+     "precision": 0.192708,
+     "latency_ms": 135.893333
     },
     {
      "step": 3,
      "tasks": 4,
-     "mrr": 0.786064,
-     "recall": 0.36276,
-     "hit_at_k": 0.93125,
-     "latency_ms": 180.305
+     "mrr": 0.757307,
+     "recall": 0.347917,
+     "hit_at_k": 0.89375,
+     "precision": 0.182031,
+     "latency_ms": 168.75
     }
    ],
    "dynamics": {
     "decays": 4,
     "replays": 0,
-    "promotions": 0
+    "promotions": 0,
+    "interval_days": 30.0
    }
   },
   "G_mira_consolidation": {
@@ -6352,64 +7637,78 @@
      "step": 0,
      "task": 0,
      "n": 40,
+     "memory_count": 5229,
      "mrr": 0.797321,
      "recall": 0.422917,
+     "precision": 0.225,
      "hit_at_k": 0.95,
-     "latency_ms": 59.84
+     "latency_ms": 57.22
     },
     {
      "step": 1,
      "task": 0,
      "n": 40,
-     "mrr": 0.776042,
-     "recall": 0.395833,
-     "hit_at_k": 0.95,
-     "latency_ms": 102.57
+     "memory_count": 9919,
+     "mrr": 0.725238,
+     "recall": 0.372917,
+     "precision": 0.196875,
+     "hit_at_k": 0.9,
+     "latency_ms": 98.25
     },
     {
      "step": 1,
      "task": 1,
      "n": 40,
-     "mrr": 0.87375,
-     "recall": 0.375,
+     "memory_count": 9919,
+     "mrr": 0.9,
+     "recall": 0.39375,
+     "precision": 0.2,
      "hit_at_k": 1.0,
-     "latency_ms": 94.11
+     "latency_ms": 95.05
     },
     {
      "step": 2,
      "task": 0,
      "n": 40,
-     "mrr": 0.765268,
-     "recall": 0.395833,
-     "hit_at_k": 0.95,
-     "latency_ms": 141.88
+     "memory_count": 14382,
+     "mrr": 0.730446,
+     "recall": 0.379167,
+     "precision": 0.2,
+     "hit_at_k": 0.9,
+     "latency_ms": 136.33
     },
     {
      "step": 2,
      "task": 1,
      "n": 40,
-     "mrr": 0.845833,
-     "recall": 0.3625,
-     "hit_at_k": 0.975,
-     "latency_ms": 140.61
+     "memory_count": 14382,
+     "mrr": 0.750833,
+     "recall": 0.31875,
+     "precision": 0.16875,
+     "hit_at_k": 0.925,
+     "latency_ms": 132.42
     },
     {
      "step": 2,
      "task": 2,
      "n": 40,
-     "mrr": 0.83125,
-     "recall": 0.3875,
-     "hit_at_k": 0.925,
-     "latency_ms": 132.19
+     "memory_count": 14382,
+     "mrr": 0.86875,
+     "recall": 0.402083,
+     "precision": 0.20625,
+     "hit_at_k": 0.95,
+     "latency_ms": 127.77
     },
     {
      "step": 3,
      "task": 0,
      "n": 40,
-     "mrr": 0.758185,
-     "recall": 0.389583,
-     "hit_at_k": 0.925,
-     "latency_ms": 184.01,
+     "memory_count": 18632,
+     "mrr": 0.734405,
+     "recall": 0.347917,
+     "precision": 0.184375,
+     "hit_at_k": 0.825,
+     "latency_ms": 184.03,
      "questions": [
       "Who led the military expedition in the province that borders Zhejiang to the south?",
       "The singer, who starred in Shake It Up, signed to which record label?",
@@ -6456,17 +7755,17 @@
       1.0,
       1.0,
       0.5,
-      0.33333,
+      0.2,
       1.0,
       1.0,
       1.0,
       1.0,
       1.0,
       1.0,
+      1.0,
+      0.0,
       1.0,
       0.14286,
-      1.0,
-      0.25,
       0.0,
       1.0,
       1.0,
@@ -6475,9 +7774,9 @@
       0.0,
       0.33333,
       1.0,
-      0.16667,
-      0.33333,
-      0.14286,
+      0.0,
+      0.2,
+      0.0,
       1.0,
       1.0,
       1.0,
@@ -6487,7 +7786,7 @@
       0.0,
       1.0,
       1.0,
-      0.125,
+      0.0,
       1.0,
       1.0,
       1.0,
@@ -6506,7 +7805,7 @@
       1,
       1,
       1,
-      1,
+      0,
       1,
       1,
       0,
@@ -6517,9 +7816,9 @@
       0,
       1,
       1,
+      0,
       1,
-      1,
-      1,
+      0,
       1,
       1,
       1,
@@ -6529,7 +7828,7 @@
       0,
       1,
       1,
-      1,
+      0,
       1,
       1,
       1,
@@ -6541,10 +7840,12 @@
      "step": 3,
      "task": 1,
      "n": 40,
-     "mrr": 0.813333,
-     "recall": 0.34375,
-     "hit_at_k": 0.95,
-     "latency_ms": 173.01,
+     "memory_count": 18632,
+     "mrr": 0.734167,
+     "recall": 0.31875,
+     "precision": 0.16875,
+     "hit_at_k": 0.9,
+     "latency_ms": 167.57,
      "questions": [
       "Who was given India's highest civilian honor before he became President of India?",
       "Who played king whose regal Name did Albert Adopt in the king's speech?",
@@ -6589,44 +7890,44 @@
      ],
      "rr": [
       0.5,
+      0.5,
+      1.0,
+      1.0,
+      0.0,
+      0.5,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      0.16667,
+      0.16667,
+      1.0,
+      1.0,
+      0.25,
+      0.5,
+      1.0,
+      1.0,
+      0.0,
+      0.33333,
       1.0,
       1.0,
       1.0,
       0.0,
-      1.0,
-      1.0,
-      1.0,
-      1.0,
-      1.0,
       1.0,
       1.0,
       1.0,
       1.0,
       1.0,
       0.2,
+      1.0,
+      1.0,
       0.25,
-      1.0,
-      1.0,
-      0.33333,
-      1.0,
-      1.0,
-      1.0,
       0.0,
-      1.0,
-      1.0,
-      1.0,
-      1.0,
-      0.16667,
-      1.0,
-      1.0,
-      1.0,
-      1.0,
-      1.0,
-      0.33333,
-      1.0,
-      1.0,
-      0.5,
-      0.25,
       1.0
      ],
      "hit": [
@@ -6658,6 +7959,7 @@
       1,
       1,
       1,
+      0,
       1,
       1,
       1,
@@ -6667,8 +7969,7 @@
       1,
       1,
       1,
-      1,
-      1,
+      0,
       1
      ]
     },
@@ -6676,10 +7977,12 @@
      "step": 3,
      "task": 2,
      "n": 40,
-     "mrr": 0.788333,
-     "recall": 0.36875,
-     "hit_at_k": 0.925,
-     "latency_ms": 164.48,
+     "memory_count": 18632,
+     "mrr": 0.73125,
+     "recall": 0.352083,
+     "precision": 0.178125,
+     "hit_at_k": 0.875,
+     "latency_ms": 160.15,
      "questions": [
       "In which county is Kimbrough Memorial Stadium located?",
       "What instrument is played by the person from The Blackout All-Stars?",
@@ -6728,21 +8031,21 @@
       1.0,
       1.0,
       1.0,
-      0.33333,
+      0.16667,
       1.0,
       1.0,
       1.0,
       1.0,
-      0.25,
       0.0,
-      1.0,
-      0.2,
-      1.0,
+      0.0,
       1.0,
       0.16667,
-      0.5,
       1.0,
       1.0,
+      0.0,
+      0.25,
+      1.0,
+      0.25,
       1.0,
       1.0,
       1.0,
@@ -6755,8 +8058,8 @@
       1.0,
       0.33333,
       1.0,
-      1.0,
       0.5,
+      0.33333,
       1.0,
       0.25,
       1.0,
@@ -6775,13 +8078,13 @@
       1,
       1,
       1,
-      1,
+      0,
       0,
       1,
       1,
       1,
       1,
-      1,
+      0,
       1,
       1,
       1,
@@ -6811,10 +8114,12 @@
      "step": 3,
      "task": 3,
      "n": 40,
-     "mrr": 0.784405,
-     "recall": 0.348958,
-     "hit_at_k": 0.925,
-     "latency_ms": 169.69,
+     "memory_count": 18632,
+     "mrr": 0.831488,
+     "recall": 0.372917,
+     "precision": 0.196875,
+     "hit_at_k": 0.975,
+     "latency_ms": 170.54,
      "questions": [
       "What is the competition the 1972 Federation Cup is part of named after?",
       "What political party was the candidate who garnered a million votes during the 1920 election despite being in prison, a member of?",
@@ -6862,10 +8167,10 @@
       1.0,
       1.0,
       1.0,
-      0.25,
+      0.5,
       1.0,
       1.0,
-      0.14286,
+      0.2,
       1.0,
       1.0,
       1.0,
@@ -6877,25 +8182,25 @@
       1.0,
       1.0,
       1.0,
-      0.5,
+      1.0,
       1.0,
       0.0,
+      0.5,
+      1.0,
+      1.0,
       0.25,
       1.0,
       1.0,
-      0.0,
       1.0,
       1.0,
-      1.0,
-      1.0,
-      0.2,
-      0.2,
+      0.5,
+      0.33333,
       1.0,
       0.33333,
       1.0,
       1.0,
       1.0,
-      0.0,
+      0.14286,
       1.0,
       1.0
      ],
@@ -6925,7 +8230,6 @@
       1,
       1,
       1,
-      0,
       1,
       1,
       1,
@@ -6937,7 +8241,8 @@
       1,
       1,
       1,
-      0,
+      1,
+      1,
       1,
       1
      ]
@@ -6969,33 +8274,33 @@
        },
        {
         "step": 1,
-        "value": 0.776042,
+        "value": 0.725238,
         "best_previous": 0.797321,
-        "forgetting": 0.021279,
-        "retention": 0.973312,
+        "forgetting": 0.072083,
+        "retention": 0.909594,
         "n": 40
        },
        {
         "step": 2,
-        "value": 0.765268,
+        "value": 0.730446,
         "best_previous": 0.797321,
-        "forgetting": 0.032053,
-        "retention": 0.959799,
+        "forgetting": 0.066875,
+        "retention": 0.916125,
         "n": 40
        },
        {
         "step": 3,
-        "value": 0.758185,
+        "value": 0.734405,
         "best_previous": 0.797321,
-        "forgetting": 0.039136,
-        "retention": 0.950916,
+        "forgetting": 0.062916,
+        "retention": 0.921091,
         "n": 40
        }
       ],
       "1": [
        {
         "step": 1,
-        "value": 0.87375,
+        "value": 0.9,
         "best_previous": null,
         "forgetting": 0.0,
         "retention": 1.0,
@@ -7003,25 +8308,25 @@
        },
        {
         "step": 2,
-        "value": 0.845833,
-        "best_previous": 0.87375,
-        "forgetting": 0.027917,
-        "retention": 0.968049,
+        "value": 0.750833,
+        "best_previous": 0.9,
+        "forgetting": 0.149167,
+        "retention": 0.834259,
         "n": 40
        },
        {
         "step": 3,
-        "value": 0.813333,
-        "best_previous": 0.87375,
-        "forgetting": 0.060417,
-        "retention": 0.930853,
+        "value": 0.734167,
+        "best_previous": 0.9,
+        "forgetting": 0.165833,
+        "retention": 0.815741,
         "n": 40
        }
       ],
       "2": [
        {
         "step": 2,
-        "value": 0.83125,
+        "value": 0.86875,
         "best_previous": null,
         "forgetting": 0.0,
         "retention": 1.0,
@@ -7029,17 +8334,17 @@
        },
        {
         "step": 3,
-        "value": 0.788333,
-        "best_previous": 0.83125,
-        "forgetting": 0.042917,
-        "retention": 0.948371,
+        "value": 0.73125,
+        "best_previous": 0.86875,
+        "forgetting": 0.1375,
+        "retention": 0.841727,
         "n": 40
        }
       ],
       "3": [
        {
         "step": 3,
-        "value": 0.784405,
+        "value": 0.831488,
         "best_previous": null,
         "forgetting": 0.0,
         "retention": 1.0,
@@ -7059,33 +8364,33 @@
        },
        {
         "step": 1,
-        "value": 0.395833,
+        "value": 0.372917,
         "best_previous": 0.422917,
-        "forgetting": 0.027084,
-        "retention": 0.935959,
+        "forgetting": 0.05,
+        "retention": 0.881773,
         "n": 40
        },
        {
         "step": 2,
-        "value": 0.395833,
+        "value": 0.379167,
         "best_previous": 0.422917,
-        "forgetting": 0.027084,
-        "retention": 0.935959,
+        "forgetting": 0.04375,
+        "retention": 0.896552,
         "n": 40
        },
        {
         "step": 3,
-        "value": 0.389583,
+        "value": 0.347917,
         "best_previous": 0.422917,
-        "forgetting": 0.033334,
-        "retention": 0.921181,
+        "forgetting": 0.075,
+        "retention": 0.82266,
         "n": 40
        }
       ],
       "1": [
        {
         "step": 1,
-        "value": 0.375,
+        "value": 0.39375,
         "best_previous": null,
         "forgetting": 0.0,
         "retention": 1.0,
@@ -7093,25 +8398,25 @@
        },
        {
         "step": 2,
-        "value": 0.3625,
-        "best_previous": 0.375,
-        "forgetting": 0.0125,
-        "retention": 0.966667,
+        "value": 0.31875,
+        "best_previous": 0.39375,
+        "forgetting": 0.075,
+        "retention": 0.809524,
         "n": 40
        },
        {
         "step": 3,
-        "value": 0.34375,
-        "best_previous": 0.375,
-        "forgetting": 0.03125,
-        "retention": 0.916667,
+        "value": 0.31875,
+        "best_previous": 0.39375,
+        "forgetting": 0.075,
+        "retention": 0.809524,
         "n": 40
        }
       ],
       "2": [
        {
         "step": 2,
-        "value": 0.3875,
+        "value": 0.402083,
         "best_previous": null,
         "forgetting": 0.0,
         "retention": 1.0,
@@ -7119,17 +8424,107 @@
        },
        {
         "step": 3,
-        "value": 0.36875,
-        "best_previous": 0.3875,
-        "forgetting": 0.01875,
-        "retention": 0.951613,
+        "value": 0.352083,
+        "best_previous": 0.402083,
+        "forgetting": 0.05,
+        "retention": 0.875648,
         "n": 40
        }
       ],
       "3": [
        {
         "step": 3,
-        "value": 0.348958,
+        "value": 0.372917,
+        "best_previous": null,
+        "forgetting": 0.0,
+        "retention": 1.0,
+        "n": 40
+       }
+      ]
+     },
+     "precision": {
+      "0": [
+       {
+        "step": 0,
+        "value": 0.225,
+        "best_previous": null,
+        "forgetting": 0.0,
+        "retention": 1.0,
+        "n": 40
+       },
+       {
+        "step": 1,
+        "value": 0.196875,
+        "best_previous": 0.225,
+        "forgetting": 0.028125,
+        "retention": 0.875,
+        "n": 40
+       },
+       {
+        "step": 2,
+        "value": 0.2,
+        "best_previous": 0.225,
+        "forgetting": 0.025,
+        "retention": 0.888889,
+        "n": 40
+       },
+       {
+        "step": 3,
+        "value": 0.184375,
+        "best_previous": 0.225,
+        "forgetting": 0.040625,
+        "retention": 0.819444,
+        "n": 40
+       }
+      ],
+      "1": [
+       {
+        "step": 1,
+        "value": 0.2,
+        "best_previous": null,
+        "forgetting": 0.0,
+        "retention": 1.0,
+        "n": 40
+       },
+       {
+        "step": 2,
+        "value": 0.16875,
+        "best_previous": 0.2,
+        "forgetting": 0.03125,
+        "retention": 0.84375,
+        "n": 40
+       },
+       {
+        "step": 3,
+        "value": 0.16875,
+        "best_previous": 0.2,
+        "forgetting": 0.03125,
+        "retention": 0.84375,
+        "n": 40
+       }
+      ],
+      "2": [
+       {
+        "step": 2,
+        "value": 0.20625,
+        "best_previous": null,
+        "forgetting": 0.0,
+        "retention": 1.0,
+        "n": 40
+       },
+       {
+        "step": 3,
+        "value": 0.178125,
+        "best_previous": 0.20625,
+        "forgetting": 0.028125,
+        "retention": 0.863636,
+        "n": 40
+       }
+      ],
+      "3": [
+       {
+        "step": 3,
+        "value": 0.196875,
         "best_previous": null,
         "forgetting": 0.0,
         "retention": 1.0,
@@ -7151,33 +8546,33 @@
        },
        {
         "step": 1,
-        "value": 0.776042,
+        "value": 0.725238,
         "best_previous": 0.797321,
-        "forgetting": 0.021279,
-        "retention": 0.973312,
+        "forgetting": 0.072083,
+        "retention": 0.909594,
         "n": 40
        },
        {
         "step": 2,
-        "value": 0.765268,
+        "value": 0.730446,
         "best_previous": 0.797321,
-        "forgetting": 0.032053,
-        "retention": 0.959799,
+        "forgetting": 0.066875,
+        "retention": 0.916125,
         "n": 40
        },
        {
         "step": 3,
-        "value": 0.758185,
+        "value": 0.734405,
         "best_previous": 0.797321,
-        "forgetting": 0.039136,
-        "retention": 0.950916,
+        "forgetting": 0.062916,
+        "retention": 0.921091,
         "n": 40
        }
       ],
       "1": [
        {
         "step": 1,
-        "value": 0.87375,
+        "value": 0.9,
         "best_previous": null,
         "forgetting": 0.0,
         "retention": 1.0,
@@ -7185,25 +8580,25 @@
        },
        {
         "step": 2,
-        "value": 0.845833,
-        "best_previous": 0.87375,
-        "forgetting": 0.027917,
-        "retention": 0.968049,
+        "value": 0.750833,
+        "best_previous": 0.9,
+        "forgetting": 0.149167,
+        "retention": 0.834259,
         "n": 40
        },
        {
         "step": 3,
-        "value": 0.813333,
-        "best_previous": 0.87375,
-        "forgetting": 0.060417,
-        "retention": 0.930853,
+        "value": 0.734167,
+        "best_previous": 0.9,
+        "forgetting": 0.165833,
+        "retention": 0.815741,
         "n": 40
        }
       ],
       "2": [
        {
         "step": 2,
-        "value": 0.83125,
+        "value": 0.86875,
         "best_previous": null,
         "forgetting": 0.0,
         "retention": 1.0,
@@ -7211,17 +8606,17 @@
        },
        {
         "step": 3,
-        "value": 0.788333,
-        "best_previous": 0.83125,
-        "forgetting": 0.042917,
-        "retention": 0.948371,
+        "value": 0.73125,
+        "best_previous": 0.86875,
+        "forgetting": 0.1375,
+        "retention": 0.841727,
         "n": 40
        }
       ],
       "3": [
        {
         "step": 3,
-        "value": 0.784405,
+        "value": 0.831488,
         "best_previous": null,
         "forgetting": 0.0,
         "retention": 1.0,
@@ -7241,33 +8636,33 @@
        },
        {
         "step": 1,
-        "value": 0.395833,
+        "value": 0.372917,
         "best_previous": 0.422917,
-        "forgetting": 0.027084,
-        "retention": 0.935959,
+        "forgetting": 0.05,
+        "retention": 0.881773,
         "n": 40
        },
        {
         "step": 2,
-        "value": 0.395833,
+        "value": 0.379167,
         "best_previous": 0.422917,
-        "forgetting": 0.027084,
-        "retention": 0.935959,
+        "forgetting": 0.04375,
+        "retention": 0.896552,
         "n": 40
        },
        {
         "step": 3,
-        "value": 0.389583,
+        "value": 0.347917,
         "best_previous": 0.422917,
-        "forgetting": 0.033334,
-        "retention": 0.921181,
+        "forgetting": 0.075,
+        "retention": 0.82266,
         "n": 40
        }
       ],
       "1": [
        {
         "step": 1,
-        "value": 0.375,
+        "value": 0.39375,
         "best_previous": null,
         "forgetting": 0.0,
         "retention": 1.0,
@@ -7275,25 +8670,25 @@
        },
        {
         "step": 2,
-        "value": 0.3625,
-        "best_previous": 0.375,
-        "forgetting": 0.0125,
-        "retention": 0.966667,
+        "value": 0.31875,
+        "best_previous": 0.39375,
+        "forgetting": 0.075,
+        "retention": 0.809524,
         "n": 40
        },
        {
         "step": 3,
-        "value": 0.34375,
-        "best_previous": 0.375,
-        "forgetting": 0.03125,
-        "retention": 0.916667,
+        "value": 0.31875,
+        "best_previous": 0.39375,
+        "forgetting": 0.075,
+        "retention": 0.809524,
         "n": 40
        }
       ],
       "2": [
        {
         "step": 2,
-        "value": 0.3875,
+        "value": 0.402083,
         "best_previous": null,
         "forgetting": 0.0,
         "retention": 1.0,
@@ -7301,17 +8696,107 @@
        },
        {
         "step": 3,
-        "value": 0.36875,
-        "best_previous": 0.3875,
-        "forgetting": 0.01875,
-        "retention": 0.951613,
+        "value": 0.352083,
+        "best_previous": 0.402083,
+        "forgetting": 0.05,
+        "retention": 0.875648,
         "n": 40
        }
       ],
       "3": [
        {
         "step": 3,
-        "value": 0.348958,
+        "value": 0.372917,
+        "best_previous": null,
+        "forgetting": 0.0,
+        "retention": 1.0,
+        "n": 40
+       }
+      ]
+     },
+     "precision": {
+      "0": [
+       {
+        "step": 0,
+        "value": 0.225,
+        "best_previous": null,
+        "forgetting": 0.0,
+        "retention": 1.0,
+        "n": 40
+       },
+       {
+        "step": 1,
+        "value": 0.196875,
+        "best_previous": 0.225,
+        "forgetting": 0.028125,
+        "retention": 0.875,
+        "n": 40
+       },
+       {
+        "step": 2,
+        "value": 0.2,
+        "best_previous": 0.225,
+        "forgetting": 0.025,
+        "retention": 0.888889,
+        "n": 40
+       },
+       {
+        "step": 3,
+        "value": 0.184375,
+        "best_previous": 0.225,
+        "forgetting": 0.040625,
+        "retention": 0.819444,
+        "n": 40
+       }
+      ],
+      "1": [
+       {
+        "step": 1,
+        "value": 0.2,
+        "best_previous": null,
+        "forgetting": 0.0,
+        "retention": 1.0,
+        "n": 40
+       },
+       {
+        "step": 2,
+        "value": 0.16875,
+        "best_previous": 0.2,
+        "forgetting": 0.03125,
+        "retention": 0.84375,
+        "n": 40
+       },
+       {
+        "step": 3,
+        "value": 0.16875,
+        "best_previous": 0.2,
+        "forgetting": 0.03125,
+        "retention": 0.84375,
+        "n": 40
+       }
+      ],
+      "2": [
+       {
+        "step": 2,
+        "value": 0.20625,
+        "best_previous": null,
+        "forgetting": 0.0,
+        "retention": 1.0,
+        "n": 40
+       },
+       {
+        "step": 3,
+        "value": 0.178125,
+        "best_previous": 0.20625,
+        "forgetting": 0.028125,
+        "retention": 0.863636,
+        "n": 40
+       }
+      ],
+      "3": [
+       {
+        "step": 3,
+        "value": 0.196875,
         "best_previous": null,
         "forgetting": 0.0,
         "retention": 1.0,
@@ -7321,25 +8806,33 @@
      }
     },
     "average_forgetting": {
-     "mrr": 0.035617,
-     "recall": 0.020834
+     "mrr": 0.091562,
+     "recall": 0.05,
+     "precision": 0.025
     },
     "mean_retention": {
-     "mrr": 0.957535,
-     "recall": 0.947365
+     "mrr": 0.89464,
+     "recall": 0.876958,
+     "precision": 0.881707
     },
     "final_performance": {
      "mrr": {
-      "0": 0.758185,
-      "1": 0.813333,
-      "2": 0.788333,
-      "3": 0.784405
+      "0": 0.734405,
+      "1": 0.734167,
+      "2": 0.73125,
+      "3": 0.831488
      },
      "recall": {
-      "0": 0.389583,
-      "1": 0.34375,
-      "2": 0.36875,
-      "3": 0.348958
+      "0": 0.347917,
+      "1": 0.31875,
+      "2": 0.352083,
+      "3": 0.372917
+     },
+     "precision": {
+      "0": 0.184375,
+      "1": 0.16875,
+      "2": 0.178125,
+      "3": 0.196875
      }
     }
    },
@@ -7350,42 +8843,47 @@
      "mrr": 0.797321,
      "recall": 0.422917,
      "hit_at_k": 0.95,
-     "latency_ms": 59.84
+     "precision": 0.225,
+     "latency_ms": 57.22
     },
     {
      "step": 1,
      "tasks": 2,
-     "mrr": 0.824896,
-     "recall": 0.385416,
-     "hit_at_k": 0.975,
-     "latency_ms": 98.34
+     "mrr": 0.812619,
+     "recall": 0.383333,
+     "hit_at_k": 0.95,
+     "precision": 0.198437,
+     "latency_ms": 96.65
     },
     {
      "step": 2,
      "tasks": 3,
-     "mrr": 0.814117,
-     "recall": 0.381944,
-     "hit_at_k": 0.95,
-     "latency_ms": 138.226667
+     "mrr": 0.783343,
+     "recall": 0.366667,
+     "hit_at_k": 0.925,
+     "precision": 0.191667,
+     "latency_ms": 132.173333
     },
     {
      "step": 3,
      "tasks": 4,
-     "mrr": 0.786064,
-     "recall": 0.36276,
-     "hit_at_k": 0.93125,
-     "latency_ms": 172.7975
+     "mrr": 0.757828,
+     "recall": 0.347917,
+     "hit_at_k": 0.89375,
+     "precision": 0.182031,
+     "latency_ms": 170.5725
     }
    ],
    "dynamics": {
     "decays": 0,
     "replays": 0,
     "promotions": 0,
+    "interval_days": 30.0,
     "states": {
-     "new": 18130,
-     "candidate": 390,
-     "stable": 83,
-     "consolidated": 29
+     "new": 18124,
+     "candidate": 405,
+     "stable": 88,
+     "consolidated": 15
     }
    }
   },
@@ -7400,64 +8898,78 @@
      "step": 0,
      "task": 0,
      "n": 40,
+     "memory_count": 5229,
      "mrr": 0.797321,
      "recall": 0.416667,
+     "precision": 0.221875,
      "hit_at_k": 0.95,
-     "latency_ms": 57.24
+     "latency_ms": 57.36
     },
     {
      "step": 1,
      "task": 0,
      "n": 40,
-     "mrr": 0.776042,
-     "recall": 0.389583,
-     "hit_at_k": 0.95,
-     "latency_ms": 97.52
+     "memory_count": 9919,
+     "mrr": 0.755238,
+     "recall": 0.379167,
+     "precision": 0.2,
+     "hit_at_k": 0.9,
+     "latency_ms": 98.45
     },
     {
      "step": 1,
      "task": 1,
      "n": 40,
-     "mrr": 0.877917,
-     "recall": 0.375,
+     "memory_count": 9919,
+     "mrr": 0.9,
+     "recall": 0.39375,
+     "precision": 0.2,
      "hit_at_k": 1.0,
-     "latency_ms": 94.72
+     "latency_ms": 95.35
     },
     {
      "step": 2,
      "task": 0,
      "n": 40,
-     "mrr": 0.765268,
-     "recall": 0.389583,
-     "hit_at_k": 0.95,
-     "latency_ms": 149.27
+     "memory_count": 14382,
+     "mrr": 0.699583,
+     "recall": 0.33125,
+     "precision": 0.178125,
+     "hit_at_k": 0.8,
+     "latency_ms": 137.38
     },
     {
      "step": 2,
      "task": 1,
      "n": 40,
-     "mrr": 0.852083,
-     "recall": 0.3625,
+     "memory_count": 14382,
+     "mrr": 0.86875,
+     "recall": 0.35625,
+     "precision": 0.18125,
      "hit_at_k": 0.975,
-     "latency_ms": 132.98
+     "latency_ms": 132.35
     },
     {
      "step": 2,
      "task": 2,
      "n": 40,
-     "mrr": 0.83125,
-     "recall": 0.38125,
+     "memory_count": 14382,
+     "mrr": 0.841071,
+     "recall": 0.40625,
+     "precision": 0.20625,
      "hit_at_k": 0.925,
-     "latency_ms": 128.13
+     "latency_ms": 127.39
     },
     {
      "step": 3,
      "task": 0,
      "n": 40,
-     "mrr": 0.758185,
-     "recall": 0.383333,
-     "hit_at_k": 0.925,
-     "latency_ms": 184.57,
+     "memory_count": 18632,
+     "mrr": 0.716667,
+     "recall": 0.335417,
+     "precision": 0.18125,
+     "hit_at_k": 0.8,
+     "latency_ms": 174.44,
      "questions": [
       "Who led the military expedition in the province that borders Zhejiang to the south?",
       "The singer, who starred in Shake It Up, signed to which record label?",
@@ -7510,22 +9022,22 @@
       1.0,
       1.0,
       1.0,
+      0.5,
       1.0,
+      0.0,
       1.0,
-      0.14286,
-      1.0,
-      0.25,
+      0.0,
       0.0,
       1.0,
       1.0,
       1.0,
       1.0,
       0.0,
-      0.33333,
-      1.0,
       0.16667,
-      0.33333,
-      0.14286,
+      1.0,
+      0.0,
+      0.16667,
+      0.0,
       1.0,
       1.0,
       1.0,
@@ -7535,7 +9047,7 @@
       0.0,
       1.0,
       1.0,
-      0.125,
+      0.0,
       1.0,
       1.0,
       1.0,
@@ -7554,9 +9066,9 @@
       1,
       1,
       1,
+      0,
       1,
-      1,
-      1,
+      0,
       0,
       1,
       1,
@@ -7565,9 +9077,9 @@
       0,
       1,
       1,
+      0,
       1,
-      1,
-      1,
+      0,
       1,
       1,
       1,
@@ -7577,7 +9089,7 @@
       0,
       1,
       1,
-      1,
+      0,
       1,
       1,
       1,
@@ -7589,10 +9101,12 @@
      "step": 3,
      "task": 1,
      "n": 40,
-     "mrr": 0.821667,
-     "recall": 0.34375,
-     "hit_at_k": 0.95,
-     "latency_ms": 169.71,
+     "memory_count": 18632,
+     "mrr": 0.700417,
+     "recall": 0.31875,
+     "precision": 0.16875,
+     "hit_at_k": 0.925,
+     "latency_ms": 167.37,
      "questions": [
       "Who was given India's highest civilian honor before he became President of India?",
       "Who played king whose regal Name did Albert Adopt in the king's speech?",
@@ -7637,44 +9151,44 @@
      ],
      "rr": [
       0.5,
-      1.0,
+      0.33333,
       1.0,
       1.0,
       0.0,
+      0.5,
       1.0,
       1.0,
       1.0,
       1.0,
+      0.5,
       1.0,
       1.0,
+      1.0,
+      1.0,
+      0.16667,
+      0.2,
+      1.0,
+      1.0,
+      0.2,
+      0.33333,
+      1.0,
+      0.5,
+      0.0,
+      0.33333,
+      1.0,
+      1.0,
+      1.0,
+      0.5,
+      0.5,
       1.0,
       1.0,
       1.0,
       1.0,
       0.2,
+      1.0,
+      1.0,
       0.25,
-      1.0,
-      1.0,
-      0.33333,
-      1.0,
-      1.0,
-      1.0,
       0.0,
-      1.0,
-      1.0,
-      1.0,
-      1.0,
-      0.5,
-      1.0,
-      1.0,
-      1.0,
-      1.0,
-      1.0,
-      0.33333,
-      1.0,
-      1.0,
-      0.5,
-      0.25,
       1.0
      ],
      "hit": [
@@ -7716,7 +9230,7 @@
       1,
       1,
       1,
-      1,
+      0,
       1
      ]
     },
@@ -7724,10 +9238,12 @@
      "step": 3,
      "task": 2,
      "n": 40,
-     "mrr": 0.78625,
-     "recall": 0.36875,
-     "hit_at_k": 0.925,
-     "latency_ms": 163.03,
+     "memory_count": 18632,
+     "mrr": 0.816667,
+     "recall": 0.372917,
+     "precision": 0.190625,
+     "hit_at_k": 0.95,
+     "latency_ms": 161.52,
      "questions": [
       "In which county is Kimbrough Memorial Stadium located?",
       "What instrument is played by the person from The Blackout All-Stars?",
@@ -7776,23 +9292,23 @@
       1.0,
       1.0,
       1.0,
-      0.33333,
-      1.0,
-      1.0,
-      1.0,
-      1.0,
-      0.25,
-      0.0,
-      1.0,
-      0.2,
-      1.0,
-      1.0,
-      0.16667,
       0.5,
       1.0,
       1.0,
       1.0,
       1.0,
+      0.33333,
+      0.25,
+      1.0,
+      0.33333,
+      1.0,
+      1.0,
+      1.0,
+      0.16667,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
       1.0,
       1.0,
       1.0,
@@ -7801,7 +9317,7 @@
       1.0,
       1.0,
       1.0,
-      0.25,
+      0.33333,
       1.0,
       1.0,
       0.5,
@@ -7824,7 +9340,7 @@
       1,
       1,
       1,
-      0,
+      1,
       1,
       1,
       1,
@@ -7859,10 +9375,12 @@
      "step": 3,
      "task": 3,
      "n": 40,
-     "mrr": 0.784405,
-     "recall": 0.348958,
-     "hit_at_k": 0.925,
-     "latency_ms": 171.93,
+     "memory_count": 18632,
+     "mrr": 0.817708,
+     "recall": 0.363542,
+     "precision": 0.190625,
+     "hit_at_k": 0.95,
+     "latency_ms": 171.11,
      "questions": [
       "What is the competition the 1972 Federation Cup is part of named after?",
       "What political party was the candidate who garnered a million votes during the 1920 election despite being in prison, a member of?",
@@ -7910,10 +9428,10 @@
       1.0,
       1.0,
       1.0,
-      0.25,
+      0.5,
       1.0,
       1.0,
-      0.14286,
+      0.125,
       1.0,
       1.0,
       1.0,
@@ -7925,19 +9443,19 @@
       1.0,
       1.0,
       1.0,
+      1.0,
+      1.0,
+      0.0,
       0.5,
       1.0,
-      0.0,
+      1.0,
+      0.16667,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
       0.25,
-      1.0,
-      1.0,
-      0.0,
-      1.0,
-      1.0,
-      1.0,
-      1.0,
-      0.2,
-      0.2,
+      0.33333,
       1.0,
       0.33333,
       1.0,
@@ -7973,7 +9491,7 @@
       1,
       1,
       1,
-      0,
+      1,
       1,
       1,
       1,
@@ -8017,33 +9535,33 @@
        },
        {
         "step": 1,
-        "value": 0.776042,
+        "value": 0.755238,
         "best_previous": 0.797321,
-        "forgetting": 0.021279,
-        "retention": 0.973312,
+        "forgetting": 0.042083,
+        "retention": 0.94722,
         "n": 40
        },
        {
         "step": 2,
-        "value": 0.765268,
+        "value": 0.699583,
         "best_previous": 0.797321,
-        "forgetting": 0.032053,
-        "retention": 0.959799,
+        "forgetting": 0.097738,
+        "retention": 0.877417,
         "n": 40
        },
        {
         "step": 3,
-        "value": 0.758185,
+        "value": 0.716667,
         "best_previous": 0.797321,
-        "forgetting": 0.039136,
-        "retention": 0.950916,
+        "forgetting": 0.080654,
+        "retention": 0.898844,
         "n": 40
        }
       ],
       "1": [
        {
         "step": 1,
-        "value": 0.877917,
+        "value": 0.9,
         "best_previous": null,
         "forgetting": 0.0,
         "retention": 1.0,
@@ -8051,25 +9569,25 @@
        },
        {
         "step": 2,
-        "value": 0.852083,
-        "best_previous": 0.877917,
-        "forgetting": 0.025834,
-        "retention": 0.970574,
+        "value": 0.86875,
+        "best_previous": 0.9,
+        "forgetting": 0.03125,
+        "retention": 0.965278,
         "n": 40
        },
        {
         "step": 3,
-        "value": 0.821667,
-        "best_previous": 0.877917,
-        "forgetting": 0.05625,
-        "retention": 0.935928,
+        "value": 0.700417,
+        "best_previous": 0.9,
+        "forgetting": 0.199583,
+        "retention": 0.778241,
         "n": 40
        }
       ],
       "2": [
        {
         "step": 2,
-        "value": 0.83125,
+        "value": 0.841071,
         "best_previous": null,
         "forgetting": 0.0,
         "retention": 1.0,
@@ -8077,17 +9595,17 @@
        },
        {
         "step": 3,
-        "value": 0.78625,
-        "best_previous": 0.83125,
-        "forgetting": 0.045,
-        "retention": 0.945865,
+        "value": 0.816667,
+        "best_previous": 0.841071,
+        "forgetting": 0.024404,
+        "retention": 0.970985,
         "n": 40
        }
       ],
       "3": [
        {
         "step": 3,
-        "value": 0.784405,
+        "value": 0.817708,
         "best_previous": null,
         "forgetting": 0.0,
         "retention": 1.0,
@@ -8107,33 +9625,33 @@
        },
        {
         "step": 1,
-        "value": 0.389583,
+        "value": 0.379167,
         "best_previous": 0.416667,
-        "forgetting": 0.027084,
-        "retention": 0.934998,
+        "forgetting": 0.0375,
+        "retention": 0.91,
         "n": 40
        },
        {
         "step": 2,
-        "value": 0.389583,
+        "value": 0.33125,
         "best_previous": 0.416667,
-        "forgetting": 0.027084,
-        "retention": 0.934998,
+        "forgetting": 0.085417,
+        "retention": 0.794999,
         "n": 40
        },
        {
         "step": 3,
-        "value": 0.383333,
+        "value": 0.335417,
         "best_previous": 0.416667,
-        "forgetting": 0.033334,
-        "retention": 0.919998,
+        "forgetting": 0.08125,
+        "retention": 0.805,
         "n": 40
        }
       ],
       "1": [
        {
         "step": 1,
-        "value": 0.375,
+        "value": 0.39375,
         "best_previous": null,
         "forgetting": 0.0,
         "retention": 1.0,
@@ -8141,25 +9659,25 @@
        },
        {
         "step": 2,
-        "value": 0.3625,
-        "best_previous": 0.375,
-        "forgetting": 0.0125,
-        "retention": 0.966667,
+        "value": 0.35625,
+        "best_previous": 0.39375,
+        "forgetting": 0.0375,
+        "retention": 0.904762,
         "n": 40
        },
        {
         "step": 3,
-        "value": 0.34375,
-        "best_previous": 0.375,
-        "forgetting": 0.03125,
-        "retention": 0.916667,
+        "value": 0.31875,
+        "best_previous": 0.39375,
+        "forgetting": 0.075,
+        "retention": 0.809524,
         "n": 40
        }
       ],
       "2": [
        {
         "step": 2,
-        "value": 0.38125,
+        "value": 0.40625,
         "best_previous": null,
         "forgetting": 0.0,
         "retention": 1.0,
@@ -8167,17 +9685,107 @@
        },
        {
         "step": 3,
-        "value": 0.36875,
-        "best_previous": 0.38125,
-        "forgetting": 0.0125,
-        "retention": 0.967213,
+        "value": 0.372917,
+        "best_previous": 0.40625,
+        "forgetting": 0.033333,
+        "retention": 0.91795,
         "n": 40
        }
       ],
       "3": [
        {
         "step": 3,
-        "value": 0.348958,
+        "value": 0.363542,
+        "best_previous": null,
+        "forgetting": 0.0,
+        "retention": 1.0,
+        "n": 40
+       }
+      ]
+     },
+     "precision": {
+      "0": [
+       {
+        "step": 0,
+        "value": 0.221875,
+        "best_previous": null,
+        "forgetting": 0.0,
+        "retention": 1.0,
+        "n": 40
+       },
+       {
+        "step": 1,
+        "value": 0.2,
+        "best_previous": 0.221875,
+        "forgetting": 0.021875,
+        "retention": 0.901408,
+        "n": 40
+       },
+       {
+        "step": 2,
+        "value": 0.178125,
+        "best_previous": 0.221875,
+        "forgetting": 0.04375,
+        "retention": 0.802817,
+        "n": 40
+       },
+       {
+        "step": 3,
+        "value": 0.18125,
+        "best_previous": 0.221875,
+        "forgetting": 0.040625,
+        "retention": 0.816901,
+        "n": 40
+       }
+      ],
+      "1": [
+       {
+        "step": 1,
+        "value": 0.2,
+        "best_previous": null,
+        "forgetting": 0.0,
+        "retention": 1.0,
+        "n": 40
+       },
+       {
+        "step": 2,
+        "value": 0.18125,
+        "best_previous": 0.2,
+        "forgetting": 0.01875,
+        "retention": 0.90625,
+        "n": 40
+       },
+       {
+        "step": 3,
+        "value": 0.16875,
+        "best_previous": 0.2,
+        "forgetting": 0.03125,
+        "retention": 0.84375,
+        "n": 40
+       }
+      ],
+      "2": [
+       {
+        "step": 2,
+        "value": 0.20625,
+        "best_previous": null,
+        "forgetting": 0.0,
+        "retention": 1.0,
+        "n": 40
+       },
+       {
+        "step": 3,
+        "value": 0.190625,
+        "best_previous": 0.20625,
+        "forgetting": 0.015625,
+        "retention": 0.924242,
+        "n": 40
+       }
+      ],
+      "3": [
+       {
+        "step": 3,
+        "value": 0.190625,
         "best_previous": null,
         "forgetting": 0.0,
         "retention": 1.0,
@@ -8199,33 +9807,33 @@
        },
        {
         "step": 1,
-        "value": 0.776042,
+        "value": 0.755238,
         "best_previous": 0.797321,
-        "forgetting": 0.021279,
-        "retention": 0.973312,
+        "forgetting": 0.042083,
+        "retention": 0.94722,
         "n": 40
        },
        {
         "step": 2,
-        "value": 0.765268,
+        "value": 0.699583,
         "best_previous": 0.797321,
-        "forgetting": 0.032053,
-        "retention": 0.959799,
+        "forgetting": 0.097738,
+        "retention": 0.877417,
         "n": 40
        },
        {
         "step": 3,
-        "value": 0.758185,
+        "value": 0.716667,
         "best_previous": 0.797321,
-        "forgetting": 0.039136,
-        "retention": 0.950916,
+        "forgetting": 0.080654,
+        "retention": 0.898844,
         "n": 40
        }
       ],
       "1": [
        {
         "step": 1,
-        "value": 0.877917,
+        "value": 0.9,
         "best_previous": null,
         "forgetting": 0.0,
         "retention": 1.0,
@@ -8233,25 +9841,25 @@
        },
        {
         "step": 2,
-        "value": 0.852083,
-        "best_previous": 0.877917,
-        "forgetting": 0.025834,
-        "retention": 0.970574,
+        "value": 0.86875,
+        "best_previous": 0.9,
+        "forgetting": 0.03125,
+        "retention": 0.965278,
         "n": 40
        },
        {
         "step": 3,
-        "value": 0.821667,
-        "best_previous": 0.877917,
-        "forgetting": 0.05625,
-        "retention": 0.935928,
+        "value": 0.700417,
+        "best_previous": 0.9,
+        "forgetting": 0.199583,
+        "retention": 0.778241,
         "n": 40
        }
       ],
       "2": [
        {
         "step": 2,
-        "value": 0.83125,
+        "value": 0.841071,
         "best_previous": null,
         "forgetting": 0.0,
         "retention": 1.0,
@@ -8259,17 +9867,17 @@
        },
        {
         "step": 3,
-        "value": 0.78625,
-        "best_previous": 0.83125,
-        "forgetting": 0.045,
-        "retention": 0.945865,
+        "value": 0.816667,
+        "best_previous": 0.841071,
+        "forgetting": 0.024404,
+        "retention": 0.970985,
         "n": 40
        }
       ],
       "3": [
        {
         "step": 3,
-        "value": 0.784405,
+        "value": 0.817708,
         "best_previous": null,
         "forgetting": 0.0,
         "retention": 1.0,
@@ -8289,33 +9897,33 @@
        },
        {
         "step": 1,
-        "value": 0.389583,
+        "value": 0.379167,
         "best_previous": 0.416667,
-        "forgetting": 0.027084,
-        "retention": 0.934998,
+        "forgetting": 0.0375,
+        "retention": 0.91,
         "n": 40
        },
        {
         "step": 2,
-        "value": 0.389583,
+        "value": 0.33125,
         "best_previous": 0.416667,
-        "forgetting": 0.027084,
-        "retention": 0.934998,
+        "forgetting": 0.085417,
+        "retention": 0.794999,
         "n": 40
        },
        {
         "step": 3,
-        "value": 0.383333,
+        "value": 0.335417,
         "best_previous": 0.416667,
-        "forgetting": 0.033334,
-        "retention": 0.919998,
+        "forgetting": 0.08125,
+        "retention": 0.805,
         "n": 40
        }
       ],
       "1": [
        {
         "step": 1,
-        "value": 0.375,
+        "value": 0.39375,
         "best_previous": null,
         "forgetting": 0.0,
         "retention": 1.0,
@@ -8323,25 +9931,25 @@
        },
        {
         "step": 2,
-        "value": 0.3625,
-        "best_previous": 0.375,
-        "forgetting": 0.0125,
-        "retention": 0.966667,
+        "value": 0.35625,
+        "best_previous": 0.39375,
+        "forgetting": 0.0375,
+        "retention": 0.904762,
         "n": 40
        },
        {
         "step": 3,
-        "value": 0.34375,
-        "best_previous": 0.375,
-        "forgetting": 0.03125,
-        "retention": 0.916667,
+        "value": 0.31875,
+        "best_previous": 0.39375,
+        "forgetting": 0.075,
+        "retention": 0.809524,
         "n": 40
        }
       ],
       "2": [
        {
         "step": 2,
-        "value": 0.38125,
+        "value": 0.40625,
         "best_previous": null,
         "forgetting": 0.0,
         "retention": 1.0,
@@ -8349,17 +9957,107 @@
        },
        {
         "step": 3,
-        "value": 0.36875,
-        "best_previous": 0.38125,
-        "forgetting": 0.0125,
-        "retention": 0.967213,
+        "value": 0.372917,
+        "best_previous": 0.40625,
+        "forgetting": 0.033333,
+        "retention": 0.91795,
         "n": 40
        }
       ],
       "3": [
        {
         "step": 3,
-        "value": 0.348958,
+        "value": 0.363542,
+        "best_previous": null,
+        "forgetting": 0.0,
+        "retention": 1.0,
+        "n": 40
+       }
+      ]
+     },
+     "precision": {
+      "0": [
+       {
+        "step": 0,
+        "value": 0.221875,
+        "best_previous": null,
+        "forgetting": 0.0,
+        "retention": 1.0,
+        "n": 40
+       },
+       {
+        "step": 1,
+        "value": 0.2,
+        "best_previous": 0.221875,
+        "forgetting": 0.021875,
+        "retention": 0.901408,
+        "n": 40
+       },
+       {
+        "step": 2,
+        "value": 0.178125,
+        "best_previous": 0.221875,
+        "forgetting": 0.04375,
+        "retention": 0.802817,
+        "n": 40
+       },
+       {
+        "step": 3,
+        "value": 0.18125,
+        "best_previous": 0.221875,
+        "forgetting": 0.040625,
+        "retention": 0.816901,
+        "n": 40
+       }
+      ],
+      "1": [
+       {
+        "step": 1,
+        "value": 0.2,
+        "best_previous": null,
+        "forgetting": 0.0,
+        "retention": 1.0,
+        "n": 40
+       },
+       {
+        "step": 2,
+        "value": 0.18125,
+        "best_previous": 0.2,
+        "forgetting": 0.01875,
+        "retention": 0.90625,
+        "n": 40
+       },
+       {
+        "step": 3,
+        "value": 0.16875,
+        "best_previous": 0.2,
+        "forgetting": 0.03125,
+        "retention": 0.84375,
+        "n": 40
+       }
+      ],
+      "2": [
+       {
+        "step": 2,
+        "value": 0.20625,
+        "best_previous": null,
+        "forgetting": 0.0,
+        "retention": 1.0,
+        "n": 40
+       },
+       {
+        "step": 3,
+        "value": 0.190625,
+        "best_previous": 0.20625,
+        "forgetting": 0.015625,
+        "retention": 0.924242,
+        "n": 40
+       }
+      ],
+      "3": [
+       {
+        "step": 3,
+        "value": 0.190625,
         "best_previous": null,
         "forgetting": 0.0,
         "retention": 1.0,
@@ -8369,25 +10067,33 @@
      }
     },
     "average_forgetting": {
-     "mrr": 0.035097,
-     "recall": 0.019271
+     "mrr": 0.07616,
+     "recall": 0.047396,
+     "precision": 0.021875
     },
     "mean_retention": {
-     "mrr": 0.958177,
-     "recall": 0.95097
+     "mrr": 0.912017,
+     "recall": 0.883119,
+     "precision": 0.896223
     },
     "final_performance": {
      "mrr": {
-      "0": 0.758185,
-      "1": 0.821667,
-      "2": 0.78625,
-      "3": 0.784405
+      "0": 0.716667,
+      "1": 0.700417,
+      "2": 0.816667,
+      "3": 0.817708
      },
      "recall": {
-      "0": 0.383333,
-      "1": 0.34375,
-      "2": 0.36875,
-      "3": 0.348958
+      "0": 0.335417,
+      "1": 0.31875,
+      "2": 0.372917,
+      "3": 0.363542
+     },
+     "precision": {
+      "0": 0.18125,
+      "1": 0.16875,
+      "2": 0.190625,
+      "3": 0.190625
      }
     }
    },
@@ -8398,37 +10104,42 @@
      "mrr": 0.797321,
      "recall": 0.416667,
      "hit_at_k": 0.95,
-     "latency_ms": 57.24
+     "precision": 0.221875,
+     "latency_ms": 57.36
     },
     {
      "step": 1,
      "tasks": 2,
-     "mrr": 0.826979,
-     "recall": 0.382292,
-     "hit_at_k": 0.975,
-     "latency_ms": 96.12
+     "mrr": 0.827619,
+     "recall": 0.386458,
+     "hit_at_k": 0.95,
+     "precision": 0.2,
+     "latency_ms": 96.9
     },
     {
      "step": 2,
      "tasks": 3,
-     "mrr": 0.8162,
-     "recall": 0.377778,
-     "hit_at_k": 0.95,
-     "latency_ms": 136.793333
+     "mrr": 0.803135,
+     "recall": 0.364583,
+     "hit_at_k": 0.9,
+     "precision": 0.188542,
+     "latency_ms": 132.373333
     },
     {
      "step": 3,
      "tasks": 4,
-     "mrr": 0.787627,
-     "recall": 0.361198,
-     "hit_at_k": 0.93125,
-     "latency_ms": 172.31
+     "mrr": 0.762865,
+     "recall": 0.347656,
+     "hit_at_k": 0.90625,
+     "precision": 0.182812,
+     "latency_ms": 168.61
     }
    ],
    "dynamics": {
     "decays": 0,
     "replays": 2000,
-    "promotions": 0
+    "promotions": 0,
+    "interval_days": 30.0
    }
   },
   "I_bio_dynamics": {
@@ -8445,64 +10156,78 @@
      "step": 0,
      "task": 0,
      "n": 40,
-     "mrr": 0.814583,
+     "memory_count": 5229,
+     "mrr": 0.816667,
      "recall": 0.414583,
+     "precision": 0.221875,
      "hit_at_k": 0.95,
-     "latency_ms": 55.78
+     "latency_ms": 57.97
     },
     {
      "step": 1,
      "task": 0,
      "n": 40,
-     "mrr": 0.791667,
-     "recall": 0.4,
+     "memory_count": 9919,
+     "mrr": 0.783333,
+     "recall": 0.39375,
+     "precision": 0.209375,
      "hit_at_k": 0.95,
-     "latency_ms": 99.86
+     "latency_ms": 99.75
     },
     {
      "step": 1,
      "task": 1,
      "n": 40,
-     "mrr": 0.791667,
-     "recall": 0.33125,
-     "hit_at_k": 0.95,
-     "latency_ms": 97.85
+     "memory_count": 9919,
+     "mrr": 0.838393,
+     "recall": 0.36875,
+     "precision": 0.1875,
+     "hit_at_k": 1.0,
+     "latency_ms": 95.26
     },
     {
      "step": 2,
      "task": 0,
      "n": 40,
-     "mrr": 0.78625,
-     "recall": 0.389583,
-     "hit_at_k": 0.95,
-     "latency_ms": 137.7
-    },
-    {
-     "step": 2,
-     "task": 1,
-     "n": 40,
-     "mrr": 0.822917,
-     "recall": 0.325,
+     "memory_count": 14382,
+     "mrr": 0.764405,
+     "recall": 0.385417,
+     "precision": 0.203125,
      "hit_at_k": 0.925,
-     "latency_ms": 135.06
+     "latency_ms": 138.06
+    },
+    {
+     "step": 2,
+     "task": 1,
+     "n": 40,
+     "memory_count": 14382,
+     "mrr": 0.839673,
+     "recall": 0.36875,
+     "precision": 0.1875,
+     "hit_at_k": 1.0,
+     "latency_ms": 134.21
     },
     {
      "step": 2,
      "task": 2,
      "n": 40,
-     "mrr": 0.766071,
-     "recall": 0.352083,
-     "hit_at_k": 0.875,
-     "latency_ms": 130.25
+     "memory_count": 14382,
+     "mrr": 0.757292,
+     "recall": 0.339583,
+     "precision": 0.171875,
+     "hit_at_k": 0.825,
+     "latency_ms": 128.45
     },
     {
      "step": 3,
      "task": 0,
      "n": 40,
-     "mrr": 0.788333,
-     "recall": 0.402083,
-     "hit_at_k": 0.975,
-     "latency_ms": 173.67,
+     "memory_count": 18632,
+     "mrr": 0.748542,
+     "recall": 0.389583,
+     "precision": 0.20625,
+     "hit_at_k": 0.95,
+     "latency_ms": 173.03,
      "questions": [
       "Who led the military expedition in the province that borders Zhejiang to the south?",
       "The singer, who starred in Shake It Up, signed to which record label?",
@@ -8555,32 +10280,32 @@
       1.0,
       1.0,
       1.0,
-      1.0,
+      0.5,
       1.0,
       0.2,
       1.0,
-      0.5,
+      0.25,
       0.0,
       1.0,
       1.0,
       1.0,
       1.0,
       0.16667,
-      0.25,
+      0.2,
       1.0,
       0.16667,
-      0.5,
-      0.25,
-      1.0,
-      1.0,
-      1.0,
-      1.0,
-      1.0,
-      1.0,
-      0.5,
-      1.0,
-      1.0,
+      0.33333,
       0.16667,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      0.0,
+      1.0,
+      1.0,
+      0.125,
       1.0,
       1.0,
       1.0,
@@ -8619,7 +10344,7 @@
       1,
       1,
       1,
-      1,
+      0,
       1,
       1,
       1,
@@ -8634,10 +10359,12 @@
      "step": 3,
      "task": 1,
      "n": 40,
-     "mrr": 0.821667,
-     "recall": 0.325,
+     "memory_count": 18632,
+     "mrr": 0.76125,
+     "recall": 0.31875,
+     "precision": 0.16875,
      "hit_at_k": 0.925,
-     "latency_ms": 166.74,
+     "latency_ms": 168.23,
      "questions": [
       "Who was given India's highest civilian honor before he became President of India?",
       "Who played king whose regal Name did Albert Adopt in the king's speech?",
@@ -8681,8 +10408,8 @@
       "When was the celestial object that eluded efforts to measure oxygen discovered to be the center of the solar system?"
      ],
      "rr": [
-      0.5,
       1.0,
+      0.5,
       1.0,
       1.0,
       0.0,
@@ -8691,17 +10418,17 @@
       1.0,
       1.0,
       1.0,
-      1.0,
+      0.33333,
       1.0,
       1.0,
       1.0,
       1.0,
       0.2,
-      0.33333,
+      0.25,
       1.0,
       1.0,
       0.33333,
-      1.0,
+      0.33333,
       1.0,
       1.0,
       0.0,
@@ -8709,8 +10436,8 @@
       1.0,
       1.0,
       1.0,
-      1.0,
-      1.0,
+      0.5,
+      0.5,
       1.0,
       1.0,
       1.0,
@@ -8769,10 +10496,12 @@
      "step": 3,
      "task": 2,
      "n": 40,
-     "mrr": 0.743155,
-     "recall": 0.352083,
-     "hit_at_k": 0.9,
-     "latency_ms": 160.63,
+     "memory_count": 18632,
+     "mrr": 0.75128,
+     "recall": 0.3375,
+     "precision": 0.171875,
+     "hit_at_k": 0.925,
+     "latency_ms": 161.14,
      "questions": [
       "In which county is Kimbrough Memorial Stadium located?",
       "What instrument is played by the person from The Blackout All-Stars?",
@@ -8826,32 +10555,32 @@
       1.0,
       1.0,
       1.0,
-      0.5,
-      0.0,
-      0.5,
-      0.33333,
-      1.0,
-      1.0,
-      0.0,
-      0.33333,
-      1.0,
-      0.16667,
-      1.0,
-      1.0,
-      1.0,
-      1.0,
-      1.0,
-      0.0,
-      1.0,
-      1.0,
-      1.0,
-      1.0,
-      0.33333,
-      1.0,
-      1.0,
       0.25,
+      0.0,
+      0.5,
+      0.33333,
       1.0,
-      0.16667,
+      1.0,
+      0.33333,
+      0.125,
+      1.0,
+      0.5,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      0.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      0.33333,
+      1.0,
+      1.0,
+      0.2,
+      1.0,
+      0.33333,
       1.0,
       0.0,
       1.0,
@@ -8874,7 +10603,7 @@
       1,
       1,
       1,
-      0,
+      1,
       1,
       1,
       1,
@@ -8904,10 +10633,12 @@
      "step": 3,
      "task": 3,
      "n": 40,
-     "mrr": 0.7425,
-     "recall": 0.301042,
-     "hit_at_k": 0.825,
-     "latency_ms": 171.46,
+     "memory_count": 18632,
+     "mrr": 0.755655,
+     "recall": 0.326042,
+     "precision": 0.16875,
+     "hit_at_k": 0.875,
+     "latency_ms": 171.35,
      "questions": [
       "What is the competition the 1972 Federation Cup is part of named after?",
       "What political party was the candidate who garnered a million votes during the 1920 election despite being in prison, a member of?",
@@ -8953,11 +10684,11 @@
      "rr": [
       1.0,
       1.0,
+      1.0,
+      1.0,
+      0.25,
       0.5,
       1.0,
-      0.16667,
-      1.0,
-      1.0,
       0.0,
       1.0,
       1.0,
@@ -8970,7 +10701,7 @@
       1.0,
       1.0,
       1.0,
-      0.0,
+      0.25,
       1.0,
       0.0,
       0.0,
@@ -8981,8 +10712,8 @@
       1.0,
       1.0,
       1.0,
-      0.2,
-      0.0,
+      0.25,
+      0.14286,
       1.0,
       0.33333,
       1.0,
@@ -9012,19 +10743,19 @@
       1,
       1,
       1,
-      0,
-      1,
-      0,
-      0,
       1,
       1,
       0,
-      1,
-      1,
-      1,
+      0,
       1,
       1,
       0,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
       1,
       1,
       1,
@@ -9054,7 +10785,7 @@
       "0": [
        {
         "step": 0,
-        "value": 0.814583,
+        "value": 0.816667,
         "best_previous": null,
         "forgetting": 0.0,
         "retention": 1.0,
@@ -9062,33 +10793,33 @@
        },
        {
         "step": 1,
-        "value": 0.791667,
-        "best_previous": 0.814583,
-        "forgetting": 0.022916,
-        "retention": 0.971868,
+        "value": 0.783333,
+        "best_previous": 0.816667,
+        "forgetting": 0.033334,
+        "retention": 0.959183,
         "n": 40
        },
        {
         "step": 2,
-        "value": 0.78625,
-        "best_previous": 0.814583,
-        "forgetting": 0.028333,
-        "retention": 0.965218,
+        "value": 0.764405,
+        "best_previous": 0.816667,
+        "forgetting": 0.052262,
+        "retention": 0.936006,
         "n": 40
        },
        {
         "step": 3,
-        "value": 0.788333,
-        "best_previous": 0.814583,
-        "forgetting": 0.02625,
-        "retention": 0.967775,
+        "value": 0.748542,
+        "best_previous": 0.816667,
+        "forgetting": 0.068125,
+        "retention": 0.916582,
         "n": 40
        }
       ],
       "1": [
        {
         "step": 1,
-        "value": 0.791667,
+        "value": 0.838393,
         "best_previous": null,
         "forgetting": 0.0,
         "retention": 1.0,
@@ -9096,25 +10827,25 @@
        },
        {
         "step": 2,
-        "value": 0.822917,
-        "best_previous": 0.791667,
+        "value": 0.839673,
+        "best_previous": 0.838393,
         "forgetting": 0.0,
-        "retention": 1.039474,
+        "retention": 1.001527,
         "n": 40
        },
        {
         "step": 3,
-        "value": 0.821667,
-        "best_previous": 0.822917,
-        "forgetting": 0.00125,
-        "retention": 0.998481,
+        "value": 0.76125,
+        "best_previous": 0.839673,
+        "forgetting": 0.078423,
+        "retention": 0.906603,
         "n": 40
        }
       ],
       "2": [
        {
         "step": 2,
-        "value": 0.766071,
+        "value": 0.757292,
         "best_previous": null,
         "forgetting": 0.0,
         "retention": 1.0,
@@ -9122,17 +10853,17 @@
        },
        {
         "step": 3,
-        "value": 0.743155,
-        "best_previous": 0.766071,
-        "forgetting": 0.022916,
-        "retention": 0.970086,
+        "value": 0.75128,
+        "best_previous": 0.757292,
+        "forgetting": 0.006012,
+        "retention": 0.992061,
         "n": 40
        }
       ],
       "3": [
        {
         "step": 3,
-        "value": 0.7425,
+        "value": 0.755655,
         "best_previous": null,
         "forgetting": 0.0,
         "retention": 1.0,
@@ -9152,33 +10883,33 @@
        },
        {
         "step": 1,
-        "value": 0.4,
+        "value": 0.39375,
         "best_previous": 0.414583,
-        "forgetting": 0.014583,
-        "retention": 0.964825,
+        "forgetting": 0.020833,
+        "retention": 0.94975,
         "n": 40
        },
        {
         "step": 2,
-        "value": 0.389583,
+        "value": 0.385417,
         "best_previous": 0.414583,
-        "forgetting": 0.025,
-        "retention": 0.939698,
+        "forgetting": 0.029166,
+        "retention": 0.92965,
         "n": 40
        },
        {
         "step": 3,
-        "value": 0.402083,
+        "value": 0.389583,
         "best_previous": 0.414583,
-        "forgetting": 0.0125,
-        "retention": 0.969849,
+        "forgetting": 0.025,
+        "retention": 0.939698,
         "n": 40
        }
       ],
       "1": [
        {
         "step": 1,
-        "value": 0.33125,
+        "value": 0.36875,
         "best_previous": null,
         "forgetting": 0.0,
         "retention": 1.0,
@@ -9186,25 +10917,25 @@
        },
        {
         "step": 2,
-        "value": 0.325,
-        "best_previous": 0.33125,
-        "forgetting": 0.00625,
-        "retention": 0.981132,
+        "value": 0.36875,
+        "best_previous": 0.36875,
+        "forgetting": 0.0,
+        "retention": 1.0,
         "n": 40
        },
        {
         "step": 3,
-        "value": 0.325,
-        "best_previous": 0.33125,
-        "forgetting": 0.00625,
-        "retention": 0.981132,
+        "value": 0.31875,
+        "best_previous": 0.36875,
+        "forgetting": 0.05,
+        "retention": 0.864407,
         "n": 40
        }
       ],
       "2": [
        {
         "step": 2,
-        "value": 0.352083,
+        "value": 0.339583,
         "best_previous": null,
         "forgetting": 0.0,
         "retention": 1.0,
@@ -9212,8 +10943,98 @@
        },
        {
         "step": 3,
-        "value": 0.352083,
-        "best_previous": 0.352083,
+        "value": 0.3375,
+        "best_previous": 0.339583,
+        "forgetting": 0.002083,
+        "retention": 0.993866,
+        "n": 40
+       }
+      ],
+      "3": [
+       {
+        "step": 3,
+        "value": 0.326042,
+        "best_previous": null,
+        "forgetting": 0.0,
+        "retention": 1.0,
+        "n": 40
+       }
+      ]
+     },
+     "precision": {
+      "0": [
+       {
+        "step": 0,
+        "value": 0.221875,
+        "best_previous": null,
+        "forgetting": 0.0,
+        "retention": 1.0,
+        "n": 40
+       },
+       {
+        "step": 1,
+        "value": 0.209375,
+        "best_previous": 0.221875,
+        "forgetting": 0.0125,
+        "retention": 0.943662,
+        "n": 40
+       },
+       {
+        "step": 2,
+        "value": 0.203125,
+        "best_previous": 0.221875,
+        "forgetting": 0.01875,
+        "retention": 0.915493,
+        "n": 40
+       },
+       {
+        "step": 3,
+        "value": 0.20625,
+        "best_previous": 0.221875,
+        "forgetting": 0.015625,
+        "retention": 0.929577,
+        "n": 40
+       }
+      ],
+      "1": [
+       {
+        "step": 1,
+        "value": 0.1875,
+        "best_previous": null,
+        "forgetting": 0.0,
+        "retention": 1.0,
+        "n": 40
+       },
+       {
+        "step": 2,
+        "value": 0.1875,
+        "best_previous": 0.1875,
+        "forgetting": 0.0,
+        "retention": 1.0,
+        "n": 40
+       },
+       {
+        "step": 3,
+        "value": 0.16875,
+        "best_previous": 0.1875,
+        "forgetting": 0.01875,
+        "retention": 0.9,
+        "n": 40
+       }
+      ],
+      "2": [
+       {
+        "step": 2,
+        "value": 0.171875,
+        "best_previous": null,
+        "forgetting": 0.0,
+        "retention": 1.0,
+        "n": 40
+       },
+       {
+        "step": 3,
+        "value": 0.171875,
+        "best_previous": 0.171875,
         "forgetting": 0.0,
         "retention": 1.0,
         "n": 40
@@ -9222,7 +11043,7 @@
       "3": [
        {
         "step": 3,
-        "value": 0.301042,
+        "value": 0.16875,
         "best_previous": null,
         "forgetting": 0.0,
         "retention": 1.0,
@@ -9236,7 +11057,7 @@
       "0": [
        {
         "step": 0,
-        "value": 0.814583,
+        "value": 0.816667,
         "best_previous": null,
         "forgetting": 0.0,
         "retention": 1.0,
@@ -9244,33 +11065,33 @@
        },
        {
         "step": 1,
-        "value": 0.791667,
-        "best_previous": 0.814583,
-        "forgetting": 0.022916,
-        "retention": 0.971868,
+        "value": 0.783333,
+        "best_previous": 0.816667,
+        "forgetting": 0.033334,
+        "retention": 0.959183,
         "n": 40
        },
        {
         "step": 2,
-        "value": 0.78625,
-        "best_previous": 0.814583,
-        "forgetting": 0.028333,
-        "retention": 0.965218,
+        "value": 0.764405,
+        "best_previous": 0.816667,
+        "forgetting": 0.052262,
+        "retention": 0.936006,
         "n": 40
        },
        {
         "step": 3,
-        "value": 0.788333,
-        "best_previous": 0.814583,
-        "forgetting": 0.02625,
-        "retention": 0.967775,
+        "value": 0.748542,
+        "best_previous": 0.816667,
+        "forgetting": 0.068125,
+        "retention": 0.916582,
         "n": 40
        }
       ],
       "1": [
        {
         "step": 1,
-        "value": 0.791667,
+        "value": 0.838393,
         "best_previous": null,
         "forgetting": 0.0,
         "retention": 1.0,
@@ -9278,25 +11099,25 @@
        },
        {
         "step": 2,
-        "value": 0.822917,
-        "best_previous": 0.791667,
+        "value": 0.839673,
+        "best_previous": 0.838393,
         "forgetting": 0.0,
-        "retention": 1.039474,
+        "retention": 1.001527,
         "n": 40
        },
        {
         "step": 3,
-        "value": 0.821667,
-        "best_previous": 0.822917,
-        "forgetting": 0.00125,
-        "retention": 0.998481,
+        "value": 0.76125,
+        "best_previous": 0.839673,
+        "forgetting": 0.078423,
+        "retention": 0.906603,
         "n": 40
        }
       ],
       "2": [
        {
         "step": 2,
-        "value": 0.766071,
+        "value": 0.757292,
         "best_previous": null,
         "forgetting": 0.0,
         "retention": 1.0,
@@ -9304,17 +11125,17 @@
        },
        {
         "step": 3,
-        "value": 0.743155,
-        "best_previous": 0.766071,
-        "forgetting": 0.022916,
-        "retention": 0.970086,
+        "value": 0.75128,
+        "best_previous": 0.757292,
+        "forgetting": 0.006012,
+        "retention": 0.992061,
         "n": 40
        }
       ],
       "3": [
        {
         "step": 3,
-        "value": 0.7425,
+        "value": 0.755655,
         "best_previous": null,
         "forgetting": 0.0,
         "retention": 1.0,
@@ -9334,33 +11155,33 @@
        },
        {
         "step": 1,
-        "value": 0.4,
+        "value": 0.39375,
         "best_previous": 0.414583,
-        "forgetting": 0.014583,
-        "retention": 0.964825,
+        "forgetting": 0.020833,
+        "retention": 0.94975,
         "n": 40
        },
        {
         "step": 2,
-        "value": 0.389583,
+        "value": 0.385417,
         "best_previous": 0.414583,
-        "forgetting": 0.025,
-        "retention": 0.939698,
+        "forgetting": 0.029166,
+        "retention": 0.92965,
         "n": 40
        },
        {
         "step": 3,
-        "value": 0.402083,
+        "value": 0.389583,
         "best_previous": 0.414583,
-        "forgetting": 0.0125,
-        "retention": 0.969849,
+        "forgetting": 0.025,
+        "retention": 0.939698,
         "n": 40
        }
       ],
       "1": [
        {
         "step": 1,
-        "value": 0.33125,
+        "value": 0.36875,
         "best_previous": null,
         "forgetting": 0.0,
         "retention": 1.0,
@@ -9368,25 +11189,25 @@
        },
        {
         "step": 2,
-        "value": 0.325,
-        "best_previous": 0.33125,
-        "forgetting": 0.00625,
-        "retention": 0.981132,
+        "value": 0.36875,
+        "best_previous": 0.36875,
+        "forgetting": 0.0,
+        "retention": 1.0,
         "n": 40
        },
        {
         "step": 3,
-        "value": 0.325,
-        "best_previous": 0.33125,
-        "forgetting": 0.00625,
-        "retention": 0.981132,
+        "value": 0.31875,
+        "best_previous": 0.36875,
+        "forgetting": 0.05,
+        "retention": 0.864407,
         "n": 40
        }
       ],
       "2": [
        {
         "step": 2,
-        "value": 0.352083,
+        "value": 0.339583,
         "best_previous": null,
         "forgetting": 0.0,
         "retention": 1.0,
@@ -9394,8 +11215,98 @@
        },
        {
         "step": 3,
-        "value": 0.352083,
-        "best_previous": 0.352083,
+        "value": 0.3375,
+        "best_previous": 0.339583,
+        "forgetting": 0.002083,
+        "retention": 0.993866,
+        "n": 40
+       }
+      ],
+      "3": [
+       {
+        "step": 3,
+        "value": 0.326042,
+        "best_previous": null,
+        "forgetting": 0.0,
+        "retention": 1.0,
+        "n": 40
+       }
+      ]
+     },
+     "precision": {
+      "0": [
+       {
+        "step": 0,
+        "value": 0.221875,
+        "best_previous": null,
+        "forgetting": 0.0,
+        "retention": 1.0,
+        "n": 40
+       },
+       {
+        "step": 1,
+        "value": 0.209375,
+        "best_previous": 0.221875,
+        "forgetting": 0.0125,
+        "retention": 0.943662,
+        "n": 40
+       },
+       {
+        "step": 2,
+        "value": 0.203125,
+        "best_previous": 0.221875,
+        "forgetting": 0.01875,
+        "retention": 0.915493,
+        "n": 40
+       },
+       {
+        "step": 3,
+        "value": 0.20625,
+        "best_previous": 0.221875,
+        "forgetting": 0.015625,
+        "retention": 0.929577,
+        "n": 40
+       }
+      ],
+      "1": [
+       {
+        "step": 1,
+        "value": 0.1875,
+        "best_previous": null,
+        "forgetting": 0.0,
+        "retention": 1.0,
+        "n": 40
+       },
+       {
+        "step": 2,
+        "value": 0.1875,
+        "best_previous": 0.1875,
+        "forgetting": 0.0,
+        "retention": 1.0,
+        "n": 40
+       },
+       {
+        "step": 3,
+        "value": 0.16875,
+        "best_previous": 0.1875,
+        "forgetting": 0.01875,
+        "retention": 0.9,
+        "n": 40
+       }
+      ],
+      "2": [
+       {
+        "step": 2,
+        "value": 0.171875,
+        "best_previous": null,
+        "forgetting": 0.0,
+        "retention": 1.0,
+        "n": 40
+       },
+       {
+        "step": 3,
+        "value": 0.171875,
+        "best_previous": 0.171875,
         "forgetting": 0.0,
         "retention": 1.0,
         "n": 40
@@ -9404,7 +11315,7 @@
       "3": [
        {
         "step": 3,
-        "value": 0.301042,
+        "value": 0.16875,
         "best_previous": null,
         "forgetting": 0.0,
         "retention": 1.0,
@@ -9414,25 +11325,33 @@
      }
     },
     "average_forgetting": {
-     "mrr": 0.012604,
-     "recall": 0.004688
+     "mrr": 0.03814,
+     "recall": 0.019271,
+     "precision": 0.008594
     },
     "mean_retention": {
-     "mrr": 0.984085,
-     "recall": 0.987745
+     "mrr": 0.953812,
+     "recall": 0.949493,
+     "precision": 0.957394
     },
     "final_performance": {
      "mrr": {
-      "0": 0.788333,
-      "1": 0.821667,
-      "2": 0.743155,
-      "3": 0.7425
+      "0": 0.748542,
+      "1": 0.76125,
+      "2": 0.75128,
+      "3": 0.755655
      },
      "recall": {
-      "0": 0.402083,
-      "1": 0.325,
-      "2": 0.352083,
-      "3": 0.301042
+      "0": 0.389583,
+      "1": 0.31875,
+      "2": 0.3375,
+      "3": 0.326042
+     },
+     "precision": {
+      "0": 0.20625,
+      "1": 0.16875,
+      "2": 0.171875,
+      "3": 0.16875
      }
     }
    },
@@ -9440,45 +11359,50 @@
     {
      "step": 0,
      "tasks": 1,
-     "mrr": 0.814583,
+     "mrr": 0.816667,
      "recall": 0.414583,
      "hit_at_k": 0.95,
-     "latency_ms": 55.78
+     "precision": 0.221875,
+     "latency_ms": 57.97
     },
     {
      "step": 1,
      "tasks": 2,
-     "mrr": 0.791667,
-     "recall": 0.365625,
-     "hit_at_k": 0.95,
-     "latency_ms": 98.855
+     "mrr": 0.810863,
+     "recall": 0.38125,
+     "hit_at_k": 0.975,
+     "precision": 0.198437,
+     "latency_ms": 97.505
     },
     {
      "step": 2,
      "tasks": 3,
-     "mrr": 0.791746,
-     "recall": 0.355555,
+     "mrr": 0.787123,
+     "recall": 0.364583,
      "hit_at_k": 0.916667,
-     "latency_ms": 134.336667
+     "precision": 0.1875,
+     "latency_ms": 133.573333
     },
     {
      "step": 3,
      "tasks": 4,
-     "mrr": 0.773914,
-     "recall": 0.345052,
-     "hit_at_k": 0.90625,
-     "latency_ms": 168.125
+     "mrr": 0.754182,
+     "recall": 0.342969,
+     "hit_at_k": 0.91875,
+     "precision": 0.178906,
+     "latency_ms": 168.4375
     }
    ],
    "dynamics": {
     "decays": 4,
     "replays": 2000,
     "promotions": 0,
+    "interval_days": 30.0,
     "states": {
-     "new": 18247,
-     "candidate": 273,
-     "consolidated": 45,
-     "stable": 67
+     "new": 18234,
+     "candidate": 283,
+     "stable": 65,
+     "consolidated": 50
     }
    }
   },
@@ -9499,64 +11423,78 @@
      "step": 0,
      "task": 0,
      "n": 40,
-     "mrr": 0.814583,
+     "memory_count": 5229,
+     "mrr": 0.816667,
      "recall": 0.414583,
+     "precision": 0.221875,
      "hit_at_k": 0.95,
-     "latency_ms": 69.02
+     "latency_ms": 57.75
     },
     {
      "step": 1,
      "task": 0,
      "n": 40,
-     "mrr": 0.808333,
-     "recall": 0.4,
-     "hit_at_k": 0.95,
-     "latency_ms": 99.22
-    },
-    {
-     "step": 1,
-     "task": 1,
-     "n": 40,
-     "mrr": 0.791667,
-     "recall": 0.33125,
-     "hit_at_k": 0.95,
-     "latency_ms": 96.37
-    },
-    {
-     "step": 2,
-     "task": 0,
-     "n": 40,
-     "mrr": 0.802917,
+     "memory_count": 9919,
+     "mrr": 0.8,
      "recall": 0.39375,
+     "precision": 0.209375,
      "hit_at_k": 0.95,
-     "latency_ms": 135.59
+     "latency_ms": 64.51
+    },
+    {
+     "step": 1,
+     "task": 1,
+     "n": 40,
+     "memory_count": 9919,
+     "mrr": 0.838393,
+     "recall": 0.36875,
+     "precision": 0.1875,
+     "hit_at_k": 1.0,
+     "latency_ms": 74.81
+    },
+    {
+     "step": 2,
+     "task": 0,
+     "n": 40,
+     "memory_count": 14382,
+     "mrr": 0.768571,
+     "recall": 0.383333,
+     "precision": 0.203125,
+     "hit_at_k": 0.925,
+     "latency_ms": 166.31
     },
     {
      "step": 2,
      "task": 1,
      "n": 40,
-     "mrr": 0.822917,
-     "recall": 0.325,
-     "hit_at_k": 0.925,
-     "latency_ms": 131.51
+     "memory_count": 14382,
+     "mrr": 0.837589,
+     "recall": 0.36875,
+     "precision": 0.1875,
+     "hit_at_k": 1.0,
+     "latency_ms": 161.47
     },
     {
      "step": 2,
      "task": 2,
      "n": 40,
-     "mrr": 0.766071,
-     "recall": 0.352083,
-     "hit_at_k": 0.875,
-     "latency_ms": 125.84
+     "memory_count": 14382,
+     "mrr": 0.757292,
+     "recall": 0.339583,
+     "precision": 0.171875,
+     "hit_at_k": 0.825,
+     "latency_ms": 155.91
     },
     {
      "step": 3,
      "task": 0,
      "n": 40,
-     "mrr": 0.768542,
-     "recall": 0.40625,
-     "hit_at_k": 0.975,
-     "latency_ms": 173.11,
+     "memory_count": 18632,
+     "mrr": 0.724792,
+     "recall": 0.39375,
+     "precision": 0.209375,
+     "hit_at_k": 0.95,
+     "latency_ms": 222.97,
      "questions": [
       "Who led the military expedition in the province that borders Zhejiang to the south?",
       "The singer, who starred in Shake It Up, signed to which record label?",
@@ -9600,7 +11538,7 @@
       "Where was the designer of the Lap Engine educated?"
      ],
      "rr": [
-      0.16667,
+      0.5,
       1.0,
       0.5,
       0.33333,
@@ -9609,32 +11547,32 @@
       1.0,
       1.0,
       1.0,
-      1.0,
+      0.5,
       1.0,
       0.2,
       1.0,
-      0.5,
+      0.25,
       0.0,
       1.0,
       1.0,
       1.0,
       1.0,
-      0.125,
-      0.33333,
-      1.0,
       0.16667,
-      0.5,
       0.25,
       1.0,
-      1.0,
-      1.0,
+      0.16667,
+      0.33333,
+      0.16667,
       1.0,
       1.0,
       1.0,
       0.5,
       1.0,
       1.0,
-      0.16667,
+      0.0,
+      1.0,
+      1.0,
+      0.125,
       1.0,
       1.0,
       1.0,
@@ -9673,7 +11611,7 @@
       1,
       1,
       1,
-      1,
+      0,
       1,
       1,
       1,
@@ -9688,10 +11626,12 @@
      "step": 3,
      "task": 1,
      "n": 40,
-     "mrr": 0.799405,
-     "recall": 0.325,
+     "memory_count": 18632,
+     "mrr": 0.760417,
+     "recall": 0.31875,
+     "precision": 0.16875,
      "hit_at_k": 0.925,
-     "latency_ms": 166.52,
+     "latency_ms": 199.4,
      "questions": [
       "Who was given India's highest civilian honor before he became President of India?",
       "Who played king whose regal Name did Albert Adopt in the king's speech?",
@@ -9735,8 +11675,8 @@
       "When was the celestial object that eluded efforts to measure oxygen discovered to be the center of the solar system?"
      ],
      "rr": [
-      0.5,
       1.0,
+      0.5,
       1.0,
       1.0,
       0.0,
@@ -9745,17 +11685,17 @@
       1.0,
       1.0,
       1.0,
-      1.0,
+      0.33333,
       1.0,
       1.0,
       1.0,
       1.0,
       0.16667,
-      0.33333,
+      0.25,
       1.0,
       1.0,
       0.33333,
-      1.0,
+      0.33333,
       1.0,
       1.0,
       0.0,
@@ -9763,8 +11703,8 @@
       1.0,
       1.0,
       1.0,
-      0.14286,
-      1.0,
+      0.5,
+      0.5,
       1.0,
       1.0,
       1.0,
@@ -9823,10 +11763,12 @@
      "step": 3,
      "task": 2,
      "n": 40,
-     "mrr": 0.743155,
-     "recall": 0.352083,
-     "hit_at_k": 0.9,
-     "latency_ms": 159.39,
+     "memory_count": 18632,
+     "mrr": 0.75128,
+     "recall": 0.3375,
+     "precision": 0.171875,
+     "hit_at_k": 0.925,
+     "latency_ms": 192.64,
      "questions": [
       "In which county is Kimbrough Memorial Stadium located?",
       "What instrument is played by the person from The Blackout All-Stars?",
@@ -9880,32 +11822,32 @@
       1.0,
       1.0,
       1.0,
-      0.5,
-      0.0,
-      0.5,
-      0.33333,
-      1.0,
-      1.0,
-      0.0,
-      0.33333,
-      1.0,
-      0.16667,
-      1.0,
-      1.0,
-      1.0,
-      1.0,
-      1.0,
-      0.0,
-      1.0,
-      1.0,
-      1.0,
-      1.0,
-      0.33333,
-      1.0,
-      1.0,
       0.25,
+      0.0,
+      0.5,
+      0.33333,
       1.0,
-      0.16667,
+      1.0,
+      0.33333,
+      0.125,
+      1.0,
+      0.5,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      0.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      0.33333,
+      1.0,
+      1.0,
+      0.2,
+      1.0,
+      0.33333,
       1.0,
       0.0,
       1.0,
@@ -9928,7 +11870,7 @@
       1,
       1,
       1,
-      0,
+      1,
       1,
       1,
       1,
@@ -9958,10 +11900,12 @@
      "step": 3,
      "task": 3,
      "n": 40,
-     "mrr": 0.7425,
-     "recall": 0.301042,
-     "hit_at_k": 0.825,
-     "latency_ms": 169.65,
+     "memory_count": 18632,
+     "mrr": 0.755655,
+     "recall": 0.326042,
+     "precision": 0.16875,
+     "hit_at_k": 0.875,
+     "latency_ms": 203.53,
      "questions": [
       "What is the competition the 1972 Federation Cup is part of named after?",
       "What political party was the candidate who garnered a million votes during the 1920 election despite being in prison, a member of?",
@@ -10007,11 +11951,11 @@
      "rr": [
       1.0,
       1.0,
+      1.0,
+      1.0,
+      0.25,
       0.5,
       1.0,
-      0.16667,
-      1.0,
-      1.0,
       0.0,
       1.0,
       1.0,
@@ -10024,7 +11968,7 @@
       1.0,
       1.0,
       1.0,
-      0.0,
+      0.25,
       1.0,
       0.0,
       0.0,
@@ -10035,8 +11979,8 @@
       1.0,
       1.0,
       1.0,
-      0.2,
-      0.0,
+      0.25,
+      0.14286,
       1.0,
       0.33333,
       1.0,
@@ -10066,19 +12010,19 @@
       1,
       1,
       1,
-      0,
-      1,
-      0,
-      0,
       1,
       1,
       0,
-      1,
-      1,
-      1,
+      0,
       1,
       1,
       0,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
       1,
       1,
       1,
@@ -10108,7 +12052,7 @@
       "0": [
        {
         "step": 0,
-        "value": 0.814583,
+        "value": 0.816667,
         "best_previous": null,
         "forgetting": 0.0,
         "retention": 1.0,
@@ -10116,33 +12060,33 @@
        },
        {
         "step": 1,
-        "value": 0.808333,
-        "best_previous": 0.814583,
-        "forgetting": 0.00625,
-        "retention": 0.992327,
+        "value": 0.8,
+        "best_previous": 0.816667,
+        "forgetting": 0.016667,
+        "retention": 0.979591,
         "n": 40
        },
        {
         "step": 2,
-        "value": 0.802917,
-        "best_previous": 0.814583,
-        "forgetting": 0.011666,
-        "retention": 0.985679,
+        "value": 0.768571,
+        "best_previous": 0.816667,
+        "forgetting": 0.048096,
+        "retention": 0.941107,
         "n": 40
        },
        {
         "step": 3,
-        "value": 0.768542,
-        "best_previous": 0.814583,
-        "forgetting": 0.046041,
-        "retention": 0.943479,
+        "value": 0.724792,
+        "best_previous": 0.816667,
+        "forgetting": 0.091875,
+        "retention": 0.8875,
         "n": 40
        }
       ],
       "1": [
        {
         "step": 1,
-        "value": 0.791667,
+        "value": 0.838393,
         "best_previous": null,
         "forgetting": 0.0,
         "retention": 1.0,
@@ -10150,25 +12094,25 @@
        },
        {
         "step": 2,
-        "value": 0.822917,
-        "best_previous": 0.791667,
-        "forgetting": 0.0,
-        "retention": 1.039474,
+        "value": 0.837589,
+        "best_previous": 0.838393,
+        "forgetting": 0.000804,
+        "retention": 0.999041,
         "n": 40
        },
        {
         "step": 3,
-        "value": 0.799405,
-        "best_previous": 0.822917,
-        "forgetting": 0.023512,
-        "retention": 0.971428,
+        "value": 0.760417,
+        "best_previous": 0.838393,
+        "forgetting": 0.077976,
+        "retention": 0.906993,
         "n": 40
        }
       ],
       "2": [
        {
         "step": 2,
-        "value": 0.766071,
+        "value": 0.757292,
         "best_previous": null,
         "forgetting": 0.0,
         "retention": 1.0,
@@ -10176,17 +12120,17 @@
        },
        {
         "step": 3,
-        "value": 0.743155,
-        "best_previous": 0.766071,
-        "forgetting": 0.022916,
-        "retention": 0.970086,
+        "value": 0.75128,
+        "best_previous": 0.757292,
+        "forgetting": 0.006012,
+        "retention": 0.992061,
         "n": 40
        }
       ],
       "3": [
        {
         "step": 3,
-        "value": 0.7425,
+        "value": 0.755655,
         "best_previous": null,
         "forgetting": 0.0,
         "retention": 1.0,
@@ -10206,14 +12150,6 @@
        },
        {
         "step": 1,
-        "value": 0.4,
-        "best_previous": 0.414583,
-        "forgetting": 0.014583,
-        "retention": 0.964825,
-        "n": 40
-       },
-       {
-        "step": 2,
         "value": 0.39375,
         "best_previous": 0.414583,
         "forgetting": 0.020833,
@@ -10221,18 +12157,26 @@
         "n": 40
        },
        {
-        "step": 3,
-        "value": 0.40625,
+        "step": 2,
+        "value": 0.383333,
         "best_previous": 0.414583,
-        "forgetting": 0.008333,
-        "retention": 0.9799,
+        "forgetting": 0.03125,
+        "retention": 0.924623,
+        "n": 40
+       },
+       {
+        "step": 3,
+        "value": 0.39375,
+        "best_previous": 0.414583,
+        "forgetting": 0.020833,
+        "retention": 0.94975,
         "n": 40
        }
       ],
       "1": [
        {
         "step": 1,
-        "value": 0.33125,
+        "value": 0.36875,
         "best_previous": null,
         "forgetting": 0.0,
         "retention": 1.0,
@@ -10240,25 +12184,25 @@
        },
        {
         "step": 2,
-        "value": 0.325,
-        "best_previous": 0.33125,
-        "forgetting": 0.00625,
-        "retention": 0.981132,
+        "value": 0.36875,
+        "best_previous": 0.36875,
+        "forgetting": 0.0,
+        "retention": 1.0,
         "n": 40
        },
        {
         "step": 3,
-        "value": 0.325,
-        "best_previous": 0.33125,
-        "forgetting": 0.00625,
-        "retention": 0.981132,
+        "value": 0.31875,
+        "best_previous": 0.36875,
+        "forgetting": 0.05,
+        "retention": 0.864407,
         "n": 40
        }
       ],
       "2": [
        {
         "step": 2,
-        "value": 0.352083,
+        "value": 0.339583,
         "best_previous": null,
         "forgetting": 0.0,
         "retention": 1.0,
@@ -10266,8 +12210,98 @@
        },
        {
         "step": 3,
-        "value": 0.352083,
-        "best_previous": 0.352083,
+        "value": 0.3375,
+        "best_previous": 0.339583,
+        "forgetting": 0.002083,
+        "retention": 0.993866,
+        "n": 40
+       }
+      ],
+      "3": [
+       {
+        "step": 3,
+        "value": 0.326042,
+        "best_previous": null,
+        "forgetting": 0.0,
+        "retention": 1.0,
+        "n": 40
+       }
+      ]
+     },
+     "precision": {
+      "0": [
+       {
+        "step": 0,
+        "value": 0.221875,
+        "best_previous": null,
+        "forgetting": 0.0,
+        "retention": 1.0,
+        "n": 40
+       },
+       {
+        "step": 1,
+        "value": 0.209375,
+        "best_previous": 0.221875,
+        "forgetting": 0.0125,
+        "retention": 0.943662,
+        "n": 40
+       },
+       {
+        "step": 2,
+        "value": 0.203125,
+        "best_previous": 0.221875,
+        "forgetting": 0.01875,
+        "retention": 0.915493,
+        "n": 40
+       },
+       {
+        "step": 3,
+        "value": 0.209375,
+        "best_previous": 0.221875,
+        "forgetting": 0.0125,
+        "retention": 0.943662,
+        "n": 40
+       }
+      ],
+      "1": [
+       {
+        "step": 1,
+        "value": 0.1875,
+        "best_previous": null,
+        "forgetting": 0.0,
+        "retention": 1.0,
+        "n": 40
+       },
+       {
+        "step": 2,
+        "value": 0.1875,
+        "best_previous": 0.1875,
+        "forgetting": 0.0,
+        "retention": 1.0,
+        "n": 40
+       },
+       {
+        "step": 3,
+        "value": 0.16875,
+        "best_previous": 0.1875,
+        "forgetting": 0.01875,
+        "retention": 0.9,
+        "n": 40
+       }
+      ],
+      "2": [
+       {
+        "step": 2,
+        "value": 0.171875,
+        "best_previous": null,
+        "forgetting": 0.0,
+        "retention": 1.0,
+        "n": 40
+       },
+       {
+        "step": 3,
+        "value": 0.171875,
+        "best_previous": 0.171875,
         "forgetting": 0.0,
         "retention": 1.0,
         "n": 40
@@ -10276,7 +12310,7 @@
       "3": [
        {
         "step": 3,
-        "value": 0.301042,
+        "value": 0.16875,
         "best_previous": null,
         "forgetting": 0.0,
         "retention": 1.0,
@@ -10290,7 +12324,7 @@
       "0": [
        {
         "step": 0,
-        "value": 0.814583,
+        "value": 0.816667,
         "best_previous": null,
         "forgetting": 0.0,
         "retention": 1.0,
@@ -10298,33 +12332,33 @@
        },
        {
         "step": 1,
-        "value": 0.808333,
-        "best_previous": 0.814583,
-        "forgetting": 0.00625,
-        "retention": 0.992327,
+        "value": 0.8,
+        "best_previous": 0.816667,
+        "forgetting": 0.016667,
+        "retention": 0.979591,
         "n": 40
        },
        {
         "step": 2,
-        "value": 0.802917,
-        "best_previous": 0.814583,
-        "forgetting": 0.011666,
-        "retention": 0.985679,
+        "value": 0.768571,
+        "best_previous": 0.816667,
+        "forgetting": 0.048096,
+        "retention": 0.941107,
         "n": 40
        },
        {
         "step": 3,
-        "value": 0.768542,
-        "best_previous": 0.814583,
-        "forgetting": 0.046041,
-        "retention": 0.943479,
+        "value": 0.724792,
+        "best_previous": 0.816667,
+        "forgetting": 0.091875,
+        "retention": 0.8875,
         "n": 40
        }
       ],
       "1": [
        {
         "step": 1,
-        "value": 0.791667,
+        "value": 0.838393,
         "best_previous": null,
         "forgetting": 0.0,
         "retention": 1.0,
@@ -10332,25 +12366,25 @@
        },
        {
         "step": 2,
-        "value": 0.822917,
-        "best_previous": 0.791667,
-        "forgetting": 0.0,
-        "retention": 1.039474,
+        "value": 0.837589,
+        "best_previous": 0.838393,
+        "forgetting": 0.000804,
+        "retention": 0.999041,
         "n": 40
        },
        {
         "step": 3,
-        "value": 0.799405,
-        "best_previous": 0.822917,
-        "forgetting": 0.023512,
-        "retention": 0.971428,
+        "value": 0.760417,
+        "best_previous": 0.838393,
+        "forgetting": 0.077976,
+        "retention": 0.906993,
         "n": 40
        }
       ],
       "2": [
        {
         "step": 2,
-        "value": 0.766071,
+        "value": 0.757292,
         "best_previous": null,
         "forgetting": 0.0,
         "retention": 1.0,
@@ -10358,17 +12392,17 @@
        },
        {
         "step": 3,
-        "value": 0.743155,
-        "best_previous": 0.766071,
-        "forgetting": 0.022916,
-        "retention": 0.970086,
+        "value": 0.75128,
+        "best_previous": 0.757292,
+        "forgetting": 0.006012,
+        "retention": 0.992061,
         "n": 40
        }
       ],
       "3": [
        {
         "step": 3,
-        "value": 0.7425,
+        "value": 0.755655,
         "best_previous": null,
         "forgetting": 0.0,
         "retention": 1.0,
@@ -10388,14 +12422,6 @@
        },
        {
         "step": 1,
-        "value": 0.4,
-        "best_previous": 0.414583,
-        "forgetting": 0.014583,
-        "retention": 0.964825,
-        "n": 40
-       },
-       {
-        "step": 2,
         "value": 0.39375,
         "best_previous": 0.414583,
         "forgetting": 0.020833,
@@ -10403,18 +12429,26 @@
         "n": 40
        },
        {
-        "step": 3,
-        "value": 0.40625,
+        "step": 2,
+        "value": 0.383333,
         "best_previous": 0.414583,
-        "forgetting": 0.008333,
-        "retention": 0.9799,
+        "forgetting": 0.03125,
+        "retention": 0.924623,
+        "n": 40
+       },
+       {
+        "step": 3,
+        "value": 0.39375,
+        "best_previous": 0.414583,
+        "forgetting": 0.020833,
+        "retention": 0.94975,
         "n": 40
        }
       ],
       "1": [
        {
         "step": 1,
-        "value": 0.33125,
+        "value": 0.36875,
         "best_previous": null,
         "forgetting": 0.0,
         "retention": 1.0,
@@ -10422,25 +12456,25 @@
        },
        {
         "step": 2,
-        "value": 0.325,
-        "best_previous": 0.33125,
-        "forgetting": 0.00625,
-        "retention": 0.981132,
+        "value": 0.36875,
+        "best_previous": 0.36875,
+        "forgetting": 0.0,
+        "retention": 1.0,
         "n": 40
        },
        {
         "step": 3,
-        "value": 0.325,
-        "best_previous": 0.33125,
-        "forgetting": 0.00625,
-        "retention": 0.981132,
+        "value": 0.31875,
+        "best_previous": 0.36875,
+        "forgetting": 0.05,
+        "retention": 0.864407,
         "n": 40
        }
       ],
       "2": [
        {
         "step": 2,
-        "value": 0.352083,
+        "value": 0.339583,
         "best_previous": null,
         "forgetting": 0.0,
         "retention": 1.0,
@@ -10448,8 +12482,98 @@
        },
        {
         "step": 3,
-        "value": 0.352083,
-        "best_previous": 0.352083,
+        "value": 0.3375,
+        "best_previous": 0.339583,
+        "forgetting": 0.002083,
+        "retention": 0.993866,
+        "n": 40
+       }
+      ],
+      "3": [
+       {
+        "step": 3,
+        "value": 0.326042,
+        "best_previous": null,
+        "forgetting": 0.0,
+        "retention": 1.0,
+        "n": 40
+       }
+      ]
+     },
+     "precision": {
+      "0": [
+       {
+        "step": 0,
+        "value": 0.221875,
+        "best_previous": null,
+        "forgetting": 0.0,
+        "retention": 1.0,
+        "n": 40
+       },
+       {
+        "step": 1,
+        "value": 0.209375,
+        "best_previous": 0.221875,
+        "forgetting": 0.0125,
+        "retention": 0.943662,
+        "n": 40
+       },
+       {
+        "step": 2,
+        "value": 0.203125,
+        "best_previous": 0.221875,
+        "forgetting": 0.01875,
+        "retention": 0.915493,
+        "n": 40
+       },
+       {
+        "step": 3,
+        "value": 0.209375,
+        "best_previous": 0.221875,
+        "forgetting": 0.0125,
+        "retention": 0.943662,
+        "n": 40
+       }
+      ],
+      "1": [
+       {
+        "step": 1,
+        "value": 0.1875,
+        "best_previous": null,
+        "forgetting": 0.0,
+        "retention": 1.0,
+        "n": 40
+       },
+       {
+        "step": 2,
+        "value": 0.1875,
+        "best_previous": 0.1875,
+        "forgetting": 0.0,
+        "retention": 1.0,
+        "n": 40
+       },
+       {
+        "step": 3,
+        "value": 0.16875,
+        "best_previous": 0.1875,
+        "forgetting": 0.01875,
+        "retention": 0.9,
+        "n": 40
+       }
+      ],
+      "2": [
+       {
+        "step": 2,
+        "value": 0.171875,
+        "best_previous": null,
+        "forgetting": 0.0,
+        "retention": 1.0,
+        "n": 40
+       },
+       {
+        "step": 3,
+        "value": 0.171875,
+        "best_previous": 0.171875,
         "forgetting": 0.0,
         "retention": 1.0,
         "n": 40
@@ -10458,7 +12582,7 @@
       "3": [
        {
         "step": 3,
-        "value": 0.301042,
+        "value": 0.16875,
         "best_previous": null,
         "forgetting": 0.0,
         "retention": 1.0,
@@ -10468,25 +12592,33 @@
      }
     },
     "average_forgetting": {
-     "mrr": 0.023117,
-     "recall": 0.003646
+     "mrr": 0.043966,
+     "recall": 0.018229,
+     "precision": 0.007812
     },
     "mean_retention": {
-     "mrr": 0.971248,
-     "recall": 0.990258
+     "mrr": 0.946639,
+     "recall": 0.952006,
+     "precision": 0.960916
     },
     "final_performance": {
      "mrr": {
-      "0": 0.768542,
-      "1": 0.799405,
-      "2": 0.743155,
-      "3": 0.7425
+      "0": 0.724792,
+      "1": 0.760417,
+      "2": 0.75128,
+      "3": 0.755655
      },
      "recall": {
-      "0": 0.40625,
-      "1": 0.325,
-      "2": 0.352083,
-      "3": 0.301042
+      "0": 0.39375,
+      "1": 0.31875,
+      "2": 0.3375,
+      "3": 0.326042
+     },
+     "precision": {
+      "0": 0.209375,
+      "1": 0.16875,
+      "2": 0.171875,
+      "3": 0.16875
      }
     }
    },
@@ -10494,45 +12626,50 @@
     {
      "step": 0,
      "tasks": 1,
-     "mrr": 0.814583,
+     "mrr": 0.816667,
      "recall": 0.414583,
      "hit_at_k": 0.95,
-     "latency_ms": 69.02
+     "precision": 0.221875,
+     "latency_ms": 57.75
     },
     {
      "step": 1,
      "tasks": 2,
-     "mrr": 0.8,
-     "recall": 0.365625,
-     "hit_at_k": 0.95,
-     "latency_ms": 97.795
+     "mrr": 0.819197,
+     "recall": 0.38125,
+     "hit_at_k": 0.975,
+     "precision": 0.198437,
+     "latency_ms": 69.66
     },
     {
      "step": 2,
      "tasks": 3,
-     "mrr": 0.797302,
-     "recall": 0.356944,
+     "mrr": 0.787817,
+     "recall": 0.363889,
      "hit_at_k": 0.916667,
-     "latency_ms": 130.98
+     "precision": 0.1875,
+     "latency_ms": 161.23
     },
     {
      "step": 3,
      "tasks": 4,
-     "mrr": 0.763401,
-     "recall": 0.346094,
-     "hit_at_k": 0.90625,
-     "latency_ms": 167.1675
+     "mrr": 0.748036,
+     "recall": 0.34401,
+     "hit_at_k": 0.91875,
+     "precision": 0.179688,
+     "latency_ms": 204.635
     }
    ],
    "dynamics": {
     "decays": 4,
     "replays": 2000,
-    "promotions": 53,
+    "promotions": 52,
+    "interval_days": 30.0,
     "states": {
-     "new": 18248,
-     "candidate": 272,
-     "consolidated": 45,
-     "stable": 67
+     "new": 18235,
+     "candidate": 283,
+     "stable": 64,
+     "consolidated": 50
     }
    }
   }

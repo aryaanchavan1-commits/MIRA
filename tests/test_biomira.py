@@ -123,6 +123,21 @@ def test_adaptive_decay_fades_but_never_deletes() -> None:
     assert f.nodes["n3"].importance >= 0.6 * 0.15 - 1e-9, "floor must hold"
 
 
+def test_repeated_decay_passes_charge_each_interval_once() -> None:
+    """A sleep pass charges the interval since it last ran, never the full
+    age again — two immediate passes are a no-op, ten more days cost exactly
+    ten days of fade."""
+    cfg = _cfg()
+    f = _frame()
+    first = B.apply_adaptive_decay(f, cfg)
+    imp = {nid: n.importance for nid, n in f.nodes.items()}
+    second = B.apply_adaptive_decay(f, cfg)
+    assert second["retention_mean"] >= 0.999, second
+    assert all(f.nodes[nid].importance == v for nid, v in imp.items()), \
+        "an immediate repeat pass must not fade anything further"
+    assert first["retention_mean"] < 1.0
+
+
 def test_consolidated_memories_decay_slower_than_new_ones() -> None:
     cfg = _cfg()
     a, b = _node("prot", days_old=90), _node("fresh_new", days_old=90)

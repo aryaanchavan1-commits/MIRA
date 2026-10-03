@@ -25,11 +25,13 @@ Usage:
 from __future__ import annotations
 
 import argparse
+import datetime
 import json
 import os
 import random
 import sys
 import time
+from typing import Optional
 
 if hasattr(sys.stdout, "reconfigure"):
     sys.stdout.reconfigure(encoding="utf-8", errors="replace")
@@ -153,14 +155,23 @@ def gold_ids(ws, questions: list, per_task: int, seed: int) -> dict:
 
 
 def run_variant(name: str, spec: dict, ws: Workspace, base_cfg: dict, idx: dict,
-                golds: dict, n_tasks: int, k: int) -> dict:
-    """Replay the sequence for one variant; return lab rows."""
+                golds: dict, n_tasks: int, k: int, interval_days: float = 30.0) -> dict:
+    """Replay the sequence for one variant; return lab rows.
+
+    Time model: ``interval_days`` of disuse pass over everything learned so
+    far between two task arrivals (updated_at backdated in memory, restored
+    at the end). Without this every node shares one ingest time, retention is
+    near-uniform and adaptive decay is a constant factor that cannot reorder
+    anything — the degenerate run reported in the first version of this lab.
+    """
     cfg = variant_config(base_cfg, spec)
     bio = biomira.bio_config(cfg)
     rows: list = []
-    dyn: dict = {"decays": 0, "replays": 0, "promotions": 0}
+    dyn: dict = {"decays": 0, "replays": 0, "promotions": 0,
+                 "interval_days": interval_days}
     snapshot_imp = {n.id: n.importance for n in ws.frame.nodes.values()}
     snapshot_ring = {n.id: n.ring for n in ws.frame.nodes.values()}
+    snapshot_ts = {n.id: (n.updated_at, n.created_at) for n in ws.frame.nodes.values()}
 
     for step in range(n_tasks):
         # --- the variant's "sleep" pass over everything learned so far -----
@@ -194,7 +205,7 @@ def run_variant(name: str, spec: dict, ws: Workspace, base_cfg: dict, idx: dict,
             recs = golds.get(task, [])
             if not recs:
                 continue
-            hits, rr, lat = [], [], []
+            hits, rr, prec, lat = [], [], [], []
             for rec in recs:
                 qv = ws.embeddings.encode([rec["question"]])[0]
                 res = retriever.retrieve(rec["question"], qv, active_components=active,
@@ -202,6 +213,7 @@ def run_variant(name: str, spec: dict, ws: Workspace, base_cfg: dict, idx: dict,
                 gold = set(rec["supporting_ids"])
                 ranked = [i.node.id for i in res.items]
                 hits.append(len(gold & set(ranked[:k])) / max(1, len(gold)))
+                prec.append(len(gold & set(ranked[:k])) / max(1, k))
                 rr.append(mrr(ranked, gold))
                 lat.append(res.latency_ms)
                 if bio["enabled"]:
@@ -211,8 +223,10 @@ def run_variant(name: str, spec: dict, ws: Workspace, base_cfg: dict, idx: dict,
                     biomira.touch(frame, ranked, bio,
                                   failed=not (gold & set(ranked[:k])))
             rows.append({"step": step, "task": task, "n": len(recs),
+                         "memory_count": len(frame.nodes),
                          "mrr": round(sum(rr) / len(rr), 6),
                          "recall": round(sum(hits) / len(hits), 6),
+                         "precision": round(sum(prec) / len(prec), 6),
                          "hit_at_k": round(sum(1 for h in hits if h > 0)
                                            / len(hits), 6),
                          "latency_ms": round(sum(lat) / len(lat), 2)})
@@ -229,15 +243,39 @@ def run_variant(name: str, spec: dict, ws: Workspace, base_cfg: dict, idx: dict,
             for node in frame.nodes.values():
                 node.metadata.pop("bio", None)
 
+        # --- the clock: everything learned so far ages until the next task ---
+        if interval_days:
+            shift = datetime.timedelta(days=interval_days)
+            for node in frame.nodes.values():
+                node.updated_at = _shift_iso(node.updated_at, -shift)
+                node.created_at = _shift_iso(node.created_at, -shift)
+
     for nid, node in ws.frame.nodes.items():
         node.importance = snapshot_imp.get(nid, node.importance)
         node.ring = snapshot_ring.get(nid, node.ring)
+        node.updated_at, node.created_at = snapshot_ts.get(nid, (node.updated_at,
+                                                                  node.created_at))
         node.metadata.pop("bio", None)
     out = {"variant": name, "spec": spec, "rows": rows,
-           "metrics": forgetting_metrics(rows),
+           "metrics": forgetting_metrics(rows, metrics=("mrr", "recall", "precision")),
            "step_summary": [summary_row(rows, s) for s in range(n_tasks)],
            "dynamics": dyn}
     return out
+
+
+def _shift_iso(ts: Optional[str], delta: datetime.timedelta) -> Optional[str]:
+    """Backdate/advance an ISO timestamp (simulated time between tasks)."""
+    if not ts:
+        return ts
+    d = _parse_iso(ts)
+    return (d + delta).isoformat(timespec="seconds") if d else ts
+
+
+def _parse_iso(ts: str) -> Optional[datetime.datetime]:
+    try:
+        return datetime.datetime.fromisoformat(str(ts).replace("Z", "+00:00"))
+    except (TypeError, ValueError):
+        return None
 
 
 def _final_question_rows(variant: dict, n_tasks: int) -> list:
@@ -271,6 +309,15 @@ def significance(results: dict, baseline: str, n_tasks: int) -> dict:
     return out
 
 
+def _rss_gb() -> Optional[float]:
+    """Process RSS in GB, or None when psutil is unavailable."""
+    try:
+        import psutil
+        return round(psutil.Process().memory_info().rss / 1e9, 3)
+    except Exception:
+        return None
+
+
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--variants", default="all",
@@ -278,6 +325,9 @@ def main() -> int:
     ap.add_argument("--per-task", type=int, default=40)
     ap.add_argument("--k", type=int, default=8)
     ap.add_argument("--seed", type=int, default=42)
+    ap.add_argument("--interval-days", type=float, default=30.0,
+                    help="simulated days of disuse between two task arrivals; "
+                         "0 reproduces the degenerate same-age corpus")
     ap.add_argument("--out", default=OUT)
     args = ap.parse_args()
 
@@ -293,6 +343,7 @@ def main() -> int:
 
     ws = load_workspace()
     base_cfg = ws.config
+    ram0, db_bytes = _rss_gb(), os.path.getsize(os.path.join(_LAB, "mira.db"))
     idx = task_index(ws)
     tagged = len(idx)
     print(f"lab workspace: {len(ws.frame.nodes)} nodes, {tagged} tagged, "
@@ -308,7 +359,7 @@ def main() -> int:
     t0 = time.time()
     for name in names:
         v = run_variant(name, VARIANTS[name], ws, base_cfg, idx, golds,
-                        n_tasks, args.k)
+                        n_tasks, args.k, interval_days=args.interval_days)
         results[name] = v
         agg = v["step_summary"][-1] if v["step_summary"] else {}
         print(f"{name:24s} final mrr {agg.get('mrr', 0):.4f} "
@@ -318,6 +369,15 @@ def main() -> int:
 
     payload = {"generated_at": time.strftime("%Y-%m-%dT%H:%M:%S"),
                "n_tasks": n_tasks, "k": args.k, "per_task": args.per_task,
+               "interval_days": args.interval_days,
+               "ram_rss_gb": {"start": ram0, "end": _rss_gb()},
+               "lab_store_bytes": db_bytes,
+               "time_model": (f"{args.interval_days:g} simulated days of disuse "
+                              "pass over all learned memories between two task "
+                              "arrivals (in-memory, restored after the run)"
+                              if args.interval_days else
+                              "no simulated time — all memories share one ingest "
+                              "time, so decay is a near-uniform rescale"),
                "questions_per_task": {str(t): len(v) for t, v in golds.items()},
                "significance": significance(results, "B_mira", n_tasks),
                "scope": "retrieval-level (MRR/recall) over evidence node ids; "

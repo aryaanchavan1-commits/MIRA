@@ -65,11 +65,31 @@ def decay_factor(node: MemoryNode, now: datetime.datetime,
         return 1.0
     if (ts.tzinfo is None) != (now.tzinfo is None):
         now = now.replace(tzinfo=None) if ts.tzinfo is None else now.replace(tzinfo=ts.tzinfo)
-    days = max(0.0, (now - ts).total_seconds() / 86400.0)
+    # apply_decay overrides the age with "elapsed since the last decay pass"
+    # so repeated sleeps charge each interval once (see _last_activity)
+    override = node.metadata.get("_decay_age_days")
+    days = float(override) if override is not None else max(
+        0.0, (now - ts).total_seconds() / 86400.0)
+    days = max(0.0, days)
     degree = node.metadata.get("_degree", 0)  # set by caller (apply_decay)
     stability = 1.0 + stability_boost * (min(degree, 8) / 8.0) * node.confidence
     tau = max(half_life_days, 1e-6) / np.log(2.0) * stability
     return float(np.exp(-days / tau))
+
+
+def _last_activity(node: MemoryNode) -> Optional[datetime.datetime]:
+    """The newest of last-modified and last-decayed.
+
+    A decay pass must charge only the interval SINCE it last ran, not the
+    full age again — otherwise a nightly consolidate multiplies a memory by
+    R(age) every night and a month of sleep erases it. Clock resets from use
+    (reinforce_nodes touches updated_at) still count as activity; created_at
+    is only a fallback when updated_at is missing.
+    """
+    base = _parse_ts(node.updated_at) or _parse_ts(node.created_at)
+    last_decay = _parse_ts(node.metadata.get("last_decay_at"))
+    stamps = [s for s in (base, last_decay) if s is not None]
+    return max(stamps) if stamps else None
 
 
 def apply_decay(frame: MemoryFrame, now: Optional[datetime.datetime] = None,
@@ -86,10 +106,21 @@ def apply_decay(frame: MemoryFrame, now: Optional[datetime.datetime] = None,
 
     changed, total_r, n = 0, 0.0, 0
     min_seen, max_seen = 1.0, 0.0
+    stamp = now.isoformat(timespec="seconds")
     for node in frame.nodes.values():
         node.metadata["_degree"] = degree.get(node.id, 0)
+        ts = _last_activity(node)
+        if ts is not None:
+            if (ts.tzinfo is None) != (now.tzinfo is None):
+                now = now.replace(tzinfo=None) if ts.tzinfo is None \
+                    else now.replace(tzinfo=ts.tzinfo)
+            node.metadata["_decay_age_days"] = max(
+                0.0, (now - ts).total_seconds() / 86400.0)
         r = decay_factor(node, now, half_life_days=half_life_days)
         node.metadata.pop("_degree", None)
+        node.metadata.pop("_decay_age_days", None)
+        if not dry_run:
+            node.metadata["last_decay_at"] = stamp
         total_r += r
         n += 1
         min_seen, max_seen = min(min_seen, r), max(max_seen, r)

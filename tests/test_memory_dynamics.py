@@ -105,6 +105,38 @@ def test_build_gists_skips_small_clusters() -> None:
     assert report["gists"] == 0
 
 
+def test_repeated_decay_passes_charge_each_interval_once() -> None:
+    """Two immediate passes must not double-count: decay is charged per
+    interval since the last pass, so an immediate second pass is a no-op and
+    a nightly consolidate cannot compound a month of age into one night."""
+    f = MemoryFrame()
+    n = _node("old", vec=[1.0, 0.0])
+    n.updated_at = (datetime.utcnow()
+                    - timedelta(days=30)).isoformat(timespec="seconds")
+    f.add_node(n)
+
+    r1 = apply_decay(f, half_life_days=30.0)
+    imp_after_one = f.nodes["old"].importance
+    assert imp_after_one < _node("old").importance, "aged memory must fade"
+
+    r2 = apply_decay(f, half_life_days=30.0)   # immediate second pass
+    assert f.nodes["old"].importance == imp_after_one, \
+        "a same-moment repeat pass must charge zero extra interval"
+    assert r2["retention_mean"] >= 0.999
+    assert r1["retention_mean"] < 1.0
+
+    # 10 more days pass: the next pass charges exactly those 10 days, not 40
+    f.nodes["old"].updated_at = (datetime.utcnow()
+                                 - timedelta(days=10)).isoformat(timespec="seconds")
+    f.nodes["old"].metadata["last_decay_at"] = (datetime.utcnow()
+                                                - timedelta(days=10)
+                                                ).isoformat(timespec="seconds")
+    apply_decay(f, half_life_days=30.0)
+    expected = imp_after_one * (0.5 ** (10 / 30.0))
+    assert abs(f.nodes["old"].importance - expected) < 0.02, \
+        (f.nodes["old"].importance, expected)
+
+
 def _run_all() -> None:
     tests = [v for k, v in sorted(globals().items()) if k.startswith("test_")]
     for fn in tests:
