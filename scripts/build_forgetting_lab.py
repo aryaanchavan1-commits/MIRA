@@ -1,11 +1,16 @@
-"""Build the Catastrophic Forgetting Lab workspace: 4 sequential tasks (spec §15).
+"""Build the Catastrophic Forgetting Lab workspace: sequential task shards (§15).
 
-Real MuSiQue data, ingested as **four sequential task shards** so knowledge
+Real MuSiQue data, ingested as **six sequential task shards** so knowledge
 acquisition order is controlled and reproducible:
 
-    Task A -> Task B -> Task C -> Task D
-      test      test        test        test
-        A      A + B       A + B + C   A + B + C + D
+    Task A -> Task B -> Task C -> Task D -> Task E -> Task F
+      test      test        test        test        test        test
+        A      A + B       A + B + C   A + ... + D  ... + E     A + ... + F
+
+Six rather than four by default: a longer sequence gives the forgetting curve
+more post-arrival observation points (a task is re-tested at every later step),
+which is the axis the whole study lives on. ``--tasks 4`` reproduces the
+shorter sequence.
 
 Design notes (why it is built this way):
 
@@ -22,6 +27,7 @@ Design notes (why it is built this way):
 
 Usage:
     .venv/Scripts/python.exe scripts/build_forgetting_lab.py
+    .venv/Scripts/python.exe scripts/build_forgetting_lab.py --tasks 4
     .venv/Scripts/python.exe scripts/build_forgetting_lab.py --distractors 150
 """
 from __future__ import annotations
@@ -113,7 +119,7 @@ def plan_tasks(questions: list, paragraphs: dict, n_tasks: int, seed: int,
 
 def main() -> int:
     ap = argparse.ArgumentParser()
-    ap.add_argument("--tasks", type=int, default=4)
+    ap.add_argument("--tasks", type=int, default=6)
     ap.add_argument("--distractors", type=int, default=120)
     ap.add_argument("--seed", type=int, default=42)
     ap.add_argument("--plan-only", action="store_true",

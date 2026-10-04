@@ -21,7 +21,8 @@ from __future__ import annotations
 
 from typing import Any, Dict, Iterable, List, Optional
 
-METRICS = ("mrr", "recall", "hit_at_k", "precision", "latency_ms")
+METRICS = ("mrr", "recall", "hit_at_k", "precision", "answer_coverage",
+           "answer_found", "latency_ms")
 
 
 def _series(rows: Iterable[Dict[str, Any]], task: int,

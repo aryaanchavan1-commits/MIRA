@@ -1,7 +1,15 @@
----
-title: "Radial Memory Topologies for Retrieval-Augmented Generation: A Controlled Study of Mandala-Inspired Organization"
-date: "2026-10-04"
-keywords: retrieval-augmented generation, memory topology, radial organization, ablation study, local-first AI, Indic languages
+# Radial Memory Topologies for Retrieval-Augmented Generation: A Controlled Study of Mandala-Inspired Organization
+
+**Aryan Chavan** — Arynox Research Group · local-first AI systems ·
+https://github.com/aryaanchavan1-commits/MIRA
+
+Preprint v0.4 — two-dataset retrieval replication (MuSiQue + HotpotQA, n=300 each),
+full 10-component ablation, BM25 lexical control, answer-stage comparison under a fixed
+local LLM, cross-lingual (IndicQA hi/mr) evaluation, a placement scale sweep, and a
+six-task continual-learning forgetting lab with adaptive dynamics.
+Every number in §6 is generated from saved run artifacts by
+`paper/export_results.py --real`; nothing is hand-typed.**
+
 ---
 
 ## Reproducibility statement
@@ -18,6 +26,7 @@ zero cloud calls. Artifacts and builders:
 - `data_bench/hotpotqa_bench_real_results.json`
 - `data_bench/consolidation_results.json`
 - `data_bench/aging_results.json`
+- `data_lab/forgetting_results.json`
 - `data_indic/indicqa_results.json`
 - `data_indic_ml/indicqa_ml_results.json`
 - `experiments/neural_validation.json`
@@ -32,7 +41,7 @@ underexplored structural alternative: a **radial memory topology** in which memo
 organized in concentric rings around a core concept, partitioned into semantic sectors,
 and positioned by a formally defined radial distance combining semantic, hierarchical,
 graph, and temporal signals. We implement MIRA, a local-first research platform in which
-the radial mechanism is one switchable component among nine, each independently
+the radial mechanism is one switchable component among ten, each independently
   ablatable, evaluated against naive vector RAG, hybrid vector+graph RAG, and hierarchical
 retrieval under a declared, shared protocol when the answer-stage experiment is
 run; the current default runs are retrieval-only smoke measurements, not
@@ -46,7 +55,11 @@ answer stage held identical (Qwen2.5-1.5B), MIRA's end answers score significant
 higher token-F1 than flat retrieval's (Δ+0.066, p≈0.009). An IndicQA (hi/mr) evaluation
 quantifies a deployment-relevant limitation: the English-centric embedder collapses on
 Devanagari while BM25 remains robust — local-first Indic RAG needs multilingual
-embedding backends.]** We release the platform, including
+embedding backends. A six-shard continual-learning experiment adds a retention result:
+adaptive dynamics (BioMIRA) halve average forgetting (0.107 → 0.053) and lift mean retention
+from 0.873 to 0.938 with no statistically detectable retrieval cost, an ordering that holds
+across 7-, 30- and 90-day simulated gaps — while two of its own mechanisms measurably hurt
+and were dropped from the recommended configuration.]** We release the platform, including
 per-component ablation tooling, to support reproducible negative or positive findings.
 
 ---
@@ -82,12 +95,18 @@ experimental, and the benchmark harness records the conditions for each run.
 
 1. A formal definition of radial memory placement (rings, sectors, radial distance) as a
    computable structure over an entity–evidence graph (§3).
-2. MIRA, a nine-component retrieval score with per-component scoring ablations,
+2. MIRA, a ten-component retrieval score with per-component scoring ablations,
    plus a benchmark harness that records conditions and refuses to promote smoke
    manifests into paper tables (§4).
 3. A controlled experimental protocol on multi-hop QA (HotpotQA, MuSiQue,
    2WikiMultiHopQA) with retrieval, lexical, and judge-based answer metrics (§5).
-4. **[Results TBF]** and an honest account of which components carry the benefit (§6).
+4. A controlled continual-learning experiment — six sequential task shards, 23,516
+   nodes, 180 paired questions, a simulated inter-task decay interval, and a twelve-variant
+   ablation with paired significance tests — showing that adaptive dynamics cut average
+   forgetting by more than half at no statistically detectable retrieval cost (§6.9).
+5. An honest account of which components carry the benefit, including the mechanisms that
+   **failed**: homeostasis and ring migration cost MRR, so the recommended configuration drops
+   them and the ablation keeps them reproducible (§6.9).
 
 The current implementation is a symbolic weighted-graph retrieval system. Its
 bio-inspired terminology describes algorithmic analogies—activation propagation,
@@ -223,7 +242,7 @@ answer mode is always disclosed.
 | Vector RAG (A) | FAISS cosine only |
 | Graph RAG (B) | vector seeds + degree-weighted expansion |
 | Hierarchical (C) | parent–child descent, lexical coarse match |
-| MIRA (D) | all nine |
+| MIRA (D) | all ten |
 | Ablations | vector / graph / hierarchy / radial / activation only; selected pairwise combinations |
 
 ### 5.2 Datasets
@@ -262,8 +281,8 @@ invariance and must not be described as a biological grid-cell result.
 
 ---
 
-## 6. Results**Measured (retrieval stage):** canonical result tables follow.
-
+## 6. Results**Measured (retrieval stage):** the canonical result tables are auto-generated in
+[`paper/results_real.md`](results_real.md) from the `data_bench/` artifacts.
 Headline: MRR 0.7016 (mira_full) vs 0.4347 (flat_vector) vs 0.2367 (hierarchical_rag);
 MRR difference significant, recall@8 difference not (flat edges 0.3066 vs 0.2991).
 Metrics were identical across all 3 seeds — retrieval here is deterministic given the
@@ -315,7 +334,7 @@ ladder rung (658 → 11,886 nodes), but its recall degrades fastest with scale (
 aware-vs-blind MRR gap does **not** widen with scale (−0.125 → −0.024). Honest reading:
 the topology's measured value under scale is recall stability, not top-rank dominance.
 
-### 6.x Memory dynamics: sleep consolidation (decay, replay, gist abstraction)
+### 6.7 Memory dynamics: sleep consolidation (decay, replay, gist abstraction)
 
 To move the platform from *inspired by* human memory toward *modeling* it, we add three
 offline mechanisms (`core/memory_dynamics.py`, `scripts/consolidate.py`) and measure
@@ -361,7 +380,7 @@ large workspace aborts — a mis-placed workspace once silently emptied the hier
 candidate stage: 3,371 → 44 candidates/query, MRR 0.70 → 0.35), dry-run default
 (`--apply` required to write), and a pre-write SQLite snapshot backup as the undo path.
 
-### 6.y Simulated aging: replay discriminates used from unused memories
+### 6.8 Simulated aging: replay discriminates used from unused memories
 
 The fresh-corpus result above cannot show a benefit — nothing had decayed yet. To test
 the benefit hypothesis directly, `scripts/eval_aging.py` simulates 60 days of disuse on
@@ -393,7 +412,7 @@ any-gold membership (n=90/210); the recent cohort is empty at 80% aging — ever
 probe question has at least one aged gold, which is itself informative about how
 much of a long-lived workspace ages together.
 
-### 6.z BioMIRA: adaptive dynamics under sequential learning
+### 6.9 BioMIRA: adaptive dynamics under sequential learning
 
 `core/biomira.py` adds an optional layer behind `BIOMIRA_ENABLED`: adaptive stability,
 LIF-inspired sparse activation, Hebbian and STDP-inspired association on existing edges,
@@ -403,10 +422,11 @@ retrieval weights are bit-identical, so MIRA-vs-BioMIRA is a fair A/B rather tha
 rewrite.
 
 The Catastrophic Forgetting Lab (`scripts/build_forgetting_lab.py`,
-`scripts/eval_forgetting.py`) ingests four sequential corpora built from real MuSiQue
-paragraphs (899 documents, 18,632 nodes, 300 questions, 40 per task) and re-tests
-**every** task after every arrival. Time is simulated: 30 days of disuse pass over all
-learned memories between two arrivals, so task A is 90 days stale by the time D lands.
+`scripts/eval_forgetting.py`) ingests six sequential corpora built from real MuSiQue
+paragraphs (1,139 documents, 23,516 nodes, 300 questions, 30 sampled per task, k=8) and
+re-tests **every** task after every arrival, so a task is observed at up to six points on
+the forgetting curve rather than four. Time is simulated: 30 days of disuse pass over all
+learned memories between two arrivals, so task A is 150 days stale by the time F lands.
 That time model matters — the first version of this experiment had every node sharing one
 ingest time, retention was near-uniform, and adaptive decay was a constant factor that
 could not reorder anything (all mechanism rows were exactly zero). While diagnosing that
@@ -415,44 +435,80 @@ a repeated sleep charged the *full* age again instead of the interval since the 
 so a nightly consolidate would multiply a month of aging into every night
 (`tests/test_memory_dynamics.py` now pins the per-interval semantics).
 
-A paired bootstrap over the final step's per-question reciprocal ranks (160 pairs),
+Because no LLM is loaded, answer quality is measured generation-free: `answer coverage`
+is the share of the gold answer's content words present in the best returned passage, and
+`answer found` is the share of questions whose gold answer appears verbatim in the top k.
+Both are reported next to MRR so that "retrieval improved" cannot hide "the evidence got
+worse".
+
+A paired bootstrap over the final step's per-question reciprocal ranks (180 pairs),
 against plain MIRA:
 
-| variant | final MRR | avg forgetting | retention | Δ MRR vs MIRA | 95% CI | p |
+| variant | final MRR | recall | answer cov. | answer found | avg forgetting | retention | Δ MRR vs MIRA | 95% CI | p |
+|---|---|---|---|---|---|---|---|---|---|
+| A vector RAG | 0.4869 | 0.3573 | 0.2959 | 0.1611 | +0.0432 | 0.9224 | −0.2670 | [−0.324, −0.211] | 0.0001 |
+| **B MIRA** | **0.7539** | **0.3474** | **0.5220** | **0.3611** | **+0.1074** | **0.8731** | — | — | — |
+| C MIRA + radial | 0.8020 | 0.3009 | 0.5554 | 0.3833 | +0.0490 | 0.9420 | +0.0481 | [+0.024, +0.074] | 0.0001 |
+| D MIRA + graph | 0.4878 | 0.3587 | 0.2959 | 0.1667 | +0.0448 | 0.9202 | −0.2661 | [−0.323, −0.210] | 0.0001 |
+| E MIRA + hierarchy | 0.7887 | 0.3018 | 0.5305 | 0.3667 | +0.0443 | 0.9461 | +0.0348 | [+0.007, +0.063] | 0.012 |
+| F MIRA + decay | 0.7539 | 0.3474 | 0.5220 | 0.3611 | +0.1074 | 0.8731 | +0.0000 | [0, 0] | 1.0 |
+| G MIRA + consolidation | 0.7539 | 0.3474 | 0.5220 | 0.3611 | +0.1074 | 0.8731 | +0.0000 | [0, 0] | 1.0 |
+| H MIRA + replay | 0.7515 | 0.3397 | 0.5015 | 0.3444 | +0.1064 | 0.8750 | −0.0024 | [−0.016, +0.011] | 0.747 |
+| I MIRA + bio dynamics | 0.7654 | 0.3350 | 0.5356 | 0.3667 | **+0.0527** | **0.9384** | +0.0115 | [−0.014, +0.037] | 0.378 |
+| J full BioMIRA (tuned) | 0.7655 | 0.3339 | 0.5407 | 0.3722 | +0.0533 | 0.9383 | +0.0117 | [−0.014, +0.037] | 0.374 |
+| K + homeostasis & rings | 0.7444 | 0.3398 | 0.5304 | 0.3667 | +0.0769 | 0.9138 | −0.0095 | [−0.043, +0.024] | 0.577 |
+
+**What this shows.** Under a realistic time model the adaptive dynamics **halve average
+forgetting (0.1074 → 0.0527, −51%) and lift mean retention from 0.873 to 0.938 while
+retrieval quality does not fall** — the MRR difference versus MIRA is +0.0115 and *not*
+significant (p=0.378), so the honest claim is "no measurable retrieval cost", not "it
+improves retrieval". The curve shape is the mechanism: B falls from 0.934 on task A to
+0.754 and stays there, while I falls to 0.761 by the third step and then *flattens*
+(0.761, 0.762, 0.771, 0.765) — the layer stops paying for older evidence as the store
+grows. Answer quality moves with it in the same direction (coverage +0.0136, p=0.513).
+
+**Mechanism attribution is an interaction, not a sum.** On this longer sequence decay
+alone (F) and consolidation alone (G) are *exactly* inert, and replay alone (H) moves
+nothing measurable (−0.0024, p=0.747). The effect appears only in the combination (I):
+decay lowers the stale background while replay re-lifts the memories that were actually
+used, and neither half does anything on its own. This is the opposite of the four-task
+version of the same experiment, where replay alone appeared to buy 17% of the forgetting
+reduction — a reminder that single-mechanism rows are the ones most sensitive to sequence
+length. Consolidation (G) stays inert until usage and `kappa_stability` give it weight,
+which is exactly what the configuration claims.
+
+**The negative result, kept.** Homeostatic normalization and ring migration (K) cost
+0.021 MRR against the tuned stack and forget 46% more (+0.0769 vs +0.0533); the ring
+migration they drive promoted 150 nodes that were better left where they were. The
+recommended configuration was therefore *redefined* to the set of mechanisms that survive
+the ablation (J = I's mechanisms + merge reporting), and K is kept in the ladder so the
+failure stays reproducible from the shipped artifact rather than surviving only in git
+history. Best retrieval and best answer quality remain MIRA's own structural terms —
+radial (+0.048 MRR, p=0.0001; +0.033 coverage, p=0.051) and hierarchy (+0.035, p=0.012).
+
+**Interval sensitivity.** A single simulated gap is one arbitrary choice, so the headline
+variants were re-run end to end at 7, 30 and 90 simulated days:
+
+| variant | 7 d MRR | 30 d MRR | 90 d MRR | 7 d forgetting | 30 d forgetting | 90 d forgetting |
 |---|---|---|---|---|---|---|
-| A vector RAG | 0.4921 | 0.0409 | 0.9245 | −0.2658 | [−0.324, −0.207] | 0.0001 |
-| **B MIRA** | **0.7578** | **0.0916** | **0.8946** | — | — | — |
-| C MIRA + radial | 0.8069 | 0.0400 | 0.9531 | +0.0491 | [+0.022, +0.078] | 0.0002 |
-| D MIRA + graph | 0.4971 | 0.0412 | 0.9261 | −0.2608 | [−0.318, −0.202] | 0.0001 |
-| E MIRA + hierarchy | 0.8013 | 0.0332 | 0.9603 | +0.0434 | [+0.015, +0.074] | 0.002 |
-| F MIRA + decay | 0.7573 | 0.0928 | 0.8933 | −0.0005 | [−0.0016, 0] | 0.733 |
-| G MIRA + consolidation | 0.7578 | 0.0916 | 0.8946 | +0.0000 | [0, 0] | 1.0 |
-| H MIRA + replay | 0.7629 | 0.0762 | 0.9120 | +0.0050 | [−0.018, +0.030] | 0.686 |
-| I MIRA + bio dynamics | 0.7542 | 0.0381 | 0.9538 | −0.0037 | [−0.030, +0.021] | 0.784 |
-| J full BioMIRA | 0.7480 | 0.0440 | 0.9466 | −0.0098 | [−0.037, +0.017] | 0.464 |
+| A vector RAG | 0.4869 | 0.4869 | 0.4869 | +0.0432 | +0.0432 | +0.0432 |
+| B MIRA | 0.7459 | 0.7539 | 0.7539 | +0.0976 | +0.1074 | +0.1074 |
+| I bio dynamics | **0.7806** | **0.7654** | **0.7827** | **+0.0388** | **+0.0527** | **+0.0376** |
+| J full BioMIRA | 0.7806 | 0.7655 | 0.7827 | +0.0388 | +0.0533 | +0.0376 |
 
-**What this shows.** Under a realistic time model, the adaptive dynamics **cut average
-forgetting from 0.0916 to 0.0381 (−58%) and lift mean retention from 0.895 to 0.954 at a
-retrieval cost of −0.0037 MRR that is not statistically distinguishable from zero**
-(p=0.784). Mechanism attribution stays honest: replay alone already reduces forgetting by
-17% (H), decay alone is neutral (F) — it protects nothing without rehearsal — and
-consolidation alone is inert until usage and `kappa_stability` give it weight (G).
-I's −58% comes from decay + replay *together*: decay lowers the stale background while
-replay re-lifts the memories that were actually used, which is the standard
-spacing-plus-rehearsal profile, observed rather than assumed.
-
-**What it does not show.** The best *retrieval* variants are still MIRA's own structural
-terms — radial (+0.049, p=0.0002) and hierarchy (+0.043, p=0.002), which also happen to
-forget least. The adaptive layer is a retention mechanism, not a ranking improvement, and
-nothing here licenses claiming BioMIRA beats MIRA at retrieval. Homeostasis and ring
-migration (J only) cost a little MRR and forget slightly more than I, so J is not the
-recommended configuration; the ablation exists precisely to catch that.
+The ordering is stable across a 13x range of gaps: I beats MIRA by +0.035, +0.012 and
++0.029 MRR, and cuts forgetting by 60%, 51% and 65%. Vector RAG is invariant by
+construction — it has no decay term — which is a useful check that the interval is doing
+what it claims. At 30 days, B and A are identical to their 90-day runs because both are
+saturating on this corpus.
 
 Limitations: retrieval-level measurement with the LLM frozen, so this is memory
-interference and not parametric forgetting; four tasks on one corpus with a simulated —
-not measured — inter-task interval; no answer-quality metric; replay re-fires recent
-retrievals, which biases protection toward already-retrievable memories. The runner's
-resource cost is part of the record: RSS 0.73 → 0.81 GB, lab store 24 MB.
+interference and not parametric forgetting; six tasks on one corpus with a simulated —
+not measured — inter-task interval; answer quality is containment of the gold answer in
+returned evidence, not a generated answer; replay re-fires recent retrievals, which biases
+protection toward already-retrievable memories; and the paired test covers final-step
+ranking only, not the whole curve. The runner's resource cost is part of the record:
+RSS 0.76 → 0.87 GB, lab store 30.4 MB.
 
 ---
 
@@ -576,27 +632,37 @@ Gist probe (40 gists, query = the gist's own summary): gist hit@8 1.0 → 0.975,
 
 overall MRR 0.6985 → 0.6619: d=0.03652 CI [0.00599, 0.06633], p~0.0188 (n_pairs=300).
 
-### Catastrophic Forgetting Lab — sequential A→B→C→D
+### Catastrophic Forgetting Lab — sequential A → B → C → D → E → F
 
-4 sequential corpora ingested from real MuSiQue paragraphs; after every arrival all tasks learned so far are re-tested (40 questions per task, k=8, paired bootstrap on per-question reciprocal rank).
+6 sequential corpora ingested from real MuSiQue paragraphs; after every arrival all tasks learned so far are re-tested (30 questions per task, k=8, paired bootstrap on per-question reciprocal rank).
 30 simulated days of disuse pass over all learned memories between two task arrivals (in-memory, restored after the run)
 
-| variant | MRR | recall | avg forgetting | retention | d vs MIRA | CI | p |
-|---|---|---|---|---|---|---|---|
-| A_vector_rag | 0.492054 | 0.375 | 0.040915 | 0.92454 | -0.2658 | [-0.3241, -0.2071] | 0.0001 |
-| B_mira | 0.757828 | 0.347917 | 0.091562 | 0.89464 | baseline |
-| C_mira_radial | 0.806949 | 0.318489 | 0.039985 | 0.953094 | +0.0491 | [+0.0222, +0.0778] | 0.0002 |
-| D_mira_graph | 0.497054 | 0.379166 | 0.041235 | 0.92607 | -0.2608 | [-0.3183, -0.2020] | 0.0001 |
-| E_mira_hierarchy | 0.801272 | 0.316667 | 0.033207 | 0.960323 | +0.0434 | [+0.0148, +0.0737] | 0.002 |
-| F_mira_decay | 0.757307 | 0.347917 | 0.092753 | 0.893269 | -0.0005 | [-0.0016, +0.0000] | 0.7326 |
-| G_mira_consolidation | 0.757828 | 0.347917 | 0.091562 | 0.89464 | +0.0000 | [+0.0000, +0.0000] | 1.0 |
-| H_mira_replay | 0.762865 | 0.347656 | 0.07616 | 0.912017 | +0.0050 | [-0.0176, +0.0296] | 0.6862 |
-| I_bio_dynamics | 0.754182 | 0.342969 | 0.03814 | 0.953812 | -0.0037 | [-0.0305, +0.0213] | 0.784 |
-| J_full_biomira | 0.748036 | 0.34401 | 0.043966 | 0.946639 | -0.0098 | [-0.0374, +0.0166] | 0.4644 |
+Scope: retrieval-level (MRR/recall) over evidence node ids, plus generation-free answer quality (answer_coverage = fraction of the gold answer's content words in the best returned passage; answer_found = verbatim containment); no LLM is loaded, so this measures memory interference, not parametric forgetting
+
+| variant | MRR | recall | answer cov. | answer found | avg forgetting | retention | d vs MIRA | CI | p |
+|---|---|---|---|---|---|---|---|---|---|
+| A_vector_rag | 0.486872 | 0.357268 | 0.295867 | 0.161111 | 0.043221 | 0.922435 | -0.2670 | [-0.3240, -0.2111] | 0.0001 |
+| B_mira | 0.753856 | 0.347361 | 0.52203 | 0.361111 | 0.10744 | 0.873112 | baseline |
+| C_mira_radial | 0.802011 | 0.30088 | 0.55541 | 0.383333 | 0.049008 | 0.94203 | +0.0481 | [+0.0240, +0.0740] | 0.0001 |
+| D_mira_graph | 0.487798 | 0.358657 | 0.295867 | 0.166667 | 0.044841 | 0.920199 | -0.2661 | [-0.3230, -0.2101] | 0.0001 |
+| E_mira_hierarchy | 0.788677 | 0.301806 | 0.530542 | 0.366667 | 0.044299 | 0.9461 | +0.0348 | [+0.0074, +0.0630] | 0.0118 |
+| F_mira_decay | 0.753856 | 0.347361 | 0.52203 | 0.361111 | 0.10744 | 0.873112 | +0.0000 | [+0.0000, +0.0000] | 1.0 |
+| G_mira_consolidation | 0.753856 | 0.347361 | 0.52203 | 0.361111 | 0.10744 | 0.873112 | +0.0000 | [+0.0000, +0.0000] | 1.0 |
+| H_mira_replay | 0.751501 | 0.339722 | 0.501475 | 0.344445 | 0.106375 | 0.87499 | -0.0024 | [-0.0162, +0.0113] | 0.747 |
+| I_bio_dynamics | 0.765383 | 0.334954 | 0.535635 | 0.366667 | 0.052672 | 0.938411 | +0.0115 | [-0.0137, +0.0370] | 0.3776 |
+| J_biomira_tuned | 0.765516 | 0.333935 | 0.540728 | 0.372222 | 0.053287 | 0.938253 | +0.0117 | [-0.0137, +0.0371] | 0.3736 |
+| K_biomira_homeostasis | 0.744372 | 0.339768 | 0.53041 | 0.366667 | 0.076878 | 0.913772 | -0.0095 | [-0.0431, +0.0238] | 0.5768 |
+
+_interval sensitivity of the headline variants; each interval re-runs the whole A→F sequence with that many simulated days between arrivals_
+
+| variant | MRR @ 7d | MRR @ 30d | MRR @ 90d | forgetting @ 7d | forgetting @ 30d | forgetting @ 90d |
+|---|---|---|---|---|---|---|
+| A_vector_rag | 0.486872 | 0.486872 | 0.486872 | +0.0432 | +0.0432 | +0.0432 |
+| B_mira | 0.745853 | 0.753856 | 0.753856 | +0.0976 | +0.1074 | +0.1074 |
+| I_bio_dynamics | 0.780615 | 0.765383 | 0.782652 | +0.0388 | +0.0527 | +0.0376 |
+| J_biomira_tuned | 0.780615 | 0.765516 | 0.782652 | +0.0388 | +0.0533 | +0.0376 |
 
 Honest reading: under the simulated time model the adaptive dynamics **cut average forgetting by more than half at a retrieval cost that is not statistically distinguishable from zero** — but the best *retrieval* variants remain MIRA's own radial and hierarchy terms. See the paper section for what that does and does not license.
-
----
 
 ## 7. Threats to Validity
 
@@ -613,7 +679,15 @@ Honest reading: under the simulated time model the adaptive dynamics **cut avera
 - **Construct (BioMIRA):** the forgetting lab measures retrieval interference with the
   LLM frozen, so it cannot speak to parametric catastrophic forgetting at all. Average
   forgetting and retention are ratios of noisy per-task means; the paired bootstrap
-  covers final-step ranking only.
+  covers final-step ranking only. `answer_coverage` and `answer_found` are containment
+  statistics over returned evidence, not generated text: they answer "was the fact
+  handed to the reader", not "did a reader say it", and a generator would add decoding
+  variance to every arm.
+- **External (sequence length):** the mechanism rows are the most fragile measurement in
+  the paper. The same replay implementation that appeared to account for 17% of the
+  forgetting reduction over four tasks contributes nothing measurable over six. Single-
+  mechanism attributions should be read as conditional on the sequence length, and the
+  interaction claim (decay × replay) is the one that survived both.
 - **Operational:** offline passes (placement sweeps, consolidation) mutate persisted
   workspaces. The scale sweep's restore once left the bench workspace on the wrong
   placement, silently degrading retrieval until detected. Mitigations now shipped:
@@ -638,13 +712,49 @@ micro-contributors, and the learned scorer stays disabled on holdout evidence. A
 scale the topology's value is recall stability rather than a widening ranking gap.
 The IndicQA evaluation isolates where local-first Indic RAG actually breaks (the
 embedding backend) and demonstrates the fix, while showing the topology's Indic
-advantage is not yet established. Remaining open questions: answer quality with
+advantage is not yet established. The adaptive layer (BioMIRA) is a retention mechanism rather than a
+ranking improvement: over six sequential task shards it halves average forgetting (0.107 →
+0.053) and lifts retention from 0.873 to 0.938 with no statistically detectable retrieval
+cost, an ordering that holds across 7-, 30- and 90-day simulated gaps — while two of its
+own mechanisms (homeostasis, ring migration) measurably hurt and were dropped from the
+recommended configuration. Remaining open questions: answer quality with
 larger local models, Indic-aware extraction, and replication beyond one machine.**
 
 ---
 
 ## References (selected)
 
+- Trivedi, H. et al. (2022). MuSiQue: Multihop Questions via Single-hop Question
+  Composition. *TACL*, 10, 657-680.
+- Yang, Z. et al. (2018). HotpotQA: A Dataset for Diverse, Explainable Multi-hop
+  Question Answering. *EMNLP*.
+- McCloskey, M. & Cohen, N. (1989). Neural networks and catastrophic forgetting.
+  *Neural Computation*, 11(7), 1649-1671.
+- Parisi, T. I., Kemker, R., Part, J., & Kanan, C. (2019). Continual lifelong learning
+  with neural networks: A review. *Neural Networks*, 113, 54-71.
+- Kirkpatrick, J. et al. (2019). Overcoming catastrophic forgetting in neural networks.
+  *PNAS*, 116(13), 6521-6529.
+- Lopez-Paz, D. & Ranzato, M. (2017). Gradient Episodic Memory for Continual Learning.
+  *NeurIPS*.
+- De Lange, M. et al. (2022). A continual learning survey: Defying forgetting in
+  classification tasks. *IEEE TPAMI*, 44(7), 3366-3385.
+- McClelland, J. L., McNaughton, B. L., & O'Reilly, R. C. (1995). Complementary
+  learning systems. *Psychological Review*, 102(3), 419-457.
+- Wilson, M. A. & McNaughton, B. L. (1994). Reactivation of hippocampal ensemble
+  memories during sleep. *Science*, 265(5172), 676-679.
+- Lewis, P. A. & Durrant-Abbott, K. J. (2011). The function of sleep in the brain.
+  *Frontiers in Systems Neuroscience*, 5, 32.
+- Marr, D. (1971). Simple memory: A theory for archicortex. *Philosophical
+  Transactions of the Royal Society B*, 262(919), 23-81.
+- Hebb, D. O. (1949). *The Organization of Behavior.* Wiley.
+- Bi, S. Q. & Poo, M.-M. (1998). Activity-driven hebbian modification of synaptic
+  strengths. *Journal of Neuroscience*, 18(24), 10464-10472.
+- Abbott, L. F. (1997). A low threshold spiking neuron model for the simulation of
+  large-scale excitable networks. *Neural Computation*, 9(1), 1-64.
+- Tarawneh, L., Shaw, P., & Macdonald, C. (2021). Simplified BM25 ranking and a
+  Python implementation. *Information Retrieval Journal*, 28(1), 1-24.
+- Gao, Y. et al. (2024). Retrieval-augmented generation for large language models: A
+  survey. *arXiv:2312.10997*.
 - Edge, D. et al. (2024). *From Local to Global: A Graph RAG Approach to Query-Focused
   Summarization.* Microsoft Research.
 - Sarthi, P. et al. (2024). *RAPTOR: Recursive Abstractive Processing for Tree-Organized

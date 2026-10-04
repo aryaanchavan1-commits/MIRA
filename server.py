@@ -587,17 +587,29 @@ def lab_forgetting() -> Dict[str, Any]:
             "spec": v.get("spec"), "dynamics": v.get("dynamics"),
             "steps": v.get("step_summary"), "rows": v.get("rows"),
             "final_mrr": final.get("mrr"), "final_recall": final.get("recall"),
+            "final_answer_coverage": final.get("answer_coverage"),
+            "final_answer_found": final.get("answer_found"),
             "average_forgetting": agg, "mean_retention": ret,
             "curves": v["metrics"].get("metrics", {}),
         }
+    sweep = {}
+    for days, bucket in (data.get("interval_sweep") or {}).items():
+        sweep[days] = {n: {"final_mrr": (b.get("step_summary") or [{}])[-1].get("mrr"),
+                          "final_answer_coverage":
+                              (b.get("step_summary") or [{}])[-1].get("answer_coverage"),
+                          "final_forgetting": b.get("metrics", {})
+                              .get("average_forgetting", {}).get("mrr")}
+                      for n, b in bucket.items() if isinstance(b, dict) and b.get("rows")}
     return {"available": True, "meta": {k: data.get(k) for k in
                                         ("generated_at", "n_tasks", "k",
                                          "per_task", "scope",
                                          "interval_days", "time_model",
                                          "ram_rss_gb", "lab_store_bytes",
-                                         "variant_interpretation")},
+                                         "variant_interpretation",
+                                         "complete", "sweep_note")},
             "questions_per_task": data.get("questions_per_task"),
             "significance": data.get("significance"),
+            "interval_sweep": sweep or None,
             "variants": variants, "tasks": _lab_plan(plan_path)}
 
 

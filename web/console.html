@@ -185,7 +185,7 @@
       <div id="bio-toggle-out" class="small" role="status" aria-live="polite"></div>
     </div>
 
-    <div class="stat-grid" id="bio-stats" aria-live="polite"></div>
+    <div class="stat-grid stat-grid-4" id="bio-stats" aria-live="polite"></div>
 
     <div class="card">
       <h2>Dynamics pass</h2>
@@ -234,22 +234,33 @@
   <!-- FORGETTING LAB -->
   <section class="view" id="view-forgetting">
     <h1>Catastrophic Forgetting Lab</h1>
-    <p class="small muted">Sequential tasks A → B → C → D. After every task, <strong>all</strong> tasks
-      learned so far are re-tested, and forgetting is measured as the drop from each task's own best
-      earlier score. Scope: retrieval-level (MRR / recall) with the LLM frozen — this measures
-      <strong>memory interference</strong>, not parametric forgetting.</p>
+    <p class="small muted" id="lab-intro">Sequential task shards, learned one after another. After every
+      task, <strong>all</strong> tasks learned so far are re-tested, and forgetting is measured as the
+      drop from each task's own best earlier score. Scope: retrieval-level (MRR / recall) with the LLM
+      frozen — this measures <strong>memory interference</strong>, not parametric forgetting.</p>
     <div id="lab-tasks-out" aria-live="polite"></div>
     <div class="card">
       <h2>Ablation ladder</h2>
-      <p class="small muted">A–J isolate one signal or one adaptive mechanism at a time.
+      <p class="small muted">Each row isolates one signal or one adaptive mechanism at a time.
         Improvement is only attributed to a component that shows its own isolated effect
         — a negative or null row is a result, not a failure.</p>
       <div id="lab-variants-out" role="status" aria-live="polite" aria-busy="false"></div>
     </div>
     <div class="card">
-      <h2>Retention &amp; forgetting curves</h2>
-      <label class="small muted" for="lab-variant-select">Variant</label>
-      <select id="lab-variant-select"></select>
+      <h2>Retrieval across steps</h2>
+      <p class="small muted">One line per task. A line that slopes down after later tasks arrive is
+        interference: that task got harder to retrieve because the store grew.</p>
+      <div class="bench-form">
+        <label for="lab-variant-select">Variant</label>
+        <select id="lab-variant-select"></select>
+        <label for="lab-metric">Metric</label>
+        <select id="lab-metric">
+          <option value="mrr">MRR</option>
+          <option value="recall">Recall</option>
+          <option value="answer_coverage">Answer coverage</option>
+          <option value="answer_found">Answer found</option>
+        </select>
+      </div>
       <div id="lab-chart-out" aria-live="polite"></div>
     </div>
   </section>

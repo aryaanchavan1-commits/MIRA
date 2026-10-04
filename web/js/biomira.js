@@ -33,15 +33,19 @@ async function loadBioState() {
     if (document.activeElement !== $("bio-kappa")) {
       $("bio-kappa").value = bioNum(data.config?.kappa_stability ?? 0, 2);
     }
+    // dynamics counters are meaningless while the layer is off: printing 0.000
+    // reads as "measured, nothing happening" rather than "not measured"
+    const on = Boolean(data.enabled);
+    const dyn = (v, digits = 3) => (on ? bioNum(v, digits) : "—");
     const cells = [
       ["Memories", data.nodes ?? "—"],
       ["Edges", data.edges ?? "—"],
-      ["Active now", data.active_count ?? "—"],
-      ["Mean activation", bioNum(data.mean_activation)],
-      ["At risk (retention &lt; 0.5)", data.at_risk_count ?? "—"],
-      ["Mean uses / memory", bioNum(data.mean_access_count, 2)],
-      ["Replayed memories", data.replayed_nodes ?? "—"],
-      ["Replay buffer", `${data.replay_buffer_size ?? "—"} max`],
+      ["Active now", on ? (data.active_count ?? "—") : "—"],
+      ["Mean activation", dyn(data.mean_activation)],
+      ["At risk", on ? (data.at_risk_count ?? "—") : "—"],
+      ["Mean uses / memory", dyn(data.mean_access_count, 2)],
+      ["Replayed memories", on ? (data.replayed_nodes ?? "—") : "—"],
+      ["Replay buffer", on ? `${data.replay_buffer_size ?? "—"} max` : "—"],
     ];
     stats.innerHTML = cells.map(([label, value]) =>
       `<div class="stat"><div class="v">${esc(String(value))}</div>` +
@@ -55,7 +59,11 @@ async function loadBioState() {
     const stale = document.getElementById("bio-hist-card");
     if (stale) stale.remove();
     stats.insertAdjacentHTML("afterend",
-      `<div class="card" id="bio-hist-card"><h2>Consolidation states</h2>${bar}</div>`);
+      `<div class="card" id="bio-hist-card"><h2>Consolidation states</h2>${bar}
+        <p class="small muted">A memory walks NEW → CANDIDATE → STABLE → CONSOLIDATED as it is
+        retrieved successfully and survives decay. State only advances on evidence: use it, or
+        it falls back. The ladder is the mechanism; the forgetting lab below is the test of
+        whether it helps.</p></div>`);
   } catch (err) {
     setStatus(stats, `Could not load BioMIRA state: ${err.message || err}`, "error");
   } finally {
@@ -151,8 +159,9 @@ async function loadBioMemories() {
       <td>${esc(String(m.access_count ?? 0))}</td>
       <td class="small muted">v${esc(String(m.version ?? 1))}</td>
     </tr>`).join("");
-    out.innerHTML = `<div class="table-wrap"><table class="lab-table">
-      <caption class="small muted">${esc(String(data.count))} memories, sorted by ${esc(data.sort)}</caption>
+    out.innerHTML = `<p class="small muted" id="bio-memories-cap">${esc(String(data.count))} memories,
+      sorted by ${esc(data.sort)}</p>
+    <div class="table-wrap"><table class="lab-table" aria-describedby="bio-memories-cap">
       <thead><tr><th scope="col">Memory</th><th scope="col">State</th><th scope="col">Ring</th>
       <th scope="col">Activation</th><th scope="col">Stability</th><th scope="col">Retention</th>
       <th scope="col">Importance</th><th scope="col">Uses</th><th scope="col">Version</th></tr></thead>
@@ -215,29 +224,40 @@ async function showBioExplain(nodeId) {
 }
 
 /* ---------- forgetting lab ---------- */
-function labChart(rows, k) {
+const LAB_METRICS = [
+  ["mrr", "MRR", "reciprocal rank of the first gold evidence node"],
+  ["recall", "Recall", "share of gold evidence nodes in the top k"],
+  ["answer_coverage", "Answer coverage", "share of the gold answer's words present in the best returned passage"],
+  ["answer_found", "Answer found", "share of questions whose gold answer appears verbatim in the top k"],
+];
+
+function labChart(rows, metric = "mrr") {
   if (!rows || !rows.length) return "";
+  const spec = LAB_METRICS.find((m) => m[0] === metric) || LAB_METRICS[0];
+  const [key, label] = spec;
   const W = 720, H = 240, pad = 34;
   const xs = [...new Set(rows.map((r) => r.step))].sort((a, b) => a - b);
   const x = (step) => pad + (W - 2 * pad) * (xs.indexOf(step) / Math.max(1, xs.length - 1));
-  // Retention sits in a narrow band near 1, so a fixed 0-1 axis would flatten
-  // every series into one line. Scale to the data and say so on the axis.
-  const vals = rows.map((r) => Number(r.mrr) || 0);
+  // Every one of these metrics sits in a narrow band near its own mean, so a
+  // fixed 0-1 axis would flatten every series into one line. Scale to the data
+  // and say so on the axis, rather than quietly cropping.
+  const vals = rows.map((r) => Number(r[key]) || 0);
   const lo = Math.min(...vals), hi = Math.max(...vals);
   const span = Math.max(hi - lo, 0.02);
   const yLo = Math.max(0, lo - span * 0.25), yHi = Math.min(1, hi + span * 0.25);
   const y = (v) => H - pad - (H - 2 * pad) *
     ((Math.min(1, Math.max(0, Number(v) || 0)) - yLo) / (yHi - yLo || 1));
   const tasks = [...new Set(rows.map((r) => r.task))].sort((a, b) => a - b);
-  const colors = ["#e0703a", "#3f8f7a", "#7a6bd0", "#b0894a", "#4a7fb0"];
+  const colors = ["#e0703a", "#3f8f7a", "#7a6bd0", "#b0894a", "#4a7fb0",
+                  "#c2557a", "#5f8f3f", "#8a6f4a"];
   const series = tasks.map((t) => {
     const pts = rows.filter((r) => r.task === t).sort((a, b) => a.step - b.step);
     const path = pts.map((p, i) =>
-      `${i ? "L" : "M"}${x(p.step).toFixed(1)},${y(p.mrr).toFixed(1)}`).join(" ");
+      `${i ? "L" : "M"}${x(p.step).toFixed(1)},${y(p[key]).toFixed(1)}`).join(" ");
     const dots = pts.map((p) =>
-      `<circle cx="${x(p.step).toFixed(1)}" cy="${y(p.mrr).toFixed(1)}" r="3.5"
-        fill="${colors[t % colors.length]}"><title>task ${t + 1}, step ${p.step + 1}:
-        MRR ${bioNum(p.mrr)} · recall ${bioNum(p.recall)} · n=${esc(String(p.n ?? "?"))}</title></circle>`).join("");
+      `<circle cx="${x(p.step).toFixed(1)}" cy="${y(p[key]).toFixed(1)}" r="3.5"
+        fill="${colors[t % colors.length]}"><title>Task ${String.fromCharCode(65 + t)}, after task ${p.step + 1}:
+        ${label} ${bioNum(p[key])} · MRR ${bioNum(p.mrr)} · recall ${bioNum(p.recall)} · n=${esc(String(p.n ?? "?"))}</title></circle>`).join("");
     return `<path d="${path}" fill="none" stroke="${colors[t % colors.length]}" stroke-width="2"/><g>${dots}</g>`;
   }).join("");
   const ticks = [0, 0.25, 0.5, 0.75, 1].map((f) => yLo + f * (yHi - yLo));
@@ -249,12 +269,38 @@ function labChart(rows, k) {
   const legend = tasks.map((t) =>
     `<span><span class="dot" style="background:${colors[t % colors.length]}"></span>Task ${String.fromCharCode(65 + t)}</span>`).join("");
   return `<svg viewBox="0 0 ${W} ${H}" role="img" class="chart"
-    aria-label="Retrieval MRR per task across the four learning steps, y axis zoomed to ${yLo.toFixed(2)}-${yHi.toFixed(2)}">
-    ${grid}${steps}<g>${series}</g></svg><div class="legend">${legend}</div>`;
+    aria-label="${esc(label)} per task across ${xs.length} learning steps, y axis zoomed to ${yLo.toFixed(2)}-${yHi.toFixed(2)}. ${esc(spec[2])}.">
+    ${grid}<text x="${pad}" y="${pad - 14}" class="chart-axis">${esc(label)}</text>${steps}<g>${series}</g></svg><div class="legend">${legend}</div>`;
+}
+
+/* Interval sensitivity: does the ranking survive a different gap between
+ * tasks? One table beats a paragraph of hand-waving about robustness. */
+function labSweep(data) {
+  const sweep = data.interval_sweep;
+  if (!sweep || !Object.keys(sweep).length) return "";
+  const days = Object.keys(sweep).sort((a, b) => Number(a) - Number(b));
+  const variants = [...new Set(days.flatMap((d) => Object.keys(sweep[d])))];
+  const cell = (v, key, signed) => {
+    if (!v || v[key] == null) return "—";
+    return signed ? bioSigned(v[key], 4) : bioNum(v[key]);
+  };
+  const body = variants.map((name) => `<tr>
+    <th scope="row">${esc(name)}</th>
+    ${days.map((d) => `<td>${cell(sweep[d]?.[name], "final_mrr")}</td>`).join("")}
+    ${days.map((d) => `<td>${cell(sweep[d]?.[name], "final_forgetting", true)}</td>`).join("")}
+  </tr>`).join("");
+  return `<h3 class="subhead">Interval sensitivity</h3>
+    <p class="small muted" id="lab-sweep-cap">${esc(data.meta?.sweep_note || "Final MRR at each simulated gap between task arrivals.")}</p>
+    <div class="table-wrap"><table class="lab-table" aria-describedby="lab-sweep-cap">
+      <thead><tr><th scope="col">Variant</th>
+        ${days.map((d) => `<th scope="col">MRR @ ${esc(d)}d</th>`).join("")}
+        ${days.map((d) => `<th scope="col">Forgetting @ ${esc(d)}d</th>`).join("")}
+      </tr></thead><tbody>${body}</tbody></table></div>`;
 }
 
 async function loadForgettingLab() {
   const tasksOut = $("lab-tasks-out");
+  const metricSel = $("lab-metric");
   const variantsOut = $("lab-variants-out");
   const chartOut = $("lab-chart-out");
   if (!tasksOut) return;
@@ -262,6 +308,17 @@ async function loadForgettingLab() {
   try {
     const data = await api("/api/lab/forgetting");
     const plan = data.tasks;
+    const names0 = (plan?.tasks || []).map((t) => t.name);
+    const intro = $("lab-intro");
+    // the sequence length is data, not prose: a hardcoded "A -> D" is a lie
+    // the moment the corpus is rebuilt with more shards
+    if (intro && names0.length) {
+      const arrow = names0.join(" → ");
+      intro.innerHTML = `Sequential tasks ${esc(arrow)} (${names0.length} shards). After every task,
+        <strong>all</strong> tasks learned so far are re-tested, and forgetting is measured as the
+        drop from each task's own best earlier score. Scope: retrieval-level (MRR / recall) with the
+        LLM frozen — this measures <strong>memory interference</strong>, not parametric forgetting.`;
+    }
     tasksOut.innerHTML = plan ? `<div class="grid-2">${plan.tasks.map((t) => `
       <div class="card"><h3>Task ${esc(t.name)}</h3>
         <p class="bench-figure">${esc(String(t.questions))}</p>
@@ -281,43 +338,58 @@ async function loadForgettingLab() {
     const rows = names.map((name) => {
       const v = data.variants[name];
       const dMRR = Number(v.final_mrr) - Number(base.final_mrr || 0);
-      const s = sig[name];
+      const s = sig[name]?.rr;
       // a mean difference with a p-value is a claim; without one it is not.
       const verdict = name === "B_mira" ? "baseline"
         : !s ? "not tested"
           : s.p_value <= 0.05
             ? `${s.mean_diff > 0 ? "significantly better" : "significantly WORSE"} (p=${bioNum(s.p_value, 4)})`
-            : `${Math.abs(dMRR) < 0.005 ? "no measurable change" : s.mean_diff > 0 ? "trends better" : "trends worse"}, not significant`;
+            : `${Math.abs(dMRR) < 0.005 ? "no change" : s.mean_diff > 0 ? "trends better" : "trends worse"}, not significant`;
       return `<tr>
         <th scope="row">${esc(name)}</th>
         <td>${esc(v.spec?.kappa ? `κ=${v.spec.kappa}` : "—")}</td>
         <td>${bioNum(v.final_mrr)}</td>
         <td>${bioNum(v.final_recall)}</td>
+        <td>${bioNum(v.final_answer_coverage)}</td>
+        <td>${bioNum(v.final_answer_found)}</td>
         <td>${bioSigned(v.average_forgetting, 4)}</td>
         <td>${bioNum(v.mean_retention, 3)}</td>
         <td>${esc(verdict)}</td>
       </tr>`;
     }).join("");
-    variantsOut.innerHTML = `<div class="table-wrap"><table class="lab-table">
-      <caption class="small muted">Final retrieval after task D · ${esc(data.meta?.n_tasks ?? "")} sequential tasks ·
-        ${esc(String(data.meta?.per_task ?? ""))} questions sampled per task</caption>
+    const nTasks = Number(data.meta?.n_tasks) || 0;
+    const lastTask = nTasks ? String.fromCharCode(64 + nTasks) : "—";
+    const planned = Number(data.tasks?.tasks?.length) || 0;
+    const stale = planned && nTasks && planned !== nTasks;
+    variantsOut.innerHTML = `<p class="small muted" id="lab-ladder-cap">Final retrieval after task
+        ${esc(lastTask)} · ${esc(String(nTasks))} sequential tasks ·
+        ${esc(String(data.meta?.per_task ?? ""))} questions sampled per task</p>
+      <div class="table-wrap"><table class="lab-table" aria-describedby="lab-ladder-cap">
       <thead><tr><th scope="col">Variant</th><th scope="col">Stability</th><th scope="col">MRR</th>
-        <th scope="col">Recall</th><th scope="col">Avg forgetting</th><th scope="col">Retention</th>
+        <th scope="col">Recall</th><th scope="col">Ans. coverage</th><th scope="col">Ans. found</th>
+        <th scope="col">Avg forgetting</th><th scope="col">Retention</th>
         <th scope="col">Verdict vs MIRA</th></tr></thead>
       <tbody>${rows}</tbody></table></div>
+      ${stale ? `<p class="small status-error" role="alert">The corpus on disk has ${planned} tasks
+        but this table was measured on ${nTasks}. Rebuild and re-run the lab
+        (scripts/build_forgetting_lab.py, then scripts/eval_forgetting.py).</p>` : ""}
+      ${data.meta?.complete === false ? `<p class="small muted" role="status">This run was still
+        in progress when it was written — some variants may be missing.</p>` : ""}
       <p class="small muted">${esc(data.meta?.scope || "")}
-        ${data.meta?.time_model ? `Time model: ${esc(data.meta.time_model)}.` : ""}
+        ${data.meta?.time_model ? ` · Time model: ${esc(data.meta.time_model)}.` : ""}
         ${data.meta?.ram_rss_gb?.end ? `Runner RSS ${esc(String(data.meta.ram_rss_gb.end))} GB ·
           lab store ${esc(String(Math.round((data.meta.lab_store_bytes || 0) / 1e6)))} MB.` : ""}
         ${data.significance ? `Significance: ${esc(data.significance.test)} —
-          ${esc(String(data.significance.vs_baseline?.[Object.keys(data.significance.vs_baseline || {})[0]]?.n_pairs ?? "?"))} paired questions against
-          ${esc(data.significance.baseline)}.` : ""}</p>`;
+          ${esc(String(Object.values(sig)[0]?.rr?.n_pairs ?? "?"))} paired questions against
+          ${esc(data.significance.baseline)}.</p>` : ""}
+      ${labSweep(data)}`;
     const select = $("lab-variant-select");
     const keep = select.value || (names.includes("B_mira") ? "B_mira" : names[0]);
     select.innerHTML = names.map((n) =>
       `<option value="${esc(n)}"${n === keep ? " selected" : ""}>${esc(n)}</option>`).join("");
     const chosen = data.variants[select.value];
-    chartOut.innerHTML = chosen ? labChart(chosen.rows, data.meta?.k)
+    const metric = $("lab-metric")?.value || "mrr";
+    chartOut.innerHTML = chosen ? labChart(chosen.rows, metric)
       : `<p class="small muted">No rows for this variant.</p>`;
   } catch (err) {
     setStatus(variantsOut, `Could not load the lab: ${err.message || err}`, "error");
@@ -339,6 +411,7 @@ async function loadForgettingLab() {
     if (btn) showBioExplain(btn.dataset.bioNode);
   });
   $("lab-variant-select").addEventListener("change", loadForgettingLab);
+  $("#lab-metric")?.addEventListener("change", loadForgettingLab);
   document.querySelectorAll(".side-nav button").forEach((btn) => {
     if (btn.dataset.view === "biomira") btn.addEventListener("click", loadBioState);
     if (btn.dataset.view === "forgetting") btn.addEventListener("click", loadForgettingLab);

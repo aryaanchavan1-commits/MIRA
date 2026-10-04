@@ -118,22 +118,34 @@ Gist probe (40 gists, query = the gist's own summary): gist hit@8 1.0 → 0.975,
 
 overall MRR 0.6985 → 0.6619: d=0.03652 CI [0.00599, 0.06633], p~0.0188 (n_pairs=300).
 
-### Catastrophic Forgetting Lab — sequential A→B→C→D
+### Catastrophic Forgetting Lab — sequential A → B → C → D → E → F
 
-4 sequential corpora ingested from real MuSiQue paragraphs; after every arrival all tasks learned so far are re-tested (40 questions per task, k=8, paired bootstrap on per-question reciprocal rank).
+6 sequential corpora ingested from real MuSiQue paragraphs; after every arrival all tasks learned so far are re-tested (30 questions per task, k=8, paired bootstrap on per-question reciprocal rank).
 30 simulated days of disuse pass over all learned memories between two task arrivals (in-memory, restored after the run)
 
-| variant | MRR | recall | avg forgetting | retention | d vs MIRA | CI | p |
-|---|---|---|---|---|---|---|---|
-| A_vector_rag | 0.492054 | 0.375 | 0.040915 | 0.92454 | -0.2658 | [-0.3241, -0.2071] | 0.0001 |
-| B_mira | 0.757828 | 0.347917 | 0.091562 | 0.89464 | baseline |
-| C_mira_radial | 0.806949 | 0.318489 | 0.039985 | 0.953094 | +0.0491 | [+0.0222, +0.0778] | 0.0002 |
-| D_mira_graph | 0.497054 | 0.379166 | 0.041235 | 0.92607 | -0.2608 | [-0.3183, -0.2020] | 0.0001 |
-| E_mira_hierarchy | 0.801272 | 0.316667 | 0.033207 | 0.960323 | +0.0434 | [+0.0148, +0.0737] | 0.002 |
-| F_mira_decay | 0.757307 | 0.347917 | 0.092753 | 0.893269 | -0.0005 | [-0.0016, +0.0000] | 0.7326 |
-| G_mira_consolidation | 0.757828 | 0.347917 | 0.091562 | 0.89464 | +0.0000 | [+0.0000, +0.0000] | 1.0 |
-| H_mira_replay | 0.762865 | 0.347656 | 0.07616 | 0.912017 | +0.0050 | [-0.0176, +0.0296] | 0.6862 |
-| I_bio_dynamics | 0.754182 | 0.342969 | 0.03814 | 0.953812 | -0.0037 | [-0.0305, +0.0213] | 0.784 |
-| J_full_biomira | 0.748036 | 0.34401 | 0.043966 | 0.946639 | -0.0098 | [-0.0374, +0.0166] | 0.4644 |
+Scope: retrieval-level (MRR/recall) over evidence node ids, plus generation-free answer quality (answer_coverage = fraction of the gold answer's content words in the best returned passage; answer_found = verbatim containment); no LLM is loaded, so this measures memory interference, not parametric forgetting
+
+| variant | MRR | recall | answer cov. | answer found | avg forgetting | retention | d vs MIRA | CI | p |
+|---|---|---|---|---|---|---|---|---|---|
+| A_vector_rag | 0.486872 | 0.357268 | 0.295867 | 0.161111 | 0.043221 | 0.922435 | -0.2670 | [-0.3240, -0.2111] | 0.0001 |
+| B_mira | 0.753856 | 0.347361 | 0.52203 | 0.361111 | 0.10744 | 0.873112 | baseline |
+| C_mira_radial | 0.802011 | 0.30088 | 0.55541 | 0.383333 | 0.049008 | 0.94203 | +0.0481 | [+0.0240, +0.0740] | 0.0001 |
+| D_mira_graph | 0.487798 | 0.358657 | 0.295867 | 0.166667 | 0.044841 | 0.920199 | -0.2661 | [-0.3230, -0.2101] | 0.0001 |
+| E_mira_hierarchy | 0.788677 | 0.301806 | 0.530542 | 0.366667 | 0.044299 | 0.9461 | +0.0348 | [+0.0074, +0.0630] | 0.0118 |
+| F_mira_decay | 0.753856 | 0.347361 | 0.52203 | 0.361111 | 0.10744 | 0.873112 | +0.0000 | [+0.0000, +0.0000] | 1.0 |
+| G_mira_consolidation | 0.753856 | 0.347361 | 0.52203 | 0.361111 | 0.10744 | 0.873112 | +0.0000 | [+0.0000, +0.0000] | 1.0 |
+| H_mira_replay | 0.751501 | 0.339722 | 0.501475 | 0.344445 | 0.106375 | 0.87499 | -0.0024 | [-0.0162, +0.0113] | 0.747 |
+| I_bio_dynamics | 0.765383 | 0.334954 | 0.535635 | 0.366667 | 0.052672 | 0.938411 | +0.0115 | [-0.0137, +0.0370] | 0.3776 |
+| J_biomira_tuned | 0.765516 | 0.333935 | 0.540728 | 0.372222 | 0.053287 | 0.938253 | +0.0117 | [-0.0137, +0.0371] | 0.3736 |
+| K_biomira_homeostasis | 0.744372 | 0.339768 | 0.53041 | 0.366667 | 0.076878 | 0.913772 | -0.0095 | [-0.0431, +0.0238] | 0.5768 |
+
+_interval sensitivity of the headline variants; each interval re-runs the whole A→F sequence with that many simulated days between arrivals_
+
+| variant | MRR @ 7d | MRR @ 30d | MRR @ 90d | forgetting @ 7d | forgetting @ 30d | forgetting @ 90d |
+|---|---|---|---|---|---|---|
+| A_vector_rag | 0.486872 | 0.486872 | 0.486872 | +0.0432 | +0.0432 | +0.0432 |
+| B_mira | 0.745853 | 0.753856 | 0.753856 | +0.0976 | +0.1074 | +0.1074 |
+| I_bio_dynamics | 0.780615 | 0.765383 | 0.782652 | +0.0388 | +0.0527 | +0.0376 |
+| J_biomira_tuned | 0.780615 | 0.765516 | 0.782652 | +0.0388 | +0.0533 | +0.0376 |
 
 Honest reading: under the simulated time model the adaptive dynamics **cut average forgetting by more than half at a retrieval cost that is not statistically distinguishable from zero** — but the best *retrieval* variants remain MIRA's own radial and hierarchy terms. See the paper section for what that does and does not license.

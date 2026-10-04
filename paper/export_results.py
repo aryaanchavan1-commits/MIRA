@@ -276,25 +276,54 @@ def export_real() -> None:
     if forgetting_path.exists():
         f = json.loads(forgetting_path.read_text(encoding="utf-8"))
         sig = (f.get("significance") or {}).get("vs_baseline") or {}
-        lines += ["### Catastrophic Forgetting Lab — sequential A→B→C→D",
+        n_tasks = int(f.get("n_tasks") or 0)
+        seq = " → ".join(chr(65 + i) for i in range(n_tasks))
+        lines += [f"### Catastrophic Forgetting Lab — sequential {seq}",
                   "",
                   f"{f.get('n_tasks')} sequential corpora ingested from real MuSiQue "
                   f"paragraphs; after every arrival all tasks learned so far are "
                   f"re-tested ({f.get('per_task')} questions per task, k={f.get('k')}, "
                   "paired bootstrap on per-question reciprocal rank).",
                   f"{f.get('time_model')}", "",
-                  "| variant | MRR | recall | avg forgetting | retention | d vs MIRA | CI | p |",
-                  "|---|---|---|---|---|---|---|---|"]
+                  f"Scope: {f.get('scope')}", "",
+                  "| variant | MRR | recall | answer cov. | answer found | avg forgetting | retention | d vs MIRA | CI | p |",
+                  "|---|---|---|---|---|---|---|---|---|---|"]
         for name, v in (f.get("variants") or {}).items():
             agg = (v.get("metrics") or {}).get("average_forgetting", {}).get("mrr")
             ret = (v.get("metrics") or {}).get("mean_retention", {}).get("mrr")
             last = (v.get("step_summary") or [{}])[-1]
-            s = sig.get(name)
+            s = (sig.get(name) or {}).get("rr")
             stat = ("baseline" if name == "B_mira" else
                     f"{s['mean_diff']:+.4f} | [{s['ci_low']:+.4f}, {s['ci_high']:+.4f}] "
                     f"| {s['p_value']}" if s else "— | — | —")
             lines.append(f"| {name} | {last.get('mrr')} | {last.get('recall')} | "
+                         f"{last.get('answer_coverage')} | {last.get('answer_found')} | "
                          f"{agg} | {ret} | {stat} |")
+        sweep = f.get("interval_sweep") or {}
+        if sweep:
+            days = sorted(sweep, key=lambda x: float(x))
+            # a sweep bucket also carries its own significance block; only the
+            # variants measured by the main run belong in this table
+            known = set(f.get("variants") or {})
+            names = sorted({n for b in sweep.values() for n in b
+                            if isinstance(b, dict) and n in known})
+            lines += ["", f"_{f.get('sweep_note')}_", "",
+                      "| variant | " + " | ".join(
+                          f"MRR @ {d}d" for d in days) + " | " + " | ".join(
+                          f"forgetting @ {d}d" for d in days) + " |",
+                      "|---" * (1 + 2 * len(days)) + "|"]
+            for name in names:
+                cells = []
+                for d in days:
+                    v = sweep[d].get(name) or {}
+                    last = (v.get("step_summary") or [{}])[-1]
+                    cells.append(str(last.get("mrr", "—")))
+                for d in days:
+                    v = sweep[d].get(name) or {}
+                    agg = (v.get("metrics") or {}).get(
+                        "average_forgetting", {}).get("mrr")
+                    cells.append("—" if agg is None else f"{agg:+.4f}")
+                lines.append(f"| {name} | " + " | ".join(cells) + " |")
         lines += ["",
                   "Honest reading: under the simulated time model the adaptive "
                   "dynamics **cut average forgetting by more than half at a "

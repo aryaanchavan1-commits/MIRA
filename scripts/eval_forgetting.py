@@ -1,10 +1,11 @@
 """Catastrophic Forgetting Lab + BioMIRA ablation (spec §15-17, §26-29).
 
-Replays the sequential learning of Task A → B → C → D and, after every task,
-re-tests **all** tasks learned so far:
+Replays the sequential learning of Task A → B → … → F (the shard count is
+whatever scripts/build_forgetting_lab.py ingested; 6 by default) and, after
+every task, re-tests **all** tasks learned so far:
 
     after A:  A          after B:  A + B
-    after C:  A + B + C  after D:  A + B + C + D
+    after C:  A + B + C  after F:  A + B + C + D + E + F
 
 then reports Forgetting_i / Retention_i (evaluation/forgetting.py).
 
@@ -14,13 +15,15 @@ replays the sequence over a *masked frame* — at step k only nodes from tasks
 0..k are visible — so learning order, interference and the dynamics passes all
 happen for real, without re-ingesting or re-embedding per variant.
 
-Retrieval-level, not answer-level: no LLM is loaded, so the metrics are MRR /
-recall / hit@k over evidence node ids. That is the honest scope for a frozen
-1-3B model on a laptop (§20-21).
+Retrieval-level, not generation-level: no LLM is loaded, so the headline
+metrics are MRR / recall / hit@k over evidence node ids. A generation-free
+answer-quality proxy (``answer_f1``, see ``token_f1``) is reported alongside
+them. That is the honest scope for a frozen 1-3B model on a laptop (§20-21).
 
 Usage:
-    .venv/Scripts/python.exe scripts/eval_forgetting.py --per-task 40
-    .venv/Scripts/python.exe scripts/eval_forgetting.py --variants B_mira,J_full_biomira
+    .venv/Scripts/python.exe scripts/eval_forgetting.py --per-task 30
+    .venv/Scripts/python.exe scripts/eval_forgetting.py --variants B_mira,J_biomira_tuned
+    .venv/Scripts/python.exe scripts/eval_forgetting.py --intervals 7,30,90
 """
 from __future__ import annotations
 
@@ -29,6 +32,8 @@ import datetime
 import json
 import os
 import random
+import re
+import string
 import sys
 import time
 from typing import Optional
@@ -65,9 +70,14 @@ FULL = ("semantic", "structural", "radial", "graph", "importance",
 #   A  = vector RAG floor (semantic only)
 #   C/D/E = MIRA with exactly ONE structural signal, to see what each buys
 #   B  = full MIRA baseline (all signals, no BioMIRA)
-#   F-J = full MIRA plus ONE adaptive mechanism at a time (single-factor),
-#         and J = every mechanism together. Improvement is only ever
-#         attributed to a component that shows its own isolated effect.
+#   F-I = full MIRA plus ONE adaptive mechanism at a time (single-factor).
+#   J   = the tuned full stack: exactly I's mechanisms, because the first run
+#         showed homeostasis + ring migration *cost* 0.006 MRR versus I, so
+#         "full stack" was redefined to the set of mechanisms that survive the
+#         ablation. K re-enables them, which keeps that negative result
+#         reproducible in the shipped table instead of only in git history.
+# Improvement is only ever attributed to a component that shows its own
+# isolated effect.
 VARIANTS = {
     "A_vector_rag":      {"components": ("semantic",)},
     "B_mira":            {"components": None},
@@ -79,11 +89,57 @@ VARIANTS = {
     "H_mira_replay":     {"components": None, "replay": True},
     "I_bio_dynamics":    {"components": None, "decay": True, "replay": True,
                           "consolidation": True, "kappa": 0.10},
-    "J_full_biomira":    {"components": None, "decay": True, "replay": True,
+    "J_biomira_tuned":   {"components": None, "decay": True, "replay": True,
                           "consolidation": True, "kappa": 0.10,
-                          "homeostasis": True, "ring_migration": True,
                           "merge_report": True},
+    "K_biomira_homeostasis": {"components": None, "decay": True, "replay": True,
+                              "consolidation": True, "kappa": 0.10,
+                              "homeostasis": True, "ring_migration": True,
+                              "merge_report": True},
 }
+
+
+def _norm_tokens(s: str) -> list:
+    """SQuAD-style normalisation: lowercase, drop punctuation and articles."""
+    s = str(s or "").lower()
+    s = "".join(ch for ch in s if ch not in set(string.punctuation))
+    s = re.sub(r"\b(a|an|the)\b", " ", s)
+    return [t for t in s.split() if t]
+
+
+def answer_quality(passages: list, answer: str) -> tuple:
+    """(coverage, found) for the best returned passage against the gold answer.
+
+    Generation-free answer quality, in the open-domain-QA oracle sense: did
+    retrieval hand the reader the material needed to answer?
+
+    ``coverage`` = fraction of the gold answer's content words present in the
+        best passage. Length-invariant, so it cannot be gamed by long passages
+        the way a token-F1 against a whole paragraph is.
+    ``found``    = 1 when the normalised answer string occurs verbatim in some
+        returned passage — the strict containment check, which needs no token
+        cleverness and fails when the retriever found the topic but not the fact.
+
+    A frozen 1-3B generator is deliberately *not* in the loop: it GGML-aborts
+    under this box's memory pressure and, worse, it would add decoding as an
+    uncontrolled confound to a study whose independent variable is the memory
+    store. Answerability of the returned evidence is the quantity the memory
+    mechanisms can actually move, and it is deterministic.
+    """
+    gold = _norm_tokens(answer)
+    if not gold or not passages:
+        return 0.0, 0
+    gold_set = set(gold)
+    needle = " ".join(gold)
+    coverage, found = 0.0, 0
+    for text in passages:
+        toks = _norm_tokens(text)
+        if not toks:
+            continue
+        coverage = max(coverage, len(gold_set & set(toks)) / len(gold_set))
+        if found or needle in " ".join(toks):
+            found = 1
+    return round(coverage, 6), found
 
 
 def variant_config(base: dict, spec: dict) -> dict:
@@ -95,7 +151,9 @@ def variant_config(base: dict, spec: dict) -> dict:
     cfg["biomira"] = dict(base.get("biomira") or {})
     cfg["biomira"].update({
         "enabled": bool(uses_bio),
-        "homeostasis": bool(spec.get("homeostasis", True)),
+        # off unless a variant explicitly asks for them: the ablation showed
+        # they cost MRR, so they are opt-in, never inherited
+        "homeostasis": bool(spec.get("homeostasis", False)),
         "ring_migration": bool(spec.get("ring_migration", False)),
     })
     cfg.setdefault("retrieval_score", {})["kappa_stability"] = float(spec.get("kappa", 0.0))
@@ -205,39 +263,51 @@ def run_variant(name: str, spec: dict, ws: Workspace, base_cfg: dict, idx: dict,
             recs = golds.get(task, [])
             if not recs:
                 continue
-            hits, rr, prec, lat = [], [], [], []
+            hits, rr, prec, lat, cov, found = [], [], [], [], [], []
             for rec in recs:
                 qv = ws.embeddings.encode([rec["question"]])[0]
                 res = retriever.retrieve(rec["question"], qv, active_components=active,
                                          final_k=k)
                 gold = set(rec["supporting_ids"])
                 ranked = [i.node.id for i in res.items]
-                hits.append(len(gold & set(ranked[:k])) / max(1, len(gold)))
-                prec.append(len(gold & set(ranked[:k])) / max(1, k))
+                top = ranked[:k]
+                hits.append(len(gold & set(top)) / max(1, len(gold)))
+                prec.append(len(gold & set(top)) / max(1, k))
                 rr.append(mrr(ranked, gold))
                 lat.append(res.latency_ms)
+                # answer quality without a generator: is the fact actually in
+                # what we returned?
+                c, f = answer_quality(
+                    [frame.nodes[i].raw_text or frame.nodes[i].summary
+                     for i in top if i in frame.nodes], rec["answer"])
+                cov.append(c)
+                found.append(f)
                 if bio["enabled"]:
                     # the frozen LLM accepts every grounded retrieval, so a hit
                     # counts as successful use; that is the feedback edge of the
                     # architecture (§24 ANSWER -> FEEDBACK -> consolidation)
                     biomira.touch(frame, ranked, bio,
-                                  failed=not (gold & set(ranked[:k])))
+                                  failed=not (gold & set(top)))
             rows.append({"step": step, "task": task, "n": len(recs),
                          "memory_count": len(frame.nodes),
                          "mrr": round(sum(rr) / len(rr), 6),
                          "recall": round(sum(hits) / len(hits), 6),
                          "precision": round(sum(prec) / len(prec), 6),
+                         "answer_coverage": round(sum(cov) / len(cov), 6),
+                         "answer_found": round(sum(found) / len(found), 6),
                          "hit_at_k": round(sum(1 for h in hits if h > 0)
                                            / len(hits), 6),
                          "latency_ms": round(sum(lat) / len(lat), 2)})
-            # per-question reciprocal ranks only for the final step: that is
-            # the headline comparison, and the only place a paired test has
-            # the resolution to say anything. Curves stay as means, which is
-            # all a forgetting curve needs.
+            # per-question values only for the final step: that is the headline
+            # comparison, and the only place a paired test has the resolution to
+            # say anything. Curves stay as means, which is all a forgetting
+            # curve needs.
             if step == n_tasks - 1:
                 rows[-1]["questions"] = [q["question"] for q in recs]
                 rows[-1]["rr"] = [round(x, 5) for x in rr]
                 rows[-1]["hit"] = [1 if h > 0 else 0 for h in hits]
+                rows[-1]["cov"] = cov
+                rows[-1]["found"] = found
         if not bio["enabled"]:
             # keep baseline runs free of any BioMIRA state leaking forward
             for node in frame.nodes.values():
@@ -257,7 +327,9 @@ def run_variant(name: str, spec: dict, ws: Workspace, base_cfg: dict, idx: dict,
                                                                   node.created_at))
         node.metadata.pop("bio", None)
     out = {"variant": name, "spec": spec, "rows": rows,
-           "metrics": forgetting_metrics(rows, metrics=("mrr", "recall", "precision")),
+           "metrics": forgetting_metrics(
+               rows, metrics=("mrr", "recall", "precision", "answer_coverage",
+                              "answer_found")),
            "step_summary": [summary_row(rows, s) for s in range(n_tasks)],
            "dynamics": dyn}
     return out
@@ -284,8 +356,11 @@ def _final_question_rows(variant: dict, n_tasks: int) -> list:
     for r in variant["rows"]:
         if r["step"] != n_tasks - 1 or "rr" not in r:
             continue
-        for q, rr, hit in zip(r["questions"], r["rr"], r["hit"]):
-            out.append({"question": q, "rr": rr, "hit": hit})
+        for q, rr, hit, cov, found in zip(r["questions"], r["rr"], r["hit"],
+                                        r.get("cov") or [None] * len(r["rr"]),
+                                        r.get("found") or [None] * len(r["rr"])):
+            out.append({"question": q, "rr": rr, "hit": hit,
+                        "cov": cov, "found": found})
     return out
 
 
@@ -299,13 +374,16 @@ def significance(results: dict, baseline: str, n_tasks: int) -> dict:
     from scripts.eval_significance import paired_bootstrap
     base = _final_question_rows(results[baseline], n_tasks)
     out = {"baseline": baseline, "test": "paired bootstrap, 10k resamples, "
-                                        "final-step per-question reciprocal rank",
+                                        "final-step per-question values",
            "vs_baseline": {}}
     for name, v in results.items():
         if name == baseline:
             continue
-        out["vs_baseline"][name] = paired_bootstrap(
-            _final_question_rows(v, n_tasks), base, "rr")
+        rows = _final_question_rows(v, n_tasks)
+        out["vs_baseline"][name] = {
+            "rr": paired_bootstrap(rows, base, "rr"),
+            "answer_coverage": paired_bootstrap(rows, base, "cov"),
+        }
     return out
 
 
@@ -328,6 +406,13 @@ def main() -> int:
     ap.add_argument("--interval-days", type=float, default=30.0,
                     help="simulated days of disuse between two task arrivals; "
                          "0 reproduces the degenerate same-age corpus")
+    ap.add_argument("--intervals", default="",
+                    help="comma-separated extra intervals to sweep, e.g. 7,30,90. "
+                         "Each is run over --sweep-variants only; the primary "
+                         "--interval-days run stays the full ablation")
+    ap.add_argument("--sweep-variants",
+                    default="A_vector_rag,B_mira,I_bio_dynamics,J_biomira_tuned",
+                    help="variants replayed at every interval in --intervals")
     ap.add_argument("--out", default=OUT)
     args = ap.parse_args()
 
@@ -356,7 +441,48 @@ def main() -> int:
           flush=True)
 
     results = {}
+    sweep: dict = {}
     t0 = time.time()
+    payload: dict = {}
+
+    def flush(results: dict, sweep: dict) -> None:
+        """Write after every variant: a multi-hour sweep must survive a crash."""
+        payload.update({
+            "generated_at": time.strftime("%Y-%m-%dT%H:%M:%S"),
+            "complete": len(results) == len(names),
+            "n_tasks": n_tasks, "k": args.k, "per_task": args.per_task,
+            "interval_days": args.interval_days,
+            "ram_rss_gb": {"start": ram0, "end": _rss_gb()},
+            "lab_store_bytes": db_bytes,
+            "time_model": (f"{args.interval_days:g} simulated days of disuse "
+                           "pass over all learned memories between two task "
+                           "arrivals (in-memory, restored after the run)"
+                           if args.interval_days else
+                           "no simulated time — all memories share one ingest "
+                           "time, so decay is a near-uniform rescale"),
+            "questions_per_task": {str(t): len(v) for t, v in golds.items()},
+            "significance": significance(results, "B_mira", n_tasks)
+                           if len(results) > 1 else {},
+            "interval_sweep": sweep or None,
+            "sweep_note": ("interval sensitivity of the headline variants; each "
+                           "interval re-runs the whole A→F sequence with that "
+                           "many simulated days between arrivals"),
+            "scope": "retrieval-level (MRR/recall) over evidence node ids, plus "
+                     "generation-free answer quality (answer_coverage = "
+                     "fraction of the gold answer's content words in the best "
+                     "returned passage; answer_found = verbatim containment); "
+                     "no LLM is loaded, so this measures memory interference, "
+                     "not parametric forgetting",
+            "variant_interpretation":
+                "C/D/E isolate one structural signal each; F-I add one adaptive "
+                "mechanism at a time to full MIRA; J is the tuned full stack "
+                "(I's mechanisms — homeostasis and ring migration are dropped "
+                "because K shows they cost MRR)",
+            "variants": results,
+        })
+        with open(args.out, "w", encoding="utf-8") as fh:
+            json.dump(payload, fh, indent=1)
+
     for name in names:
         v = run_variant(name, VARIANTS[name], ws, base_cfg, idx, golds,
                         n_tasks, args.k, interval_days=args.interval_days)
@@ -364,31 +490,40 @@ def main() -> int:
         agg = v["step_summary"][-1] if v["step_summary"] else {}
         print(f"{name:24s} final mrr {agg.get('mrr', 0):.4f} "
               f"recall {agg.get('recall', 0):.4f} "
+              f"ans_cov {agg.get('answer_coverage', 0):.4f} "
+              f"ans_found {agg.get('answer_found', 0):.4f} "
               f"avg_forgetting {v['metrics']['average_forgetting'].get('mrr', 0):+.4f} "
               f"({time.time() - t0:.0f}s)", flush=True)
+        flush(results, sweep)
 
-    payload = {"generated_at": time.strftime("%Y-%m-%dT%H:%M:%S"),
-               "n_tasks": n_tasks, "k": args.k, "per_task": args.per_task,
-               "interval_days": args.interval_days,
-               "ram_rss_gb": {"start": ram0, "end": _rss_gb()},
-               "lab_store_bytes": db_bytes,
-               "time_model": (f"{args.interval_days:g} simulated days of disuse "
-                              "pass over all learned memories between two task "
-                              "arrivals (in-memory, restored after the run)"
-                              if args.interval_days else
-                              "no simulated time — all memories share one ingest "
-                              "time, so decay is a near-uniform rescale"),
-               "questions_per_task": {str(t): len(v) for t, v in golds.items()},
-               "significance": significance(results, "B_mira", n_tasks),
-               "scope": "retrieval-level (MRR/recall) over evidence node ids; "
-                        "LLM frozen and unused, so this measures memory "
-                        "interference, not parametric forgetting",
-               "variant_interpretation":
-                   "C/D/E isolate one structural signal each; F-I add one "
-                   "adaptive mechanism at a time to full MIRA; J adds all",
-               "variants": results}
-    with open(args.out, "w", encoding="utf-8") as fh:
-        json.dump(payload, fh, indent=1)
+    # --- interval sensitivity ------------------------------------------------
+    # The full 12-variant ablation runs once, at the default interval; this
+    # replays only the headline variants at the other intervals so a robust
+    # claim does not cost 12x the compute.
+    sweep_names = [v.strip() for v in args.sweep_variants.split(",") if v.strip()]
+    unknown = set(sweep_names) - set(VARIANTS)
+    if unknown:
+        raise SystemExit(f"unknown sweep variants: {sorted(unknown)}")
+    intervals = sorted({float(x) for x in args.intervals.split(",") if x.strip()})
+    for days in intervals:
+        if days == args.interval_days:
+            # reuse the primary run rather than paying for it twice
+            sweep[f"{days:g}"] = {n: results[n] for n in sweep_names
+                                  if n in results}
+            continue
+        bucket: dict = {}
+        for name in sweep_names:
+            bucket[name] = run_variant(name, VARIANTS[name], ws, base_cfg, idx,
+                                       golds, n_tasks, args.k, interval_days=days)
+            agg = bucket[name]["step_summary"][-1]
+            print(f"  interval {days:g}d {name:22s} mrr {agg.get('mrr', 0):.4f} "
+                  f"ans_cov {agg.get('answer_coverage', 0):.4f} "
+                  f"({time.time() - t0:.0f}s)", flush=True)
+        bucket["significance"] = significance(bucket, "B_mira", n_tasks)
+        sweep[f"{days:g}"] = bucket
+        flush(results, sweep)
+
+    flush(results, sweep)
     print(f"wrote {args.out}", flush=True)
     return 0
 

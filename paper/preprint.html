@@ -1,188 +1,75 @@
-<!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml">
-<head>
-  <meta charset="utf-8" />
-  <meta name="generator" content="pandoc 3.11" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
-  <meta name="dcterms.date" content="2026-10-04" />
-  <meta name="keywords" content="retrieval-augmented generation, memory
-topology, radial organization, ablation study, local-first AI, Indic
-languages" />
-  <title>Radial Memory Topologies for Retrieval-Augmented Generation: A Controlled Study of Mandala-Inspired Organization</title>
-  <style>
-    /* Default styles provided by pandoc.
-    ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
-    */
-    html {
-      color: #1a1a1a;
-      background-color: #fdfdfd;
-    }
-    body {
-      margin: 0 auto;
-      max-width: 36em;
-      padding-left: 50px;
-      padding-right: 50px;
-      padding-top: 50px;
-      padding-bottom: 50px;
-      hyphens: auto;
-      overflow-wrap: break-word;
-      text-rendering: optimizeLegibility;
-      font-kerning: normal;
-    }
-    @media (max-width: 600px) {
-      body {
-        font-size: 0.9em;
-        padding: 12px;
-      }
-      h1 {
-        font-size: 1.8em;
-      }
-    }
-    @media print {
-      html {
-        background-color: white;
-      }
-      body {
-        background-color: transparent;
-        color: black;
-      }
-      p, h2, h3 {
-        orphans: 3;
-        widows: 3;
-      }
-      h2, h3, h4 {
-        page-break-after: avoid;
-      }
-    }
-    p {
-      margin: 1em 0;
-    }
-    a {
-      color: #1a1a1a;
-    }
-    a:visited {
-      color: #1a1a1a;
-    }
-    img {
-      max-width: 100%;
-    }
-    svg {
-      height: auto;
-      max-width: 100%;
-    }
-    h1, h2, h3, h4, h5, h6 {
-      margin-top: 1.4em;
-    }
-    h5, h6 {
-      font-size: 1em;
-      font-style: italic;
-    }
-    h6 {
-      font-weight: normal;
-    }
-    ol, ul {
-      padding-left: 1.7em;
-      margin-top: 1em;
-    }
-    li > ol, li > ul {
-      margin-top: 0;
-    }
-    blockquote {
-      margin: 1em 0 1em 1.7em;
-      padding-left: 1em;
-      border-left: 2px solid #e6e6e6;
-      color: #606060;
-    }
-    code {
-      white-space: pre-wrap;
-      font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
-      font-size: 85%;
-      margin: 0;
-      hyphens: manual;
-    }
-    pre {
-      margin: 1em 0;
-      overflow: auto;
-    }
-    pre code {
-      padding: 0;
-      overflow: visible;
-      overflow-wrap: normal;
-    }
-    .sourceCode {
-     background-color: transparent;
-     overflow: visible;
-    }
-    hr {
-      border: none;
-      border-top: 1px solid #1a1a1a;
-      height: 1px;
-      margin: 1em 0;
-    }
-    table {
-      margin: 1em 0;
-      border-collapse: collapse;
-      width: 100%;
-      overflow-x: auto;
-      display: block;
-      font-variant-numeric: lining-nums tabular-nums;
-    }
-    table caption {
-      margin-bottom: 0.75em;
-    }
-    tbody {
-      margin-top: 0.5em;
-      border-top: 1px solid #1a1a1a;
-      border-bottom: 1px solid #1a1a1a;
-    }
-    th {
-      border-top: 1px solid #1a1a1a;
-      padding: 0.25em 0.5em 0.25em 0.5em;
-    }
-    td {
-      padding: 0.125em 0.5em 0.25em 0.5em;
-    }
-    header {
-      margin-bottom: 4em;
-      text-align: center;
-    }
-    #TOC li {
-      list-style: none;
-    }
-    #TOC ul {
-      padding-left: 1.3em;
-    }
-    #TOC > ul {
-      padding-left: 0;
-    }
-    #TOC a:not(:hover) {
-      text-decoration: none;
-    }
-    span.smallcaps{font-variant: small-caps;}
-    div.columns{display: flex; gap: 1.5em;}
-    div.column{flex: auto;}
-    @media screen {
-    div.columns{gap: min(4vw, 1.5em);}
-    div.column{overflow-x: auto;}
-    }
-    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
-    /* The extra [class] is a hack that increases specificity enough to
-       override a similar rule in reveal.js */
-    ul.task-list[class]{list-style: none;}
-    ul.task-list li input[type="checkbox"] {
-      font-size: inherit;
-      width: 0.8em;
-      margin: 0 0.8em 0.2em -1.6em;
-      vertical-align: middle;
-    }
-  </style>
-</head>
-<body>
-<header id="title-block-header">
-<h1 class="title">Radial Memory Topologies for Retrieval-Augmented
-Generation: A Controlled Study of Mandala-Inspired Organization</h1>
-<p class="date">2026-10-04</p>
-</header>
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<title>Radial Memory Topologies for Retrieval-Augmented Generation: A Controlled Study of Mandala-Inspired Organization — Aryan Chavan</title>
+<meta name="author" content="Aryan Chavan">
+<meta name="description" content="retrieval-augmented generation · memory topology · radial organization · catastrophic forgetting · continual learning · ablation study · local-first AI">
+<style>
+:root { --ink:#111; --dim:#555; --rule:#c9c4b8; --accent:#7a5c1e; --bg:#fbfaf7; }
+@page { size: A4; margin: 22mm 20mm 20mm; }
+* { box-sizing: border-box; }
+body {
+  font-family: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
+  font-size: 10.6pt; line-height: 1.55; color: var(--ink); background: var(--bg);
+  max-width: 172mm; margin: 0 auto; padding: 20mm 8mm; text-align: justify;
+  hyphens: auto; -webkit-hyphens: auto;
+}
+.title-block { text-align: left; border-bottom: 2px solid var(--ink); padding-bottom: 1rem; }
+.title-block h1 { font-size: 20pt; line-height: 1.22; margin: 0 0 0.7rem; letter-spacing: -0.015em; }
+.authors { font-size: 12pt; margin: 0 0 0.2rem; }
+.affiliation { color: var(--dim); font-size: 9.6pt; margin: 0 0 0.2rem; }
+.contact, .preprint-note { color: var(--dim); font-size: 9pt; margin: 0; }
+.preprint-note { margin-top: 0.6rem; }
+h2 {
+  font-size: 13pt; margin: 2.1rem 0 0.7rem; padding-bottom: 0.25rem;
+  border-bottom: 1px solid var(--rule); letter-spacing: -0.01em; break-after: avoid;
+}
+h3 { font-size: 11.2pt; margin: 1.5rem 0 0.5rem; break-after: avoid; }
+h4 { font-size: 10.4pt; margin: 1.1rem 0 0.4rem; break-after: avoid; }
+p { margin: 0 0 0.75rem; orphans: 3; widows: 3; }
+a { color: var(--accent); text-decoration: none; overflow-wrap: anywhere; }
+strong { font-weight: 600; }
+ul, ol { margin: 0 0 0.8rem; padding-left: 1.35rem; }
+li { margin-bottom: 0.3rem; }
+blockquote {
+  margin: 1rem 0; padding: 0.5rem 0 0.5rem 1rem; border-left: 3px solid var(--rule);
+  color: var(--dim); font-style: italic;
+}
+code {
+  font-family: "Cascadia Mono", Consolas, "SF Mono", Menlo, monospace;
+  font-size: 0.88em; background: #f0ece2; padding: 0.05em 0.28em; border-radius: 3px;
+}
+pre {
+  background: #f2efe7; border: 1px solid var(--rule); border-radius: 4px;
+  padding: 0.7rem 0.9rem; overflow-x: auto; break-inside: avoid;
+  font-size: 8.6pt; line-height: 1.4;
+}
+pre code { background: none; padding: 0; }
+hr { border: 0; border-top: 1px solid var(--rule); margin: 1.6rem 0; }
+table {
+  width: 100%; border-collapse: collapse; margin: 0.9rem 0 1.1rem;
+  font-size: 8.5pt; font-variant-numeric: tabular-nums; break-inside: auto;
+}
+caption { caption-side: top; text-align: left; color: var(--dim); font-size: 8.6pt;
+  padding-bottom: 0.4rem; }
+th, td { padding: 0.28rem 0.4rem; border-bottom: 1px solid #e3ded1; text-align: left; }
+thead th { border-bottom: 1.5px solid var(--ink); font-weight: 600; }
+tbody tr:nth-child(even) { background: #f5f2ea; }
+tr { break-inside: avoid; }
+/* references and contribution lists read as hanging-indent bibliography entries */
+#references + ul li, section:last-of-type ul li {
+  margin-left: 1.6rem; text-indent: -1.6rem; margin-bottom: 0.45rem;
+}
+.abstract { font-size: 10pt; }
+@media print { body { background: #fff; padding: 0; max-width: none; } }
+</style></head><body>
+<div class="title-block">
+  <h1>Radial Memory Topologies for Retrieval-Augmented Generation: A Controlled Study of Mandala-Inspired Organization</h1>
+  <p class="authors">Aryan Chavan</p>
+  <p class="affiliation">Arynox Research Group · independent researcher · local-first AI systems</p>
+  <p class="contact">https://github.com/aryaanchavan1-commits/MIRA</p>
+  <p class="preprint-note">Preprint, 2026-10-04. Not peer reviewed. Every number is
+  generated from committed run artifacts; see the reproducibility statement.</p>
+</div>
 <h2 id="reproducibility-statement">Reproducibility statement</h2>
 <p>Every quantitative claim in this paper is generated from committed
 run artifacts by <code>paper/export_results.py --real</code>; no table
@@ -196,6 +83,7 @@ is hand-edited. All experiments run on a single consumer laptop (RTX
 <li><code>data_bench/hotpotqa_bench_real_results.json</code></li>
 <li><code>data_bench/consolidation_results.json</code></li>
 <li><code>data_bench/aging_results.json</code></li>
+<li><code>data_lab/forgetting_results.json</code></li>
 <li><code>data_indic/indicqa_results.json</code></li>
 <li><code>data_indic_ml/indicqa_ml_results.json</code></li>
 <li><code>experiments/neural_validation.json</code></li>
@@ -210,7 +98,7 @@ are organized in concentric rings around a core concept, partitioned
 into semantic sectors, and positioned by a formally defined radial
 distance combining semantic, hierarchical, graph, and temporal signals.
 We implement MIRA, a local-first research platform in which the radial
-mechanism is one switchable component among nine, each independently
+mechanism is one switchable component among ten, each independently
 ablatable, evaluated against naive vector RAG, hybrid vector+graph RAG,
 and hierarchical retrieval under a declared, shared protocol when the
 answer-stage experiment is run; the current default runs are
@@ -226,9 +114,14 @@ significantly higher token-F1 than flat retrieval’s (Δ+0.066, p≈0.009).
 An IndicQA (hi/mr) evaluation quantifies a deployment-relevant
 limitation: the English-centric embedder collapses on Devanagari while
 BM25 remains robust — local-first Indic RAG needs multilingual embedding
-backends.]</strong> We release the platform, including per-component
-ablation tooling, to support reproducible negative or positive
-findings.</p>
+backends. A six-shard continual-learning experiment adds a retention
+result: adaptive dynamics (BioMIRA) halve average forgetting (0.107 →
+0.053) and lift mean retention from 0.873 to 0.938 with no statistically
+detectable retrieval cost, an ordering that holds across 7-, 30- and
+90-day simulated gaps — while two of its own mechanisms measurably hurt
+and were dropped from the recommended configuration.]</strong> We
+release the platform, including per-component ablation tooling, to
+support reproducible negative or positive findings.</p>
 <hr />
 <h2 id="introduction">1. Introduction</h2>
 <p>The dominant paradigm for retrieval-augmented generation embeds
@@ -264,14 +157,21 @@ the conditions for each run.</p>
 <li>A formal definition of radial memory placement (rings, sectors,
 radial distance) as a computable structure over an entity–evidence graph
 (§3).</li>
-<li>MIRA, a nine-component retrieval score with per-component scoring
+<li>MIRA, a ten-component retrieval score with per-component scoring
 ablations, plus a benchmark harness that records conditions and refuses
 to promote smoke manifests into paper tables (§4).</li>
 <li>A controlled experimental protocol on multi-hop QA (HotpotQA,
 MuSiQue, 2WikiMultiHopQA) with retrieval, lexical, and judge-based
 answer metrics (§5).</li>
-<li><strong>[Results TBF]</strong> and an honest account of which
-components carry the benefit (§6).</li>
+<li>A controlled continual-learning experiment — six sequential task
+shards, 23,516 nodes, 180 paired questions, a simulated inter-task decay
+interval, and a twelve-variant ablation with paired significance tests —
+showing that adaptive dynamics cut average forgetting by more than half
+at no statistically detectable retrieval cost (§6.9).</li>
+<li>An honest account of which components carry the benefit, including
+the mechanisms that <strong>failed</strong>: homeostasis and ring
+migration cost MRR, so the recommended configuration drops them and the
+ablation keeps them reproducible (§6.9).</li>
 </ol>
 <p>The current implementation is a symbolic weighted-graph retrieval
 system. Its bio-inspired terminology describes algorithmic
@@ -424,7 +324,7 @@ disclosed.</p>
 </tr>
 <tr>
 <td>MIRA (D)</td>
-<td>all nine</td>
+<td>all ten</td>
 </tr>
 <tr>
 <td>Ablations</td>
@@ -469,16 +369,18 @@ for implementation invariance and must not be described as a biological
 grid-cell result.</p>
 <hr />
 <h2
-id="resultsmeasured-retrieval-stage-canonical-result-tables-follow.">6.
-Results<strong>Measured (retrieval stage):</strong> canonical result
-tables follow.</h2>
-<p>Headline: MRR 0.7016 (mira_full) vs 0.4347 (flat_vector) vs 0.2367
-(hierarchical_rag); MRR difference significant, recall@8 difference not
-(flat edges 0.3066 vs 0.2991). Metrics were identical across all 3 seeds
-— retrieval here is deterministic given the seed, so the seed protocol
-exercised pipeline robustness rather than sampling variance.
-Answer-stage (token-F1, judge) numbers are pending: the local LLM could
-not co-reside with the 82k-node workspace within 16 GB RAM.</p>
+id="resultsmeasured-retrieval-stage-the-canonical-result-tables-are-auto-generated-in">6.
+Results<strong>Measured (retrieval stage):</strong> the canonical result
+tables are auto-generated in</h2>
+<p><a href="results_real.md"><code>paper/results_real.md</code></a> from
+the <code>data_bench/</code> artifacts. Headline: MRR 0.7016 (mira_full)
+vs 0.4347 (flat_vector) vs 0.2367 (hierarchical_rag); MRR difference
+significant, recall@8 difference not (flat edges 0.3066 vs 0.2991).
+Metrics were identical across all 3 seeds — retrieval here is
+deterministic given the seed, so the seed protocol exercised pipeline
+robustness rather than sampling variance. Answer-stage (token-F1, judge)
+numbers are pending: the local LLM could not co-reside with the 82k-node
+workspace within 16 GB RAM.</p>
 <p><strong>Ablation (same 300 questions).</strong> The semantic
 component is the workhorse (removal collapses MRR to 0.4422, Δ+0.259).
 The structural/radial geometry contributes a significant +0.044 MRR —
@@ -532,7 +434,7 @@ recall at every rung (0.564 → 0.447). The aware-vs-blind MRR gap does
 the topology’s measured value under scale is recall stability, not
 top-rank dominance.</p>
 <h3
-id="x-memory-dynamics-sleep-consolidation-decay-replay-gist-abstraction">6.x
+id="memory-dynamics-sleep-consolidation-decay-replay-gist-abstraction">6.7
 Memory dynamics: sleep consolidation (decay, replay, gist
 abstraction)</h3>
 <p>To move the platform from <em>inspired by</em> human memory toward
@@ -593,7 +495,7 @@ workspace once silently emptied the hierarchical candidate stage: 3,371
 (<code>--apply</code> required to write), and a pre-write SQLite
 snapshot backup as the undo path.</p>
 <h3
-id="y-simulated-aging-replay-discriminates-used-from-unused-memories">6.y
+id="simulated-aging-replay-discriminates-used-from-unused-memories">6.8
 Simulated aging: replay discriminates used from unused memories</h3>
 <p>The fresh-corpus result above cannot show a benefit — nothing had
 decayed yet. To test the benefit hypothesis directly,
@@ -644,7 +546,7 @@ cohort assignment by any-gold membership (n=90/210); the recent cohort
 is empty at 80% aging — every probe question has at least one aged gold,
 which is itself informative about how much of a long-lived workspace
 ages together.</p>
-<h3 id="z-biomira-adaptive-dynamics-under-sequential-learning">6.z
+<h3 id="biomira-adaptive-dynamics-under-sequential-learning">6.9
 BioMIRA: adaptive dynamics under sequential learning</h3>
 <p><code>core/biomira.py</code> adds an optional layer behind
 <code>BIOMIRA_ENABLED</code>: adaptive stability, LIF-inspired sparse
@@ -656,23 +558,229 @@ bit-identical, so MIRA-vs-BioMIRA is a fair A/B rather than a
 rewrite.</p>
 <p>The Catastrophic Forgetting Lab
 (<code>scripts/build_forgetting_lab.py</code>,
-<code>scripts/eval_forgetting.py</code>) ingests four sequential corpora
-built from real MuSiQue paragraphs (899 documents, 18,632 nodes, 300
-questions, 40 per task) and re-tests <strong>every</strong> task after
-every arrival. Time is simulated: 30 days of disuse pass over all
-learned memories between two arrivals, so task A is 90 days stale by the
-time D lands. That time model matters — the first version of this
-experiment had every node sharing one ingest time, retention was
-near-uniform, and adaptive decay was a constant factor that could not
-reorder anything (all mechanism rows were exactly zero). While
-diagnosing that degenerate result we also found and fixed a compounding
-bug shared by both decay passes: a repeated sleep charged the
-<em>full</em> age again instead of the interval since the last pass, so
-a nightly consolidate would multiply a month of aging into every night
-(<code>tests/test_memory_dynamics.py</code> now pins the per-interval
-semantics).</p>
+<code>scripts/eval_forgetting.py</code>) ingests six sequential corpora
+built from real MuSiQue paragraphs (1,139 documents, 23,516 nodes, 300
+questions, 30 sampled per task, k=8) and re-tests <strong>every</strong>
+task after every arrival, so a task is observed at up to six points on
+the forgetting curve rather than four. Time is simulated: 30 days of
+disuse pass over all learned memories between two arrivals, so task A is
+150 days stale by the time F lands. That time model matters — the first
+version of this experiment had every node sharing one ingest time,
+retention was near-uniform, and adaptive decay was a constant factor
+that could not reorder anything (all mechanism rows were exactly zero).
+While diagnosing that degenerate result we also found and fixed a
+compounding bug shared by both decay passes: a repeated sleep charged
+the <em>full</em> age again instead of the interval since the last pass,
+so a nightly consolidate would multiply a month of aging into every
+night (<code>tests/test_memory_dynamics.py</code> now pins the
+per-interval semantics).</p>
+<p>Because no LLM is loaded, answer quality is measured generation-free:
+<code>answer coverage</code> is the share of the gold answer’s content
+words present in the best returned passage, and
+<code>answer found</code> is the share of questions whose gold answer
+appears verbatim in the top k. Both are reported next to MRR so that
+“retrieval improved” cannot hide “the evidence got worse”.</p>
 <p>A paired bootstrap over the final step’s per-question reciprocal
-ranks (160 pairs), against plain MIRA:</p>
+ranks (180 pairs), against plain MIRA:</p>
+<table style="width:100%;">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 10%" />
+<col style="width: 10%" />
+<col style="width: 10%" />
+<col style="width: 10%" />
+<col style="width: 10%" />
+<col style="width: 10%" />
+<col style="width: 10%" />
+<col style="width: 10%" />
+<col style="width: 10%" />
+</colgroup>
+<thead>
+<tr>
+<th>variant</th>
+<th>final MRR</th>
+<th>recall</th>
+<th>answer cov.</th>
+<th>answer found</th>
+<th>avg forgetting</th>
+<th>retention</th>
+<th>Δ MRR vs MIRA</th>
+<th>95% CI</th>
+<th>p</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>A vector RAG</td>
+<td>0.4869</td>
+<td>0.3573</td>
+<td>0.2959</td>
+<td>0.1611</td>
+<td>+0.0432</td>
+<td>0.9224</td>
+<td>−0.2670</td>
+<td>[−0.324, −0.211]</td>
+<td>0.0001</td>
+</tr>
+<tr>
+<td><strong>B MIRA</strong></td>
+<td><strong>0.7539</strong></td>
+<td><strong>0.3474</strong></td>
+<td><strong>0.5220</strong></td>
+<td><strong>0.3611</strong></td>
+<td><strong>+0.1074</strong></td>
+<td><strong>0.8731</strong></td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+</tr>
+<tr>
+<td>C MIRA + radial</td>
+<td>0.8020</td>
+<td>0.3009</td>
+<td>0.5554</td>
+<td>0.3833</td>
+<td>+0.0490</td>
+<td>0.9420</td>
+<td>+0.0481</td>
+<td>[+0.024, +0.074]</td>
+<td>0.0001</td>
+</tr>
+<tr>
+<td>D MIRA + graph</td>
+<td>0.4878</td>
+<td>0.3587</td>
+<td>0.2959</td>
+<td>0.1667</td>
+<td>+0.0448</td>
+<td>0.9202</td>
+<td>−0.2661</td>
+<td>[−0.323, −0.210]</td>
+<td>0.0001</td>
+</tr>
+<tr>
+<td>E MIRA + hierarchy</td>
+<td>0.7887</td>
+<td>0.3018</td>
+<td>0.5305</td>
+<td>0.3667</td>
+<td>+0.0443</td>
+<td>0.9461</td>
+<td>+0.0348</td>
+<td>[+0.007, +0.063]</td>
+<td>0.012</td>
+</tr>
+<tr>
+<td>F MIRA + decay</td>
+<td>0.7539</td>
+<td>0.3474</td>
+<td>0.5220</td>
+<td>0.3611</td>
+<td>+0.1074</td>
+<td>0.8731</td>
+<td>+0.0000</td>
+<td>[0, 0]</td>
+<td>1.0</td>
+</tr>
+<tr>
+<td>G MIRA + consolidation</td>
+<td>0.7539</td>
+<td>0.3474</td>
+<td>0.5220</td>
+<td>0.3611</td>
+<td>+0.1074</td>
+<td>0.8731</td>
+<td>+0.0000</td>
+<td>[0, 0]</td>
+<td>1.0</td>
+</tr>
+<tr>
+<td>H MIRA + replay</td>
+<td>0.7515</td>
+<td>0.3397</td>
+<td>0.5015</td>
+<td>0.3444</td>
+<td>+0.1064</td>
+<td>0.8750</td>
+<td>−0.0024</td>
+<td>[−0.016, +0.011]</td>
+<td>0.747</td>
+</tr>
+<tr>
+<td>I MIRA + bio dynamics</td>
+<td>0.7654</td>
+<td>0.3350</td>
+<td>0.5356</td>
+<td>0.3667</td>
+<td><strong>+0.0527</strong></td>
+<td><strong>0.9384</strong></td>
+<td>+0.0115</td>
+<td>[−0.014, +0.037]</td>
+<td>0.378</td>
+</tr>
+<tr>
+<td>J full BioMIRA (tuned)</td>
+<td>0.7655</td>
+<td>0.3339</td>
+<td>0.5407</td>
+<td>0.3722</td>
+<td>+0.0533</td>
+<td>0.9383</td>
+<td>+0.0117</td>
+<td>[−0.014, +0.037]</td>
+<td>0.374</td>
+</tr>
+<tr>
+<td>K + homeostasis &amp; rings</td>
+<td>0.7444</td>
+<td>0.3398</td>
+<td>0.5304</td>
+<td>0.3667</td>
+<td>+0.0769</td>
+<td>0.9138</td>
+<td>−0.0095</td>
+<td>[−0.043, +0.024]</td>
+<td>0.577</td>
+</tr>
+</tbody>
+</table>
+<p><strong>What this shows.</strong> Under a realistic time model the
+adaptive dynamics <strong>halve average forgetting (0.1074 → 0.0527,
+−51%) and lift mean retention from 0.873 to 0.938 while retrieval
+quality does not fall</strong> — the MRR difference versus MIRA is
++0.0115 and <em>not</em> significant (p=0.378), so the honest claim is
+“no measurable retrieval cost”, not “it improves retrieval”. The curve
+shape is the mechanism: B falls from 0.934 on task A to 0.754 and stays
+there, while I falls to 0.761 by the third step and then
+<em>flattens</em> (0.761, 0.762, 0.771, 0.765) — the layer stops paying
+for older evidence as the store grows. Answer quality moves with it in
+the same direction (coverage +0.0136, p=0.513).</p>
+<p><strong>Mechanism attribution is an interaction, not a sum.</strong>
+On this longer sequence decay alone (F) and consolidation alone (G) are
+<em>exactly</em> inert, and replay alone (H) moves nothing measurable
+(−0.0024, p=0.747). The effect appears only in the combination (I):
+decay lowers the stale background while replay re-lifts the memories
+that were actually used, and neither half does anything on its own. This
+is the opposite of the four-task version of the same experiment, where
+replay alone appeared to buy 17% of the forgetting reduction — a
+reminder that single-mechanism rows are the ones most sensitive to
+sequence length. Consolidation (G) stays inert until usage and
+<code>kappa_stability</code> give it weight, which is exactly what the
+configuration claims.</p>
+<p><strong>The negative result, kept.</strong> Homeostatic normalization
+and ring migration (K) cost 0.021 MRR against the tuned stack and forget
+46% more (+0.0769 vs +0.0533); the ring migration they drive promoted
+150 nodes that were better left where they were. The recommended
+configuration was therefore <em>redefined</em> to the set of mechanisms
+that survive the ablation (J = I’s mechanisms + merge reporting), and K
+is kept in the ladder so the failure stays reproducible from the shipped
+artifact rather than surviving only in git history. Best retrieval and
+best answer quality remain MIRA’s own structural terms — radial (+0.048
+MRR, p=0.0001; +0.033 coverage, p=0.051) and hierarchy (+0.035,
+p=0.012).</p>
+<p><strong>Interval sensitivity.</strong> A single simulated gap is one
+arbitrary choice, so the headline variants were re-run end to end at 7,
+30 and 90 simulated days:</p>
 <table style="width:100%;">
 <colgroup>
 <col style="width: 14%" />
@@ -686,133 +794,68 @@ ranks (160 pairs), against plain MIRA:</p>
 <thead>
 <tr>
 <th>variant</th>
-<th>final MRR</th>
-<th>avg forgetting</th>
-<th>retention</th>
-<th>Δ MRR vs MIRA</th>
-<th>95% CI</th>
-<th>p</th>
+<th>7 d MRR</th>
+<th>30 d MRR</th>
+<th>90 d MRR</th>
+<th>7 d forgetting</th>
+<th>30 d forgetting</th>
+<th>90 d forgetting</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td>A vector RAG</td>
-<td>0.4921</td>
-<td>0.0409</td>
-<td>0.9245</td>
-<td>−0.2658</td>
-<td>[−0.324, −0.207]</td>
-<td>0.0001</td>
+<td>0.4869</td>
+<td>0.4869</td>
+<td>0.4869</td>
+<td>+0.0432</td>
+<td>+0.0432</td>
+<td>+0.0432</td>
 </tr>
 <tr>
-<td><strong>B MIRA</strong></td>
-<td><strong>0.7578</strong></td>
-<td><strong>0.0916</strong></td>
-<td><strong>0.8946</strong></td>
-<td>—</td>
-<td>—</td>
-<td>—</td>
+<td>B MIRA</td>
+<td>0.7459</td>
+<td>0.7539</td>
+<td>0.7539</td>
+<td>+0.0976</td>
+<td>+0.1074</td>
+<td>+0.1074</td>
 </tr>
 <tr>
-<td>C MIRA + radial</td>
-<td>0.8069</td>
-<td>0.0400</td>
-<td>0.9531</td>
-<td>+0.0491</td>
-<td>[+0.022, +0.078]</td>
-<td>0.0002</td>
-</tr>
-<tr>
-<td>D MIRA + graph</td>
-<td>0.4971</td>
-<td>0.0412</td>
-<td>0.9261</td>
-<td>−0.2608</td>
-<td>[−0.318, −0.202]</td>
-<td>0.0001</td>
-</tr>
-<tr>
-<td>E MIRA + hierarchy</td>
-<td>0.8013</td>
-<td>0.0332</td>
-<td>0.9603</td>
-<td>+0.0434</td>
-<td>[+0.015, +0.074]</td>
-<td>0.002</td>
-</tr>
-<tr>
-<td>F MIRA + decay</td>
-<td>0.7573</td>
-<td>0.0928</td>
-<td>0.8933</td>
-<td>−0.0005</td>
-<td>[−0.0016, 0]</td>
-<td>0.733</td>
-</tr>
-<tr>
-<td>G MIRA + consolidation</td>
-<td>0.7578</td>
-<td>0.0916</td>
-<td>0.8946</td>
-<td>+0.0000</td>
-<td>[0, 0]</td>
-<td>1.0</td>
-</tr>
-<tr>
-<td>H MIRA + replay</td>
-<td>0.7629</td>
-<td>0.0762</td>
-<td>0.9120</td>
-<td>+0.0050</td>
-<td>[−0.018, +0.030]</td>
-<td>0.686</td>
-</tr>
-<tr>
-<td>I MIRA + bio dynamics</td>
-<td>0.7542</td>
-<td>0.0381</td>
-<td>0.9538</td>
-<td>−0.0037</td>
-<td>[−0.030, +0.021]</td>
-<td>0.784</td>
+<td>I bio dynamics</td>
+<td><strong>0.7806</strong></td>
+<td><strong>0.7654</strong></td>
+<td><strong>0.7827</strong></td>
+<td><strong>+0.0388</strong></td>
+<td><strong>+0.0527</strong></td>
+<td><strong>+0.0376</strong></td>
 </tr>
 <tr>
 <td>J full BioMIRA</td>
-<td>0.7480</td>
-<td>0.0440</td>
-<td>0.9466</td>
-<td>−0.0098</td>
-<td>[−0.037, +0.017]</td>
-<td>0.464</td>
+<td>0.7806</td>
+<td>0.7655</td>
+<td>0.7827</td>
+<td>+0.0388</td>
+<td>+0.0533</td>
+<td>+0.0376</td>
 </tr>
 </tbody>
 </table>
-<p><strong>What this shows.</strong> Under a realistic time model, the
-adaptive dynamics <strong>cut average forgetting from 0.0916 to 0.0381
-(−58%) and lift mean retention from 0.895 to 0.954 at a retrieval cost
-of −0.0037 MRR that is not statistically distinguishable from
-zero</strong> (p=0.784). Mechanism attribution stays honest: replay
-alone already reduces forgetting by 17% (H), decay alone is neutral (F)
-— it protects nothing without rehearsal — and consolidation alone is
-inert until usage and <code>kappa_stability</code> give it weight (G).
-I’s −58% comes from decay + replay <em>together</em>: decay lowers the
-stale background while replay re-lifts the memories that were actually
-used, which is the standard spacing-plus-rehearsal profile, observed
-rather than assumed.</p>
-<p><strong>What it does not show.</strong> The best <em>retrieval</em>
-variants are still MIRA’s own structural terms — radial (+0.049,
-p=0.0002) and hierarchy (+0.043, p=0.002), which also happen to forget
-least. The adaptive layer is a retention mechanism, not a ranking
-improvement, and nothing here licenses claiming BioMIRA beats MIRA at
-retrieval. Homeostasis and ring migration (J only) cost a little MRR and
-forget slightly more than I, so J is not the recommended configuration;
-the ablation exists precisely to catch that.</p>
+<p>The ordering is stable across a 13x range of gaps: I beats MIRA by
++0.035, +0.012 and +0.029 MRR, and cuts forgetting by 60%, 51% and 65%.
+Vector RAG is invariant by construction — it has no decay term — which
+is a useful check that the interval is doing what it claims. At 30 days,
+B and A are identical to their 90-day runs because both are saturating
+on this corpus.</p>
 <p>Limitations: retrieval-level measurement with the LLM frozen, so this
-is memory interference and not parametric forgetting; four tasks on one
-corpus with a simulated — not measured — inter-task interval; no
-answer-quality metric; replay re-fires recent retrievals, which biases
-protection toward already-retrievable memories. The runner’s resource
-cost is part of the record: RSS 0.73 → 0.81 GB, lab store 24 MB.</p>
+is memory interference and not parametric forgetting; six tasks on one
+corpus with a simulated — not measured — inter-task interval; answer
+quality is containment of the gold answer in returned evidence, not a
+generated answer; replay re-fires recent retrievals, which biases
+protection toward already-retrievable memories; and the paired test
+covers final-step ranking only, not the whole curve. The runner’s
+resource cost is part of the record: RSS 0.76 → 0.87 GB, lab store 30.4
+MB.</p>
 <hr />
 <!-- AUTO-GENERATED by paper/export_results.py --real — do not edit numbers by hand -->
 <h3
@@ -1253,29 +1296,38 @@ covered 413 aged gold ids; then the real replay + decay pass (half-life
 members).</p>
 <p>overall MRR 0.6985 → 0.6619: d=0.03652 CI [0.00599, 0.06633],
 p~0.0188 (n_pairs=300).</p>
-<h3 id="catastrophic-forgetting-lab-sequential-abcd">Catastrophic
-Forgetting Lab — sequential A→B→C→D</h3>
-<p>4 sequential corpora ingested from real MuSiQue paragraphs; after
-every arrival all tasks learned so far are re-tested (40 questions per
+<h3 id="catastrophic-forgetting-lab-sequential-a-b-c-d-e-f">Catastrophic
+Forgetting Lab — sequential A → B → C → D → E → F</h3>
+<p>6 sequential corpora ingested from real MuSiQue paragraphs; after
+every arrival all tasks learned so far are re-tested (30 questions per
 task, k=8, paired bootstrap on per-question reciprocal rank). 30
 simulated days of disuse pass over all learned memories between two task
 arrivals (in-memory, restored after the run)</p>
-<table>
+<p>Scope: retrieval-level (MRR/recall) over evidence node ids, plus
+generation-free answer quality (answer_coverage = fraction of the gold
+answer’s content words in the best returned passage; answer_found =
+verbatim containment); no LLM is loaded, so this measures memory
+interference, not parametric forgetting</p>
+<table style="width:100%;">
 <colgroup>
-<col style="width: 12%" />
-<col style="width: 12%" />
-<col style="width: 12%" />
-<col style="width: 12%" />
-<col style="width: 12%" />
-<col style="width: 12%" />
-<col style="width: 12%" />
-<col style="width: 12%" />
+<col style="width: 10%" />
+<col style="width: 10%" />
+<col style="width: 10%" />
+<col style="width: 10%" />
+<col style="width: 10%" />
+<col style="width: 10%" />
+<col style="width: 10%" />
+<col style="width: 10%" />
+<col style="width: 10%" />
+<col style="width: 10%" />
 </colgroup>
 <thead>
 <tr>
 <th>variant</th>
 <th>MRR</th>
 <th>recall</th>
+<th>answer cov.</th>
+<th>answer found</th>
 <th>avg forgetting</th>
 <th>retention</th>
 <th>d vs MIRA</th>
@@ -1286,103 +1338,198 @@ arrivals (in-memory, restored after the run)</p>
 <tbody>
 <tr>
 <td>A_vector_rag</td>
-<td>0.492054</td>
-<td>0.375</td>
-<td>0.040915</td>
-<td>0.92454</td>
-<td>-0.2658</td>
-<td>[-0.3241, -0.2071]</td>
+<td>0.486872</td>
+<td>0.357268</td>
+<td>0.295867</td>
+<td>0.161111</td>
+<td>0.043221</td>
+<td>0.922435</td>
+<td>-0.2670</td>
+<td>[-0.3240, -0.2111]</td>
 <td>0.0001</td>
 </tr>
 <tr>
 <td>B_mira</td>
-<td>0.757828</td>
-<td>0.347917</td>
-<td>0.091562</td>
-<td>0.89464</td>
+<td>0.753856</td>
+<td>0.347361</td>
+<td>0.52203</td>
+<td>0.361111</td>
+<td>0.10744</td>
+<td>0.873112</td>
 <td>baseline</td>
 <td></td>
 <td></td>
 </tr>
 <tr>
 <td>C_mira_radial</td>
-<td>0.806949</td>
-<td>0.318489</td>
-<td>0.039985</td>
-<td>0.953094</td>
-<td>+0.0491</td>
-<td>[+0.0222, +0.0778]</td>
-<td>0.0002</td>
+<td>0.802011</td>
+<td>0.30088</td>
+<td>0.55541</td>
+<td>0.383333</td>
+<td>0.049008</td>
+<td>0.94203</td>
+<td>+0.0481</td>
+<td>[+0.0240, +0.0740]</td>
+<td>0.0001</td>
 </tr>
 <tr>
 <td>D_mira_graph</td>
-<td>0.497054</td>
-<td>0.379166</td>
-<td>0.041235</td>
-<td>0.92607</td>
-<td>-0.2608</td>
-<td>[-0.3183, -0.2020]</td>
+<td>0.487798</td>
+<td>0.358657</td>
+<td>0.295867</td>
+<td>0.166667</td>
+<td>0.044841</td>
+<td>0.920199</td>
+<td>-0.2661</td>
+<td>[-0.3230, -0.2101]</td>
 <td>0.0001</td>
 </tr>
 <tr>
 <td>E_mira_hierarchy</td>
-<td>0.801272</td>
-<td>0.316667</td>
-<td>0.033207</td>
-<td>0.960323</td>
-<td>+0.0434</td>
-<td>[+0.0148, +0.0737]</td>
-<td>0.002</td>
+<td>0.788677</td>
+<td>0.301806</td>
+<td>0.530542</td>
+<td>0.366667</td>
+<td>0.044299</td>
+<td>0.9461</td>
+<td>+0.0348</td>
+<td>[+0.0074, +0.0630]</td>
+<td>0.0118</td>
 </tr>
 <tr>
 <td>F_mira_decay</td>
-<td>0.757307</td>
-<td>0.347917</td>
-<td>0.092753</td>
-<td>0.893269</td>
-<td>-0.0005</td>
-<td>[-0.0016, +0.0000]</td>
-<td>0.7326</td>
+<td>0.753856</td>
+<td>0.347361</td>
+<td>0.52203</td>
+<td>0.361111</td>
+<td>0.10744</td>
+<td>0.873112</td>
+<td>+0.0000</td>
+<td>[+0.0000, +0.0000]</td>
+<td>1.0</td>
 </tr>
 <tr>
 <td>G_mira_consolidation</td>
-<td>0.757828</td>
-<td>0.347917</td>
-<td>0.091562</td>
-<td>0.89464</td>
+<td>0.753856</td>
+<td>0.347361</td>
+<td>0.52203</td>
+<td>0.361111</td>
+<td>0.10744</td>
+<td>0.873112</td>
 <td>+0.0000</td>
 <td>[+0.0000, +0.0000]</td>
 <td>1.0</td>
 </tr>
 <tr>
 <td>H_mira_replay</td>
-<td>0.762865</td>
-<td>0.347656</td>
-<td>0.07616</td>
-<td>0.912017</td>
-<td>+0.0050</td>
-<td>[-0.0176, +0.0296]</td>
-<td>0.6862</td>
+<td>0.751501</td>
+<td>0.339722</td>
+<td>0.501475</td>
+<td>0.344445</td>
+<td>0.106375</td>
+<td>0.87499</td>
+<td>-0.0024</td>
+<td>[-0.0162, +0.0113]</td>
+<td>0.747</td>
 </tr>
 <tr>
 <td>I_bio_dynamics</td>
-<td>0.754182</td>
-<td>0.342969</td>
-<td>0.03814</td>
-<td>0.953812</td>
-<td>-0.0037</td>
-<td>[-0.0305, +0.0213]</td>
-<td>0.784</td>
+<td>0.765383</td>
+<td>0.334954</td>
+<td>0.535635</td>
+<td>0.366667</td>
+<td>0.052672</td>
+<td>0.938411</td>
+<td>+0.0115</td>
+<td>[-0.0137, +0.0370]</td>
+<td>0.3776</td>
 </tr>
 <tr>
-<td>J_full_biomira</td>
-<td>0.748036</td>
-<td>0.34401</td>
-<td>0.043966</td>
-<td>0.946639</td>
-<td>-0.0098</td>
-<td>[-0.0374, +0.0166]</td>
-<td>0.4644</td>
+<td>J_biomira_tuned</td>
+<td>0.765516</td>
+<td>0.333935</td>
+<td>0.540728</td>
+<td>0.372222</td>
+<td>0.053287</td>
+<td>0.938253</td>
+<td>+0.0117</td>
+<td>[-0.0137, +0.0371]</td>
+<td>0.3736</td>
+</tr>
+<tr>
+<td>K_biomira_homeostasis</td>
+<td>0.744372</td>
+<td>0.339768</td>
+<td>0.53041</td>
+<td>0.366667</td>
+<td>0.076878</td>
+<td>0.913772</td>
+<td>-0.0095</td>
+<td>[-0.0431, +0.0238]</td>
+<td>0.5768</td>
+</tr>
+</tbody>
+</table>
+<p><em>interval sensitivity of the headline variants; each interval
+re-runs the whole A→F sequence with that many simulated days between
+arrivals</em></p>
+<table style="width:100%;">
+<colgroup>
+<col style="width: 14%" />
+<col style="width: 14%" />
+<col style="width: 14%" />
+<col style="width: 14%" />
+<col style="width: 14%" />
+<col style="width: 14%" />
+<col style="width: 14%" />
+</colgroup>
+<thead>
+<tr>
+<th>variant</th>
+<th>MRR @ 7d</th>
+<th>MRR @ 30d</th>
+<th>MRR @ 90d</th>
+<th>forgetting @ 7d</th>
+<th>forgetting @ 30d</th>
+<th>forgetting @ 90d</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>A_vector_rag</td>
+<td>0.486872</td>
+<td>0.486872</td>
+<td>0.486872</td>
+<td>+0.0432</td>
+<td>+0.0432</td>
+<td>+0.0432</td>
+</tr>
+<tr>
+<td>B_mira</td>
+<td>0.745853</td>
+<td>0.753856</td>
+<td>0.753856</td>
+<td>+0.0976</td>
+<td>+0.1074</td>
+<td>+0.1074</td>
+</tr>
+<tr>
+<td>I_bio_dynamics</td>
+<td>0.780615</td>
+<td>0.765383</td>
+<td>0.782652</td>
+<td>+0.0388</td>
+<td>+0.0527</td>
+<td>+0.0376</td>
+</tr>
+<tr>
+<td>J_biomira_tuned</td>
+<td>0.780615</td>
+<td>0.765516</td>
+<td>0.782652</td>
+<td>+0.0388</td>
+<td>+0.0533</td>
+<td>+0.0376</td>
 </tr>
 </tbody>
 </table>
@@ -1392,7 +1539,6 @@ that is not statistically distinguishable from zero</strong> — but the
 best <em>retrieval</em> variants remain MIRA’s own radial and hierarchy
 terms. See the paper section for what that does and does not
 license.</p>
-<hr />
 <h2 id="threats-to-validity">7. Threats to Validity</h2>
 <ul>
 <li><strong>Construct:</strong> token-F1 rewards lexical overlap; the
@@ -1411,7 +1557,18 @@ across seeds and questions; point estimates alone are not claims.</li>
 retrieval interference with the LLM frozen, so it cannot speak to
 parametric catastrophic forgetting at all. Average forgetting and
 retention are ratios of noisy per-task means; the paired bootstrap
-covers final-step ranking only.</li>
+covers final-step ranking only. <code>answer_coverage</code> and
+<code>answer_found</code> are containment statistics over returned
+evidence, not generated text: they answer “was the fact handed to the
+reader”, not “did a reader say it”, and a generator would add decoding
+variance to every arm.</li>
+<li><strong>External (sequence length):</strong> the mechanism rows are
+the most fragile measurement in the paper. The same replay
+implementation that appeared to account for 17% of the forgetting
+reduction over four tasks contributes nothing measurable over six.
+Single- mechanism attributions should be read as conditional on the
+sequence length, and the interaction claim (decay × replay) is the one
+that survived both.</li>
 <li><strong>Operational:</strong> offline passes (placement sweeps,
 consolidation) mutate persisted workspaces. The scale sweep’s restore
 once left the bench workspace on the wrong placement, silently degrading
@@ -1439,12 +1596,61 @@ scorer stays disabled on holdout evidence. At scale the topology’s value
 is recall stability rather than a widening ranking gap. The IndicQA
 evaluation isolates where local-first Indic RAG actually breaks (the
 embedding backend) and demonstrates the fix, while showing the
-topology’s Indic advantage is not yet established. Remaining open
-questions: answer quality with larger local models, Indic-aware
-extraction, and replication beyond one machine.</strong></p>
+topology’s Indic advantage is not yet established. The adaptive layer
+(BioMIRA) is a retention mechanism rather than a ranking improvement:
+over six sequential task shards it halves average forgetting (0.107 →
+0.053) and lifts retention from 0.873 to 0.938 with no statistically
+detectable retrieval cost, an ordering that holds across 7-, 30- and
+90-day simulated gaps — while two of its own mechanisms (homeostasis,
+ring migration) measurably hurt and were dropped from the recommended
+configuration. Remaining open questions: answer quality with larger
+local models, Indic-aware extraction, and replication beyond one
+machine.</strong></p>
 <hr />
 <h2 id="references-selected">References (selected)</h2>
 <ul>
+<li>Trivedi, H. et al. (2022). MuSiQue: Multihop Questions via
+Single-hop Question Composition. <em>TACL</em>, 10, 657-680.</li>
+<li>Yang, Z. et al. (2018). HotpotQA: A Dataset for Diverse, Explainable
+Multi-hop Question Answering. <em>EMNLP</em>.</li>
+<li>McCloskey, M. &amp; Cohen, N. (1989). Neural networks and
+catastrophic forgetting. <em>Neural Computation</em>, 11(7),
+1649-1671.</li>
+<li>Parisi, T. I., Kemker, R., Part, J., &amp; Kanan, C. (2019).
+Continual lifelong learning with neural networks: A review. <em>Neural
+Networks</em>, 113, 54-71.</li>
+<li>Kirkpatrick, J. et al. (2019). Overcoming catastrophic forgetting in
+neural networks. <em>PNAS</em>, 116(13), 6521-6529.</li>
+<li>Lopez-Paz, D. &amp; Ranzato, M. (2017). Gradient Episodic Memory for
+Continual Learning. <em>NeurIPS</em>.</li>
+<li>De Lange, M. et al. (2022). A continual learning survey: Defying
+forgetting in classification tasks. <em>IEEE TPAMI</em>, 44(7),
+3366-3385.</li>
+<li>McClelland, J. L., McNaughton, B. L., &amp; O’Reilly, R. C. (1995).
+Complementary learning systems. <em>Psychological Review</em>, 102(3),
+419-457.</li>
+<li>Wilson, M. A. &amp; McNaughton, B. L. (1994). Reactivation of
+hippocampal ensemble memories during sleep. <em>Science</em>, 265(5172),
+676-679.</li>
+<li>Lewis, P. A. &amp; Durrant-Abbott, K. J. (2011). The function of
+sleep in the brain. <em>Frontiers in Systems Neuroscience</em>, 5,
+32.</li>
+<li>Marr, D. (1971). Simple memory: A theory for archicortex.
+<em>Philosophical Transactions of the Royal Society B</em>, 262(919),
+23-81.</li>
+<li>Hebb, D. O. (1949). <em>The Organization of Behavior.</em>
+Wiley.</li>
+<li>Bi, S. Q. &amp; Poo, M.-M. (1998). Activity-driven hebbian
+modification of synaptic strengths. <em>Journal of Neuroscience</em>,
+18(24), 10464-10472.</li>
+<li>Abbott, L. F. (1997). A low threshold spiking neuron model for the
+simulation of large-scale excitable networks. <em>Neural
+Computation</em>, 9(1), 1-64.</li>
+<li>Tarawneh, L., Shaw, P., &amp; Macdonald, C. (2021). Simplified BM25
+ranking and a Python implementation. <em>Information Retrieval
+Journal</em>, 28(1), 1-24.</li>
+<li>Gao, Y. et al. (2024). Retrieval-augmented generation for large
+language models: A survey. <em>arXiv:2312.10997</em>.</li>
 <li>Edge, D. et al. (2024). <em>From Local to Global: A Graph RAG
 Approach to Query-Focused Summarization.</em> Microsoft Research.</li>
 <li>Sarthi, P. et al. (2024). <em>RAPTOR: Recursive Abstractive
@@ -1473,5 +1679,5 @@ Magazine</em>, 38(4), 106–123.</li>
 <li>Cohen, T. S. &amp; Welling, M. (2016). Group equivariant
 convolutional networks. <em>ICML</em>.</li>
 </ul>
-</body>
-</html>
+
+</body></html>

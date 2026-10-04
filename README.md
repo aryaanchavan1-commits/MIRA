@@ -275,38 +275,57 @@ activation-driven ring migration. Off means off — no writes, and
 is asserted in `tests/test_biomira.py`.
 
 The Catastrophic Forgetting Lab (`scripts/build_forgetting_lab.py` +
-`scripts/eval_forgetting.py`) ingests four sequential corpora built from real
-MuSiQue paragraphs (899 docs, 18,632 nodes, 300 questions) and re-tests every
-task after every arrival, with **30 simulated days of disuse between
-arrivals** — so task A is 90 days stale when task D lands. Result on that
-corpus:
+`scripts/eval_forgetting.py`) ingests six sequential corpora built from real
+MuSiQue paragraphs (1,139 docs, 23,516 nodes, 300 questions, 30 sampled per
+task) and re-tests every task after every arrival, with **30 simulated days of
+disuse between arrivals** — so task A is 150 days stale when task F lands.
+Result on that corpus (paired bootstrap on 180 per-question reciprocal ranks):
 
-| variant | final MRR | avg forgetting | retention | Δ MRR vs MIRA (95% CI, p) |
-|---|---|---|---|---|
-| A vector RAG | 0.4921 | 0.0409 | 0.9245 | −0.2658 [−0.324, −0.207], p<0.001 |
-| **B MIRA** | **0.7578** | **0.0916** | **0.8946** | baseline |
-| C MIRA + radial | 0.8069 | 0.0400 | 0.9531 | +0.0491 [+0.022, +0.078], p=0.0002 |
-| D MIRA + graph | 0.4971 | 0.0412 | 0.9261 | −0.2608 [−0.318, −0.202], p<0.001 |
-| E MIRA + hierarchy | 0.8013 | 0.0332 | 0.9603 | +0.0434 [+0.015, +0.074], p=0.002 |
-| F MIRA + decay | 0.7573 | 0.0928 | 0.8933 | −0.0005, p=0.733 |
-| G MIRA + consolidation | 0.7578 | 0.0916 | 0.8946 | +0.0000, p=1.0 |
-| H MIRA + replay | 0.7629 | 0.0762 | 0.9120 | +0.0050 [−0.018, +0.030], p=0.686 |
-| I MIRA + bio dynamics | 0.7542 | **0.0381** | 0.9538 | −0.0037 [−0.030, +0.021], p=0.784 |
-| J full BioMIRA | 0.7480 | 0.0440 | 0.9466 | −0.0098 [−0.037, +0.017], p=0.464 |
+| variant | final MRR | answer cov. | avg forgetting | retention | Δ MRR vs MIRA (95% CI, p) |
+|---|---|---|---|---|---|
+| A vector RAG | 0.4869 | 0.2959 | +0.0432 | 0.9224 | −0.2670 [−0.324, −0.211], p<0.001 |
+| **B MIRA** | **0.7539** | **0.5220** | **+0.1074** | **0.8731** | baseline |
+| C MIRA + radial | 0.8020 | 0.5554 | +0.0490 | 0.9420 | +0.0481 [+0.024, +0.074], p<0.001 |
+| D MIRA + graph | 0.4878 | 0.2959 | +0.0448 | 0.9202 | −0.2661 [−0.323, −0.210], p<0.001 |
+| E MIRA + hierarchy | 0.7887 | 0.5305 | +0.0443 | 0.9461 | +0.0348 [+0.007, +0.063], p=0.012 |
+| F MIRA + decay | 0.7539 | 0.5220 | +0.1074 | 0.8731 | +0.0000, p=1.0 |
+| G MIRA + consolidation | 0.7539 | 0.5220 | +0.1074 | 0.8731 | +0.0000, p=1.0 |
+| H MIRA + replay | 0.7515 | 0.5015 | +0.1064 | 0.8750 | −0.0024 [−0.016, +0.011], p=0.747 |
+| I MIRA + bio dynamics | 0.7654 | 0.5356 | **+0.0527** | **0.9384** | +0.0115 [−0.014, +0.037], p=0.378 |
+| J full BioMIRA (tuned) | 0.7655 | 0.5407 | +0.0533 | 0.9383 | +0.0117 [−0.014, +0.037], p=0.374 |
+| K + homeostasis & rings | 0.7444 | 0.5304 | +0.0769 | 0.9138 | −0.0095 [−0.043, +0.024], p=0.577 |
 
-Reading it honestly: **the adaptive dynamics cut average forgetting by 58%
-(0.0916 → 0.0381) at a retrieval cost that is not statistically
-distinguishable from zero** — that is the retention mechanism working. But
-replay alone already buys 17% of it (H), decay alone buys nothing (F),
-consolidation alone is inert until usage gives it weight (G), and the best
-*retrieval* variants are still MIRA's own radial and hierarchy terms. The
-full stack (J) is slightly worse than I: homeostasis + ring migration cost a
-little ranking and forget a bit more, which is exactly the kind of thing the
-ablation ladder exists to catch. A first version of this lab gave every node
-one ingest time and every mechanism row was exactly zero — the degenerate
-corpus is documented in the paper, along with the compounding decay bug its
-diagnosis uncovered (a nightly consolidate used to re-charge the full age
-every night; now each pass charges only the interval since it last ran, and
+Reading it honestly: **the adaptive dynamics halve average forgetting
+(0.1074 → 0.0527) and lift retention 0.873 → 0.938 with no statistically
+detectable retrieval cost** — a retention win, not a ranking win. But it is an
+*interaction*, not a sum: decay alone (F) and consolidation alone (G) are
+exactly inert and replay alone (H) moves nothing measurable; the effect only
+appears when decay lowers the stale background *and* replay re-lifts what was
+actually used. And the best retrieval **and** answer-quality variants are still
+MIRA's own structural terms (radial +0.048 MRR, +0.033 coverage).
+
+Two mechanisms measurably *hurt*: homeostasis + ring migration (K) cost 0.021
+MRR and forget 46% more, promoting 150 nodes that were better left alone. The
+recommended configuration is therefore redefined to the mechanisms that survive
+the ablation (J), and K stays in the ladder so the negative result is
+reproducible from the shipped artifact.
+
+**Interval sensitivity** — the headline variants re-run end to end at three
+simulated gaps:
+
+| variant | 7 d MRR | 30 d MRR | 90 d MRR | 7 d forget | 30 d forget | 90 d forget |
+|---|---|---|---|---|---|---|
+| A vector RAG | 0.4869 | 0.4869 | 0.4869 | +0.0432 | +0.0432 | +0.0432 |
+| B MIRA | 0.7459 | 0.7539 | 0.7539 | +0.0976 | +0.1074 | +0.1074 |
+| I bio dynamics | **0.7806** | **0.7654** | **0.7827** | **+0.0388** | **+0.0527** | **+0.0376** |
+
+I beats MIRA by +0.035/+0.012/+0.029 MRR and cuts forgetting by 60%/51%/65%
+across a 13x range of gaps; vector RAG is invariant by construction, which is
+the check that the interval does what it claims. A first version of this lab
+gave every node one ingest time and every mechanism row was exactly zero — the
+degenerate corpus is documented in the paper, along with the compounding decay
+bug its diagnosis uncovered (a nightly consolidate used to re-charge the full
+age every night; now each pass charges only the interval since it last ran, and
 a test pins that). Exposed in the
 console as **Biological Memory** and **Catastrophic Forgetting Lab**, with
 per-memory "why was this retrieved / why did it decay / why is it
