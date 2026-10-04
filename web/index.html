@@ -97,30 +97,32 @@
   <div class="grid-3">
     <article class="card">
       <h3>The formula under test</h3>
-      <pre class="formula">score = α·semantic + β·radial + γ·graph
-+ δ·hierarchy + ε·temporal
-+ ζ·importance + η·confidence
-+ θ·recency + ι·path
-+ κ·activation + λ·stability</pre>
-      <p class="small">Every coefficient is configurable and every component can be switched
+      <pre class="formula">score = α·semantic + β·structural + γ·radial
++ δ·graph + ε·importance + ζ·confidence
++ η·recency + θ·path + ι·activation
++ κ·stability (BioMIRA layer only)</pre>
+      <p class="small">Ten components, one Greek letter each — the same mapping the code
+      uses. Every coefficient is configurable and every component can be switched
       off, which makes the contribution testable rather than decorative.</p>
     </article>
     <article class="card">
       <h3>The honest baselines</h3>
       <ul class="ticks">
         <li>Naive vector RAG (FAISS cosine)</li>
-        <li>Vector + graph hybrid</li>
+        <li>BM25 lexical retrieval (unicode-aware)</li>
         <li>Hierarchical coarse-to-fine</li>
         <li>Full MIRA, all components</li>
       </ul>
       <p class="small">Controlled runs keep the model, embeddings, dataset and hardware fixed.
-      Publishable answer-quality claims additionally require the shared answer-stage protocol.</p>
+      The measured MuSiQue answer-stage comparison (n=50, identical compression + LLM
+      stage for every system) ships in <code>paper/results_real.md</code>.</p>
     </article>
     <article class="card">
       <h3>What counts as a win</h3>
       <p>A candidate win requires higher recall or MRR on multi-hop QA at an equal or lower
-      context budget. The current smoke harness reports retrieval metrics; answer-stage runs
-      are required before making answer-quality claims.</p>
+      context budget, backed by a paired test. Measured so far: MRR 0.70 vs 0.43 flat
+      (p≈0.0001) on MuSiQue, replicated on HotpotQA — while recall is a statistical tie,
+      and BM25 stays ahead on IndicQA. Wins and ties are both reported.</p>
     </article>
   </div>
 </section>
@@ -165,8 +167,8 @@
 <section class="section section-alt" id="benchmark">
   <h2 data-i18n="bench.h2">Evaluated on real multi-hop data</h2>
   <p class="lede" data-i18n="bench.lede">MuSiQue (Trivedi et al., 2021): answerable 2-hop questions over a shared distractor corpus.
-  MIRA is compared against flat-vector retrieval with an identical answer stage; per-question paired
-  bootstrap and Wilcoxon tests back every comparison.</p>
+  MIRA is measured against flat-vector, BM25 and hierarchical baselines; per-question paired
+  bootstrap and Wilcoxon tests back every headline comparison.</p>
   <div class="grid-3">
     <article class="card">
       <h3>MuSiQue 2-hop</h3>
@@ -215,8 +217,9 @@
     </div>
     <div class="card">
       <h3>Ablated before believed</h3>
-      <p class="small">Ten configurations — vector RAG, MIRA, each mechanism alone, and the full
-      stack — run the same sequential protocol. A component is credited only where its own row
+      <p class="small">Eleven configurations — vector RAG, MIRA, each mechanism alone, the
+      tuned adaptive stack, and the full stack re-enabled — run the same sequential
+      protocol. A component is credited only where its own row
       moves the number. <code>BioMIRA &lt; MIRA</code> is a publishable outcome.</p>
     </div>
   </div>
@@ -267,7 +270,7 @@
   <div class="footer-links">
     <a href="/console.html" data-i18n="footer.console">Console</a>
     <a href="/api/docs" data-i18n="footer.api">API docs</a>
-    <a href="https://github.com/" data-i18n="footer.source">Source</a>
+    <a href="https://github.com/aryaanchavan1-commits/MIRA" data-i18n="footer.source">Source</a>
   </div>
 </footer>
 

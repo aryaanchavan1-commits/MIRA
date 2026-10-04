@@ -199,6 +199,20 @@ zero cloud calls. Artifacts and builders:
                         "--no-pdf-header-footer", "--print-to-pdf=" + pdf_path,
                         "file:///" + out_html.replace("\\", "/")],
                        check=True, timeout=600, capture_output=True)
+        # Chrome prints the <title> into /Title but never an /Author, so the
+        # Info dict is rewritten via pypdf: readers and repositories index the
+        # author, and pypdf rebuilds the xref table (a raw byte patch would
+        # shift every later object and leave it stale).
+        from pypdf import PdfReader, PdfWriter
+        reader = PdfReader(pdf_path)
+        writer = PdfWriter(clone_from=reader)
+        writer.add_metadata({
+            "/Title": f"{TITLE} \u2014 {AUTHOR}",
+            "/Author": AUTHOR,
+            "/Keywords": KEYWORDS,
+        })
+        with open(pdf_path, "wb") as fh:
+            writer.write(fh)
         print(f"wrote {pdf_path} ({os.path.getsize(pdf_path)} bytes)")
     except Exception as exc:  # noqa: BLE001 - deliver the markdown regardless
         print(f"PDF skipped ({exc}); markdown preprint is the deliverable")

@@ -496,6 +496,45 @@ class AnswerPipeline:
         ctx = compress(result, max_tokens=requested_budget,
                        target_ratio=target_ratio)
 
+        def _wider_attempt():
+            """One widened retrieval pass for a window with no usable evidence.
+
+            Structural/label nodes carry no text of their own, so they
+            contribute via the graph but can never be evidence. When they fill
+            the top-k window the pipeline would report "no evidence" and let
+            the caller fall through to an ungrounded parametric answer -- even
+            though retrieval had text-bearing candidates in hand. Re-running
+            with a wider window only changes behaviour in cases that currently
+            answer nothing, so it cannot move a retrieval metric.
+            """
+            wider = max(effective_k * 4, effective_k + 8)
+            retry = self.retriever.retrieve(question, qvec,
+                                            active_components=active_components,
+                                            final_k=wider)
+            if not getattr(retry, "query", ""):
+                retry.query = question
+            retry_ctx = compress(retry, max_tokens=requested_budget,
+                                 target_ratio=target_ratio)
+            if not retry_ctx.text.strip() or retry_ctx.text == ctx.text:
+                return None
+            return retry, retry_ctx
+
+        def _adopt(widened) -> None:
+            nonlocal result, ctx, retrieved_ids, retrieved_count, raw_trace
+            result, ctx = widened
+            retrieved_ids = [item.node.id for item in result.items]
+            retrieved_count = len(retrieved_ids)
+            raw = getattr(result, "activation_trace", None)
+            if raw is None:
+                raw = getattr(
+                    getattr(self.retriever, "activation", None), "last_trace", [])
+            raw_trace = list(raw or [])
+
+        if not ctx.text.strip():
+            widened = _wider_attempt()
+            if widened is not None:
+                _adopt(widened)
+
         # A retrieval hit that is only a structural/label node has no evidence
         # to answer from.  Do not call the model or mislabel the fallback as
         # extractive in that case.
@@ -519,42 +558,58 @@ class AnswerPipeline:
 
         # Answer generation; Hebbian consolidation is deferred until
         # AgentPipeline accepts this answer as grounded (memory or web).
-        if llm_active:
-            from models.llm import answer_prompt
-            prompt = answer_prompt(ctx.text, question)
-            retry = _retry_prompt(ctx.text, question)
-            prompt_tokens = max(est_tokens(prompt), est_tokens(retry)) + est_tokens(_ANSWER_SYSTEM)
-            completion_budget = min(
-                completion_reserve,
-                max(0, (context_window or 0) - prompt_tokens),
-            )
-
-        if llm_active and completion_budget > 0 and ctx.text.strip():
-            # greedy first: deterministic, grounded — best mode for small models
-            text = self.llm.chat(
-                [{"role": "system", "content": _ANSWER_SYSTEM},
-                 {"role": "user", "content": prompt}],
-                max_tokens=completion_budget, temperature=0.0,
-            ) or ""
-            if _degenerate(text):
-                # strategy 2: explicit sentence-first instruction. Small models
-                # sometimes stop right after emitting a citation marker.
+        def _generate(ctx_):
+            nonlocal completion_budget
+            from models.llm import answer_prompt, extractive_answer
+            if llm_active:
+                prompt = answer_prompt(ctx_.text, question)
+                retry = _retry_prompt(ctx_.text, question)
+                prompt_tokens = (max(est_tokens(prompt), est_tokens(retry))
+                                 + est_tokens(_ANSWER_SYSTEM))
+                completion_budget = min(
+                    completion_reserve,
+                    max(0, (context_window or 0) - prompt_tokens),
+                )
+            if llm_active and completion_budget > 0 and ctx_.text.strip():
+                # greedy first: deterministic, grounded — best mode for small models
                 text = self.llm.chat(
-                    [{"role": "user", "content": retry}],
-                    max_tokens=completion_budget, temperature=0.2,
+                    [{"role": "system", "content": _ANSWER_SYSTEM},
+                     {"role": "user", "content": prompt}],
+                    max_tokens=completion_budget, temperature=0.0,
                 ) or ""
-            if _degenerate(text):
-                text = ""  # fall through to extractive
-            mode = "llm" if text else "extractive"
-            if not text:
-                from models.llm import extractive_answer
-                text = extractive_answer(question, ctx.text, ctx.units)["answer"]
-        else:
-            from models.llm import extractive_answer
-            ex = extractive_answer(question, ctx.text, ctx.units)
-            text, mode = ex["answer"], "extractive"
+                if _degenerate(text):
+                    # strategy 2: explicit sentence-first instruction. Small models
+                    # sometimes stop right after emitting a citation marker.
+                    text = self.llm.chat(
+                        [{"role": "user", "content": retry}],
+                        max_tokens=completion_budget, temperature=0.2,
+                    ) or ""
+                if _degenerate(text):
+                    text = ""  # fall through to extractive
+                mode = "llm" if text else "extractive"
+                if not text:
+                    text = extractive_answer(question, ctx_.text, ctx_.units)["answer"]
+                return text, mode
+            ex = extractive_answer(question, ctx_.text, ctx_.units)
+            return ex["answer"], "extractive"
+
+        text, mode = _generate(ctx)
 
         explicit_no_evidence = _is_no_evidence_text(text)
+        if explicit_no_evidence:
+            # The model judged the supplied evidence insufficient. Before
+            # admitting a no-evidence answer, spend the one widened window: a
+            # top-k full of textless structural nodes reads as "insufficient"
+            # even when text-bearing candidates sat one rank below the cut. If
+            # the wider evidence still cannot ground a cited answer, fall
+            # through unchanged — honest negatives stay honest.
+            widened = _wider_attempt()
+            if widened is not None:
+                retry_text, retry_mode = _generate(widened[1])
+                if not _is_no_evidence_text(retry_text):
+                    _adopt(widened)
+                    text, mode = retry_text, retry_mode
+                    explicit_no_evidence = False
         if explicit_no_evidence:
             text = _NO_EVIDENCE_TEXT
             mode = "no_evidence"
