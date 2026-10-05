@@ -28,7 +28,7 @@
   "alternateName": "Arynox MIRA — Mandala Memory",
   "applicationCategory": "ScientificResearchApplication",
   "operatingSystem": "Windows, Linux, macOS",
-  "description": "Local-first mandala-inspired memory architecture for AI retrieval and reasoning: radial rings, semantic sectors, formal radial distance, spreading activation, 9-component ablatable scoring, and reproducible multi-hop benchmarks (MuSiQue, HotpotQA, IndicQA).",
+  "description": "Local-first mandala-inspired memory architecture for AI retrieval and reasoning: radial rings, semantic sectors, formal radial distance, spreading activation, 10-component ablatable scoring, and reproducible multi-hop benchmarks (MuSiQue, HotpotQA, IndicQA).",
   "author": {"@type": "Person", "name": "Aryan Chavan", "alternateName": "Arynox"},
   "codeRepository": "https://github.com/aryaanchavan1-commits/MIRA",
   "license": "https://opensource.org/licenses/MIT",
@@ -192,9 +192,10 @@
 <section class="section section-alt" id="forgetting">
   <h2 data-i18n="forgetting.h2">Memory that is allowed to forget</h2>
   <p class="lede">A second, optional layer asks whether <strong>biologically inspired adaptive
-    dynamics</strong> reduce catastrophic forgetting when knowledge keeps arriving. It is a
-    hypothesis, not a feature set: <code>BIOMIRA_ENABLED = false</code> restores plain MIRA exactly,
-    so the two can be compared on identical data.</p>
+    dynamics</strong> reduce catastrophic forgetting when knowledge keeps arriving — and then
+    answers it by measurement. It remains a hypothesis you can switch off:
+    <code>BIOMIRA_ENABLED = false</code> restores plain MIRA exactly, so the two are compared on
+    identical data.</p>
   <div class="grid-2">
     <div class="card">
       <h3>Forgetting is the baseline problem</h3>
@@ -203,10 +204,14 @@
       forgets is not necessarily one that remembers well; it is one that stores more.</p>
     </div>
     <div class="card">
-      <h3>Adaptation, in eight mechanisms</h3>
-      <p class="small">Sparse LIF-inspired activation · Hebbian association on existing edges ·
-      STDP-inspired temporal association · homeostatic normalization · adaptive decay ·
-      consolidation states · a bounded replay buffer · memory protection.</p>
+      <h3>What the tuned stack actually runs</h3>
+      <p class="small">Adaptive decay · a bounded replay buffer · consolidation states ·
+      a stability term in the retrieval score · merge reporting. Those five are the tuned,
+      measured configuration (variant J), and each one earned its row in the ablation.</p>
+      <p class="small muted">Two further mechanisms — homeostatic normalization and
+      activation-driven ring migration — were implemented and measured, but are
+      <strong>disabled in the tuned stack</strong>: turning them on (variant K) cost retention
+      0.938 → 0.914. A mechanism that does not help is reported, not credited.</p>
       <p class="small muted">Computational abstractions only. No claim of biological equivalence.</p>
     </div>
     <div class="card">
@@ -216,17 +221,30 @@
       answerable to historical questions, and merges keep links to their sources.</p>
     </div>
     <div class="card">
+      <h3>Measured: forgetting is halved</h3>
+      <p class="bench-figure">0.107 → 0.053</p>
+      <p class="small">Average MRR forgotten after six sequential corpora land 30 simulated
+      days apart (task A is 150 days stale when task F arrives). Plain MIRA forgets 0.107 of
+      its best score; the tuned adaptive stack forgets 0.053, lifting mean retention
+      0.873 → 0.938 — with no statistically detectable retrieval cost (p=0.374).
+      The win is roughly halved forgetting, not a doubling of retention.</p>
+    </div>
+    <div class="card">
       <h3>Ablated before believed</h3>
       <p class="small">Eleven configurations — vector RAG, MIRA, each mechanism alone, the
       tuned adaptive stack, and the full stack re-enabled — run the same sequential
       protocol. A component is credited only where its own row
       moves the number. <code>BioMIRA &lt; MIRA</code> is a publishable outcome.</p>
+      <p class="small muted">Decay alone and consolidation alone are exactly inert; replay
+      alone is noise (p=0.747). The win is the <em>interaction</em>, not a sum — which is
+      why the ladder exists.</p>
     </div>
   </div>
   <p class="small muted" style="margin-top:1.6rem">Scope, stated plainly: with the LLM frozen this
     measures <strong>memory interference in retrieval</strong>, not parametric forgetting in weights.
-    Results are written to <code>data_lab/forgetting_results.json</code> and rendered in the
-    <a href="/console.html">console</a>.</p>
+    Nothing is ever deleted — the store grows monotonically, 4,487 → 23,516 nodes across the six
+    arrivals. Results are written to <code>data_lab/forgetting_results.json</code> and rendered in
+    the <a href="/console.html">console</a>.</p>
 </section>
 
 <!-- ============ SCIENCE ============ -->

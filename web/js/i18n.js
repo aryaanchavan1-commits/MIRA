@@ -11,6 +11,7 @@
   var I18N = {
     en: {
       "nav.research": "Research", "nav.architecture": "Architecture",
+      "nav.forgetting": "Forgetting",
       "nav.science": "Science", "nav.console": "Open Console →",
       "nav.overview": "Overview", "nav.chat": "Chat", "nav.mandala": "Mandala",
       "nav.documents": "Documents", "nav.websearch": "Web Search",
@@ -29,6 +30,7 @@
       "architecture.h2": "From PDF to audited answer",
       "science.h2": "Built to be refuted",
       "bench.h2": "Evaluated on real multi-hop data",
+      "forgetting.h2": "Memory that is allowed to forget",
       "bench.lede": "MuSiQue (Trivedi et al., 2021): answerable 2-hop questions over a shared distractor corpus. MIRA is measured against flat-vector, BM25 and hierarchical baselines; per-question paired bootstrap and Wilcoxon tests back every headline comparison.",
       "chat.placeholder": "Ask a multi-hop question…",
       "chat.ask": "Ask", "chat.web": "Allow live web",
@@ -43,6 +45,7 @@
     },
     hi: {
       "nav.research": "शोध", "nav.architecture": "संरचना",
+      "nav.forgetting": "विस्मरण",
       "nav.science": "विज्ञान", "nav.console": "कंसोल खोलें →",
       "nav.overview": "अवलोकन", "nav.chat": "संवाद", "nav.mandala": "मंडल",
       "nav.documents": "दस्तावेज़", "nav.websearch": "वेब खोज",
@@ -61,6 +64,7 @@
       "architecture.h2": "PDF से लेकर ऑडिट-योग्य उत्तर तक",
       "science.h2": "खंडन के लिए बनाया गया",
       "bench.h2": "वास्तविक बहु-चरण डेटा पर मूल्यांकन",
+      "forgetting.h2": "स्मृति जिसे भूलने की अनुमति है",
       "bench.lede": "MuSiQue (त्रिवेदी एवं अन्य, 2021): साझा विकर्षक (distractor) कॉर्पस पर उत्तर-योग्य 2-चरण प्रश्न। MIRA की तुलना फ़्लैट-वेक्टर, BM25 और पदानुक्रमित आधारभूत तंत्रों से की जाती है; हर प्रमुख तुलना प्रति-प्रश्न जोड़ीदार बूटस्ट्रैप और विलकॉक्सन परीक्षण से समर्थित है।",
       "chat.placeholder": "बहु-चरण प्रश्न पूछें…",
       "chat.ask": "पूछें", "chat.web": "सीधे वेब की अनुमति दें",
@@ -75,6 +79,7 @@
     },
     mr: {
       "nav.research": "संशोधन", "nav.architecture": "रचना",
+      "nav.forgetting": "विस्मरण",
       "nav.science": "विज्ञान", "nav.console": "कन्सोल उघडा →",
       "nav.overview": "आढावा", "nav.chat": "संवाद", "nav.mandala": "मंडल",
       "nav.documents": "दस्तऐवज", "nav.websearch": "वेब शोध",
@@ -93,6 +98,7 @@
       "architecture.h2": "PDF पासून ऑडिट-योग्य उत्तरापर्यंत",
       "science.h2": "खंडनासाठी बांधलेले",
       "bench.h2": "प्रत्यक्ष बहु-टप्पू डेटावर मूल्यांकन",
+      "forgetting.h2": "स्मृती जिला विस्मरण्याची परवानगी आहे",
       "bench.lede": "MuSiQue (त्रिवेदी इ. 2021): सामायिक विकर्षक कॉर्पसवर उत्तरदायी 2-टप्पू प्रश्न. MIRA ची तुलना सपाट-व्हेक्टर, BM25 आणि क्रमोच्च आधारभूत प्रणालींशी होते; प्रत्येक प्रमुख तुलना प्रति-प्रश्न जोडीदार बूटस्ट्रॅप आणि विलकॉक्सन चाचणींनी समर्थित आहे.",
       "chat.placeholder": "बहु-टप्पू प्रश्न विचारा…",
       "chat.ask": "विचारा", "chat.web": "प्रत्यक्ष वेबला परवानगी द्या",
