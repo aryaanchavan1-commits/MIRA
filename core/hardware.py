@@ -115,6 +115,10 @@ def _ram_windows() -> Dict[str, float]:
         return {
             "total": stat.ullTotalPhys / 2**30,
             "available": stat.ullAvailPhys / 2**30,
+            # Commit charge (RAM + pagefile) is what actually gates an
+            # allocation on Windows; free physical RAM does not.
+            "commit_available": stat.ullAvailPageFile / 2**30,
+            "commit_total": stat.ullTotalPageFile / 2**30,
         }
     return {}
 
@@ -290,6 +294,14 @@ def detect_hardware(project_root: Optional[str] = None) -> HardwareProfile:
     ram = detect_ram()
     prof.ram_gb = round(ram.get("total", 0.0), 2)
     prof.ram_available_gb = round(ram.get("available", prof.ram_gb * 0.5), 2)
+    # Windows refuses an allocation with os error 1455 once the *commit*
+    # charge (RAM + pagefile) is exhausted, even when physical RAM looks
+    # free — a small pagefile makes the two diverge badly. Budget against
+    # whichever is smaller so model selection never promises a model that
+    # cannot be committed.
+    commit = ram.get("commit_available") or 0.0
+    if commit > 0:
+        prof.ram_available_gb = round(min(prof.ram_available_gb, commit), 2)
 
     gpu = detect_gpu()
     if gpu:

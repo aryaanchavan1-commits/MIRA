@@ -27,7 +27,7 @@ HF_GGUF_REPOS: Dict[str, str] = {
     # param-size label → HF repo containing GGUF files (Q4_K_M preferred)
     "0.5B": "Qwen/Qwen2.5-0.5B-Instruct-GGUF",
     "1B": "bartowski/Llama-3.2-1B-Instruct-GGUF",
-    "1.5B": "Qwen/Qwen2.5-1.5B~Instruct-GGUF",
+    "1.5B": "Qwen/Qwen2.5-1.5B-Instruct-GGUF",
     "2B": "bartowski/gemma-2-2b-it-GGUF",
     "3B": "bartowski/Llama-3.2-3B-Instruct-GGUF",
 }

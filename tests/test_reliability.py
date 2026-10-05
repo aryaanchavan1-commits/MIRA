@@ -1,6 +1,7 @@
 """Focused regression tests for the reliability pass."""
 from __future__ import annotations
 
+import os
 import re
 import sys
 import tempfile
@@ -404,6 +405,10 @@ def test_sources_follow_compressed_context_units():
 
 
 def test_invalid_llm_file_stops_retry_ladder():
+    # A file-level load error is terminal for that file: retrying it across
+    # smaller contexts or CPU-only would only waste startup time. The ladder
+    # still moves on to the next smaller GGUF, so this asserts ONE attempt per
+    # distinct file rather than one attempt overall.
     with tempfile.TemporaryDirectory() as directory:
         model_path = Path(directory) / "broken.gguf"
         model_path.write_text("not a gguf", encoding="utf-8")
@@ -419,7 +424,13 @@ def test_invalid_llm_file_stops_retry_ladder():
         ):
             backend = llm_module.LLMBackend(str(model_path), n_ctx=256)
         assert not backend.available
-        assert len(calls) == 1
+        assert calls, "the requested model must be attempted"
+        attempted = [os.path.normcase(k["model_path"]) for k in calls]
+        assert len(attempted) == len(set(attempted)), (
+            f"a file was retried after a file-level error: {attempted}"
+        )
+        # The broken file is tried exactly once, not once per ctx/gpu combo.
+        assert attempted.count(os.path.normcase(str(model_path))) == 1
 
 
 def test_llm_backend_passes_configured_n_batch():
