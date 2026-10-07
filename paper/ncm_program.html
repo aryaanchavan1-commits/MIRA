@@ -1,0 +1,732 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<title>MIRA-NCM: Nested Constellation Memory — Research Program, Hypotheses, and Future Scope for Structured Long-Term AI Memory — Aryan Chavan</title>
+<meta name="author" content="Aryan Chavan">
+<meta name="description" content="nested constellation memory · long-term AI memory · retrieval-augmented generation · catastrophic forgetting · continual learning · ablation study · versioned memory · local-first AI">
+<style>
+:root { --ink:#111; --dim:#555; --rule:#c9c4b8; --accent:#7a5c1e; --bg:#fbfaf7; }
+@page { size: A4; margin: 22mm 20mm 20mm; }
+* { box-sizing: border-box; }
+body {
+  font-family: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
+  font-size: 10.6pt; line-height: 1.55; color: var(--ink); background: var(--bg);
+  max-width: 172mm; margin: 0 auto; padding: 20mm 8mm; text-align: justify;
+  hyphens: auto; -webkit-hyphens: auto;
+}
+.title-block { text-align: left; border-bottom: 2px solid var(--ink); padding-bottom: 1rem; }
+.title-block h1 { font-size: 20pt; line-height: 1.22; margin: 0 0 0.7rem; letter-spacing: -0.015em; }
+.authors { font-size: 12pt; margin: 0 0 0.2rem; }
+.affiliation { color: var(--dim); font-size: 9.6pt; margin: 0 0 0.2rem; }
+.contact, .preprint-note { color: var(--dim); font-size: 9pt; margin: 0; }
+.preprint-note { margin-top: 0.6rem; }
+h2 {
+  font-size: 13pt; margin: 2.1rem 0 0.7rem; padding-bottom: 0.25rem;
+  border-bottom: 1px solid var(--rule); letter-spacing: -0.01em; break-after: avoid;
+}
+h3 { font-size: 11.2pt; margin: 1.5rem 0 0.5rem; break-after: avoid; }
+h4 { font-size: 10.4pt; margin: 1.1rem 0 0.4rem; break-after: avoid; }
+p { margin: 0 0 0.75rem; orphans: 3; widows: 3; }
+a { color: var(--accent); text-decoration: none; overflow-wrap: anywhere; }
+strong { font-weight: 600; }
+ul, ol { margin: 0 0 0.8rem; padding-left: 1.35rem; }
+li { margin-bottom: 0.3rem; }
+blockquote {
+  margin: 1rem 0; padding: 0.5rem 0 0.5rem 1rem; border-left: 3px solid var(--rule);
+  color: var(--dim); font-style: italic;
+}
+code {
+  font-family: "Cascadia Mono", Consolas, "SF Mono", Menlo, monospace;
+  font-size: 0.88em; background: #f0ece2; padding: 0.05em 0.28em; border-radius: 3px;
+}
+pre {
+  background: #f2efe7; border: 1px solid var(--rule); border-radius: 4px;
+  padding: 0.7rem 0.9rem; overflow-x: auto; break-inside: avoid;
+  font-size: 8.6pt; line-height: 1.4;
+}
+pre code { background: none; padding: 0; }
+hr { border: 0; border-top: 1px solid var(--rule); margin: 1.6rem 0; }
+table {
+  width: 100%; border-collapse: collapse; margin: 0.9rem 0 1.1rem;
+  font-size: 8.5pt; font-variant-numeric: tabular-nums; break-inside: auto;
+}
+caption { caption-side: top; text-align: left; color: var(--dim); font-size: 8.6pt;
+  padding-bottom: 0.4rem; }
+th, td { padding: 0.28rem 0.4rem; border-bottom: 1px solid #e3ded1; text-align: left; }
+thead th { border-bottom: 1.5px solid var(--ink); font-weight: 600; }
+tbody tr:nth-child(even) { background: #f5f2ea; }
+tr { break-inside: avoid; }
+/* references and contribution lists read as hanging-indent bibliography entries */
+#references + ul li, section:last-of-type ul li {
+  margin-left: 1.6rem; text-indent: -1.6rem; margin-bottom: 0.45rem;
+}
+.abstract { font-size: 10pt; }
+@media print { body { background: #fff; padding: 0; max-width: none; } }
+
+body { font-size: 10.2pt; line-height: 1.48; }
+h2 { margin: 1.7rem 0 0.6rem; }
+p { margin: 0 0 0.65rem; }
+table { font-size: 8.2pt; }</style></head><body>
+<div class="title-block">
+  <h1>MIRA-NCM: Nested Constellation Memory — Research Program, Hypotheses, and Future Scope for Structured Long-Term AI Memory</h1>
+  <p class="authors">Aryan Chavan</p>
+  <p class="contact">https://github.com/aryaanchavan1-commits/MIRA</p>
+  <p class="preprint-note">Research program document. Hypotheses and future work;
+  no unevaluated component is reported as a result. Every measured number cites a
+  committed run artifact.</p>
+</div>
+<h1 id="abstract">Abstract</h1>
+<p>MIRA is a local-first retrieval memory system for retrieval-augmented
+generation (RAG) whose evidence store is organized radially (rings and
+sectors), hierarchically, and as a graph, scored by a ten-term explicit
+function, and populated by biologically <em>inspired</em> consolidation
+dynamics (decay, bounded replay, gist summaries). In controlled
+experiments its retrieval beats strong baselines on multi-hop benchmarks
+(MRR 0.7016 vs 0.4347 for flat vectors on MuSiQue, p≈0.0001; 0.9175 vs
+0.6774 on HotpotQA) while losing honestly elsewhere (IndicQA, where
+unicode-aware BM25 remains strongest). This document specifies the next
+research program: <strong>MIRA-NCM (Nested Constellation
+Memory)</strong>. It states the primary research question, six
+falsifiable hypotheses (H1–H6) with pre-registered success and rejection
+criteria, the architecture and formalization of sparse overlapping
+constellation membership, nested memory nodes, and persistent versioned
+storage, a mechanism-level analysis of <em>why</em> each structure
+should help AI memory and <em>how</em> each effect would be measured,
+the ablation ladder and fairness controls that isolate every mechanism,
+a prior-work comparison that bounds the novelty claims, and the
+future-scope roadmap. Nothing in this document is a claimed result:
+sections that report numbers cite committed run artifacts; everything
+else is labeled hypothesis or speculation. The program is designed so
+that any of its hypotheses can be rejected by the experiments it
+prescribes.</p>
+<h1 id="introduction-and-audit-of-the-existing-system">1. Introduction
+and audit of the existing system</h1>
+<p>Long-term memory for AI agents fails in specific, measurable ways:
+relevant evidence is buried under newer distractors (interference),
+multi-hop questions require binding facts that no single embedding
+links, facts change over time and stale versions resurface as current,
+and the system cannot say <em>why</em> it retrieved what it retrieved.
+MIRA attacks these as retrieval-organization problems on a single
+consumer laptop (RTX 3050 4 GB, 16 GB RAM) with a frozen, replaceable
+local LLM — no cloud calls, no fine-tuning, so every observed effect is
+attributable to memory architecture rather than to model capacity.</p>
+<p><strong>What exists today</strong> (verified against the repository
+and committed artifacts):</p>
+<ul>
+<li><strong>Radial organization.</strong> Every memory node carries
+interpretable coordinates: ring (recency / importance band) and sector
+(topic region), giving a radial-distance term in retrieval scoring.</li>
+<li><strong>Ten-term explicit scoring.</strong>
+<code>score = α·semantic + β·structural + γ·radial + δ·graph + ε·importance + ζ·confidence + η·recency + θ·path + ι·activation + κ·stability</code>.
+No hidden terms; every component is individually ablatable and logged
+per retrieval.</li>
+<li><strong>Graph + hierarchy + vector</strong> as parallel retrieval
+paths over the same evidence nodes.</li>
+<li><strong>Biologically inspired dynamics (BioMIRA).</strong> Adaptive
+decay (half-life configurable), bounded replay during “sleep”
+consolidation, gist summaries (507 gists created over an 82,783-node
+workspace), Hebbian-inspired association and STDP-inspired temporal
+updates, activation and stability traces. These are engineering
+analogies, not claims of biological equivalence.</li>
+<li><strong>Explainability.</strong> Each retrieval returns
+per-component scores and the evidence path; the answer stage compresses
+only retrieved evidence and cites it, with an explicit no-evidence state
+that is never silently converted into a grounded answer.</li>
+<li><strong>Experiment framework.</strong> Committed manifests and
+result JSONs for: the real-data benchmark (n=300 MuSiQue questions, 3
+seeds), component ablations, HotpotQA replication, IndicQA
+(Hindi/Marathi), the answer-stage comparison (n=50), sleep
+consolidation, simulated aging, and a sequential catastrophic-forgetting
+lab over six corpora (A→F, 30 questions per task, paired bootstrap),
+with per-question metrics and confidence intervals.</li>
+</ul>
+<p><strong>Honest current weaknesses</strong> measured on the committed
+artifacts: retrieval recall@8 ties flat vectors (0.2991 vs 0.3066,
+p=0.52) — MIRA’s MRR lead is ranking, not coverage; <code>graph</code>
+and <code>recency</code> components are currently inert on the MuSiQue
+corpus (ablation deltas exactly 0.0); dense retrieval collapses on
+Devanagari with an English-centric embedder (MRR 0.02–0.04) and still
+trails BM25 at full IndicQA scale even with a multilingual embedder; the
+2-hop answer-stage F1 gain over flat vectors, while statistically
+consistent, is small in absolute terms (n=50). These weaknesses are the
+starting point for the NCM program, not embarrassments to hide: each one
+names a mechanism the new architecture must justify or drop.</p>
+<h1 id="research-questions">2. Research questions</h1>
+<p><strong>Primary.</strong> <em>Does structured, sparse, overlapping
+constellation-based memory organization improve long-term information
+retrieval, multi-hop retrieval, temporal reasoning, and continual memory
+retention compared with conventional vector, graph, hierarchical, and
+non-overlapping radial memory organizations?</em></p>
+<p><strong>Secondary.</strong> <em>Does nested memory organization
+represent relationships at multiple scales without uncontrolled memory
+duplication?</em> <strong>Tertiary.</strong> <em>Can persistent
+versioned memory with adaptive dynamics improve retention while keeping
+storage and retrieval cost bounded?</em> <strong>Optional
+fourth.</strong> <em>Can quantum-inspired probabilistic representations
+improve ambiguity and overlapping-membership handling on classical
+hardware?</em></p>
+<p>None of these is assumed to have a “yes” answer. Section 4 gives each
+a rejection condition.</p>
+<h1 id="status-taxonomy-what-is-what">3. Status taxonomy — what is
+what</h1>
+<p>Every claim in the MIRA program is tagged with exactly one
+status:</p>
+<table>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr>
+<th>Tag</th>
+<th>Meaning</th>
+<th>Examples</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>[CS]</td>
+<td>Established computer science</td>
+<td>kNN search, BM25, exponential decay, checksums, versioned
+records</td>
+</tr>
+<tr>
+<td>[ENG]</td>
+<td>MIRA’s original engineering implementation</td>
+<td>radial ring/sector layout; ten-term scoring; compress-then-cite</td>
+</tr>
+<tr>
+<td>[HYP]</td>
+<td>Falsifiable hypothesis, not yet tested</td>
+<td>H1–H6 (§4); constellation overlap effects</td>
+</tr>
+<tr>
+<td>[DEMO]</td>
+<td>Demonstrated by committed artifacts</td>
+<td>the tables in §5; forgetting-lab results</td>
+</tr>
+<tr>
+<td>[SPEC]</td>
+<td>Speculative future direction</td>
+<td>quantum-inspired layer; swarm memory (§10)</td>
+</tr>
+</tbody>
+</table>
+<p>“Quantum-inspired” always means a classical probabilistic
+representation; “persistent” always means persistent <em>and
+versioned</em>, never “forever memory”; “biologically inspired” never
+implies biological fidelity; radial geometry is an organizational
+coordinate system, not a physical one.</p>
+<h1 id="hypotheses-success-criteria-and-rejection-conditions">4.
+Hypotheses, success criteria, and rejection conditions</h1>
+<p>Each hypothesis names its metric, comparison, and threshold.
+Thresholds are fixed before the final runs (pre-registration);
+exploratory deviations will be labeled as such.</p>
+<p><strong>H1 [HYP] — Radial organization improves structured
+retrieval.</strong> <em>Supported</em> if removing the radial term
+(leave-one-out) costs ≥ 0.02 MRR on multi-hop corpora at p &lt; 0.05.
+<em>Current evidence [DEMO]</em>: minus-radial costs 0.0098 MRR
+(p=0.052) on MuSiQue — borderline, not yet supported at the
+pre-registered threshold; in the forgetting lab the radial variant is
+the best joint variant (MRR 0.802, forgetting 0.049). <em>Rejected</em>
+if larger corpora or the NCM benchmark show no significant cost when
+radial is removed.</p>
+<p><strong>H2 [HYP] — Sparse overlapping constellations improve
+multi-hop retrieval.</strong> <em>Supported</em> if MIRA-NCM beats the
+strongest non-overlapping structural variant by ≥ 0.03 MRR on 2-hop and
+≥ 0.05 on 3–4-hop synthetic multi-hop sets, without recall@8 loss and
+within +15 % latency. <em>Rejected</em> if overlap adds cost without a
+hop-depth-dependent gain. <em>Mechanistic prior [DEMO]</em>: the
+structural/path term is the second most valuable component (removing it
+costs 0.0442 MRR, p=0.0001), suggesting binding structure — not raw
+similarity — is what multi-hop retrieval uses.</p>
+<p><strong>H3 [HYP] — Nested memory gives multi-scale access within
+bounded storage.</strong> <em>Supported</em> if hierarchy-sensitive
+questions gain ≥ 0.03 MRR while total node growth stays &lt; 10 %
+(summaries replace duplication; children are references, not copies).
+<em>Rejected</em> if gains appear only with unbounded depth or
+duplicated storage. <em>Prior [DEMO]</em>: the hierarchy variant already
+retains 0.946 (best of all forgetting-lab variants); nesting generalizes
+it.</p>
+<p><strong>H4 [HYP] — Persistent versioning improves temporal/conflict
+correctness.</strong> <em>Supported</em> if the versioned variant
+reduces wrong-current-answer errors by ≥ 50 % on the temporal and
+contradiction benchmarks (§7) relative to last-write-wins storage.
+<em>Rejected</em> if version lookup alone (without supersession-aware
+scoring) performs equally, or if history storage dominates the
+budget.</p>
+<p><strong>H5 [HYP] — Adaptive dynamics improve continual retention
+without retrieval cost.</strong> <em>Supported</em> if average
+forgetting drops by ≥ 30 % with MRR indistinguishable from the static
+system (paired CI includes 0) across intervals {7, 30, 90 days}.
+<em>Current evidence [DEMO], partial</em>: the biologically inspired
+stack cuts average forgetting 0.1074 → 0.0527 (retention 0.873 → 0.938)
+with MRR +0.0115, CI [−0.014, +0.037], p=0.378 — the forgetting
+reduction replicates across intervals (0.039/0.053/0.038 at 7/30/90
+days) but the MRR CI does not exclude a small loss, and two mechanisms
+(homeostatic normalization, ring migration) <em>hurt</em> (retention
+0.914) and are therefore disabled in the tuned stack. H5 is
+half-supported: dynamics buy retention; their retrieval neutrality is
+not yet established at n=300 questions.</p>
+<p><strong>H6 [SPEC→HYP] — A quantum-inspired representation improves
+ambiguity handling.</strong> <em>Supported</em> only if the optional
+probabilistic backend beats the classical scorer on a pre-defined
+ambiguous- membership benchmark at the same compute budget. Implemented
+as an isolated, switchable module; if it shows no improvement it will be
+reported as such and removed from the default stack. No claim of quantum
+advantage, entanglement, or hardware of any kind is made or will be
+made.</p>
+<h1 id="measured-foundation-all-numbers-from-committed-artifacts">5.
+Measured foundation (all numbers from committed artifacts)</h1>
+<p><strong>Multi-hop retrieval (MuSiQue answerable 2-hop, n=300,
+k=8):</strong> MIRA 0.7016 MRR vs flat vector 0.4347 (Δ=0.267, 95 % CI
+[0.224, 0.311], p≈0.0001), BM25 0.3066, hierarchical RAG 0.2367.
+Recall@8 statistically ties flat vectors. Replicated on HotpotQA bridge
+questions (MRR 0.9175 vs 0.6774, p≈0.0001). Answer stage (n=50, 1.5B
+local model, identical compression+LLM for both arms): token-F1 0.0260
+vs 0.0259, p=0.0086 — consistent but small.</p>
+<p><strong>Component attribution (leave-one-out):</strong> semantic
+0.2594, structural 0.0442, activation 0.0179 (each p≤0.022); radial
+0.0098 (p=0.052); graph and recency exactly inert on this corpus (delta
+0.0, p=0.0001 by bootstrap degeneracy) — an honest negative that
+motivates NCM’s overlap mechanism to give structural terms work to do
+beyond the document tree.</p>
+<p><strong>Cross-lingual boundary:</strong> with an English-centric
+MiniLM embedder, Hindi/Marathi dense MRR is 0.02–0.04 while
+unicode-aware BM25 holds 0.39–0.45; a multilingual embedder lifts Hindi
+flat MRR ~14× (0.028 → 0.394), yet at full scale (3,151 questions) BM25
+remains strongest. MIRA does not currently beat baselines on
+single-paragraph extractive QA in Indic languages.</p>
+<p><strong>Continual-memory lab (six sequential corpora, 30
+questions/task, all prior tasks re-tested after each arrival; 30
+simulated days of disuse between arrivals):</strong></p>
+<table style="width:100%;">
+<colgroup>
+<col style="width: 16%" />
+<col style="width: 16%" />
+<col style="width: 16%" />
+<col style="width: 16%" />
+<col style="width: 16%" />
+<col style="width: 16%" />
+</colgroup>
+<thead>
+<tr>
+<th>variant</th>
+<th>MRR</th>
+<th>avg forgetting</th>
+<th>retention</th>
+<th>Δ MRR vs B (95 % CI)</th>
+<th>p</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>A vector RAG</td>
+<td>0.4869</td>
+<td>0.0432</td>
+<td>0.9224</td>
+<td>−0.2670 [−0.324, −0.211]</td>
+<td>0.0001</td>
+</tr>
+<tr>
+<td>B MIRA</td>
+<td>0.7539</td>
+<td>0.1074</td>
+<td>0.8731</td>
+<td>baseline</td>
+<td>—</td>
+</tr>
+<tr>
+<td>C MIRA radial</td>
+<td>0.8020</td>
+<td>0.0490</td>
+<td>0.9420</td>
+<td>+0.0481 [+0.024, +0.074]</td>
+<td>0.0001</td>
+</tr>
+<tr>
+<td>E MIRA hierarchy</td>
+<td>0.7887</td>
+<td>0.0443</td>
+<td>0.9461</td>
+<td>+0.0348 [+0.007, +0.063]</td>
+<td>0.0118</td>
+</tr>
+<tr>
+<td>I B. dynamics</td>
+<td>0.7654</td>
+<td>0.0527</td>
+<td>0.9384</td>
+<td>+0.0115 [−0.014, +0.037]</td>
+<td>0.378</td>
+</tr>
+<tr>
+<td>J tuned stack</td>
+<td>0.7655</td>
+<td>0.0533</td>
+<td>0.9383</td>
+<td>+0.0117 [−0.014, +0.037]</td>
+<td>0.374</td>
+</tr>
+<tr>
+<td>K + homeostasis</td>
+<td>0.7444</td>
+<td>0.0769</td>
+<td>0.9138</td>
+<td>−0.0095 [−0.043, +0.024]</td>
+<td>0.577</td>
+</tr>
+</tbody>
+</table>
+<p>Reading this table honestly: low forgetting alone is worthless —
+vector RAG has the second-lowest forgetting <em>and</em> the worst MRR,
+because weaker memories have less to interfere with. The meaningful
+result is the joint criterion: the radial variant improves both MRR
+(+0.048) <em>and</em> retention (+0.069) simultaneously. Decay alone and
+consolidation alone are byte-identical to baseline (inert); replay alone
+is noise (p=0.747); only the <em>interaction</em> of decay and bounded
+replay moves retention. The store grows monotonically 4,487 → 23,516
+nodes across arrivals — nothing is deleted, so “interference” here is
+purely a ranking phenomenon, not data loss.</p>
+<p><strong>Sleep consolidation under aging:</strong> after 60 simulated
+days over 66,527 nodes, replayed memories <em>recover</em> (MRR +0.0307)
+while faded ones decline (−0.0653); decay retention is 0.9789 per pass
+with no measurable retrieval cost (Δ=0.0017, p=0.26). This is the
+complementary- learning-systems pattern — fast trace, selective replay,
+gist abstraction [8][9] — implemented as retrieval dynamics, and it is
+the strongest existing evidence that dynamics can <em>target</em> what
+consolidates rather than merely rotting everything.</p>
+<h1 id="mira-ncm-architecture-and-formalization">6. MIRA-NCM:
+architecture and formalization</h1>
+<pre><code>                 MIRA (existing, preserved as ablation baseline)
+      radial ─┬─ graph ─┬─ hierarchy ─┬─ vector ─┬─ ten-term scoring
+              └─────────┴─────────────┴──────────┘
+                                │
+                     CONSTELLATIONS (new)
+              sparse overlapping soft membership, K per node
+                                │
+                   NESTED MEMORY NODES (new)
+              bounded-depth parents, children = references
+                                │
+              PERSISTENT VERSIONED STORAGE (new)
+              immutable history, supersession, provenance, checksums
+                                │
+              ADAPTIVE DYNAMICS (existing, tunable)
+              decay · replay · consolidation · stability
+                                │
+         multi-path retrieval + per-component explanation
+                                │
+        [SPEC] optional quantum-inspired probabilistic backend</code></pre>
+<p><strong>Constellations.</strong> A constellation is a soft cluster
+induced from the corpus — never a hand-coded category: centroids are
+seeded from embedding space (k-means over node vectors), entities, and
+graph communities, then grow by assignment. A memory node <em>m</em>
+joins its top-K constellations with weights derived from similarity to
+the centroid and normalized in L1:
+<code>w_c(m) = sim(e_m, μ_c) / Σ_{c' ∈ topK} sim(e_m, μ_{c'})</code>,
+with <code>CONSTELLATION_TOP_K</code> ∈ {1,2,3,5} as an ablation axis
+(K=1 reproduces non-overlapping soft clustering; the hypothesis is
+precisely that K&gt;1 is what helps). Overlap between memories uses the
+shared-membership inner product
+<code>overlap(a,b) = Σ_c w_c(a)·w_c(b)</code> — a bounded, sparse
+kernel: candidate pairs are generated only through a
+constellation-inverted index, so construction is O(N·K²) expected, not
+O(N²), and <code>MAX_OVERLAP_EDGES</code> per constellation plus an
+<code>OVERLAP_THRESHOLD</code> floor prevent explosion. Radial distance
+<code>d_r = |ring_a − ring_b| + λ·ang(θ_a, θ_b)</code> and constellation
+distance <code>d_c = 1 − overlap(a,b)</code> are independent,
+unit-testable functions; the geometry is an organizational coordinate
+system, and no physical interpretation is claimed for it.</p>
+<p><strong>Nesting.</strong> A node may declare a bounded-depth parent
+(<code>MAX_DEPTH</code>, default 4; children are node-id references with
+provenance, never copies). Retrieval may traverse parent/summary links
+as one more scoring path (<code>w_hierarchy</code>); nesting never
+replaces vector or graph access.</p>
+<p><strong>Persistence.</strong> Every update appends a version:
+immutable history, <code>supersedes</code> / <code>superseded_by</code>
+links, content hash (<code>SHA-256</code> over content + metadata) for
+integrity and duplicate detection, and full provenance. Current-ness is
+a <em>scoring property</em>: superseded versions remain retrievable as
+history (a temporal query about March must be able to find the March
+belief) but are down-weighted for “what is true now” queries.
+Consolidation merges store the summary <em>and</em> its source links, so
+reconstruction is always possible.</p>
+<p><strong>Retrieval scoring</strong> extends the existing ten-term
+function with two explicit terms:
+<code>+ μ·constellation_overlap(q,m) + ν·version_currentness(m)</code>,
+each individually ablatable, logged per retrieval, and returned in the
+explanation payload (“retrieved because: semantic 0.82, overlap 0.76,
+path 0.91, …”). Everything else about MIRA — compress-then-cite, the
+no-evidence state, the memory gate — is untouched.</p>
+<h1
+id="why-this-should-help-ai-memory-and-how-each-effect-is-measured">7.
+Why this should help AI memory, and how each effect is measured</h1>
+<p>The program rests on one observed regularity: <strong>retrieval
+interference is a structural phenomenon, and structure is what MIRA
+already manipulates.</strong> Mechanism by mechanism:</p>
+<p><strong>Multi-hop binding (tests H2).</strong> A 4-hop question
+connects person → project → hardware → event. Flat similarity only helps
+the hop with lexical overlap; embeddings miss the rest. Overlapping
+constellations create a sparse evidence graph in which two facts that
+share <em>any</em> context (the person, the project, the time) are one
+traversal step apart. The measured prior — removing structural/path
+terms costs 0.0442 MRR while semantic remains dominant — says binding
+structure carries real weight; the hypothesis is that <em>overlap</em>
+is the right shape of that structure because it does not force each
+memory into one bucket. <em>Measured by</em>: per-hop retrieval accuracy
+and path accuracy on synthetic 1–4-hop chains built with the same
+generator discipline as the existing benchmarks, plus the real
+MuSiQue/HotpotQA suites for external validity.</p>
+<p><strong>Continual retention (tests H5, extended by
+constellations).</strong> In the forgetting lab, new corpora degrade old
+rankings purely by adding competitors. Constellations partition the
+interference set: a distractor from an unrelated constellation competes
+less with a target (its overlap term is ~0), so the effective distractor
+pool per query shrinks as the corpus diversifies. Meanwhile nested gists
+give replay a rehearsal target — and the aging experiment already shows
+targeted replay <em>recovers</em> aged memories (+0.0307) rather than
+merely slowing decay. This is why the forgetting claim is scoped: MIRA
+measures <em>retrieval</em> interference with the LLM frozen; it does
+not and cannot speak to parametric forgetting in neural weights, and no
+experiment here claims otherwise. <em>Measured by</em>: the existing
+sequential A→F protocol extended to 8–10 corpora, reporting forgetting,
+retention, MRR jointly — never forgetting alone, which weak systems
+trivially win.</p>
+<p><strong>Temporal correctness (tests H4).</strong> Contradiction
+handling fails today the way it fails in all unversioned stores: the
+newest fact wins by recency weight regardless of question tense. Version
+chains turn “what did the user use in March?” into a lookup and “which
+preference is current?” into a supersession traversal, both
+deterministic and auditable. <em>Measured by</em>: a generated temporal
+benchmark (belief-revision sequences, e.g. Python → Rust → Python)
+scored on current/historical/superseded/uncertain classification, with
+wrong-current-answer rate as the headline error.</p>
+<p><strong>Interpretability as a capability, not decoration.</strong>
+Because every term is explicit and logged, a wrong retrieval can be
+attributed to a component, and a component that only hurts can be
+removed — the ablation table is the mechanism for this, and it already
+exposed two inert terms (graph, recency on this corpus) and two harmful
+dynamics (homeostasis, ring migration). The NCM program inherits that
+discipline: any mechanism that cannot pay for itself gets deleted.</p>
+<p><strong>Why a local, frozen-LLM setting is the right
+testbed.</strong> With the model fixed, every delta between systems is
+attributable to memory organization — the variable the program is trying
+to understand — and the whole stack runs on 16 GB RAM-class hardware,
+which is also where agent memory actually has to live. The cost is
+external validity to larger models; that is a limitation, stated here,
+and revisit-able later, not a hidden one.</p>
+<h1 id="experimental-design">8. Experimental design</h1>
+<p><strong>Benchmark suite (MIRA-MemoryBench).</strong> Single-hop;
+multi-hop (1–4 hop, synthetic + MuSiQue + HotpotQA); temporal belief
+revision; contradiction; continual sequence (8–10 corpora);
+cross-lingual (en/hi/mr, with the multilingual embedder as the reported
+configuration and the English-centric one as a documented failure mode);
+noise and distractor stress; memory update and version-history drills;
+explanation audit (do logged components predict human-judged relevance
+better than chance?). Each benchmark run emits
+<code>manifest.json</code> (experiment id, git commit, model, embedder,
+dataset version, seed, hardware, K, context budget, memory count),
+<code>results.json</code>/<code>results.csv</code>,
+<code>metrics.json</code>, plots, and logs. Datasets are
+synthetic-generated with committed generators (source, license, seed,
+statistics) plus public sets where licensing permits; leakage tests
+check for duplicate documents, repeated questions, and answer
+exposure.</p>
+<p><strong>Ablation ladder (all selectable by configuration, existing
+MIRA preserved).</strong> B0 keyword · B1 vector RAG · B2 graph RAG · B3
+hierarchical RAG · M1 MIRA minus radial · M2 MIRA · M3 MIRA + graph · M4
++ constellations · M5 + nesting · M6 + versioning · M7 + adaptive
+dynamics · M8 full MIRA-NCM · M9 = M8 + quantum-inspired backend. MODE
+configuration keeps <code>classic_mira</code>, <code>mira_ncm</code>,
+<code>bio_mira</code>, <code>quantum_inspired</code> all loadable in the
+same process.</p>
+<p><strong>Fairness controls.</strong> Same questions, embedder, LLM,
+context budget, retrieval K, temperature, seeds, preprocessing, and
+evaluation code for every arm. If MIRA-NCM needs more storage or
+latency, that is reported in the same table as the accuracy it buys;
+trade-offs are results.</p>
+<p><strong>Statistics.</strong> ≥ 3 seeds where variance exists; paired
+bootstrap for per-question metrics with 95 % CIs; Wilcoxon signed-rank
+as the non-parametric cross-check (both already implemented); effect
+sizes reported beside every p-value; “statistically significant” is
+never conflated with “practically meaningful” — the answer-stage F1
+result (p=0.0086, Δ=0.0001 absolute) is the standing example of the
+difference. Hypotheses H1–H6 are pre-registered in
+<code>docs/EXPERIMENT_PROTOCOL.md</code> before the final runs;
+thresholds will not move after results.</p>
+<p><strong>Failure analysis.</strong> Every benchmark exports
+<code>failure_examples.json</code> with a taxonomy: semantic confusion,
+wrong constellation, wrong graph path, wrong temporal ordering,
+over/under-retrieval, stale-memory errors, excessive overlap, storage
+blowup, multilingual failure. Failures are inspected before any headline
+is written.</p>
+<p><strong>Resource envelope.</strong> Target: retrieval p95 &lt; 2 s at
+10⁵ nodes on 16 GB RAM / 4 GB VRAM, storage overhead of NCM structures
+&lt; 25 % of node payload, measured via the existing resource
+instrumentation at 1K/10K/50K/100K nodes. Scaling claims beyond what is
+measured will not be made.</p>
+<h1 id="prior-work-and-bounded-novelty-claims">9. Prior work and bounded
+novelty claims</h1>
+<p>MIRA-NCM combines known ideas; the contribution is the
+<em>composition and its measurement</em>, not invention of the
+ingredients. Sparse distributed memory with decaying counters and
+positional structure is Kanerva’s [14]; associative spreading activation
+is classical [11]; hierarchical control and episodic-storage separation
+in agent memory appears in Generative Agents [15]; graph-structured
+retrieval for multi-hop QA is HippoRAG’s premise (a PageRank-style KG
+index) [16] and GraphRAG’s (community summaries) [17];
+continual-learning taxonomies and replay baselines are standard [3–7];
+complementary learning systems motivate the decay/replay/gist triangle
+[8][9][10]; BM25 remains a baseline no structured system may skip
+[13][18] — MIRA’s own IndicQA results are the proof of that rule. What
+MIRA-NCM adds, contingent on H1–H3: an <em>overlap-kernel</em>
+definition of memory association that is sparse by construction and
+ablatable per K; a forgetting lab that scores forgetting jointly with
+ranking quality (most continual benchmarks report only accuracy); and a
+retrieval stack whose every component is individually measured and
+removable. Where a competing system already demonstrates an effect, the
+paper will cite it and claim only the difference.</p>
+<h1 id="risks-and-kill-criteria">10. Risks and kill criteria</h1>
+<table>
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<thead>
+<tr>
+<th>Risk</th>
+<th>Mitigation / kill criterion</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Overlap explosion (K large, corpus dense)</td>
+<td>inverted-index construction; MAX_OVERLAP_EDGES; if overhead &gt; 25
+% without MRR gain, mechanism is cut</td>
+</tr>
+<tr>
+<td>Embedding dominance swamps new terms</td>
+<td>ablation gates: each new term must move its target metric with
+others fixed, else weight → 0</td>
+</tr>
+<tr>
+<td>Constellations re-create single-assignment (K=1 behavior)</td>
+<td>K sweep is a mandatory axis; K∈{2,3} must differ from K=1 to keep H2
+alive</td>
+</tr>
+<tr>
+<td>Version history grows unbounded</td>
+<td>history capped per node with archived cold storage; H4 rejection if
+history &gt; 30 % of store</td>
+</tr>
+<tr>
+<td>Dynamics help retention, hurt MRR (as K showed)</td>
+<td>joint criterion only: a variant that fails the MRR CI test is
+disabled regardless of retention</td>
+</tr>
+<tr>
+<td>Gist abstraction loses members</td>
+<td>the measured 0.975 gist hit-rate is the floor; regressions trigger
+regeneration</td>
+</tr>
+<tr>
+<td>Any baseline wins a suite</td>
+<td>reported as-is; per §61 principle the goal is a true memory
+principle, not a win column</td>
+</tr>
+</tbody>
+</table>
+<h1 id="future-scope">11. Future scope</h1>
+<p><strong>Phase 1 — Constellation core (weeks 1–3).</strong> Centroid
+induction, top-K membership, overlap index, <code>w_constellation</code>
+term, unit tests, K-sweep ablation on the existing MuSiQue harness. Ship
+criterion: H2 pilot on synthetic 3-hop chains.</p>
+<p><strong>Phase 2 — Nesting + versioning (weeks 3–6).</strong>
+Bounded-depth parents, version chains, supersession scoring, temporal +
+contradiction benchmarks; H3/H4 pilots.</p>
+<p><strong>Phase 3 — Continual suite scale-up (weeks 6–8).</strong>
+Extend the forgetting lab to 8–10 corpora with NCM variants in the
+ladder; joint-criterion analysis; H5 final test.</p>
+<p><strong>Phase 4 — Explanation audit + resource sweeps (weeks
+8–10).</strong> Component-predicts-relevance study, 10⁵-node scaling
+run, complexity documentation from the actual implementations.</p>
+<p><strong>Phase 5 — Optional backends (quarter 2).</strong>
+Quantum-inspired probabilistic membership as a switchable scorer (H6,
+explicitly allowed to fail); pluggable storage (SQLite/FAISS backends
+already implicit in the local-first design); SDK
+(<code>MemoryEngine.add/retrieve/history/explain</code>) over the
+existing server API; multi-tenant namespaces only if an actual
+deployment demands them.</p>
+<p><strong>Longer-range [SPEC].</strong> Agentic self-curriculum (the
+agent schedules its own replays from prediction error); federated memory
+across devices with provenance-preserving merge; learned constellation
+induction (currently centroid-based by design — learned clustering is a
+confound until the fixed version is characterized); learned term weights
+replacing the hand set (only after the fixed-weight behavior is fully
+mapped, otherwise attribution dies).</p>
+<p><strong>Product trajectory (deliberately modest).</strong> The engine
+first: inspectable long-term memory infrastructure for local AI agents —
+a defensible niche precisely because every retrieval is auditable and
+every claim reproducible. Local → SDK → optional managed deployment, in
+that order, and only after the benchmarks justify the engineering.</p>
+<h1 id="reproducibility-statement">Reproducibility statement</h1>
+<p>Every measured number in this document is generated from committed
+run artifacts and reproduced by
+<code>paper/export_results.py --real</code>; the forgetting-lab table
+traces to <code>data_lab/forgetting_results.json</code> (variants A–K, 6
+tasks, 30 questions each, complete); the retrieval tables trace to
+<code>data_bench/*.json</code>; consolidation and aging to
+<code>data_bench/consolidation_results.json</code> and
+<code>data_bench/aging_results.json</code>. Nothing here is
+hand-entered. Hypotheses H1–H6 are forward-looking and marked as such;
+the NCM components they describe are <strong>not yet evaluated</strong>
+and no result is claimed for them. Full protocol (datasets, thresholds,
+seeds, tests) to be committed as
+<code>docs/EXPERIMENT_PROTOCOL.md</code> before the first final-variant
+run, per pre-registration.</p>
+<h1 id="references-selected">References (selected)</h1>
+<ol type="1">
+<li>Trivedi, H. et al. (2022). MuSiQue: Multihop Questions via
+Single-hop Question Composition. <em>TACL</em>, 10, 657–680.</li>
+<li>Yang, Z. et al. (2018). HotpotQA: A Dataset for Diverse, Explainable
+Multi-hop Question Answering. <em>EMNLP</em>.</li>
+<li>McCloskey, M. &amp; Cohen, N. (1989). Neural networks and
+catastrophic forgetting. <em>Neural Computation</em>, 11(7),
+1649–1671.</li>
+<li>Parisi, T. I. et al. (2019). Continual lifelong learning with neural
+networks: A review. <em>Neural Networks</em>, 113, 54–71.</li>
+<li>Kirkpatrick, J. et al. (2019). Overcoming catastrophic forgetting in
+neural networks. <em>PNAS</em>, 116(13), 6521–6529.</li>
+<li>Lopez-Paz, D. &amp; Ranzato, M. (2017). Gradient Episodic Memory for
+Continual Learning. <em>NeurIPS</em>.</li>
+<li>De Lange, M. et al. (2022). A continual learning survey. <em>IEEE
+TPAMI</em>, 44(7), 3366–3385.</li>
+<li>McClelland, J. L., McNaughton, B. L., &amp; O’Reilly, R. C. (1995).
+Complementary learning systems. <em>Psychological Review</em>, 102(3),
+419–457.</li>
+<li>Wilson, M. A. &amp; McNaughton, B. L. (1994). Reactivation of
+hippocampal ensemble memories during sleep. <em>Science</em>, 265,
+676–679.</li>
+<li>Marr, D. (1971). Simple memory: A theory for archicortex. <em>Phil.
+Trans. R. Soc. B</em>, 262, 23–81.</li>
+<li>Hebb, D. O. (1949). <em>The Organization of Behavior.</em>
+Wiley.</li>
+<li>Bi, G.-Q. &amp; Poo, M.-M. (1998). Activity-driven Hebbian
+modification of synaptic strengths. <em>J. Neuroscience</em>, 18,
+10464–10472.</li>
+<li>Robertson, S. &amp; Zaragoza, H. (2009). The Probabilistic Relevance
+Framework: BM25 and beyond. <em>Foundations and Trends in IR</em>,
+3(4).</li>
+<li>Kanerva, P. (1988). <em>Sparse Distributed Memory.</em> MIT
+Press.</li>
+<li>Park, J. S. et al. (2023). Generative Agents: Interactive Simulacra
+of Human Behavior. <em>UIST</em>.</li>
+<li>Gutiérrez, B. J. et al. (2024). HippoRAG: Neurobiologically Inspired
+Long-Term Memory for Large Language Models. <em>NeurIPS</em>.</li>
+<li>Edge, D. et al. (2024). From Local to Global: A Graph RAG Approach
+to Query-Focused Summarization. arXiv:2404.16130.</li>
+<li>Lewis, P. et al. (2020). Retrieval-Augmented Generation for
+Knowledge-Intensive NLP Tasks. <em>NeurIPS</em>.</li>
+</ol>
+
+</body></html>
