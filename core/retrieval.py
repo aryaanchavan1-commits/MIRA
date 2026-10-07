@@ -1,15 +1,15 @@
 """MIRA retrieval core (spec §20-24).
 
 Multi-component scoring with per-component ablation: any component can be
-switched off via `active_components`. The full system = all 9 components on.
+switched off via `active_components`.
 
 score = α·semantic + β·structural + γ·radial + δ·graph
       + ε·importance + ζ·confidence + η·recency + θ·path + ι·activation
-      + κ·stability                                          (§21, experimental)
+      + κ·stability + μ·constellation                        (§21, experimental)
 
-κ·stability is the BioMIRA component (§14): it reads the adaptive stability
-written by core/biomira.py and is weighted 0 by default, so plain MIRA scores
-are bit-identical with BioMIRA off (§1 fair baseline).
+κ·stability (BioMIRA) and μ·constellation (MIRA-NCM) are both weighted 0
+unless their layer is enabled (biomira.enabled / ncm.enabled), so plain MIRA
+scores are unchanged by either — the §1 fair baseline.
 """
 from __future__ import annotations
 
@@ -23,6 +23,7 @@ from typing import Any, Dict, List, Optional, Tuple
 import numpy as np
 
 from core import biomira
+from core import ncm
 from core.activation import SpreadingActivation
 from core.memory import MemoryFrame, MemoryNode
 from core.types import parse_float, stable_hash, utcnow, datetime
@@ -32,8 +33,8 @@ from storage.vector_store import VectorStore
 logger = logging.getLogger("mira.retrieval")
 
 ALL_COMPONENTS = ("semantic", "structural", "radial", "graph",
-                  "importance", "confidence", "recency", "path", "activation",
-                  "stability")
+                  "importance", "confidence", "recency", "path",
+                  "activation", "stability", "constellation")
 
 
 @dataclass
@@ -88,6 +89,13 @@ class MIRARetriever:
             "stability": parse_float(w.get("kappa_stability", 0.0), 0.0)
             if self.bio_enabled else 0.0,
         }
+        # MIRA-NCM constellations (H2): same gate pattern as the stability
+        # term — index exists only when ncm.enabled, weight 0 otherwise, so
+        # classic MIRA's scores and rankings are unchanged (§1/§50).
+        self.constellation_idx = ncm.attach_constellations(frame, config)
+        self.weights["constellation"] = (
+            parse_float(w.get("mu_constellation", 0.08), 0.08)
+            if self.constellation_idx is not None else 0.0)
         self.activation = SpreadingActivation(frame, config)
         # optional learned weights (§new neural unit) — off by default; run
         # scripts/train_neural.py to fit and set retrieval_score.learned: true
@@ -228,6 +236,10 @@ class MIRARetriever:
         result.n_candidates = len(cands)
 
         # 5. score with active components only (§21)
+        # constellation membership of the query, computed once for all cands
+        q_mem = (self.constellation_idx.query_membership(query_vec)
+                 if (self.constellation_idx is not None
+                     and self.weights["constellation"] > 0) else ((), ()))
         wsum = sum(self.weights[c] for c in active_names) or 1.0
         for node_id in sorted(cands):
             item = cands[node_id]
@@ -243,6 +255,8 @@ class MIRARetriever:
                 "path": self._path_score(n, item.path) if "path" in active_names else 0.0,
                 "activation": float(np.clip(act_map.get(n.id, 0.0), 0.0, 1.0)),
                 "stability": self._stability(n),
+                "constellation": (self.constellation_idx.node_score(n.id, *q_mem)
+                                  if q_mem[0] else 0.0),
             }
             item.components = comp_scores
             item.score = sum(

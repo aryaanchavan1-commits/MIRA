@@ -28,7 +28,7 @@
   "alternateName": "Arynox MIRA — Mandala Memory",
   "applicationCategory": "ScientificResearchApplication",
   "operatingSystem": "Windows, Linux, macOS",
-  "description": "Local-first mandala-inspired memory architecture for AI retrieval and reasoning: radial rings, semantic sectors, formal radial distance, spreading activation, 10-component ablatable scoring, and reproducible multi-hop benchmarks (MuSiQue, HotpotQA, IndicQA).",
+  "description": "Local-first mandala-inspired memory architecture for AI retrieval and reasoning: radial rings, semantic sectors, formal radial distance, spreading activation, 11-component ablatable scoring (constellation term default-off), and reproducible multi-hop benchmarks (MuSiQue, HotpotQA, IndicQA).",
   "author": {"@type": "Person", "name": "Aryan Chavan", "alternateName": "Arynox"},
   "codeRepository": "https://github.com/aryaanchavan1-commits/MIRA",
   "license": "https://opensource.org/licenses/MIT",
@@ -100,10 +100,13 @@
       <pre class="formula">score = α·semantic + β·structural + γ·radial
 + δ·graph + ε·importance + ζ·confidence
 + η·recency + θ·path + ι·activation
-+ κ·stability (BioMIRA layer only)</pre>
-      <p class="small">Ten components, one Greek letter each — the same mapping the code
++ κ·stability (BioMIRA layer only)
++ μ·constellation (NCM, default off)</pre>
+      <p class="small">Eleven components, one Greek letter each — the same mapping the code
       uses. Every coefficient is configurable and every component can be switched
-      off, which makes the contribution testable rather than decorative.</p>
+      off, which makes the contribution testable rather than decorative. The
+      constellation term is implemented but not yet evaluated (see
+      <code>docs/EXPERIMENT_PROTOCOL.md</code>).</p></p>
     </article>
     <article class="card">
       <h3>The honest baselines</h3>

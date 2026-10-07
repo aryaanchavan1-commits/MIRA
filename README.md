@@ -642,6 +642,41 @@ MIRA/
 └── logs/            mira.log
 ```
 
-## 21. License
+## 21. MIRA-NCM (Nested Constellation Memory) — experimental
+
+Store-side extensions for the research program in
+`paper/ncm_program.pdf` (hypotheses H1–H6, pre-registered thresholds in
+`docs/EXPERIMENT_PROTOCOL.md`). **Implemented, not yet evaluated — no result
+is claimed for any NCM mechanism.**
+
+What it is:
+
+- **Constellations** — k-means over node embeddings induces clusters; each
+  node joins its top-K clusters with L1-normalized similarity weights; the
+  retrieval term is the overlap kernel `Σ_c w_q(c)·w_m(c) ∈ [0,1]`. K=1
+  degenerates to plain clustering — that is the H2 ablation axis.
+- **Versioning** — `VersionChain`: append-only history keyed by stable hash,
+  `supersedes` links, provenance, append-only rollback, `MAX_DEPTH` cap.
+- **Retrieval term** — `μ·constellation`, gated exactly like the BioMIRA
+  stability term: weight 0 unless enabled, so classic MIRA is unchanged.
+
+What it is **not**: not "forever memory" (persistent *and versioned*), not
+quantum anything (classical hardware; H6 is optional and must earn its place),
+and the forgetting work measures retrieval interference with the LLM frozen —
+not parametric forgetting.
+
+Enable (off by default):
+
+```yaml
+ncm:
+  enabled: true
+  top_k: 3            # CONSTELLATION_TOP_K (try 1/2/3/5 for the K sweep)
+  max_constellations: 64
+```
+
+Tests: `python tests/test_ncm.py` (6 checks, incl. the default-off invariance
+that classic MIRA scores are unchanged).
+
+## 22. License
 
 MIT — see `LICENSE`.

@@ -452,9 +452,11 @@ belief) but are down-weighted for “what is true now” queries.
 Consolidation merges store the summary <em>and</em> its source links, so
 reconstruction is always possible.</p>
 <p><strong>Retrieval scoring</strong> extends the existing ten-term
-function with two explicit terms:
-<code>+ μ·constellation_overlap(q,m) + ν·version_currentness(m)</code>,
-each individually ablatable, logged per retrieval, and returned in the
+function: <code>+ μ·constellation_overlap(q,m)</code> is implemented as
+an eleventh, individually ablatable component — weight 0 unless
+<code>ncm.enabled</code>, so every published measurement remains
+reproducible bit-for-bit — and <code>+ ν·version_currentness(m)</code>
+follows with H4. Both are logged per retrieval and returned in the
 explanation payload (“retrieved because: semantic 0.82, overlap 0.76,
 path 0.91, …”). Everything else about MIRA — compress-then-cite, the
 no-evidence state, the memory gate — is untouched.</p>
@@ -678,12 +680,15 @@ tasks, 30 questions each, complete); the retrieval tables trace to
 <code>data_bench/*.json</code>; consolidation and aging to
 <code>data_bench/consolidation_results.json</code> and
 <code>data_bench/aging_results.json</code>. Nothing here is
-hand-entered. Hypotheses H1–H6 are forward-looking and marked as such;
-the NCM components they describe are <strong>not yet evaluated</strong>
-and no result is claimed for them. Full protocol (datasets, thresholds,
-seeds, tests) to be committed as
-<code>docs/EXPERIMENT_PROTOCOL.md</code> before the first final-variant
-run, per pre-registration.</p>
+hand-entered. Hypotheses H1–H6 are forward-looking and marked as such.
+As of this revision the constellation term (μ) and the
+<code>VersionChain</code> store are <strong>implemented but not yet
+evaluated</strong> — no result is claimed for them
+(<code>tests/test_ncm.py</code> covers mechanics and the default-off
+invariance only). The pre-registered protocol lives at
+<code>docs/EXPERIMENT_PROTOCOL.md</code>, the audit at
+<code>docs/ARCHITECTURE_AUDIT.md</code>, and prior-art bounds at
+<code>docs/RELATED_WORK.md</code>.</p>
 <h1 id="references-selected">References (selected)</h1>
 <ol type="1">
 <li>Trivedi, H. et al. (2022). MuSiQue: Multihop Questions via

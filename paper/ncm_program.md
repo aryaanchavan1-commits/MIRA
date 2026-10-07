@@ -229,11 +229,12 @@ versions remain retrievable as history (a temporal query about March must be abl
 March belief) but are down-weighted for "what is true now" queries. Consolidation merges store
 the summary *and* its source links, so reconstruction is always possible.
 
-**Retrieval scoring** extends the existing ten-term function with two explicit terms:
-`+ μ·constellation_overlap(q,m) + ν·version_currentness(m)`, each individually ablatable,
-logged per retrieval, and returned in the explanation payload ("retrieved because:
-semantic 0.82, overlap 0.76, path 0.91, …"). Everything else about MIRA — compress-then-cite,
-the no-evidence state, the memory gate — is untouched.
+**Retrieval scoring** extends the existing ten-term function: `+ μ·constellation_overlap(q,m)`
+is implemented as an eleventh, individually ablatable component — weight 0 unless `ncm.enabled`,
+so every published measurement remains reproducible bit-for-bit — and `+ ν·version_currentness(m)`
+follows with H4. Both are logged per retrieval and returned in the explanation payload
+("retrieved because: semantic 0.82, overlap 0.76, path 0.91, …"). Everything else about MIRA —
+compress-then-cite, the no-evidence state, the memory gate — is untouched.
 
 # 7. Why this should help AI memory, and how each effect is measured
 
@@ -389,10 +390,11 @@ by `paper/export_results.py --real`; the forgetting-lab table traces to
 `data_lab/forgetting_results.json` (variants A–K, 6 tasks, 30 questions each, complete); the
 retrieval tables trace to `data_bench/*.json`; consolidation and aging to
 `data_bench/consolidation_results.json` and `data_bench/aging_results.json`. Nothing here is
-hand-entered. Hypotheses H1–H6 are forward-looking and marked as such; the NCM components they
-describe are **not yet evaluated** and no result is claimed for them. Full protocol (datasets,
-thresholds, seeds, tests) to be committed as `docs/EXPERIMENT_PROTOCOL.md` before the first
-final-variant run, per pre-registration.
+hand-entered. Hypotheses H1–H6 are forward-looking and marked as such. As of this revision the
+constellation term (μ) and the `VersionChain` store are **implemented but not yet evaluated** —
+no result is claimed for them (`tests/test_ncm.py` covers mechanics and the default-off
+invariance only). The pre-registered protocol lives at `docs/EXPERIMENT_PROTOCOL.md`, the audit
+at `docs/ARCHITECTURE_AUDIT.md`, and prior-art bounds at `docs/RELATED_WORK.md`.
 
 # References (selected)
 

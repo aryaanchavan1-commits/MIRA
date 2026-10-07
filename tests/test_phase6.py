@@ -15,7 +15,7 @@ from core.compression import compress, est_tokens
 from core.conflicts import detect_conflict, find_conflicts, resolve
 from core.memory import MemoryEdge, MemoryFrame, MemoryNode, MemoryType
 from core.placement import place
-from core.retrieval import MIRARetriever, ablation_configs
+from core.retrieval import ALL_COMPONENTS, MIRARetriever, ablation_configs
 from core.updater import MemoryUpdater
 from models.embeddings import EmbeddingBackend
 from storage.graph_store import GraphStore
@@ -80,9 +80,7 @@ def test_retrieval_and_ablations():
         r = ret.retrieve(q, qvec, active_components=active)
         assert r.items, f"ablation {name} produced nothing"
         for it in r.items:
-            assert set(it.components) == set(
-                ["semantic", "structural", "radial", "graph", "importance",
-                 "confidence", "recency", "path", "activation", "stability"])
+            assert set(it.components) == set(ALL_COMPONENTS)
     # vector_only must rank the python facts top-2
     r = ret.retrieve(q, qvec, active_components=("semantic",))
     assert {it.node.id for it in r.items[:2]} == py_ids
