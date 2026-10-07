@@ -130,9 +130,15 @@ retrieval neutrality is not yet established at n=300 questions.
 
 **H6 [SPEC→HYP] — A quantum-inspired representation improves ambiguity handling.** *Supported*
 only if the optional probabilistic backend beats the classical scorer on a pre-defined ambiguous-
-membership benchmark at the same compute budget. Implemented as an isolated, switchable module;
-if it shows no improvement it will be reported as such and removed from the default stack. No
-claim of quantum advantage, entanglement, or hardware of any kind is made or will be made.
+membership benchmark at the same compute budget. **Implemented [ENG]** as an isolated, switchable
+backend (`core/quantum_inspired.py`, `ncm.backend: born`): memberships are mapped to amplitudes
+`a_c = sqrt(w_c)` and combined by a Born-rule inner product — `score = (Σ_c a_q(c)·a_m(c))²` —
+an interference-like nonlinearity that boosts agreement across several constellations
+simultaneously. The kernel's mechanism is verified as a unit property (multi-constellation
+agreement gains a 2.0× ratio over single-constellation vs the linear kernel's 1.41×), but its
+benchmark value is **not yet evaluated**; if it does not measure better than the linear kernel
+it will be removed — that is what H6 rejection means. No claim of quantum advantage,
+entanglement, or hardware of any kind is made or will be made.
 
 # 5. Measured foundation (all numbers from committed artifacts)
 
@@ -391,8 +397,12 @@ by `paper/export_results.py --real`; the forgetting-lab table traces to
 retrieval tables trace to `data_bench/*.json`; consolidation and aging to
 `data_bench/consolidation_results.json` and `data_bench/aging_results.json`. Nothing here is
 hand-entered. Hypotheses H1–H6 are forward-looking and marked as such. As of this revision the
-constellation term (μ) and the `VersionChain` store are **implemented but not yet evaluated** —
-no result is claimed for them (`tests/test_ncm.py` covers mechanics and the default-off
+constellation term (μ), the `VersionChain` store, the Born-rule backend (`ncm.backend: born`,
+H6's mechanism verified as a unit property, benchmark value not yet evaluated), and the Python
+SDK (`mira_sdk.MemoryEngine`: add / retrieve / explain / ask / remember / history / rollback /
+consolidate over the thread-safe engine, explanations carrying all eleven components) are
+**implemented but not yet evaluated** — no benchmark result is claimed for any of them
+(`tests/test_ncm.py` and `tests/test_quantum_sdk.py` cover mechanics and the default-off
 invariance only). The pre-registered protocol lives at `docs/EXPERIMENT_PROTOCOL.md`, the audit
 at `docs/ARCHITECTURE_AUDIT.md`, and prior-art bounds at `docs/RELATED_WORK.md`.
 

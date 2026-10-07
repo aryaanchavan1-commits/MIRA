@@ -36,6 +36,7 @@ DEFAULTS = {
     "max_constellations": 64,  # MAX_CONSTELLATIONS
     "overlap_floor": 0.0,      # OVERLAP_THRESHOLD: weights below are cut
     "max_depth": 4,            # MAX_DEPTH (version-chain cap)
+    "backend": "linear",       # membership kernel: 'linear' | 'born' (H6)
 }
 
 META_KEY = "constellations"    # stored in MemoryNode.metadata (persists)

@@ -271,11 +271,20 @@ not yet established at n=300 questions.</p>
 <p><strong>H6 [SPEC→HYP] — A quantum-inspired representation improves
 ambiguity handling.</strong> <em>Supported</em> only if the optional
 probabilistic backend beats the classical scorer on a pre-defined
-ambiguous- membership benchmark at the same compute budget. Implemented
-as an isolated, switchable module; if it shows no improvement it will be
-reported as such and removed from the default stack. No claim of quantum
-advantage, entanglement, or hardware of any kind is made or will be
-made.</p>
+ambiguous- membership benchmark at the same compute budget.
+<strong>Implemented [ENG]</strong> as an isolated, switchable backend
+(<code>core/quantum_inspired.py</code>, <code>ncm.backend: born</code>):
+memberships are mapped to amplitudes <code>a_c = sqrt(w_c)</code> and
+combined by a Born-rule inner product —
+<code>score = (Σ_c a_q(c)·a_m(c))²</code> — an interference-like
+nonlinearity that boosts agreement across several constellations
+simultaneously. The kernel’s mechanism is verified as a unit property
+(multi-constellation agreement gains a 2.0× ratio over
+single-constellation vs the linear kernel’s 1.41×), but its benchmark
+value is <strong>not yet evaluated</strong>; if it does not measure
+better than the linear kernel it will be removed — that is what H6
+rejection means. No claim of quantum advantage, entanglement, or
+hardware of any kind is made or will be made.</p>
 <h1 id="measured-foundation-all-numbers-from-committed-artifacts">5.
 Measured foundation (all numbers from committed artifacts)</h1>
 <p><strong>Multi-hop retrieval (MuSiQue answerable 2-hop, n=300,
@@ -681,11 +690,17 @@ tasks, 30 questions each, complete); the retrieval tables trace to
 <code>data_bench/consolidation_results.json</code> and
 <code>data_bench/aging_results.json</code>. Nothing here is
 hand-entered. Hypotheses H1–H6 are forward-looking and marked as such.
-As of this revision the constellation term (μ) and the
-<code>VersionChain</code> store are <strong>implemented but not yet
-evaluated</strong> — no result is claimed for them
-(<code>tests/test_ncm.py</code> covers mechanics and the default-off
-invariance only). The pre-registered protocol lives at
+As of this revision the constellation term (μ), the
+<code>VersionChain</code> store, the Born-rule backend
+(<code>ncm.backend: born</code>, H6’s mechanism verified as a unit
+property, benchmark value not yet evaluated), and the Python SDK
+(<code>mira_sdk.MemoryEngine</code>: add / retrieve / explain / ask /
+remember / history / rollback / consolidate over the thread-safe engine,
+explanations carrying all eleven components) are <strong>implemented but
+not yet evaluated</strong> — no benchmark result is claimed for any of
+them (<code>tests/test_ncm.py</code> and
+<code>tests/test_quantum_sdk.py</code> cover mechanics and the
+default-off invariance only). The pre-registered protocol lives at
 <code>docs/EXPERIMENT_PROTOCOL.md</code>, the audit at
 <code>docs/ARCHITECTURE_AUDIT.md</code>, and prior-art bounds at
 <code>docs/RELATED_WORK.md</code>.</p>

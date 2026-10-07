@@ -659,6 +659,23 @@ What it is:
   `supersedes` links, provenance, append-only rollback, `MAX_DEPTH` cap.
 - **Retrieval term** — `μ·constellation`, gated exactly like the BioMIRA
   stability term: weight 0 unless enabled, so classic MIRA is unchanged.
+- **Quantum-inspired backend (optional)** — `ncm.backend: born` swaps the
+  linear kernel for a Born-rule amplitude kernel `(Σ_c a_q(c)·a_m(c))²` with
+  `a_c = sqrt(w_c)` (classical math, ordinary hardware — see
+  `core/quantum_inspired.py`). Its interference property (multi-constellation
+  agreement is boosted) is unit-verified; its benchmark value is H6 and
+  **not yet evaluated**.
+- **Python SDK** — `mira_sdk.MemoryEngine`: `add / retrieve / explain / ask /
+  remember / history / rollback / consolidate / stats`, thread-safe, every
+  retrieval carrying the full 11-component explanation:
+
+  ```python
+  from mira_sdk import MemoryEngine
+  engine = MemoryEngine()               # retrieval-only unless you .ask()
+  engine.add("The Eiffel Tower is in Paris.")
+  hits = engine.retrieve("Where is the Eiffel Tower?")
+  print(hits["results"][0]["explanation"])
+  ```
 
 What it is **not**: not "forever memory" (persistent *and versioned*), not
 quantum anything (classical hardware; H6 is optional and must earn its place),
@@ -674,8 +691,9 @@ ncm:
   max_constellations: 64
 ```
 
-Tests: `python tests/test_ncm.py` (6 checks, incl. the default-off invariance
-that classic MIRA scores are unchanged).
+Tests: `python tests/test_ncm.py` and `python tests/test_quantum_sdk.py`
+(11 checks total, incl. the default-off invariance that classic MIRA scores
+are unchanged and the Born-kernel interference property).
 
 ## 22. License
 

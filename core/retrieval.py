@@ -24,6 +24,7 @@ import numpy as np
 
 from core import biomira
 from core import ncm
+from core import quantum_inspired as qi
 from core.activation import SpreadingActivation
 from core.memory import MemoryFrame, MemoryNode
 from core.types import parse_float, stable_hash, utcnow, datetime
@@ -92,7 +93,8 @@ class MIRARetriever:
         # MIRA-NCM constellations (H2): same gate pattern as the stability
         # term — index exists only when ncm.enabled, weight 0 otherwise, so
         # classic MIRA's scores and rankings are unchanged (§1/§50).
-        self.constellation_idx = ncm.attach_constellations(frame, config)
+        # ncm.backend: 'linear' (default) or 'born' (quantum-inspired, H6).
+        self.constellation_idx = qi.make_membership_index(frame, config)
         self.weights["constellation"] = (
             parse_float(w.get("mu_constellation", 0.08), 0.08)
             if self.constellation_idx is not None else 0.0)
