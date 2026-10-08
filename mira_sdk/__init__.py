@@ -113,8 +113,9 @@ class MemoryEngine:
             from core.ncm import VersionChain
             cfg = self._ws.config.get("ncm", {}) if isinstance(
                 self._ws.config, dict) else {}
-            chain = VersionChain(max_depth=cfg.get("max_depth", 4))
-            self._ws.version_chain = chain   # ponytail: per-process store; SQLite persistence is the documented next step
+            chain = VersionChain(max_depth=cfg.get("max_depth", 4),
+                                 store=self._ws.store)  # persists across restarts
+            self._ws.version_chain = chain
         return chain
 
     # -- maintenance -------------------------------------------------------

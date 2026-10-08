@@ -186,6 +186,39 @@ learning-systems pattern — fast trace, selective replay, gist abstraction [8][
 as retrieval dynamics, and it is the strongest existing evidence that dynamics can *target*
 what consolidates rather than merely rotting everything.
 
+## 5.1 NCM pilot — first measured data points (exploratory)
+
+Status per protocol: **exploratory pilot, not a confirmatory H2/H6 test** (n=150 MuSiQue
+questions, 1 seed, 83,290-node workspace, retrieval-level, paired questions). Artifact:
+`data_bench/ncm_pilot_results.json`; runner: `scripts/eval_ncm_pilot.py`. Sign convention:
+delta is full − variant (positive = variant worse).
+
+| Condition | MRR | Recall@8 | Δ MRR vs full | p (paired bootstrap) |
+|---|---|---|---|---|
+| full_mira (NCM off) | 0.6827 | 0.2773 | — | — |
+| ncm_linear (constellations on, linear kernel) | 0.6859 | 0.2776 | −0.0032 (NCM slightly better) | 0.594 |
+| ncm_born (Born-rule kernel, H6) | 0.6300 | 0.2544 | +0.0528 (Born worse) | 0.0046 |
+
+Reading, with the pre-registered lens intact:
+
+- **H2 pilot.** The constellation term at default K=3 top-2 membership is *neutral* on MuSiQue:
+  +0.0032 MRR, p=0.59. It does not help multi-hop ranking at this scale, and it does not hurt.
+  H2 stays alive only because the K-sweep (K=1 degenerate vs K∈{2,3}) — the axis H2 actually
+  predicts — has not been run; a neutral full-K result is exactly what H2's rejection condition
+  anticipates if the sweep also shows no K-dependent structure.
+- **H6 pilot.** The Born-rule kernel is *significantly worse* than both the linear kernel and
+  the baseline (p=0.0046). This is the first (pilot-scale) evidence **against** the
+  interference hypothesis on unambiguous single-domain queries — consistent with the mechanism:
+  the square amplifies multi-constellation agreement, which MuSiQue's 2-hop questions do not
+  reward. H6's home benchmark is *ambiguous, multi-context queries*; if the Born kernel does not
+  win there either, H6 is rejected and the backend is removed, exactly as pre-registered.
+- **Cost.** Constellation fit adds ~60 s per pipeline build at 83k nodes (k-means, capped at 64
+  constellations) and no measurable per-query latency change. Within the §8 resource envelope,
+  but only justified if a K-sweep result ever justifies the term.
+
+No claim beyond these numbers is made. The confirmatory H2/H6 runs at full protocol n and
+seeds remain the gate for anything the program says about constellations.
+
 # 6. MIRA-NCM: architecture and formalization
 
 ```
@@ -389,6 +422,91 @@ infrastructure for local AI agents — a defensible niche precisely because ever
 auditable and every claim reproducible. Local → SDK → optional managed deployment, in that
 order, and only after the benchmarks justify the engineering.
 
+# 12. The 2026 landscape (live search, Oct 2026)
+
+A live survey of the 2025–2026 agent-memory field (sources in `docs/RELATED_WORK.md`; every
+arXiv ID there is to be spot-checked against the primary source before publication) locates
+MIRA-NCM precisely. The field has consolidated around LLM-driven extraction pipelines over
+unattributed vector stores: Mem0 runs ADD/UPDATE/DELETE/NOOP extraction ops over a vector index
+(vendor-reported 93.4% LongMemEval — not independently verified), Letta/MemGPT page context,
+and Zep, Cognee, and Supermemory occupy adjacent niches. Benchmarks have matured and saturated:
+LongMemEval and LongMemEval-V2 (arXiv 2605.12493) standardize long-horizon conversational
+memory; BEAM pushes to 10⁶–10⁷ records; and public disputes over 100%-LoCoMo marketing claims
+show the numbers themselves becoming unreliable currency. In continual learning, forgetting-
+curve-scheduled replay (FOREVER, arXiv 2601.03938) and the documented failure of generic
+remedies against spurious forgetting both support the program's core design bet: forgetting
+must be measured *jointly with capability* for the specific system at hand. In quantum-inspired
+ML, the first dedicated QiML survey (tensor networks, amplitude encodings, Born-rule
+probabilities in classical models) confirms that the H6 mechanism — a classical Born-rule
+kernel — is a recognized computational representation, while no found work applies Born-rule
+kernels to persistent-memory retrieval scoring with per-term ablation.
+
+**The gap MIRA-NCM targets is therefore not "another memory system" but the two properties the
+2026 mainstream lacks: store-side structure whose every term is measurable and removable, and
+forgetting evaluated jointly with capability under a frozen LLM.** This is a positioning
+claim, not a superiority claim; it stands or falls with the H2/H6 measurements.
+
+# 13. Relevance map: what this program offers adjacent AI domains
+
+Each item is scoped by the §3 taxonomy. The honest claim in every case is about *mechanisms and
+measurements MIRA-NCM contributes*, never about solving the host field's open problems.
+
+**Continual learning / catastrophic forgetting [ENG→HYP].** The forgetting lab's central
+methodological move — score forgetting jointly with ranking quality, because a weak system
+trivially "wins" retention alone — transfers directly to weight-space continual learning, where
+spurious-forgetting results show generic remedies failing. MIRA-NCM's contribution is the
+measurement discipline and the frozen-LLM interference protocol, not a cure: **no claim that
+any mechanism here "solves catastrophic forgetting" is made or will be made.**
+
+**Safe superintelligence trajectories / scalable oversight [SPEC].** The alignment-relevant
+property is not intelligence but *auditability*: a memory whose every retrieval decomposes into
+attributable terms, whose fact updates are append-only version chains with provenance and
+rollback, and whose failure taxonomy is exported before headlines are written. If capable
+systems are built on memory architectures, retrievability of *why* a belief is current, and
+the ability to roll a belief back, are concrete, testable ingredients of oversight. Whether
+these ingredients scale to transformative systems is unmeasured and stated as speculation.
+
+**Quantum intelligence [HYP, explicitly optional].** The Born-rule backend is classical
+mathematics on ordinary CPUs: an interference-like nonlinearity that rewards multi-constellation
+agreement. It is the only genuinely quantum-*flavored* mechanism in the program, it is off by
+default, and H6 pre-registers its removal if it does not beat the linear kernel. No quantum
+hardware, no quantum speedup, no "quantum memory" is claimed. If quantum architectures for AI
+eventually matter, the durable contribution is the ablation discipline applied to an
+amplitude-based representation.
+
+**Retrieval / IR.** The eleven-component attributed stack with mandatory BM25/vector floors is
+directly reusable methodology for any retrieval system claim: every component individually
+ablatable, every delta bootstrap-tested, baselines never skipped (MIRA's own IndicQA boundary
+is the standing proof).
+
+**Agent engineering.** The SDK's version chains (append-only, supersession-linked, rollback,
+now SQLite-persisted) address fact mutation — the stale-preference problem every long-running
+agent hits — without LLM-in-the-loop extraction: the store, not a prompt, carries the update
+semantics.
+
+**Education, personalization, robotics [SPEC].** Ring/sector coordinates and consolidation
+dynamics are candidate priors anywhere a system must balance recency against consolidation
+(student knowledge tracing, assistant preference drift, robot scene memory). These are design
+analogies to be tested in each domain, not transferred results.
+
+# 14. Ancient methodologies as organizational priors
+
+MIRA's radial organization is named for the mandala: concentric rings (recency/importance
+bands) crossed by sectors (topic regions), with the most load-bearing memory nearest the
+center. The honest scoping, unchanged since the main paper: **this is an organizational prior,
+a naming and design analogy — not a claim that historical mandalas encode memory algorithms or
+that the analogy predicts effectiveness.** The same is true of the other ancient structures the
+program borrows as priors: the *method of loci* (spatial anchors improve recall — here, sector
+and radial coordinates serve as the loci); *memory palaces* (structured traversal over stored
+tokens — the evidence path is the palace walk, and it is returned per retrieval for audit);
+and * commentary traditions'* layered summaries (gist nodes over raw leaves, i.e., the
+consolidation pyramid). What makes this more than decoration is that every prior is instantiated
+as an ablatable term: switch off radial, path, or gist scoring and the analogical structure's
+contribution is a number, not a narrative. Ancient mnemonics suggested the coordinates;
+modern ablations decide whether they earn their weight — and on the measured record so far,
+radial is the smallest of the three structural contributors (Δ −0.0098, p=0.052) while
+structural/activation carry the load. The analogy is welcome; the ledger is the science.
+
 # Reproducibility statement
 
 Every measured number in this document is generated from committed run artifacts and reproduced
@@ -401,10 +519,13 @@ constellation term (μ), the `VersionChain` store, the Born-rule backend (`ncm.b
 H6's mechanism verified as a unit property, benchmark value not yet evaluated), and the Python
 SDK (`mira_sdk.MemoryEngine`: add / retrieve / explain / ask / remember / history / rollback /
 consolidate over the thread-safe engine, explanations carrying all eleven components) are
-**implemented but not yet evaluated** — no benchmark result is claimed for any of them
-(`tests/test_ncm.py` and `tests/test_quantum_sdk.py` cover mechanics and the default-off
-invariance only). The pre-registered protocol lives at `docs/EXPERIMENT_PROTOCOL.md`, the audit
-at `docs/ARCHITECTURE_AUDIT.md`, and prior-art bounds at `docs/RELATED_WORK.md`.
+implemented; version chains are **SQLite-persisted** (append-only `versions` table; rehydration
+on restart with the cap re-applied; covered by `test_version_chain_sqlite_persistence`). The
+first exploratory **NCM pilot** (H2/H6 data points) is recorded in
+`data_bench/ncm_pilot_results.json` and §5.1 below; it is a pilot, not a confirmatory H2/H6
+test. The pre-registered protocol lives at `docs/EXPERIMENT_PROTOCOL.md`, the audit
+at `docs/ARCHITECTURE_AUDIT.md`, and prior-art bounds (now including the 2026 landscape) at
+`docs/RELATED_WORK.md`.
 
 # References (selected)
 
@@ -426,3 +547,9 @@ at `docs/ARCHITECTURE_AUDIT.md`, and prior-art bounds at `docs/RELATED_WORK.md`.
 16. Gutiérrez, B. J. et al. (2024). HippoRAG: Neurobiologically Inspired Long-Term Memory for Large Language Models. *NeurIPS*.
 17. Edge, D. et al. (2024). From Local to Global: A Graph RAG Approach to Query-Focused Summarization. arXiv:2404.16130.
 18. Lewis, P. et al. (2020). Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks. *NeurIPS*.
+19. Hu, Y. et al. (2025). Memory in the Age of AI Agents: A Survey. arXiv:2512.13564.
+20. Anonymous (2026). LongMemEval-V2: Evaluating Long-Term Agent Memory. arXiv:2605.12493. [verify against primary source]
+21. Anonymous (2026). FOREVER: Forgetting Curve-Inspired Memory Replay for LLM Continual Learning. arXiv:2601.03938. [verify against primary source]
+22. Huynh, L. et al. (2026). Quantum-inspired machine learning: a survey. *Computer Science Review* (2017–2025 corpus). [verify volume/pages]
+23. Chirkova, N. et al. (2024). LongMemEval: Benchmarking Chat Assistants on Long-Term Interactive Memory. arXiv:2410.10813.
+24. Park, J. S. et al. (2023). Generative Agents secondary comparisons and 2026 agent-memory vendor systems (Mem0, Letta/MemGPT, Zep) — vendor-reported numbers are cited as such in §12 and were not independently verified.

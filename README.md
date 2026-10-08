@@ -646,8 +646,12 @@ MIRA/
 
 Store-side extensions for the research program in
 `paper/ncm_program.pdf` (hypotheses H1–H6, pre-registered thresholds in
-`docs/EXPERIMENT_PROTOCOL.md`). **Implemented, not yet evaluated — no result
-is claimed for any NCM mechanism.**
+`docs/EXPERIMENT_PROTOCOL.md`). **Implemented; first exploratory pilot measured
+(`data_bench/ncm_pilot_results.json`, n=150 MuSiQue, 1 seed — a pilot, not a
+confirmatory test): constellations ≈ neutral (Δ MRR +0.003, p=0.59); Born-rule
+kernel significantly worse (Δ −0.053, p=0.0046) — if it does not win on H6's
+ambiguity benchmark either, it is removed per the pre-registered rejection
+condition.**
 
 What it is:
 
@@ -657,14 +661,18 @@ What it is:
   degenerates to plain clustering — that is the H2 ablation axis.
 - **Versioning** — `VersionChain`: append-only history keyed by stable hash,
   `supersedes` links, provenance, append-only rollback, `MAX_DEPTH` cap.
+  **SQLite-persisted**: chains survive process restarts (append-only `versions`
+  table; cap-dropped records stay as cold history; rehydration re-applies the
+  cap so ordinals always equal positions).
 - **Retrieval term** — `μ·constellation`, gated exactly like the BioMIRA
   stability term: weight 0 unless enabled, so classic MIRA is unchanged.
 - **Quantum-inspired backend (optional)** — `ncm.backend: born` swaps the
   linear kernel for a Born-rule amplitude kernel `(Σ_c a_q(c)·a_m(c))²` with
   `a_c = sqrt(w_c)` (classical math, ordinary hardware — see
   `core/quantum_inspired.py`). Its interference property (multi-constellation
-  agreement is boosted) is unit-verified; its benchmark value is H6 and
-  **not yet evaluated**.
+  agreement is boosted) is unit-verified; the pilot says it **loses on
+  unambiguous multi-hop queries** (see above) — its H6 case now rests entirely
+  on the ambiguity benchmark, and failure there means removal.
 - **Python SDK** — `mira_sdk.MemoryEngine`: `add / retrieve / explain / ask /
   remember / history / rollback / consolidate / stats`, thread-safe, every
   retrieval carrying the full 11-component explanation:

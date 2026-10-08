@@ -156,11 +156,35 @@ class ConstellationIndex:
 
 
 class VersionChain:
-    """Persistent/versioned memory: append-only history keyed by stable hash."""
+    """Persistent/versioned memory: append-only history keyed by stable hash.
 
-    def __init__(self, max_depth: int = 4):
+    With ``store`` (a SQLiteStore), every appended record is persisted to the
+    ``versions`` table and a new instance rehydrates from it — chains survive
+    process restarts. Rows dropped by the max_depth window remain in the table
+    as cold history; rehydration keeps the last max_depth per chain, renumbered
+    so the ordinal always equals the position (rollback's contract)."""
+
+    def __init__(self, max_depth: int = 4, store: Any = None):
         self.max_depth = max(1, int(max_depth))
         self.versions: Dict[str, List[Dict[str, Any]]] = {}
+        self.store = store
+        if store is not None:
+            self._hydrate()
+
+    def _hydrate(self) -> int:
+        rec_fields = ("content", "key", "at", "source", "provenance",
+                      "supersedes", "n", "hash")
+        loaded = 0
+        for rec in self.store.load_versions():
+            self.versions.setdefault(rec["key"], []).append(
+                {k: rec[k] for k in rec_fields})
+            loaded += 1
+        for hist in self.versions.values():
+            if len(hist) > self.max_depth:
+                del hist[:-self.max_depth]
+            for i, rec in enumerate(hist, start=1):
+                rec["n"] = i
+        return loaded
 
     @staticmethod
     def key(subject: str) -> str:
@@ -181,6 +205,8 @@ class VersionChain:
                "hash": hashlib.sha256(
                    f"{key}|{len(hist) + 1}|{content}".encode()).hexdigest()[:16]}
         hist.append(rec)
+        if self.store is not None:
+            self.store.save_version(rec)
         if len(hist) > self.max_depth:
             # ponytail: hard cap discards the oldest record; upgrade path =
             # spill to cold storage. Appends never mutate surviving entries'

@@ -108,6 +108,35 @@ def test_version_chain_semantics():
     assert vc.current("lang")["content"] == "content 5"    # newest survives
 
 
+def test_version_chain_sqlite_persistence():
+    """Chains survive a process restart: write via one chain, rehydrate a
+    fresh chain over the same DB file, verify history/current/rollback."""
+    import os
+    import tempfile
+    from storage.sqlite_store import SQLiteStore
+    db = os.path.join(tempfile.mkdtemp(), "versions.db")
+    store = SQLiteStore(db)
+    vc = ncm.VersionChain(max_depth=4, store=store)
+    vc.update("ide", "User likes Python", source="chat1")
+    vc.update("ide", "User prefers Rust", source="chat2")
+    for i in range(6):                     # cap also exercised with a store
+        vc.update("lang", f"content {i}")
+    n_rows = store._conn.execute("SELECT COUNT(*) FROM versions").fetchone()[0]
+    assert n_rows == 8, n_rows             # appends are all persisted (cold cap)
+
+    vc2 = ncm.VersionChain(max_depth=4, store=SQLiteStore(db))   # "restart"
+    assert vc2.current("ide")["content"] == "User prefers Rust"
+    hist = vc2.history("ide")
+    assert [h["content"] for h in hist] == ["User likes Python", "User prefers Rust"]
+    assert hist[-1]["supersedes"] == hist[0]["hash"]
+    assert len(vc2.history("lang")) == 4   # cap re-applied on rehydration
+    assert vc2.current("lang")["content"] == "content 5"
+    rb = vc2.rollback("lang", 2)           # rollback works on rehydrated chain
+    assert rb["content"] == "content 3"    # position 2 of the post-cap window
+    assert vc2.current("lang")["content"] == "content 3"
+    store.close()
+
+
 def test_fit_degrades_below_min_nodes():
     frame = MemoryFrame()
     for i in range(3):
@@ -180,11 +209,12 @@ def run_all() -> int:
     check("membership_topk_and_normalization", test_membership_topk_and_normalization)
     check("overlap_kernel_separates_clusters", test_overlap_kernel_separates_clusters)
     check("version_chain_semantics", test_version_chain_semantics)
+    check("version_chain_sqlite_persistence", test_version_chain_sqlite_persistence)
     check("fit_degrades_below_min_nodes", test_fit_degrades_below_min_nodes)
     check("default_off_is_invariant", test_default_off_is_invariant)
     check("enabled_changes_ranking_via_constellation",
           test_enabled_changes_ranking_via_constellation)
-    print(f"{6 - len(FAILURES)}/6 passed")
+    print(f"{7 - len(FAILURES)}/7 passed")
     if FAILURES:
         for name, exc in FAILURES:
             print(f"  {name}: {exc}")

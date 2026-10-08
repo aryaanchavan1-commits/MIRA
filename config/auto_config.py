@@ -62,8 +62,12 @@ class MIRAContext:
 
 def build_context(config_path: Optional[str] = None,
                   force_llm_reload: bool = False,
+                  load_llm: bool = True,
                   _cache: Dict[str, "MIRAContext"] = {}) -> MIRAContext:
-    """Resolve the full runtime context. Cached per config path per process."""
+    """Resolve the full runtime context. Cached per config path per process.
+    ``load_llm=False`` skips the local GGUF load — for retrieval-only callers
+    (benchmarks, pilots) on RAM-tight machines; answers then use the
+    deterministic extractive fallback, which retrieval metrics never touch."""
     key = config_path or "default"
     if key in _cache and not force_llm_reload:
         return _cache[key]
@@ -96,7 +100,7 @@ def build_context(config_path: Optional[str] = None,
         logger.warning("embedding warmup failed: %s", exc)
 
     # LLM: local GGUF only (remote APIs are gated off, spec §5 priority 4)
-    if rc.llm_backend == "llama_cpp":
+    if load_llm and rc.llm_backend == "llama_cpp":
         local = model_manager.pick_local_model(rc)
         ctx.local_model = local
         if local is not None:

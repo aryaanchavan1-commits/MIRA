@@ -2,10 +2,15 @@
 
 Per spec §37: novelty claims are bounded by prior art. For each relevant line
 of work: idea, similarity, difference, what MIRA-NCM adds. If a system already
-demonstrates an effect, we cite it and claim only the difference. *This table
-was compiled from the research program's references and standard literature
-knowledge; entries were not re-verified against primary sources this session
-and should be spot-checked before publication.*
+demonstrates an effect, we cite it and claim only the difference.
+
+*Provenance note:* the core table was compiled from the research program's
+references and standard literature knowledge. The §2026-landscape section
+below was added after a live web search (Oct 2026). Vendor-reported benchmark
+numbers (Mem0, ByteRover, Supermemory, Hindsight marketing pages) are cited
+**as vendor-reported** — they were not independently verified and several are
+contested publicly (see the MemPalace/LoCoMo saturation note). Before
+publication, spot-check every arXiv ID against the primary source.
 
 | Work | Year | Idea | Similarity to MIRA | Difference | What MIRA-NCM adds |
 |---|---|---|---|---|---|
@@ -23,6 +28,32 @@ and should be spot-checked before publication.*
 | Quantum-inspired IR / ML | 1990s– | Probabilistic amplitude/interference representations | Optional H6 backend | Almost all such work is classification/ranking heuristics | Explicitly optional, required to earn its place or be removed; never called "quantum memory" |
 | Continual learning surveys (Parisi, De Lange, GEM) | 2017–2022 | Forgetting metrics, replay baselines | Forgetting lab protocol [ENG] | Those benchmarks train weights | Frozen-LLM retrieval interference; forgetting scored *jointly* with ranking quality (weak systems trivially "win" forgetting alone) |
 | BM25 (Robertson & Zaragoza) | 2009 | Lexical ranking | Mandatory baseline | — | MIRA's own IndicQA results prove the rule: BM25 wins where dense fails |
+
+## 2026 landscape (live search, Oct 2026)
+
+What changed since the program was drafted, and where MIRA-NCM stands:
+
+| Work (2025–2026) | Idea | Similarity to MIRA | Difference | What MIRA-NCM adds |
+|---|---|---|---|---|
+| Mem0 (production agent-memory layer; vendor-reported 93.4% LongMemEval, 92.5% LoCoMo) | LLM-driven memory extraction with ADD/UPDATE/DELETE/NOOP operations over a vector store | Persistent store-side agent memory with update semantics | Mem0's intelligence lives in LLM extraction prompts; the store itself is an unattributed vector index | Store-side *structure* (constellations, version chains) with every scoring term ablatable and attributable; no LLM in the retrieval loop |
+| Hu et al., *Memory in the Age of AI Agents* (arXiv 2512.13564) | Survey arguing long/short-term taxonomy is insufficient for agent memory | Motivates richer memory organization | Survey/taxonomy, no measured mechanism | Measured geometric organization with leave-one-out attribution on real benchmarks |
+| LongMemEval / LongMemEval-V2 (arXiv 2605.12493) | Long-horizon conversational memory benchmarks (single-hop, temporal, multi-hop, open-domain) | Multi-hop + temporal evaluation axes | Chat-session transcripts; answers scored end-to-end | Retrieval-level MuSiQue/HotpotQA with node-level gold, plus a forgetting protocol scored jointly with ranking |
+| BEAM (BEAM-1M / BEAM-10M) | Million-scale memory benchmarks stressing store size | Scale axis (memory_count monotonicity measured at 4.5k–23.5k) | MIRA has no million-node result — an honest open boundary | Budget caps (MAX_CONSTELLATIONS, MAX_DEPTH) designed for that scale; million-node runs are future work |
+| MemPalace "100% LoCoMo" claim + community critique | Marketing claim of saturated benchmark scores; its own docs reportedly call the scores meaningless | — | Cautionary tale | MIRA reports MRR with paired-bootstrap CIs and keeps a mandatory BM25/vector floor; we treat saturated vendor scores as unverified |
+| Letta/MemGPT "is a filesystem all you need" benchmarking | Simple baselines remain competitive against fancy memory systems | Same finding as our IndicQA result (BM25 strongest) | Their conclusion is about context management; ours is about retrieval components | Eleven components, each individually removable; baselines always reported |
+| FOREVER, forgetting-curve-inspired replay for LLM continual learning (arXiv 2601.03938) | Ebbinghaus-style curves schedule weight-space replay | Forgetting curves + replay are MIRA's consolidation pass | FOREVER fine-tunes weights; MIRA freezes the LLM and measures retrieval interference | Retrieval-level forgetting lab (A–K) scoring capability *and* retention jointly; measured replay recovery (+0.0307 MRR) of aged memories |
+| Spurious-forgetting results (OpenReview, cited by 82) | Regularization/generative replay/merging fail against *spurious* forgetting in LLM continual learning | Supports the thesis that forgetting needs task-specific measurement | Weight-training setting | Frozen-LLM interference measurement; no claim that MIRA "solves" catastrophic forgetting |
+| Huynh et al., *Quantum-inspired machine learning: a survey* (2017–2025 corpus) | First dedicated QiML survey: tensor networks, amplitude encodings, Born-rule probabilities in classical models | Born-rule amplitude kernel (`BornRuleIndex`) is exactly a classical Born-rule representation | QiML work targets classification/compression; none (found) applies Born-rule kernels to memory *retrieval scoring* with ablation | H6: an interference-like retrieval kernel that must beat the linear kernel or be removed; interference property unit-verified (2.0× vs 1.41×) |
+| Tensor-network quantum-kernel frameworks (2026) | TN contraction simulates quantum kernels for classification | Kernel methods with amplitude structure | Quantum-kernel classification, not persistent memory | Explicit scoping: classical math on CPU; never called "quantum memory" |
+
+**Reading of the landscape:** the 2026 agent-memory market has consolidated
+around LLM-driven extraction pipelines over unattributed vector stores, with
+benchmark numbers racing toward saturation and public disputes about their
+validity. The under-explored gap MIRA-NCM targets is exactly there: *store-side
+structure whose every term is measurable and removable*, and forgetting
+evaluated jointly with capability rather than as a marketing axis. That gap
+statement is a positioning claim, not a superiority claim — it stands or falls
+with the H2/H6 measurements.
 
 ## Bounded novelty statement
 

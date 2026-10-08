@@ -87,6 +87,17 @@ CREATE TABLE IF NOT EXISTS experiments (
     hardware TEXT,
     seed INTEGER
 );
+CREATE TABLE IF NOT EXISTS versions (
+    seq INTEGER PRIMARY KEY AUTOINCREMENT,
+    chain_key TEXT NOT NULL,
+    n INTEGER,
+    hash TEXT NOT NULL,
+    content TEXT NOT NULL,
+    at TEXT,
+    source TEXT DEFAULT '',
+    provenance TEXT DEFAULT '[]',
+    supersedes TEXT
+);
 CREATE TABLE IF NOT EXISTS retrieval_logs (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     at TEXT,
@@ -101,6 +112,7 @@ CREATE TABLE IF NOT EXISTS retrieval_logs (
 CREATE INDEX IF NOT EXISTS idx_nodes_type ON nodes(memory_type);
 CREATE INDEX IF NOT EXISTS idx_nodes_sector ON nodes(sector);
 CREATE INDEX IF NOT EXISTS idx_edges_target ON edges(target_id);
+CREATE INDEX IF NOT EXISTS idx_versions_key ON versions(chain_key, seq);
 """
 
 _NODE_COLS = [
@@ -333,6 +345,36 @@ class SQLiteStore:
             c.execute(
                 "UPDATE edges SET weight=? WHERE source_id=? AND target_id=?",
                 (float(weight), target_id, source_id))
+
+    # ---- version chains (MIRA-NCM VersionChain) ----
+    def save_version(self, rec: Dict) -> None:
+        """Append one version record. Rows are never updated or deleted:
+        records dropped from the in-memory max_depth window stay here as
+        cold history (the documented upgrade path for the cap)."""
+        with self.tx() as c:
+            c.execute(
+                "INSERT INTO versions(chain_key,n,hash,content,at,source,"
+                "provenance,supersedes) VALUES (?,?,?,?,?,?,?,?)",
+                (rec["key"], rec["n"], rec["hash"], rec["content"], rec["at"],
+                 rec.get("source", ""),
+                 json.dumps(rec.get("provenance", []), ensure_ascii=False),
+                 rec.get("supersedes")),
+            )
+
+    def load_versions(self) -> List[Dict]:
+        rows = self._conn.execute(
+            "SELECT chain_key,n,hash,content,at,source,provenance,supersedes "
+            "FROM versions ORDER BY chain_key, seq").fetchall()
+        out = []
+        for r in rows:
+            d = dict(r)
+            d["key"] = d.pop("chain_key")
+            try:
+                d["provenance"] = json.loads(d.get("provenance") or "[]")
+            except (TypeError, ValueError, json.JSONDecodeError):
+                d["provenance"] = []
+            out.append(d)
+        return out
 
     # ---- experiments / logs ----
     def save_experiment(self, name: str, config: Dict, results: Dict,
