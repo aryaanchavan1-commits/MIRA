@@ -219,6 +219,38 @@ Reading, with the pre-registered lens intact:
 No claim beyond these numbers is made. The confirmatory H2/H6 runs at full protocol n and
 seeds remain the gate for anything the program says about constellations.
 
+### 5.1.1 Scaled pilot — full benchmark, 3 seeds (same protocol status)
+
+The pilot was then scaled to the complete MuSiQue set (n=300, 3 seeds, same 83,290-node
+workspace; one run crashed on an out-of-memory k-means fit and was fixed by the bounded
+subsample fit described in §6, then resumed from its checkpoint — the crash itself is part of
+the record). Artifact: `data_bench/ncm_pilot_results.json` (overwritten by the scaled run).
+
+| Condition | MRR (3 seeds) | Recall@8 | Δ MRR vs full | p (paired bootstrap) |
+|---|---|---|---|---|
+| full_mira (NCM off) | 0.6985 | 0.2816 | — | — |
+| ncm_linear | 0.6897 | 0.2743 | +0.0179 (NCM worse) | 0.0002 |
+| ncm_born (H6) | 0.6354 | 0.2432 | +0.0717 (Born worse) | 0.0001 |
+
+Reading, honestly:
+
+- **The default-K constellation term does not help MuSiQue at scale — it hurts, significantly.**
+  The n=150 neutral result did not survive scaling. Per-cluster centroids at K=64 over 83k
+  nodes with top-2 membership are too coarse for 2-hop ranking on this corpus. H2 is now
+  *negative at its default configuration*; the pre-registered K-sweep (K=1 degenerate vs
+  K∈{2,3}) decides whether any K rescues it. If no configuration beats full MIRA, H2 is
+  rejected on this benchmark — which is what falsifiable means.
+- **H6 is strongly negative on unambiguous queries.** The Born kernel loses by 0.072 MRR
+  (p=0.0001), worse than its pilot deficit. Its pre-registered home is the ambiguity benchmark;
+  unless it wins there decisively, the backend is removed.
+- **Fit variance is real.** ncm_linear's per-seed MRR (0.6985 / 0.6900 / 0.6806) varies by
+  0.018 across identical question sets — the k-means fit is not bit-deterministic in-process.
+  Any future NCM claim must therefore report multi-seed means with the spread, never single
+  runs.
+- **Memory-scaling lesson.** The naive fit OOM'd at 83k nodes; the streaming fit is now
+  O(sample) peak. The §8 resource envelope is updated accordingly: NCM's fit cost is bounded
+  by `fit_sample` (default 20,000), assignment is streaming over all nodes.
+
 # 6. MIRA-NCM: architecture and formalization
 
 ```
@@ -506,6 +538,31 @@ contribution is a number, not a narrative. Ancient mnemonics suggested the coord
 modern ablations decide whether they earn their weight — and on the measured record so far,
 radial is the smallest of the three structural contributors (Δ −0.0098, p=0.052) while
 structural/activation carry the load. The analogy is welcome; the ledger is the science.
+
+## 14.1 Grantha-grounded mechanisms, implemented (`core/indic_methods.py`)
+
+Three further mappings from the granthas now exist as code, each traceable to a primary text,
+each [ENG] with its value claims (if any) kept [HYP], none affecting retrieval scores or the
+default-off guarantee:
+
+1. **Pramāṇa provenance labels (Nyāya Sūtras).** Version-chain records carry a derived
+   `pramana` label classifying *how* a fact is known: pratyakṣa (direct first-party input),
+   anumāna (system-derived: consolidation, merge, gist), upamāna (comparison/analogy),
+   śabda (testimony: documents, web, citations) — with śabda as the honest default for
+   unclassified sources. Nyāya's point that these are *independent* knowledge sources is the
+   groundwork for provenance-aware contradiction scoring (a śabda–śabda conflict is resolvable
+   by newer testimony; a śabda–pratyakṣa conflict is not — future protocol work).
+2. **Kaṭapayādi encoding (medieval Kerala mathematics).** The text→numeral table (with its
+   reversal convention) is implemented as a deterministic secondary index for version chains:
+   every returned record carries digits derived from the subject at read time — zero storage,
+   unit-tested against the table. A memorable, checkable key in the tradition's own sense.
+3. **Śruti/smṛti preservation semantics (Mīmāṃsā).** This names an existing property rather
+   than adding one: version chains are śruti-shaped (append-only, hash-linked, never rewritten;
+   rollback appends and cites the superseded hash), while the working store is smṛti-shaped
+   (decay, replay, consolidation may revise it). The śruti property is enforced by unit test.
+
+Tests: `tests/test_indic.py` (4 checks: table values, classification, annotation purity,
+SQLite-restart annotation).
 
 # Reproducibility statement
 

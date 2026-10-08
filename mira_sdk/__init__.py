@@ -28,11 +28,14 @@ class MemoryEngine:
     """Local-first memory engine. All methods are thread-safe."""
 
     def __init__(self, config_path: Optional[str] = None,
-                 llm: bool = False) -> None:
+                 llm: bool = False, load_llm: bool = True) -> None:
         """Bootstrap exactly like the server. ``llm=False`` (default) keeps
-        the engine retrieval-only — no model is loaded unless you ask()."""
+        the engine retrieval-only — no model is loaded unless you ask().
+        ``load_llm=False`` skips the local GGUF load entirely (retrieval-only
+        callers on RAM-tight machines)."""
         from config.auto_config import build_context
-        self._ctx = build_context(config_path, force_llm_reload=llm)
+        self._ctx = build_context(config_path, force_llm_reload=llm,
+                                  load_llm=load_llm)
         from core.workspace import Workspace
         self._ws = Workspace(embeddings=self._ctx.embeddings,
                              llm=self._ctx.llm, config=self._ctx.cfg)

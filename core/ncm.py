@@ -22,6 +22,7 @@ from __future__ import annotations
 
 import hashlib
 import math
+import random
 from typing import Any, Dict, List, Optional, Tuple
 
 import numpy as np
@@ -37,6 +38,7 @@ DEFAULTS = {
     "overlap_floor": 0.0,      # OVERLAP_THRESHOLD: weights below are cut
     "max_depth": 4,            # MAX_DEPTH (version-chain cap)
     "backend": "linear",       # membership kernel: 'linear' | 'born' (H6)
+    "fit_sample": 20000,       # k-means fits on a seeded subsample above this
 }
 
 META_KEY = "constellations"    # stored in MemoryNode.metadata (persists)
@@ -58,10 +60,11 @@ class ConstellationIndex:
     """Sparse overlapping soft membership over node embeddings."""
 
     def __init__(self, top_k: int = 3, max_constellations: int = 64,
-                 overlap_floor: float = 0.0):
+                 overlap_floor: float = 0.0, fit_sample: int = 20000):
         self.top_k = max(1, int(top_k))
         self.max_constellations = max(1, int(max_constellations))
         self.overlap_floor = float(overlap_floor)
+        self.fit_sample = max(MIN_FIT_NODES, int(fit_sample))
         self.centroids: Optional[np.ndarray] = None
         self.members: Dict[str, Tuple[str, ...]] = {}     # node -> constellation ids
         self.weight_of: Dict[str, Tuple[float, ...]] = {} # node -> aligned weights
@@ -70,7 +73,13 @@ class ConstellationIndex:
 
     # -- fit ------------------------------------------------------------
     def fit(self, frame: MemoryFrame) -> bool:
-        """Induce constellations from node embeddings. True if fitted."""
+        """Induce constellations from node embeddings. True if fitted.
+
+        Memory-bounded by design: above ``fit_sample`` nodes the k-means fits
+        a seeded random subsample (≥300 expected points per constellation at
+        the caps), then EVERY node is assigned by a streaming top-K pass
+        against the centroids — assignment never materializes an N×d matrix,
+        which is what OOM'd at 83k nodes on a 16 GB box."""
         self.members, self.weight_of, self._vectors = {}, {}, {}
         for n in frame.nodes.values():
             if n.embedding is not None:
@@ -80,11 +89,22 @@ class ConstellationIndex:
             self._fit_info = f"too few embedded nodes ({len(self._vectors)})"
             return False
         ids = sorted(self._vectors)
-        X = np.stack([self._vectors[i] for i in ids])
-        k = int(min(self.max_constellations, math.isqrt(len(ids))))
+        # ponytail: above fit_sample, centers come from a seeded subsample —
+        # statistically equivalent at ≤ max_constellations clusters; upgrade
+        # path if subsample centroids drift: MiniBatchKMeans over full chunks.
+        sample = ids
+        if len(ids) > self.fit_sample:
+            rng = random.Random(0)            # seeded: same sample every fit
+            sample = rng.sample(ids, self.fit_sample)
+        X = np.stack([self._vectors[i] for i in sample])
+        k = int(min(self.max_constellations, math.isqrt(len(sample))))
         try:
             from sklearn.cluster import KMeans
             labels = KMeans(n_clusters=k, n_init=4, random_state=0).fit(X).labels_
+        except MemoryError as exc:
+            self.centroids = None
+            self._fit_info = f"kmeans OOM even at sample size {len(sample)}: {exc}"
+            return False
         except Exception as exc:  # noqa: BLE001 — retrieval must not die on fit
             self.centroids = None
             self._fit_info = f"kmeans unavailable: {exc}"
@@ -92,9 +112,9 @@ class ConstellationIndex:
         self.centroids = np.stack([X[labels == j].mean(axis=0) for j in range(k)])
         norms = np.linalg.norm(self.centroids, axis=1, keepdims=True)
         self.centroids = self.centroids / np.maximum(norms, 1e-9)
-        for nid in ids:
+        for nid in ids:                    # full streaming pass, not the sample
             self._assign(nid)
-        self._fit_info = f"k={k} n={len(ids)}"
+        self._fit_info = f"k={k} n={len(ids)} sample={len(sample)}"
         return True
 
     def _assign(self, nid: str, vec: Optional[np.ndarray] = None
@@ -217,10 +237,14 @@ class VersionChain:
         return rec
 
     def history(self, subject: str) -> List[Dict[str, Any]]:
-        return list(self.versions.get(self.key(subject), []))
+        """Records annotated with derived Indic labels (pramāṇa provenance,
+        Kaṭapayādi subject digits) — computed at read time, never stored."""
+        from core.indic_methods import annotate_record
+        return [annotate_record(r, subject=subject)
+                for r in self.versions.get(self.key(subject), [])]
 
     def current(self, subject: str) -> Optional[Dict[str, Any]]:
-        hist = self.versions.get(self.key(subject), [])
+        hist = self.history(subject)
         return hist[-1] if hist else None
 
     def rollback(self, subject: str, n: int) -> Optional[Dict[str, Any]]:
@@ -228,7 +252,7 @@ class VersionChain:
         hist = self.versions.get(self.key(subject), [])
         if not (1 <= n <= len(hist)):
             return None
-        target = dict(hist[n - 1])
+        target = dict(hist[n - 1])   # raw record; update() re-annotates on read
         return self.update(subject, target["content"],
                            source=f"rollback:v{n}", provenance=[target["hash"]])
 
@@ -250,7 +274,8 @@ def attach_constellations(frame: MemoryFrame, config: Dict[str, Any],
         return existing
     idx = ConstellationIndex(top_k=cfg["top_k"],
                              max_constellations=cfg["max_constellations"],
-                             overlap_floor=cfg["overlap_floor"])
+                             overlap_floor=cfg["overlap_floor"],
+                             fit_sample=cfg["fit_sample"])
     idx.fit(frame)
     idx.attach_to_nodes(frame)
     return idx

@@ -47,6 +47,8 @@ def main() -> int:
     ap.add_argument("--n", type=int, default=150)
     ap.add_argument("--seeds", type=int, default=1)
     ap.add_argument("--k", type=int, default=8)
+    ap.add_argument("--resume", action="store_true",
+                    help="continue from ncm_pilot_checkpoint.json")
     args = ap.parse_args()
 
     with open(BENCH_JSON, "r", encoding="utf-8") as fh:
@@ -67,11 +69,22 @@ def main() -> int:
     conditions = [("full_mira", None), ("ncm_linear", "linear"), ("ncm_born", "born")]
     pool: dict = {}
     per_seed = []
+    done = set()
+    ckpt_path = os.path.join(BENCH_DIR, "ncm_pilot_checkpoint.json")
+    if args.resume and os.path.exists(ckpt_path):
+        with open(ckpt_path, "r", encoding="utf-8") as fh:
+            ck = json.load(fh)
+        per_seed = ck.get("per_seed", [])
+        pool = ck.get("pool", {})
+        done = {(p["seed"], p["condition"]) for p in per_seed}
+        print(f"resuming: {len(done)} conditions already done")
     for seed in range(args.seeds):
         rng = random.Random(2000 + seed)
         sub = records if args.n >= len(records) else rng.sample(records, args.n)
         print(f"\n=== seed {seed} ({len(sub)} questions) ===")
         for name, backend in conditions:
+            if (seed, name) in done:
+                continue
             # fresh config per condition; a fresh retrieve fn rebuilds the
             # pipeline with it (mira_retrieve_fn pins config at first query)
             ws.config = copy.deepcopy(base_cfg)
