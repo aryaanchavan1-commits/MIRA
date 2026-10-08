@@ -144,3 +144,38 @@ def annotate_record(record: Dict, subject: Optional[str] = None) -> Dict:
     if subject is not None:
         out["katapayadi"] = katapayadi(subject)
     return out
+
+
+# -- Conflict policy (S3 in paper/steps.md) -----------------------------------
+# When two records disagree, Nyaya's independence of pramanas decides HOW to
+# resolve, not just who wins. Pure function: append-only storage is untouched;
+# the policy annotates the head at read time. Aged anumana (system-derived
+# state) never overrides its own inputs.
+_PRAMANA_RANK = {"pratyaksa": 2, "shabda": 1, "upamana": 1, "anumana": 0}
+
+
+def resolve_conflict(old: Dict, new: Dict) -> Dict:
+    """Return the resolution policy for old -> new head replacement.
+
+    Rules (from paper/steps.md S3):
+      same class          -> recency wins, both kept        (shabda-vs-shabda)
+      direct vs testimony -> pratyaksa wins, dissent kept   (testimony kept)
+      anything vs anumana -> the non-derived record wins    (derived never overrides)
+    The winner is ALWAYS the newer record as far as the chain is concerned
+    (append-only: the head is whatever was appended last); the policy only
+    annotates HOW authoritative that head is and what must be preserved.
+    """
+    pa, pb = pramana_of(old.get("source", "")), pramana_of(new.get("source", ""))
+    if pa == pb:
+        policy = "recency_wins_keep_both"
+    elif pb == "anumana":
+        policy = "derived_never_overrides"
+    elif pa == "anumana":
+        policy = "derived_superseded_by_source"
+    elif "pratyaksa" in (pa, pb):
+        policy = "direct_wins_testimony_dissent"
+    else:
+        policy = "recency_wins_keep_both"
+    return {"old_pramana": pa, "new_pramana": pb,
+            "rank_change": _PRAMANA_RANK[pb] - _PRAMANA_RANK[pa],
+            "policy": policy}

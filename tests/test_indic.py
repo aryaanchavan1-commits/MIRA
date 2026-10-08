@@ -93,13 +93,46 @@ def test_annotation_survives_sqlite_restart():
     store.close()
 
 
+def test_conflict_policy():
+    """S3: same class -> recency; direct vs testimony -> direct wins,
+    dissent kept; derived never overrides its inputs."""
+    def rec(src):
+        return {"source": src, "content": "x"}
+    r = im.resolve_conflict(rec("web doc"), rec("web url"))
+    assert r["policy"] == "recency_wins_keep_both" and r["rank_change"] == 0
+    r = im.resolve_conflict(rec("web doc"), rec("chat 5"))
+    assert r["policy"] == "direct_wins_testimony_dissent" and r["rank_change"] > 0
+    r = im.resolve_conflict(rec("chat 5"), rec("web doc"))
+    assert r["policy"] == "direct_wins_testimony_dissent" and r["rank_change"] < 0
+    r = im.resolve_conflict(rec("web doc"), rec("consolidation replay"))
+    assert r["policy"] == "derived_never_overrides"
+    r = im.resolve_conflict(rec("consolidation replay"), rec("chat 1"))
+    assert r["policy"] == "derived_superseded_by_source"
+
+
+def test_head_carries_conflict_annotation():
+    vc = ncm.VersionChain(max_depth=4)
+    vc.update("audit subj", "fact v1", source="web doc")
+    vc.update("audit subj", "fact v2", source="chat 7")
+    hist = vc.history("audit subj")
+    assert "conflict" not in hist[0]
+    assert hist[-1]["conflict"]["policy"] == "direct_wins_testimony_dissent"
+    assert hist[-1]["conflict"]["old_pramana"] == "shabda"
+    assert hist[-1]["conflict"]["new_pramana"] == "pratyaksa"
+    # append-only untouched: raw records carry no policy field
+    raw = vc.versions[ncm.VersionChain.key("audit subj")]
+    assert all("conflict" not in r for r in raw)
+
+
 def run_all() -> int:
     check("katapayadi_table", test_katapayadi_table)
     check("pramana_classification", test_pramana_classification)
     check("version_chain_annotation", test_version_chain_annotation)
     check("annotation_survives_sqlite_restart",
           test_annotation_survives_sqlite_restart)
-    print(f"{4 - len(FAILURES)}/4 passed")
+    check("conflict_policy", test_conflict_policy)
+    check("head_carries_conflict_annotation", test_head_carries_conflict_annotation)
+    print(f"{6 - len(FAILURES)}/6 passed")
     if FAILURES:
         for name, exc in FAILURES:
             print(f"  {name}: {exc}")

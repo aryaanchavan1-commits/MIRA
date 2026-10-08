@@ -76,6 +76,23 @@ table { font-size: 8.2pt; }</style></head><body>
 </div>
 <h1 id="mira-next-steps-outcomes-and-startup-roadmap">MIRA — Next Steps,
 Outcomes, and Startup Roadmap</h1>
+<blockquote>
+<p><strong>Execution status (updated after the first roadmap
+pass):</strong> S1 DONE — <strong>H2 REJECTED on MuSiQue</strong>: the
+K-sweep (n=300, 3 seeds,
+<code>data_bench/ncm_ksweep_results.json</code>) found K=1 at 0.6342
+(p=0.0001 vs full), K=2 at 0.6811 (p=0.021), K=3 at 0.6806 (p=0.0002);
+no K beats full MIRA at 0.6985, so the constellation term is removed
+from the claim set (it stays behind <code>ncm.enabled</code> for the H6
+ambiguity line only). S3 DONE — pramāṇa conflict policy implemented
+(<code>resolve_conflict</code>, read-time head annotation, 6/6 tests).
+S6 DONE — <code>MemoryEngine.audit()</code> +
+<code>POST /api/audit</code> (6/6 SDK tests). Packaging:
+<code>pyproject.toml</code> (<code>mira-memory</code> 0.2.0). S2 next;
+S4/S5 BLOCKED (S4 needs the RAM upgrade or a rented box; S5 needs the
+LongMemEval dataset fetched first — local-only rule forbids
+auto-download).</p>
+</blockquote>
 <p>Status context for every item below: the framework is implemented and
 measured (<code>docs/FRAMEWORK.md</code>). Measured base: MuSiQue MRR
 0.6985 (n=300, 3 seeds) vs flat-vector 0.4347, BM25 0.3066; HotpotQA

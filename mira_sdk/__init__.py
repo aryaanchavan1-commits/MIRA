@@ -76,6 +76,39 @@ class MemoryEngine:
         """Alias of retrieve() — explicit for auditability workflows."""
         return self.retrieve(question, k=k)
 
+    def audit(self, question: str, k: Optional[int] = None) -> Dict[str, Any]:
+        """Full audit record for one retrieval (S6 in paper/steps.md).
+
+        Everything a reviewer needs to justify this answer path: the scoring
+        configuration actually in effect, per-component scores and evidence
+        paths for every hit, document sources, and the state of the version
+        store (chain count, record count). One call, exportable JSON."""
+        res = self.retrieve(question, k=k)
+        chain = getattr(self._ws, "version_chain", None)
+        rc = self._ws.config.get("retrieval_score", {}) if isinstance(
+            self._ws.config, dict) else {}
+        return {
+            **res,
+            "audit": {
+                "at": self._now(),
+                "weights_in_effect": {c: round(w, 6)
+                                      for c, w in
+                                      self._ws.answer_pipeline.retriever.weights.items()},
+                "retrieval_config": {kk: self._ws.answer_pipeline.retriever.__dict__.get(kk)
+                                     for kk in ("candidate_k", "final_k", "max_hops")},
+                "store": self._ws.stats(),
+                "version_store": (None if chain is None else {
+                    "subjects": len(chain.versions),
+                    "records": len(chain),
+                    "append_only": True}),
+            },
+        }
+
+    @staticmethod
+    def _now() -> str:
+        from core.types import iso_now
+        return iso_now()
+
     def ask(self, question: str, allow_web: Optional[bool] = None) -> Dict[str, Any]:
         """Full answer pipeline (loads the local LLM on first call).
         Answers are grounded in retrieved evidence or explicitly labeled."""

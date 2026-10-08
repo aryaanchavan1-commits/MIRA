@@ -21,6 +21,7 @@ from config.auto_config import (DATA_DIR, PROJECT_ROOT, build_context,  # noqa: 
                                 runtime_summary)
 from core.affect import AFFECT_DISCLOSURE
 from core.placement import STRATEGIES as PLACEMENT_STRATEGIES
+from core.types import iso_now
 from core.retrieval import ablation_configs
 from core.workspace import Workspace
 from tools.websearch import (
@@ -113,6 +114,52 @@ def system() -> Dict[str, Any]:
         out["workspace"] = s
         out["node_count"] = len(w.frame.nodes)
     return out
+
+
+# ---- audit (S6 in paper/steps.md): exportable per-query justification ----
+@app.post("/api/audit")
+def audit(payload: Dict[str, Any]) -> Dict[str, Any]:
+    """Full justification record for one retrieval: scoring weights in effect,
+    per-component scores, evidence paths, sources, store + version state."""
+    q = _payload_text(payload, "question", 4000, required=True)
+    k = payload.get("k")
+    if k is not None and (not isinstance(k, int) or not 1 <= k <= 50):
+        raise HTTPException(400, "k must be an integer in [1, 50]")
+    w = ws()
+    with w.lock:
+        retriever = w.answer_pipeline.retriever
+        res = retriever.retrieve(
+            q, w.embeddings.encode([q])[0], final_k=k or retriever.final_k)
+        doc_sources = w._doc_sources()
+        chain = getattr(w, "version_chain", None)
+        items = [{
+            "id": it.node.id,
+            "concept": it.node.concept,
+            "text": it.node.summary or it.node.raw_text,
+            "score": round(it.score, 6),
+            "components": {c: round(v, 6) for c, v in it.components.items()},
+            "path": it.path,
+            "source": doc_sources.get((it.node.source_ids or [""])[0],
+                                      it.node.source_ids),
+        } for it in res.items]
+        return {
+            "query": q,
+            "n_candidates": res.n_candidates,
+            "latency_ms": round(res.latency_ms, 3),
+            "results": items,
+            "audit": {
+                "at": iso_now(),
+                "weights_in_effect": {c: round(v, 6)
+                                      for c, v in retriever.weights.items()},
+                "retrieval_config": {kk: retriever.__dict__.get(kk)
+                                     for kk in ("candidate_k", "final_k", "max_hops")},
+                "store": w.stats(),
+                "version_store": None if chain is None else {
+                    "subjects": len(chain.versions),
+                    "records": len(chain),
+                    "append_only": True},
+            },
+        }
 
 
 # ---- chat ----

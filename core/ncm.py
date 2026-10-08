@@ -238,10 +238,14 @@ class VersionChain:
 
     def history(self, subject: str) -> List[Dict[str, Any]]:
         """Records annotated with derived Indic labels (pramāṇa provenance,
-        Kaṭapayādi subject digits) — computed at read time, never stored."""
-        from core.indic_methods import annotate_record
-        return [annotate_record(r, subject=subject)
-                for r in self.versions.get(self.key(subject), [])]
+        Kaṭapayādi subject digits) — computed at read time, never stored. The
+        head additionally carries the S3 conflict policy vs its predecessor."""
+        from core.indic_methods import annotate_record, resolve_conflict
+        out = [annotate_record(r, subject=subject)
+               for r in self.versions.get(self.key(subject), [])]
+        if len(out) >= 2:
+            out[-1]["conflict"] = resolve_conflict(out[-2], out[-1])
+        return out
 
     def current(self, subject: str) -> Optional[Dict[str, Any]]:
         hist = self.history(subject)

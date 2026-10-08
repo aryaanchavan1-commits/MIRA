@@ -100,6 +100,33 @@ def test_sdk_explanations_carry_all_components():
         eng.close()
 
 
+def test_sdk_audit_record():
+    """S6: audit() returns the full justification record (read-only)."""
+    try:
+        from mira_sdk import MemoryEngine
+        eng = MemoryEngine(load_llm=False)
+    except Exception as exc:  # noqa: BLE001 — env without a store
+        print(f"  (skipped: no local store — {exc})")
+        return
+    try:
+        s = eng.stats()
+        if s.get("nodes", 0) == 0:
+            print("  (skipped: empty store)")
+            return
+        a = eng.audit("memory consolidation", k=3)
+        audit = a["audit"]
+        assert a["results"], "audit must include the retrieval results"
+        assert len(audit["weights_in_effect"]) == 11
+        assert audit["store"].get("nodes", 0) > 0
+        assert audit["at"] and "T" in audit["at"]          # ISO timestamp
+        # version_store may be None (chain not yet created) or a real summary
+        vs = audit["version_store"]
+        assert vs is None or (vs["append_only"] is True
+                              and vs["records"] >= vs["subjects"] >= 0)
+    finally:
+        eng.close()
+
+
 def run_all() -> int:
     check("born_kernel_separates", test_born_kernel_separates)
     check("interference_boost_is_quantified", test_interference_boost_is_quantified)
@@ -108,7 +135,8 @@ def run_all() -> int:
     check("default_off", test_default_off)
     check("sdk_explanations_carry_all_components",
           test_sdk_explanations_carry_all_components)
-    print(f"{5 - len(FAILURES)}/5 passed")
+    check("sdk_audit_record", test_sdk_audit_record)
+    print(f"{6 - len(FAILURES)}/6 passed")
     if FAILURES:
         for name, exc in FAILURES:
             print(f"  {name}: {exc}")

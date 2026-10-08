@@ -655,9 +655,12 @@ Store-side extensions for the research program in
 (n=300, 3 seeds, 83k nodes — exploratory pilot, `data_bench/ncm_pilot_results.json`):
 the default-K constellation term significantly HURTS ranking (MRR 0.6897 vs
 0.6985, p=0.0002) and the Born-rule kernel is decisively worse (0.6354,
-p=0.0001). H2's fate now rests on the pre-registered K-sweep; H6 on the
-ambiguity benchmark — no rescue there means removal, per the rejection
-conditions. Default stays `ncm.enabled: false`.**
+p=0.0001). **The pre-registered K-sweep then REJECTED H2 on MuSiQue**
+(K=1: 0.6342; K=2: 0.6811, p=0.021; K=3: 0.6806, p=0.0002 — no K beats full
+MIRA at 0.6985): the constellation term is out of the claim set, kept behind
+`ncm.enabled` only for the H6 ambiguity line. Production surface:
+`MemoryEngine.audit()` + `POST /api/audit` (exportable per-query justification),
+pramāṇa conflict policy in version chains, `pyproject.toml` (`mira-memory`).**
 
 What it is:
 
