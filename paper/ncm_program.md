@@ -564,6 +564,26 @@ default-off guarantee:
 Tests: `tests/test_indic.py` (4 checks: table values, classification, annotation purity,
 SQLite-restart annotation).
 
+# 15. The unified framework
+
+The program's separate strands — radial topology, eleven-term attribution, BioMIRA
+dynamics, NCM constellations and versioning, the Indic methodological priors, and the
+quantum-inspired optional backend — are one framework, stated once in
+`docs/FRAMEWORK.md`:
+
+> **A memory system is an explicit, attributable scoring function over a structured,
+> versioned store — and no mechanism is allowed to exist unless its removal measurably
+> matters.**
+
+Five layers, strictly ordered: Store → Structure → Dynamics → Attribution → Governance,
+with governance empowered to veto anything below it. Mechanisms enter gated (weight 0,
+default-off), state pre-registered success *and* rejection thresholds, are ablated
+against mandatory floors, and are removed on failure — the measured ledger already
+includes one cut mechanism (homeostasis) and two currently failing gates (default-K
+constellations, Born kernel). The framework's single programmatic surface is
+`mira_sdk.MemoryEngine`; its runnable proof is `scripts/check_memory_system.py`; its
+porting rule is explicit: a port without attribution and governance is not MIRA.
+
 # Reproducibility statement
 
 Every measured number in this document is generated from committed run artifacts and reproduced

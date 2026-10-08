@@ -644,6 +644,11 @@ MIRA/
 
 ## 21. MIRA-NCM (Nested Constellation Memory) — experimental
 
+> The whole repository — papers, protocol, code — is one framework:
+> **memory as an explicit, attributable scoring function over a structured,
+> versioned store, where no mechanism survives unless its removal measurably
+> matters.** Formal statement: `docs/FRAMEWORK.md`.
+
 Store-side extensions for the research program in
 `paper/ncm_program.pdf` (hypotheses H1–H6, pre-registered thresholds in
 `docs/EXPERIMENT_PROTOCOL.md`). **Implemented; measured at full MuSiQue scale

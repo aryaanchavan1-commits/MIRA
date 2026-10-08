@@ -965,6 +965,27 @@ property is enforced by unit test.</li>
 </ol>
 <p>Tests: <code>tests/test_indic.py</code> (4 checks: table values,
 classification, annotation purity, SQLite-restart annotation).</p>
+<h1 id="the-unified-framework">15. The unified framework</h1>
+<p>The program’s separate strands — radial topology, eleven-term
+attribution, BioMIRA dynamics, NCM constellations and versioning, the
+Indic methodological priors, and the quantum-inspired optional backend —
+are one framework, stated once in <code>docs/FRAMEWORK.md</code>:</p>
+<blockquote>
+<p><strong>A memory system is an explicit, attributable scoring function
+over a structured, versioned store — and no mechanism is allowed to
+exist unless its removal measurably matters.</strong></p>
+</blockquote>
+<p>Five layers, strictly ordered: Store → Structure → Dynamics →
+Attribution → Governance, with governance empowered to veto anything
+below it. Mechanisms enter gated (weight 0, default-off), state
+pre-registered success <em>and</em> rejection thresholds, are ablated
+against mandatory floors, and are removed on failure — the measured
+ledger already includes one cut mechanism (homeostasis) and two
+currently failing gates (default-K constellations, Born kernel). The
+framework’s single programmatic surface is
+<code>mira_sdk.MemoryEngine</code>; its runnable proof is
+<code>scripts/check_memory_system.py</code>; its porting rule is
+explicit: a port without attribution and governance is not MIRA.</p>
 <h1 id="reproducibility-statement">Reproducibility statement</h1>
 <p>Every measured number in this document is generated from committed
 run artifacts and reproduced by
